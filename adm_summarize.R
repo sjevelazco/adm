@@ -1,3 +1,13 @@
+#' Title
+#'
+#' @param models 
+#'
+#' @importFrom dplyr bind_rows relocate tibble select
+#' 
+#' @return
+#' @export
+#'
+#' @examples
 adm_summarize <- function (models) 
 {
   . <- model_ID <- model <- pdispersion_sd <- NULL
@@ -9,8 +19,9 @@ adm_summarize <- function (models)
       x$performance
     })
     perf <- Map(cbind, perf, model_ID = 1:length(perf))
-    perf_tib <- dplyr::bind_rows(perf) %>% dplyr::relocate(model_ID, 
-                                                           .before = model) %>% dplyr::tibble()
+    perf_tib <- dplyr::bind_rows(perf) %>% 
+      dplyr::relocate(model_ID, .before = model) %>% 
+      dplyr::tibble()
   } else {
     perf_tib <- models[[1]]$performance
     perf_tib$model_ID <- 1
