@@ -33,7 +33,9 @@ fit_abund_raf <-
            fit_formula = NULL,
            partition,
            predict_part = FALSE,
-           mtry = sqrt(length(c(predictors, predictors_f)))) {
+           mtry = sqrt(length(c(predictors, predictors_f))),
+           ntree = 500,
+           custom_name = "raf") {
     
     # Variables
     variables <- dplyr::bind_rows(c(c = predictors, f = predictors_f))
@@ -56,7 +58,7 @@ fit_abund_raf <-
     eval_partial <- list()
     part_pred <- list()
     for (j in 1:length(folds)) {
-      message("-- Evaluating with fold ", j, "/", length(folds))
+      #message("-- Evaluating with fold ", j, "/", length(folds))
 
       train_set <- data[data[, partition] != folds[j], ]
       test_set <- data[data[, partition] == folds[j], ]
@@ -65,7 +67,7 @@ fit_abund_raf <-
         formula1,
         data = train_set,
         mtry = mtry,
-        ntree = 500, # TODO porque 1000
+        ntree = ntree, # TODO porque 1000
         importance = FALSE
       )
 
@@ -73,7 +75,7 @@ fit_abund_raf <-
       pred <- stats::predict(test_rf, test_set, type = "response")
       observed <- dplyr::pull(test_set, response)
       eval_partial[[j]] <- dplyr::tibble(
-        model = "raf",
+        model = custom_name,
         adm_eval(obs = observed, pred = pred)
       )
 
@@ -86,7 +88,7 @@ fit_abund_raf <-
     model <- randomForest::randomForest(formula1,
       data = data,
       mtry = mtry,
-      ntree = 1000, # TODO porque 1000
+      ntree = ntree, # TODO porque 1000
       importance = FALSE
     )
 
