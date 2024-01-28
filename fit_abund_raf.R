@@ -34,8 +34,7 @@ fit_abund_raf <-
            partition,
            predict_part = FALSE,
            mtry = sqrt(length(c(predictors, predictors_f))),
-           ntree = 500,
-           custom_name = "raf") {
+           ntree = 500) {
     
     # Variables
     variables <- dplyr::bind_rows(c(c = predictors, f = predictors_f))
@@ -67,7 +66,7 @@ fit_abund_raf <-
         formula1,
         data = train_set,
         mtry = mtry,
-        ntree = ntree, # TODO porque 1000
+        ntree = ntree, 
         importance = FALSE
       )
 
@@ -75,7 +74,7 @@ fit_abund_raf <-
       pred <- stats::predict(test_rf, test_set, type = "response")
       observed <- dplyr::pull(test_set, response)
       eval_partial[[j]] <- dplyr::tibble(
-        model = custom_name,
+        model = "raf",
         adm_eval(obs = observed, pred = pred)
       )
 

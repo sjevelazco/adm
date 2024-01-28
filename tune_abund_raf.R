@@ -8,12 +8,13 @@ tune_abund_raf <-
            partition,
            predict_part = FALSE,
            grid = NULL,
-           metrics) {
+           metrics,
+           verbose = FALSE) {
     # making grid
     if (is.null(grid)) {
       message("Grid not provided. Using the default one for Random Forest.")
-      mtry <- seq(from = 1, to = length(predictors), by = 1)
-      ntree <- seq(from = 50, to = 1000, by = 50)
+      mtry <- seq(from = 2, to = length(predictors), by = 1)
+      ntree <- seq(from = 500, to = 1000, by = 100)
       grid <- expand.grid(mtry = mtry, ntree = ntree)
     } else {
       if (all(names(grid)%in%c("mtry","ntree")) & length(names(grid))==2){
@@ -25,30 +26,34 @@ tune_abund_raf <-
     
     grid$comb_id <- paste("comb_", 1:nrow(grid), sep = "")
     
+    # names(hyper_combinations) <- grid[i,"comb_id"]
+    # hyper_combinations <- dplyr::bind_rows(hyper_combinations, .id = "comb_id")
+    
     # looping the grid
     message("Searching for optimal hyperparameters...")
     hyper_combinations <- list()
     for (i in 1:nrow(grid)) {
+      cat(i,"/",nrow(grid)) # DEBUG
       model <-
         fit_abund_raf(
           data = data,
           response = response,
-          predictors = pred_var,
-          predictors_f = NULL,
-          fit_formula = NULL,
+          predictors = predictors,
+          predictors_f = predictors_f,
+          fit_formula = fit_formula,
           partition = partition,
-          predict_part = FALSE,
+          predict_part = predict_part,
           mtry = grid[i,"mtry"],
-          ntree = grid[i,"ntree"],
-          custom_name = grid[i,"comb_id"]
+          ntree = grid[i,"ntree"]
         )
       hyper_combinations <- append(hyper_combinations,list(model$performance))
+      names(hyper_combinations)[i] <- grid[i,"comb_id"]
     }
     
-    hyper_combinations <- do.call(rbind,hyper_combinations)
+    hyper_combinations <- dplyr::bind_rows(hyper_combinations, .id = "comb_id")
 
     ranked_combinations <- model_selection(hyper_combinations,metrics) %>%
-      dplyr::left_join(grid, by = c("model"="comb_id"))
+      dplyr::left_join(grid, by = c("comb_id"="comb_id"))
     
     # fit final model
     message("Fitting the best model...")
@@ -56,14 +61,13 @@ tune_abund_raf <-
       fit_abund_raf(
         data = data,
         response = response,
-        predictors = pred_var,
-        predictors_f = NULL,
-        fit_formula = NULL,
+        predictors = predictors,
+        predictors_f = predictors_f,
+        fit_formula = fit_formula,
         partition = partition,
-        predict_part = FALSE,
+        predict_part = predict_part,
         mtry = ranked_combinations[[1,"mtry"]],
-        ntree = ranked_combinations[[1,"ntree"]],
-        custom_name = "raf"
+        ntree = ranked_combinations[[1,"ntree"]]
       )
     
     message('The best model was a Random Forest with mtry = ',
@@ -71,8 +75,7 @@ tune_abund_raf <-
             " and ntree = ", 
             ranked_combinations[[1,"ntree"]])
     
-    final_list <- list(best_model = final_model$model,
-               grid_performance = ranked_combinations)
+    final_list <- append(final_model,list(ranked_combinations = ranked_combinations))
     
     return(final_list)
   }
