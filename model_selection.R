@@ -18,7 +18,7 @@ model_selection <-
     cols_idx <- unlist(performance_dict[metrics])
     perf_means <- performance_var[cols_idx[cols_idx %in% grep("_mean$",performance_var)]]
     
-    ranked_combinations <- hyper_combinations
+    not_selected_combinations <- hyper_combinations
     while (nrow(hyper_combinations) > 1) {
       for (i in perf_means) {
         hyper_combinations <- hyper_combinations[which(hyper_combinations["corr_spear_mean"] >= summary(hyper_combinations[["corr_spear_mean"]])[5]),]
@@ -30,10 +30,11 @@ model_selection <-
     
     selected_comb <- hyper_combinations$comb_id[1]
     
-    ranked_combinations <- ranked_combinations %>% 
+    not_selected_combinations <- not_selected_combinations %>% 
       dplyr::filter(comb_id != selected_comb)
     
-    ranked_combinations <- bind_rows(hyper_combinations,ranked_combinations)
+    return_list <- list("optimal_combination" = hyper_combinations, 
+                        "not_optimal_combinations" = not_selected_combinations)
     
-    return(ranked_combinations)
+    return(return_list)
   }
