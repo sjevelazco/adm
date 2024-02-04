@@ -1,17 +1,29 @@
-data = data_buffer[data_buffer$species==spp[14],]
-response = "ind_ha"
-predictors = pred_var
-predictors_f = NULL
-fit_formula = NULL
-partition = "kfold"
-predict_part = FALSE
-mtry <- seq(from = 2, to = 3, by = 1)
-ntree <- seq(from = 500, to = 1000, by = 500)
-grid <- expand.grid(mtry = mtry, ntree = ntree)
-metrics = c("mae","spearman")
-verbose = FALSE
-
-#
+#' Fit and validate Random Forest models with exploration of hyper-parameters that optimize performance
+#'
+#' @param data data.frame. Database with response (i.e., abundance) and predictors values.
+#' @param response character. Column name with species abundance data (e.g., 0, 1, 45).
+#' @param predictors character. Vector with the column names of quantitative predictor variables
+#' (i.e. continuous variables). Usage predictors = c("temperature", "sand", "elevation")
+#' @param predictors_f character. Vector with the column names of qualitative predictor variables
+#' (i.e. ordinal or nominal variables type). Usage predictors_f = c("landform")
+#' @param fit_formula formula. A formula object with response and predictor
+#' variables (e.g. formula(abund ~ temp + sand + pH + landform)).
+#' Note that the variables used here must be consistent with those used in
+#' response, predictors, and predictors_f arguments. Default NULL
+#' @param partition  character. Column name with training and validation partition groups.
+#' @param predict_part 
+#' @param grid  data.frame. A data frame object with algorithm hyper-parameters values to be tested.
+#' It is recommended to generate this data.frame with the grid() function. Hyper-parameter needed
+#' for tuning is 'mtry'. The maximum mtry cannot exceed the total number of predictors.
+#' @param metrics character. Performance metric used for selecting the best combination of hyper-parameter values. One of the following metrics can be used: xxx, xxx, xxx, xxx, xxx,
+#' AUC, and BOYCE. TSS is used as default.
+#' @param n_cores numeric. Number of cores use for parallelization. Default 1
+#' @param verbose
+#'
+#' @return
+#' @export
+#'
+#' @examples
 tune_abund_raf <-
   function(data,
            response,
@@ -22,6 +34,7 @@ tune_abund_raf <-
            predict_part = FALSE,
            grid = NULL,
            metrics,
+           n_cores = 1,
            verbose = FALSE) {
     # making grid
     if (is.null(grid)) {

@@ -1,12 +1,47 @@
 Package: adm
-Title: What the Package Does (One Line, Title Case)
-Version: 0.0.0.9000
-Authors@R: 
-    person("First", "Last", , "first.last@example.com", role = c("aut", "cre"),
-           comment = c(ORCID = "YOUR-ORCID-ID"))
-Description: What the package does (one paragraph).
-License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
-    license
+Type: Package
+Title: Tools for Data Preparation, Fitting, Prediction, Evaluation, and Post-Processing of Abundance-based Distribution Models
+Version: 0.0.1
+Authors@R: c(person(given = "Admir Cesar de", family = "Oliveira Junior", role = c("aut"),
+           email = "admircjunior@gmail.com",
+           comment = c(ORCID = "xxxx-xxxx-xxxx-xxxx")), 
+           person(given = "Santiago J.E.", family = "Velazco", role = c("aut", "cre"),
+           email = "sjevelazco@gmail.com",
+           comment = c(ORCID = "0000-0002-7527-0967")))
+Maintainer: Santiago J.E. Velazco <sjevelazco@gmail.com>
+Depends: R (>= 3.5.0)
+Imports: 
+    doParallel,
+    dplyr,
+    foreach,
+    gbm,
+    grDevices,
+    kernlab,
+    maxnet,
+    mgcv,
+    nnet,
+    randomForest,
+    spThin,
+    terra (>= 1.5-21),
+    methods,
+    utils,
+    ggplot2,
+    patchwork,
+    torch, 
+    luz, 
+    torchvision
+Description: Assist in the construction of abundace-based distribution model workflow
+    by incorporating comprehensive tools for data preparation, model fitting, 
+    evaluation, and prediction.
+License: GPL (>= 3)
 Encoding: UTF-8
-Roxygen: list(markdown = TRUE)
+LazyData: true
 RoxygenNote: 7.2.3
+Suggests:
+    covr,
+    knitr,
+    rmarkdown,
+    testthat (>= 3.0.0)
+VignetteBuilder:
+    knitr
+Config/testthat/edition: 3

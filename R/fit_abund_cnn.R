@@ -36,9 +36,6 @@ fit_abund_cnn <-
            n_epochs = 10, 
            batch_size = 32
   ) {
-    require(torch)
-    require(luz)
-    require(torchvision)
     # Variables
     variables <- dplyr::bind_rows(c(c = predictors, f = predictors_f))
     
