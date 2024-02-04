@@ -1,5 +1,4 @@
-model_selection <-
-  function(hyper_combinations,metrics){
+model_selection <- function(hyper_combinations, metrics){
     metrics <- as.vector(metrics)
     performance_var <- names(hyper_combinations)
     
