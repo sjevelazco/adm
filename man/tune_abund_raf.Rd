@@ -36,13 +36,11 @@ response, predictors, and predictors_f arguments. Default NULL}
 
 \item{partition}{character. Column name with training and validation partition groups.}
 
-\item{predict_part}{}
-
 \item{grid}{data.frame. A data frame object with algorithm hyper-parameters values to be tested.
 It is recommended to generate this data.frame with the grid() function. Hyper-parameter needed
 for tuning is 'mtry' and 'ntree'. The maximum mtry cannot exceed the total number of predictors.}
 
-\item{metrics}{character. Performance metric used for selecting the best 
+\item{metrics}{character. Performance metric used for selecting the best
 combination of hyper-parameter values. One or more of the following metrics can be
  used: xxx, xxx, xxx (related to accuracy), xxx, xxx, xxx (related to discrimination)
 xxx, xxx, xxx (related to precision). Usage metrics = c(corr_spear, slope)}
@@ -56,8 +54,7 @@ Fit and validate Random Forest models with exploration of hyper-parameters that 
 }
 \examples{
 \dontrun{
-TODO 
+TODO
 require(dplyr)
-
 }
 }

@@ -2,13 +2,22 @@
 % Please edit documentation in R/adm_summarize.R
 \name{adm_summarize}
 \alias{adm_summarize}
-\title{Title}
+\title{Merge model performance tables}
 \usage{
 adm_summarize(models)
 }
 \arguments{
-\item{models}{}
+\item{models}{list of one or more models fitted with fit_ or tune_ family function outputs. A list a single or several models fitted with some of fit_ or tune_ functions. Usage models = list(mod1, mod2, mod3)}
+}
+\value{
+Combined model performance table for all input models. Models fit with tune will include model performance for the best hyperparameters.
 }
 \description{
-Title
+Merge model performance tables
+}
+\examples{
+\dontrun{
+require(dplyr)
+TODO
+}
 }
