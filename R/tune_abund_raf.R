@@ -14,16 +14,28 @@
 #' @param predict_part 
 #' @param grid  data.frame. A data frame object with algorithm hyper-parameters values to be tested.
 #' It is recommended to generate this data.frame with the grid() function. Hyper-parameter needed
-#' for tuning is 'mtry'. The maximum mtry cannot exceed the total number of predictors.
-#' @param metrics character. Performance metric used for selecting the best combination of hyper-parameter values. One of the following metrics can be used: xxx, xxx, xxx, xxx, xxx,
-#' AUC, and BOYCE. TSS is used as default.
+#' for tuning is 'mtry' and 'ntree'. The maximum mtry cannot exceed the total number of predictors.
+#' @param metrics character. Performance metric used for selecting the best 
+#' combination of hyper-parameter values. One or more of the following metrics can be
+#'  used: xxx, xxx, xxx (related to accuracy), xxx, xxx, xxx (related to discrimination)
+#' xxx, xxx, xxx (related to precision). Usage metrics = c(corr_spear, slope)
 #' @param n_cores numeric. Number of cores use for parallelization. Default 1
 #' @param verbose
 #'
+#' @importFrom doParallel registerDoParallel
+#' @importFrom dplyr bind_rows left_join
+#' @importFrom foreach foreach
+#' @importFrom parallel makeCluster
+#' 
 #' @return
 #' @export
 #'
 #' @examples
+#' \dontrun{
+#' TODO 
+#' require(dplyr)
+#' 
+#' }
 tune_abund_raf <-
   function(data,
            response,
@@ -33,9 +45,13 @@ tune_abund_raf <-
            partition,
            predict_part = FALSE,
            grid = NULL,
-           metrics,
+           metrics = NULL,
            n_cores = 1,
            verbose = FALSE) {
+    if(is.null(metrics)){
+      stop("Metrics is needed to be defined in 'metric' argument")
+    }
+    
     # making grid
     if (is.null(grid)) {
       message("Grid not provided. Using the default one for Random Forest.")
@@ -55,8 +71,13 @@ tune_abund_raf <-
     # looping the grid
     message("Searching for optimal hyperparameters...")
     hyper_combinations <- list()
-    for (i in 1:nrow(grid)) {
-      cat(i,"/",nrow(grid)) # DEBUG
+    
+    cl <- parallel::makeCluster(n_cores)
+    doParallel::registerDoParallel(cl)
+    
+    hyper_combinations <- foreach::foreach(i = 1:nrow(grid), .export=c('fit_abund_raf', 'boyce'), .packages = c("dplyr")) %dopar%{ 
+    # for (i in 1:nrow(grid)) {
+      # cat(i,"/",nrow(grid)) # DEBUG
       model <-
         fit_abund_raf(
           data = data,
@@ -69,9 +90,13 @@ tune_abund_raf <-
           mtry = grid[i,"mtry"],
           ntree = grid[i,"ntree"]
         )
-      hyper_combinations <- append(hyper_combinations,list(model$performance))
-      names(hyper_combinations)[i] <- grid[i,"comb_id"]
+      # hyper_combinations <- append(hyper_combinations,list(model$performance))
+      # names(hyper_combinations)[i] <- grid[i,"comb_id"]
+      l <- list(model$performance)
+      names(l) <- grid[i,"comb_id"]
+      l
     }
+    parallel::stopCluster(cl)
     
     hyper_combinations <- dplyr::bind_rows(hyper_combinations, .id = "comb_id")
 

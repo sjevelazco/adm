@@ -13,7 +13,7 @@ tune_abund_raf(
   partition,
   predict_part = FALSE,
   grid = NULL,
-  metrics,
+  metrics = NULL,
   n_cores = 1,
   verbose = FALSE
 )
@@ -40,10 +40,12 @@ response, predictors, and predictors_f arguments. Default NULL}
 
 \item{grid}{data.frame. A data frame object with algorithm hyper-parameters values to be tested.
 It is recommended to generate this data.frame with the grid() function. Hyper-parameter needed
-for tuning is 'mtry'. The maximum mtry cannot exceed the total number of predictors.}
+for tuning is 'mtry' and 'ntree'. The maximum mtry cannot exceed the total number of predictors.}
 
-\item{metrics}{character. Performance metric used for selecting the best combination of hyper-parameter values. One of the following metrics can be used: xxx, xxx, xxx, xxx, xxx,
-AUC, and BOYCE. TSS is used as default.}
+\item{metrics}{character. Performance metric used for selecting the best 
+combination of hyper-parameter values. One or more of the following metrics can be
+ used: xxx, xxx, xxx (related to accuracy), xxx, xxx, xxx (related to discrimination)
+xxx, xxx, xxx (related to precision). Usage metrics = c(corr_spear, slope)}
 
 \item{n_cores}{numeric. Number of cores use for parallelization. Default 1}
 
@@ -51,4 +53,11 @@ AUC, and BOYCE. TSS is used as default.}
 }
 \description{
 Fit and validate Random Forest models with exploration of hyper-parameters that optimize performance
+}
+\examples{
+\dontrun{
+TODO 
+require(dplyr)
+
+}
 }
