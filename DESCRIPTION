@@ -4,7 +4,7 @@ Title: Tools for Data Preparation, Fitting, Prediction, Evaluation, and Post-Pro
 Version: 0.0.1
 Authors@R: c(person(given = "Admir Cesar de", family = "Oliveira Junior", role = c("aut"),
            email = "admircjunior@gmail.com",
-           comment = c(ORCID = "xxxx-xxxx-xxxx-xxxx")), 
+           comment = c(ORCID = "0000-0002-1946-0475")), 
            person(given = "Santiago J.E.", family = "Velazco", role = c("aut", "cre"),
            email = "sjevelazco@gmail.com",
            comment = c(ORCID = "0000-0002-7527-0967")))

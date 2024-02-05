@@ -49,7 +49,7 @@ adm_eval <- function(obs, pred) {
     mae = mae,
     inter = inter,
     slope = slope,
-    pdisp = pdispersion
+    pdisp = pdisp
   ) %>% dplyr::as_tibble()
 
   return(result)
