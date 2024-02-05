@@ -1,6 +1,6 @@
 #' Calculate different model performance metrics
 #'
-#' @description Calculate difernet model performance related to model accuracy, discrimination, and precision.
+#' @description Calculate different model performance related to model accuracy, discrimination, and precision.
 #'
 #' @param obs numeric. Observed abundance
 #' @param pred numeric. Predicted abundance
@@ -8,7 +8,8 @@
 #' @importFrom stats cor lm sd
 #' @importFrom tibble as_tibble
 #'
-#' @return a tibble with next columns: corr_spear, corr_pear, mae, inter, slope, and pdispersion (see details)
+#' @return a tibble with next columns: corr_spear, corr_pear, mae, inter, slope, and pdisp(see details)
+#'
 #' @export
 #'
 #' @details
@@ -17,9 +18,9 @@
 #'   \item Accuracy: mean absolute error (mae)
 #'   TODO explain inter = inter slope = slope,
 #'   \item Discrimination: Spearman’s rank correlation (corr_spear) and Pearson’s correlation (corr_pear)
-#'   \item Precision:  Ratio between SD of predicted and observed abundance (pdispersion),
+#'   \item Precision:  Ratio between SD of predicted and observed abundance (pdisp),
 #'   }
-#'   Further deatails see  Waldock et al. (2022)
+#'   Further details see Waldock et al. (2022)
 #'
 #' @references
 #' \itemize{
@@ -40,7 +41,7 @@ adm_eval <- function(obs, pred) {
   inter <- lm_out$coefficients[1]
   slope <- lm_out$coefficients[2]
   # Precision
-  pdispersion <- stats::sd(pred) / stats::sd(obs)
+  pdisp <- stats::sd(pred) / stats::sd(obs)
 
   result <- data.frame(
     corr_spear = corr_spear,
@@ -48,7 +49,7 @@ adm_eval <- function(obs, pred) {
     mae = mae,
     inter = inter,
     slope = slope,
-    pdispersion = pdispersion
+    pdisp = pdispersion
   ) %>% tibble::as_tibble()
 
   return(result)

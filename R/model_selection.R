@@ -11,7 +11,7 @@ model_selection <- function(hyper_combinations, metrics) {
     mae = grep("^mae", performance_var),
     intercept = grep("^inter", performance_var),
     slope = grep("^slope", performance_var),
-    p_dispersion = grep("^pdispersion", performance_var)
+    p_dispersion = grep("^pdisp", performance_var)
   )
 
   cols_idx <- unlist(performance_dict[metrics])

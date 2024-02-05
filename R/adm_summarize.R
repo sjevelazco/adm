@@ -14,7 +14,7 @@
 #' TODO
 #' }
 adm_summarize <- function(models) {
-  . <- model_ID <- model <- pdispersion_sd <- NULL
+  . <- model_ID <- model <- pdisp_sd <- NULL
   if (data.class(models) != "list") {
     stop("models must be a list object")
   }
@@ -32,7 +32,7 @@ adm_summarize <- function(models) {
   }
   perf_tib <- perf_tib %>% dplyr::relocate(names(dplyr::select(
     perf_tib,
-    model_ID:pdispersion_sd
+    model_ID:pdisp_sd
   )))
   return(perf_tib)
 }

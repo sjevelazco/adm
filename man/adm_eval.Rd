@@ -12,10 +12,10 @@ adm_eval(obs, pred)
 \item{pred}{numeric. Predicted abundance}
 }
 \value{
-a tibble with next columns: corr_spear, corr_pear, mae, inter, slope, and pdispersion (see details)
+a tibble with next columns: corr_spear, corr_pear, mae, inter, slope, and pdisp(see details)
 }
 \description{
-Calculate difernet model performance related to model accuracy, discrimination, and precision.
+Calculate different model performance related to model accuracy, discrimination, and precision.
 }
 \details{
 This function calculate metric related to:
@@ -23,9 +23,9 @@ This function calculate metric related to:
   \item Accuracy: mean absolute error (mae)
   TODO explain inter = inter slope = slope,
   \item Discrimination: Spearman’s rank correlation (corr_spear) and Pearson’s correlation (corr_pear)
-  \item Precision:  Ratio between SD of predicted and observed abundance (pdispersion),
+  \item Precision:  Ratio between SD of predicted and observed abundance (pdisp),
   }
-  Further deatails see  Waldock et al. (2022)
+  Further details see Waldock et al. (2022)
 }
 \examples{
 \dontrun{

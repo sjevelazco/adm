@@ -36,6 +36,8 @@ response, predictors, and predictors_f arguments. Default NULL}
 
 \item{partition}{character. Column name with training and validation partition groups.}
 
+\item{predict_part}{logical. Save predicted abundance for testing data. Default = FALSE}
+
 \item{grid}{data.frame. A data frame object with algorithm hyper-parameters values to be tested.
 It is recommended to generate this data.frame with the grid() function. Hyper-parameter needed
 for tuning is 'mtry' and 'ntree'. The maximum mtry cannot exceed the total number of predictors.}

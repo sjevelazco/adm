@@ -115,7 +115,7 @@ fit_abund_svm <-
     # Sumarize performance
     eval_final <- eval_partial %>%
       dplyr::group_by(model) %>%
-      dplyr::summarise(dplyr::across(corr_spear:pdispersion, list(
+      dplyr::summarise(dplyr::across(corr_spear:pdisp, list(
         mean = mean,
         sd = stats::sd
       )), .groups = "drop")

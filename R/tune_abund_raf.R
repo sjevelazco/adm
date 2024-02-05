@@ -11,7 +11,7 @@
 #' Note that the variables used here must be consistent with those used in
 #' response, predictors, and predictors_f arguments. Default NULL
 #' @param partition  character. Column name with training and validation partition groups.
-#' @param predict_part
+#' @param predict_part logical. Save predicted abundance for testing data. Default = FALSE
 #' @param grid  data.frame. A data frame object with algorithm hyper-parameters values to be tested.
 #' It is recommended to generate this data.frame with the grid() function. Hyper-parameter needed
 #' for tuning is 'mtry' and 'ntree'. The maximum mtry cannot exceed the total number of predictors.
@@ -47,10 +47,12 @@ tune_abund_raf <-
            metrics = NULL,
            n_cores = 1,
            verbose = FALSE) {
-    if (is.null(metrics)) {
+    
+    if (is.null(metrics) |
+        !all(metrics %in% c("corr_spear", "corr_pear", "mae", "inter", "slope", "pdisp"))) {
       stop("Metrics is needed to be defined in 'metric' argument")
     }
-
+    
     # making grid
     if (is.null(grid)) {
       message("Grid not provided. Using the default one for Random Forest.")
@@ -74,7 +76,7 @@ tune_abund_raf <-
     cl <- parallel::makeCluster(n_cores)
     doParallel::registerDoParallel(cl)
 
-    hyper_combinations <- foreach::foreach(i = 1:nrow(grid), .export = c("fit_abund_raf", "boyce"), .packages = c("dplyr")) %dopar% {
+    hyper_combinations <- foreach::foreach(i = 1:nrow(grid), .export = c("fit_abund_raf"), .packages = c("dplyr")) %dopar% {
       # for (i in 1:nrow(grid)) {
       # cat(i,"/",nrow(grid)) # DEBUG
       model <-
