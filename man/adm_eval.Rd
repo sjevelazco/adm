@@ -20,7 +20,7 @@ Calculate difernet model performance related to model accuracy, discrimination, 
 \details{
 This function calculate metric related to:
 \itemize{
-  \item Accuracy: mean absolute error (mae) 
+  \item Accuracy: mean absolute error (mae)
   TODO explain inter = inter slope = slope,
   \item Discrimination: Spearman’s rank correlation (corr_spear) and Pearson’s correlation (corr_pear)
   \item Precision:  Ratio between SD of predicted and observed abundance (pdispersion),
@@ -30,7 +30,7 @@ This function calculate metric related to:
 \examples{
 \dontrun{
 require(dplyr)
-
+TODO
 }
 }
 \references{

@@ -12,7 +12,7 @@ fit_abund_raf(
   fit_formula = NULL,
   partition,
   predict_part = FALSE,
-  mtry = sqrt(length(c(predictors, predictors_f))),
+  mtry = length(c(predictors, predictors_f))/3,
   ntree = 500
 )
 }
@@ -33,7 +33,9 @@ variables (i.e. ordinal or nominal variables type). Usage predictors_f = c("land
 
 \item{predict_part}{logical. Save predicted abundance for testing data. Default = FALSE}
 
-\item{mtry}{numeric. Number of variables randomly sampled as candidates at each split. Default sqrt(length(c(predictors, predictors_f)))}
+\item{mtry}{numeric. Number of variables randomly sampled as candidates at each split. Default (length(c(predictors, predictors_f))/3)}
+
+\item{ntree}{numeric. Number of trees to grow. This should not be set to too small a number, to ensure that every input row gets predicted at least a few times. Default 500}
 }
 \value{
 A list object with:

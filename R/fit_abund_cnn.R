@@ -1,5 +1,5 @@
 ###
-#' Fit and train Convolutional Neural Network Model 
+#' Fit and train Convolutional Neural Network Model
 #'
 #' @param data tibble or data.frame. Database with response, predictors, and partition values
 #' @param response character. Column name with species abundance.
@@ -32,18 +32,17 @@ fit_abund_cnn <-
            fit_formula = NULL,
            partition,
            predict_part = FALSE,
-           learning_rate = 0.01, 
-           n_epochs = 10, 
-           batch_size = 32
-  ) {
+           learning_rate = 0.01,
+           n_epochs = 10,
+           batch_size = 32) {
     # Variables
     variables <- dplyr::bind_rows(c(c = predictors, f = predictors_f))
-    
+
     folds <- data %>%
       dplyr::pull(partition) %>%
       unique() %>%
       sort()
-    
+
     create_dataset <- torch::dataset(
       "dataset",
       initialize = function(data_list) {
@@ -59,10 +58,10 @@ fit_abund_cnn <-
         length(self$response_variable)
       }
     )
-    
+
     ##
     torch::torch_manual_seed(13)
-    
+
     net <- torch::nn_module(
       "cnn",
       initialize = function() {
@@ -84,24 +83,24 @@ fit_abund_cnn <-
       }
     )
     ##
-    
+
     eval_partial <- list()
     part_pred <- list()
     for (j in 1:length(folds)) {
       message("-- Evaluating with fold ", j, "/", length(folds))
-      
+
       train_dataloader <-
         data[data[, partition] != folds[j], c(longitude, latitude, response)] %>%
         cnn_make_samples(longitude, latitude, response, rasters, crop_size) %>%
         create_dataset() %>%
         torch::dataloader(batch_size = batch_size, shuffle = TRUE)
-      
+
       test_dataloader <-
         data[data[, partition] == folds[j], c(longitude, latitude, response)] %>%
         cnn_make_samples(longitude = longitude, latitude = latitude, response = response, raster = rasters, size = crop_size) %>%
         create_dataset() %>%
         torch::dataloader(batch_size = batch_size, shuffle = TRUE)
-      
+
       # fit model
       model <- net %>%
         luz::setup(
@@ -110,28 +109,28 @@ fit_abund_cnn <-
         ) %>%
         luz::set_opt_hparams(lr = learning_rate) %>%
         fit(train_dataloader, epochs = n_epochs, valid_data = test_dataloader)
-      
+
       pred <- predict(model, test_dataloader) %>% as.numeric()
       observed <- test_dataloader$dataset$response_variable %>% as.numeric()
       eval_partial[[j]] <- dplyr::tibble(
         model = "cnn",
         adm_eval(obs = observed, pred = pred)
       )
-      
+
       if (predict_part) {
         part_pred[[j]] <- data.frame(partition = folds[j], observed, predicted = pred)
       }
     }
-    
+
     # fit final model with all data
-    
+
     # nota: precisa criar um torch dataset e um dataloader para todos os dados
-    
-    full_dataloader <- data[, c(longitude,latitude,response)] %>%
-      cnn_make_samples(longitude,latitude,response,rasters, crop_size) %>%
+
+    full_dataloader <- data[, c(longitude, latitude, response)] %>%
+      cnn_make_samples(longitude, latitude, response, rasters, crop_size) %>%
       create_dataset() %>%
       torch::dataloader(batch_size = batch_size, shuffle = TRUE)
-    
+
     # nota: na sequência abaixo ele fitta um modelo com todos os dados
     full_model <- net %>%
       luz::setup(
@@ -140,12 +139,12 @@ fit_abund_cnn <-
       ) %>%
       luz::set_opt_hparams(lr = learning_rate) %>%
       fit(full_dataloader, epochs = n_epochs)
-    
+
     # bind predicted evaluation
     eval_partial <- eval_partial %>%
       dplyr::bind_rows() %>%
       dplyr::as_tibble()
-    
+
     # bind predicted partition
     if (predict_part) {
       part_pred <- part_pred %>%
@@ -154,15 +153,15 @@ fit_abund_cnn <-
     } else {
       part_pred <- NULL
     }
-    
+
     # Summarize performance
     eval_final <- eval_partial %>%
-      dplyr::group_by(model) %>% 
+      dplyr::group_by(model) %>%
       dplyr::summarise(dplyr::across(corr_spear:pdispersion, list(
         mean = mean,
         sd = stats::sd
       )), .groups = "drop")
-    
+
     # Final object
     data_list <- list(
       model = full_model,
@@ -171,6 +170,6 @@ fit_abund_cnn <-
       performance_part = eval_partial,
       predicted_part = part_pred
     )
-    
+
     return(data_list)
   }

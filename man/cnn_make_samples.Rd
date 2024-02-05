@@ -7,16 +7,6 @@
 cnn_make_samples(df, longitude, latitude, response, raster, size = 5)
 }
 \arguments{
-\item{df}{}
-
-\item{longitude}{}
-
-\item{latitude}{}
-
-\item{response}{}
-
-\item{raster}{}
-
 \item{size}{}
 }
 \description{
