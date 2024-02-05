@@ -6,7 +6,7 @@
 #' @param pred numeric. Predicted abundance
 #'
 #' @importFrom stats cor lm sd
-#' @importFrom tibble as_tibble
+#' @importFrom dplyr as_tibble
 #'
 #' @return a tibble with next columns: corr_spear, corr_pear, mae, inter, slope, and pdisp(see details)
 #'
@@ -50,7 +50,7 @@ adm_eval <- function(obs, pred) {
     inter = inter,
     slope = slope,
     pdisp = pdispersion
-  ) %>% tibble::as_tibble()
+  ) %>% dplyr::as_tibble()
 
   return(result)
 }
