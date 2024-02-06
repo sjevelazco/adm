@@ -129,7 +129,7 @@ fit_abund_dnn <-
     full_fitted <- net %>%
       luz::setup(
         loss = torch::nn_l1_loss(),
-        optimizer = optim_adam
+        optimizer = torch::optim_adam
       ) %>%
       luz::set_opt_hparams(lr = learning_rate) %>%
       luz::fit(df_dl, epochs = n_epochs)
