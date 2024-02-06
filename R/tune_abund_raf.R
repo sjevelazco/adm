@@ -67,18 +67,16 @@ tune_abund_raf <-
       }
     }
 
-    grid$comb_id <- paste("comb_", 1:nrow(grid), sep = "")
+    comb_id <- paste("comb_", 1:nrow(grid), sep = "")
+    grid <- cbind(comb_id,grid)
 
     # looping the grid
     message("Searching for optimal hyperparameters...")
-    hyper_combinations <- list()
 
     cl <- parallel::makeCluster(n_cores)
     doParallel::registerDoParallel(cl)
 
     hyper_combinations <- foreach::foreach(i = 1:nrow(grid), .export = c("fit_abund_raf"), .packages = c("dplyr")) %dopar% {
-      # for (i in 1:nrow(grid)) {
-      # cat(i,"/",nrow(grid)) # DEBUG
       model <-
         fit_abund_raf(
           data = data,
@@ -91,23 +89,16 @@ tune_abund_raf <-
           mtry = grid[i, "mtry"],
           ntree = grid[i, "ntree"]
         )
-      # hyper_combinations <- append(hyper_combinations,list(model$performance))
-      # names(hyper_combinations)[i] <- grid[i,"comb_id"]
-      l <- list(model$performance)
+      l <- list(cbind(grid[i,], model$performance))
       names(l) <- grid[i, "comb_id"]
       l
     }
     parallel::stopCluster(cl)
 
-    hyper_combinations <- dplyr::bind_rows(hyper_combinations, .id = "comb_id")
-
-    ranked_combinations <- model_selection(hyper_combinations, metrics) %>%
-      dplyr::left_join(grid, by = c("comb_id" = "comb_id"))
-
-    for (i in 1:length(ranked_combinations)) {
-      ranked_combinations[[i]] <- ranked_combinations[[i]] %>%
-        dplyr::left_join(grid, by = c("comb_id" = "comb_id"))
-    }
+    hyper_combinations <- lapply(hyper_combinations, function(x) bind_rows(x)) %>% 
+      bind_rows()
+    
+    ranked_combinations <- model_selection(hyper_combinations, metrics)
 
     # fit final model
     message("Fitting the best model...")

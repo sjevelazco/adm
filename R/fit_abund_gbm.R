@@ -35,7 +35,7 @@ fit_abund_gbm <-
            predict_part = FALSE,
            params,
            nrounds = 500,
-           verbose = 0) {
+           verbose = TRUE) {
     # Variables
     if (!is.null(predictors_f)){
       variables <- dplyr::bind_rows(c(c = predictors, f = predictors_f))
@@ -62,7 +62,9 @@ fit_abund_gbm <-
     eval_partial <- list()
     part_pred <- list()
     for (j in 1:length(folds)) {
-      message("-- Evaluating with fold ", j, "/", length(folds))
+      if(verbose){
+        message("-- Evaluating with fold ", j, "/", length(folds))
+      }
       
       train_set <- data[data[, partition] != folds[j], ]
       test_set <- data[data[, partition] == folds[j], ]

@@ -6,12 +6,12 @@ model_selection <- function(hyper_combinations, metrics) {
   hyper_combinations[, mae_columns] <- -1 * hyper_combinations[, mae_columns]
 
   performance_dict <- list(
-    spearman = grep("^corr_spear", performance_var),
-    pearson = grep("^corr_pear", performance_var),
+    corr_spear = grep("^corr_spear", performance_var),
+    corr_pear = grep("^corr_pear", performance_var),
     mae = grep("^mae", performance_var),
-    intercept = grep("^inter", performance_var),
+    inter = grep("^inter", performance_var),
     slope = grep("^slope", performance_var),
-    p_dispersion = grep("^pdisp", performance_var)
+    p_disp = grep("^pdisp", performance_var)
   )
 
   cols_idx <- unlist(performance_dict[metrics])
