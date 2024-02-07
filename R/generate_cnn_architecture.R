@@ -33,7 +33,8 @@ generate_cnn_architecture <-
 
       conv_layers_definition[[i]] <- layer
     }
-
+    
+    # simulates the resolution loss across the convolutional layers
     for (i in 1:number_of_conv_layers) {
       sample_size[[1]] <- ((sample_size[[1]] + (2 * conv_layers_padding[[i]]) - conv_layers_kernel[[i]]) / conv_layers_stride[[i]]) + 1
       sample_size[[2]] <- ((sample_size[[2]] + (2 * conv_layers_padding[[i]]) - conv_layers_kernel[[i]]) / conv_layers_stride[[i]]) + 1
@@ -49,7 +50,7 @@ generate_cnn_architecture <-
 
       if (i == 1) {
         layer <- paste(layer, "<-torch::nn_linear(", sample_size[[1]] * sample_size[[2]] * conv_layers_size[[length(conv_layers_size)]], ",", fc_layers_size[[1]], ")", sep = "")
-      } else if (i == number_of_hidden_layers) {
+      } else if (i == number_of_fc_layers) {
         layer <- paste(layer, "<-torch::nn_linear(", fc_layers_size[[i - 1]], ",", fc_layers_size[[length(fc_layers_size)]], ")", sep = "")
       } else {
         layer <- paste(layer, "<-torch::nn_linear(", fc_layers_size[[i - 1]], ",", fc_layers_size[[i]], ")", sep = "")
@@ -82,7 +83,7 @@ generate_cnn_architecture <-
 
     foward_definition <- foward_definition %>%
       append(conv_foward) %>%
-      append("\n      torch::torch_flatten(start_dim = 2)") %>%
+      append("\n      torch::torch_flatten(start_dim = 2) %>%") %>%
       append(fc_foward) %>%
       append("\n      self$output()\n  }") %>%
       paste0(collapse = "")
@@ -97,6 +98,8 @@ generate_cnn_architecture <-
     if (verbose == TRUE) {
       cat(arch)
     }
-
-    return(net)
+    
+    return_list <- list(net=net, arch=arch)
+    
+    return(return_list)
   }

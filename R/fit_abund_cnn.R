@@ -34,7 +34,8 @@ fit_abund_cnn <-
            predict_part = FALSE,
            learning_rate = 0.01,
            n_epochs = 10,
-           batch_size = 32) {
+           batch_size = 32,
+           custom_architecture = NULL) {
     # Variables
     variables <- dplyr::bind_rows(c(c = predictors, f = predictors_f))
 
@@ -50,8 +51,8 @@ fit_abund_cnn <-
         self$response_variable <- data_list$response
       },
       .getitem = function(index) {
-        response <- torch_tensor(self$response_variable[[index]])
-        x <- transform_to_tensor(self$predictors[[index]])
+        response <- torch::torch_tensor(self$response_variable[[index]])
+        x <- torchvision::transform_to_tensor(self$predictors[[index]])
         list(x = x, y = response)
       },
       .length = function() {
@@ -61,54 +62,58 @@ fit_abund_cnn <-
 
     ##
     torch::torch_manual_seed(13)
-
-    net <- torch::nn_module(
-      "cnn",
-      initialize = function() {
-        self$conv1 <- torch::nn_conv2d(in_channels = 7, out_channels = 14, kernel_size = 3, padding = 0)
-        self$conv2 <- torch::nn_conv2d(in_channels = 14, out_channels = 28, kernel_size = 3, padding = 0)
-        self$fc1 <- torch::nn_linear(in_features = 7 * 7 * 28, out_features = 28)
-        self$fc2 <- torch::nn_linear(in_features = 28, out_features = 1)
-      },
-      forward = function(x) {
-        x %>%
-          self$conv1() %>%
-          torch::nnf_relu() %>%
-          self$conv2() %>%
-          torch::nnf_relu() %>%
-          torch::torch_flatten(start_dim = 2) %>%
-          self$fc1() %>%
-          torch::nnf_relu() %>%
-          self$fc2()
-      }
-    )
+    
+    if (!is.null(custom_architecture)) {
+      net <- custom_architecture
+    } else {
+      net <- torch::nn_module(
+        "cnn",
+        initialize = function() {
+          self$conv1 <- torch::nn_conv2d(in_channels = 7, out_channels = 14, kernel_size = 3, padding = 0)
+          self$conv2 <- torch::nn_conv2d(in_channels = 14, out_channels = 28, kernel_size = 3, padding = 0)
+          self$fc1 <- torch::nn_linear(in_features = 7 * 7 * 28, out_features = 28)
+          self$fc2 <- torch::nn_linear(in_features = 28, out_features = 1)
+        },
+        forward = function(x) {
+          x %>%
+            self$conv1() %>%
+            torch::nnf_relu() %>%
+            self$conv2() %>%
+            torch::nnf_relu() %>%
+            torch::torch_flatten(start_dim = 2) %>%
+            self$fc1() %>%
+            torch::nnf_relu() %>%
+            self$fc2()
+        }
+      )
+    }
     ##
 
     eval_partial <- list()
     part_pred <- list()
     for (j in 1:length(folds)) {
       message("-- Evaluating with fold ", j, "/", length(folds))
-
+      print("train-dataloader") # DEBUG 
       train_dataloader <-
         data[data[, partition] != folds[j], c(longitude, latitude, response)] %>%
         cnn_make_samples(longitude, latitude, response, rasters, crop_size) %>%
         create_dataset() %>%
         torch::dataloader(batch_size = batch_size, shuffle = TRUE)
-
+      print("test-dataloader") # DEBUG
       test_dataloader <-
         data[data[, partition] == folds[j], c(longitude, latitude, response)] %>%
         cnn_make_samples(longitude = longitude, latitude = latitude, response = response, raster = rasters, size = crop_size) %>%
         create_dataset() %>%
         torch::dataloader(batch_size = batch_size, shuffle = TRUE)
-
+      print("fit-model") # DEBUG
       # fit model
       model <- net %>%
         luz::setup(
           loss = torch::nn_l1_loss(),
-          optimizer = optim_adam
+          optimizer = torch::optim_adam
         ) %>%
         luz::set_opt_hparams(lr = learning_rate) %>%
-        fit(train_dataloader, epochs = n_epochs, valid_data = test_dataloader)
+        luz::fit(train_dataloader, epochs = n_epochs, valid_data = test_dataloader)
 
       pred <- predict(model, test_dataloader) %>% as.numeric()
       observed <- test_dataloader$dataset$response_variable %>% as.numeric()
@@ -135,10 +140,10 @@ fit_abund_cnn <-
     full_model <- net %>%
       luz::setup(
         loss = torch::nn_l1_loss(),
-        optimizer = optim_adam
+        optimizer = torch::optim_adam
       ) %>%
-      luz::set_opt_hparams(lr = learning_rate) %>%
-      fit(full_dataloader, epochs = n_epochs)
+      luz::set_opt_hparams(lr = 0.1) %>%
+      luz::fit(full_dataloader, epochs = 10)
 
     # bind predicted evaluation
     eval_partial <- eval_partial %>%
