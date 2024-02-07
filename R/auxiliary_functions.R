@@ -7,7 +7,7 @@
 #' croppin_hood
 #' @importFrom terra colFromX rowFromY xFromCol yFromRow rast ext crop
 #' @noRd
-cropping_hood <- function(occ, longitude, latitude, raster, size) {
+croppin_hood <- function(occ, longitude, latitude, raster, size) {
   require("terra")
 
   long <- as.numeric(occ[, longitude])
