@@ -76,7 +76,7 @@ tune_abund_raf <-
     cl <- parallel::makeCluster(n_cores)
     doParallel::registerDoParallel(cl)
 
-    hyper_combinations <- foreach::foreach(i = 1:nrow(grid), .export = c("fit_abund_raf"), .packages = c("dplyr")) %dopar% {
+    hyper_combinations <- foreach::foreach(i = 1:nrow(grid), .export = c("fit_abund_raf","adm_eval"), .packages = c("dplyr")) %dopar% {
       model <-
         fit_abund_raf(
           data = data,

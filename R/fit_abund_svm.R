@@ -34,6 +34,7 @@ fit_abund_svm <-
            fit_formula = NULL,
            partition,
            predict_part = FALSE,
+           kernel = "rbfdot",
            sigma = "automatic",
            C = 1) {
     # Formula
@@ -70,7 +71,7 @@ fit_abund_svm <-
         formula1,
         data = train_set,
         type = "eps-svr", # TODO check nu-svr
-        kernel = "rbfdot",
+        kernel = kernel,
         kpar = kpar_,
         C = C
       )
@@ -92,7 +93,7 @@ fit_abund_svm <-
       formula1,
       data = data,
       type = "eps-svr",
-      kernel = "rbfdot",
+      kernel = kernel,
       kpar = kpar_,
       C = C
     )
