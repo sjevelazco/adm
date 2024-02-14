@@ -33,8 +33,11 @@ fit_abund_gbm <-
            fit_formula = NULL,
            partition,
            predict_part = FALSE,
-           params,
-           nrounds = 500,
+           distribution,
+           n.trees = 100,
+           interaction.depth = 1,
+           n.minobsinnode = 5,
+           shrinkage = 0.1,
            verbose = TRUE) {
     # Variables
     if (!is.null(predictors_f)){
@@ -44,20 +47,25 @@ fit_abund_gbm <-
     }
     
     
-    # # ---- Formula ----
-    # if (is.null(fit_formula)) {
-    #   formula1 <- stats::formula(paste(response, "~", paste(c(
-    #     predictors,
-    #     predictors_f
-    #   ), collapse = " + ")))
-    # } else {
-    #   formula1 <- fit_formula
-    # }
+    # ---- Formula ----
+    if (is.null(fit_formula)) {
+      formula1 <- stats::formula(paste(response, "~", paste(c(
+        predictors,
+        predictors_f
+      ), collapse = " + ")))
+    } else {
+      formula1 <- fit_formula
+    }
     
     folds <- data %>%
       dplyr::pull(partition) %>%
       unique() %>%
       sort()
+    
+    # ---- Distribution ----
+    if(distribution == "poisson"){
+      data[,response] <- round(data[,response])
+    }
     
     eval_partial <- list()
     part_pred <- list()
@@ -69,28 +77,22 @@ fit_abund_gbm <-
       train_set <- data[data[, partition] != folds[j], ]
       test_set <- data[data[, partition] == folds[j], ]
       
-      sp_train <- list(
-        data = as.matrix(train_set[, variables]),
-        target = train_set[, response]
-      )
-      
-      sp_test <- list(
-        data = as.matrix(test_set[, variables]),
-        target = test_set[, response]
+      #
+      part_model <- gbm::gbm(
+        formula = formula1,
+        data = train_set,
+        distribution = distribution,
+        n.trees = n.trees,
+        interaction.depth	= interaction.depth,
+        n.minobsinnode = n.minobsinnode,
+        shrinkage = shrinkage,
+        bag.fraction = 0.9
       )
       
       #
-      part_model <- xgboost::xgboost(
-        data = sp_train$data,
-        label = sp_train$target[[1]],
-        params = params,
-        nrounds = nrounds,
-        verbose = verbose
-      )
-      #
       
-      pred <- stats::predict(part_model, sp_test$data, type = "response")
-      observed <- sp_test$target[[1]]
+      pred <- stats::predict(part_model, test_set, type = "response")
+      observed <- test_set$ind_ha
       eval_partial[[j]] <- dplyr::tibble(
         model = "gbm",
         adm_eval(obs = observed, pred = pred)
@@ -102,12 +104,15 @@ fit_abund_gbm <-
     }
     
     # fit final model with all data
-    model <- xgboost::xgboost(
-      data = as.matrix(data[, variables]),
-      label = data[, response][[1]],
-      params = params,
-      nrounds = nrounds,
-      verbose = verbose
+    model <- gbm::gbm(
+      formula = formula1,
+      data = data,
+      distribution = distribution,
+      n.trees = n.trees,
+      interaction.depth	= interaction.depth,
+      n.minobsinnode = n.minobsinnode,
+      shrinkage = shrinkage,
+      bag.fraction = 0.9
     )
     
     

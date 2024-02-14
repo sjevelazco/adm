@@ -1,4 +1,4 @@
-tune_abund_gbm <-
+tune_abund_xgt <-
   function(data,
            response,
            predictors,
@@ -7,7 +7,7 @@ tune_abund_gbm <-
            partition,
            predict_part = FALSE,
            grid = NULL,
-           distribution,
+           objective,
            metrics = NULL,
            n_cores = 1,
            verbose = FALSE) {
@@ -17,15 +17,18 @@ tune_abund_gbm <-
       stop("Metrics is needed to be defined in 'metric' argument")
     }
     
-    grid_dict <- list(n.trees = c(100,200,300),
-                      interaction.depth = c(1,2,3),
-                      n.minobsinnode = c(5,10,15),
-                      shrinkage = seq(0.001,0.1,by=0.05))
+    grid_dict <- list(nrounds = c(100,200,300),
+                      max_depth = c(4,6,8),
+                      eta = c(0.2,0.4,0.5),
+                      gamma = c(1,5,10),
+                      colsample_bytree = c(0.5,1,2),
+                      min_child_weight = c(0.5,1,2),
+                      subsample = c(0.5,0.75,1))
     
     
     # making grid
     if (is.null(grid)) {
-      message("Grid not provided. Using the default one for Gradient Boosting Machines.")
+      message("Grid not provided. Using the default one for eXtreme Gradient Boosting.")
       grid <- expand.grid(grid_dict)
     } else if (all(names(grid) %in% names(grid_dict))) {
       user_hyper <- names(grid)[which(names(grid_dict) == names(grid))]
@@ -33,13 +36,13 @@ tune_abund_gbm <-
       
       user_list <- grid_dict[default_hyper]
       for (i in user_hyper) {
-        l <- grid[[i]] %>% unique () %>%list()
+        l <- grid[[i]] %>% unique () %>% list()
         names(l) <- i
         user_list <- append(user_list,l)
       }
       
       grid <- expand.grid(user_list)
-      if (all(names(grid) %in% names(grid_dict)) & length(names(grid))==4){
+      if (all(names(grid) %in% names(grid_dict)) & length(names(grid))==7){
         message("Using provided grid.")
       }
     } else {
@@ -55,9 +58,9 @@ tune_abund_gbm <-
     cl <- parallel::makeCluster(n_cores)
     doParallel::registerDoParallel(cl)
     
-    hyper_combinations <- foreach::foreach(i = 1:nrow(grid), .export = c("fit_abund_gbm","adm_eval"), .packages = c("dplyr")) %dopar% {
+    hyper_combinations <- foreach::foreach(i = 1:nrow(grid), .export = c("fit_abund_xgt","adm_eval"), .packages = c("dplyr")) %dopar% {
       model <-
-        fit_abund_gbm(
+        fit_abund_xgt(
           data = data,
           response = response,
           predictors = predictors,
@@ -65,12 +68,17 @@ tune_abund_gbm <-
           fit_formula = fit_formula,
           partition = partition,
           predict_part = predict_part,
-          distribution = distribution,
-          n.trees = grid[i,"n.trees"],
-          interaction.depth = grid[i,"interaction.depth"],
-          n.minobsinnode = grid[i,"n.minobsinnode"],
-          shrinkage = grid[i,"shrinkage"],
-          verbose = verbose
+          params = list(
+            max_depth = grid[i,"max_depth"],
+            eta = grid[i,"eta"],
+            gamma = grid[i,"gamma"],
+            colsample_bytree = grid[i,"colsample_bytree"],
+            min_child_weight = grid[i,"min_child_weight"],
+            subsample = grid[i,"subsample"],
+            objective = objective
+          ),
+          nrounds = grid[i,"nrounds"],
+          verbose = TRUE
         )
       l <- list(cbind(grid[i,], model$performance))
       names(l) <- grid[i, "comb_id"]
@@ -80,13 +88,13 @@ tune_abund_gbm <-
     
     hyper_combinations <- lapply(hyper_combinations, function(x) bind_rows(x)) %>% 
       bind_rows()
-      
+    
     ranked_combinations <- model_selection(hyper_combinations, metrics)
     
     # fit final model
     message("Fitting the best model...")
     final_model <-
-      fit_abund_gbm(
+      fit_abund_xgt(
         data = data,
         response = response,
         predictors = predictors,
@@ -94,28 +102,37 @@ tune_abund_gbm <-
         fit_formula = fit_formula,
         partition = partition,
         predict_part = predict_part,
-        distribution = distribution,
-        n.trees = ranked_combinations[[1]][1,"n.trees"],
-        interaction.depth = ranked_combinations[[1]][1,"interaction.depth"],
-        n.minobsinnode = ranked_combinations[[1]][1,"n.minobsinnode"],
-        shrinkage = ranked_combinations[[1]][1,"shrinkage"],
-        verbose = verbose
+        params = list(
+          max_depth = ranked_combinations[[1]][1,"max_depth"],
+          eta = ranked_combinations[[1]][1,"eta"],
+          gamma = ranked_combinations[[1]][1,"gamma"],
+          colsample_bytree = ranked_combinations[[1]][1,"colsample_bytree"],
+          min_child_weight = ranked_combinations[[1]][1,"min_child_weight"],
+          subsample = ranked_combinations[[1]][1,"subsample"],
+          objective = objective
+        ),
+        nrounds = ranked_combinations[[1]][1,"nrounds"],
+        verbose = TRUE
       )
     
     message(
-      "The best model was a GBM with n.trees = ",
-      ranked_combinations[[1]][1,"n.trees"],
-      ", interaction.depth = ",
-      ranked_combinations[[1]][1,"interaction.depth"],
-      ", n.minobsinnode = ",
-      ranked_combinations[[1]][1,"n.minobsinnode"],
-      " and shrinkage = ",
-      ranked_combinations[[1]][1,"shrinkage"]
+      "The best model was a GBM with: \n max_depth = ",
+      ranked_combinations[[1]][1,"max_depth"],
+      "\n eta = ",
+      ranked_combinations[[1]][1,"eta"],
+      "\n gamma = ",
+      ranked_combinations[[1]][1,"gamma"],
+      "\n colsample_bytree = ",
+      ranked_combinations[[1]][1,"colsample_bytree"],
+      "\n min_child_weight = ",
+      ranked_combinations[[1]][1,"min_child_weight"],
+      "\n subsample = ",
+      ranked_combinations[[1]][1,"subsample"],
+      "\n nrounds = ",
+      ranked_combinations[[1]][1,"nrounds"]
     )
     
     final_list <- c(final_model, ranked_combinations)
     
     return(final_list)
   }
-
-
