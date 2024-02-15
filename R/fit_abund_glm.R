@@ -33,7 +33,14 @@ fit_abund_glm <-
            fit_formula = NULL,
            partition,
            predict_part = FALSE,
-           family = "poisson") {
+           family = "poisson",
+           weights_obs = NULL,
+           ziformula = formula("~0")) {
+    # Weighting
+    if(!(is.null(weights_obs))){
+      data$weight <- weights_obs
+    }
+    
     # Variables
     variables <- dplyr::bind_rows(c(c = predictors, f = predictors_f))
 
@@ -56,20 +63,27 @@ fit_abund_glm <-
     part_pred <- list()
     for (j in 1:length(folds)) {
       message("-- Evaluating with fold ", j, "/", length(folds))
-
-      data[, response] <- as.integer(round(data[, response], 0))
+      
+      if (family=="poisson"){
+        data[, response] <- round(data[, response], 0)
+        data[, response] <- as.integer(data[[response]])
+      }
 
       train_set <- data[data[, partition] != folds[j], ]
       test_set <- data[data[, partition] == folds[j], ]
-
-      model <- stats::glm(
+      
+      wgts <- train_set$weight
+      
+      model <- glmmTMB::glmmTMB(
         formula = formula1,
         family = family,
-        data = train_set
+        data = train_set,
+        weights = wgts,
+        ziformula = ziformula
       )
-
-
-      pred <- stats::predict(model, test_set, type = "response")
+      
+      wgts <- test_set$weight
+      pred <- predict(model, test_set, type = "response")
       observed <- dplyr::pull(test_set, response)
       eval_partial[[j]] <- dplyr::tibble(
         model = "glm",
@@ -80,12 +94,15 @@ fit_abund_glm <-
         part_pred[[j]] <- data.frame(partition = folds[j], observed, predicted = pred)
       }
     }
-
+    
     # fit final model with all data
-    full_model <- stats::glm(
+    wgts <- data$weight
+    full_model <- glmmTMB::glmmTMB(
       formula = formula1,
       family = family,
-      data = data
+      data = data,
+      weights = wgts,
+      ziformula = ziformula
     )
 
 
