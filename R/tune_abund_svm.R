@@ -91,9 +91,9 @@ tune_abund_svm <-
         fit_formula = fit_formula,
         partition = partition,
         predict_part = predict_part,
-        sigma = ranked_combinations[[1]][[i,"sigma"]],
-        kernel = ranked_combinations[[1]][[i,"kernel"]],
-        C = ranked_combinations[[1]][[i,"C"]]
+        sigma = ranked_combinations[[1]][[1,"sigma"]],
+        kernel = ranked_combinations[[1]][[1,"kernel"]],
+        C = ranked_combinations[[1]][[1,"C"]]
       )
     
     message(
