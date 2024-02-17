@@ -20,7 +20,7 @@ model_selection <- function(hyper_combinations, metrics) {
   not_selected_combinations <- hyper_combinations
   while (nrow(hyper_combinations) > 1) {
     for (i in perf_means) {
-      hyper_combinations <- hyper_combinations[which(hyper_combinations["corr_spear_mean"] >= summary(hyper_combinations[["corr_spear_mean"]])[5]), ]
+      hyper_combinations <- hyper_combinations[which(hyper_combinations[i] >= summary(hyper_combinations[[i]])[5]), ]
       if (nrow(hyper_combinations == 1)) {
         break
       }
@@ -32,6 +32,9 @@ model_selection <- function(hyper_combinations, metrics) {
   not_selected_combinations <- not_selected_combinations %>%
     dplyr::filter(comb_id != selected_comb)
 
+  hyper_combinations[, mae_columns] <- -1 * hyper_combinations[, mae_columns]  
+  not_selected_combinations[, mae_columns] <- -1 * not_selected_combinations[, mae_columns]
+  
   return_list <- list(
     "optimal_combination" = hyper_combinations,
     "not_optimal_combinations" = not_selected_combinations
