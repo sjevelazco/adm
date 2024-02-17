@@ -1,17 +1,17 @@
-data("sppabund")
-data <- sppabund
-response <- "ind_ha"
-predictors <- c("bio1", "bio12", "bio15",  "bio3",  "cfvo", "elevation","sand")
-predictors_f = NULL
-fit_formula = NULL
-partition <- ".part"
-predict_part = FALSE
-grid = NULL
-family = "poisson"
-weight_rules = c("!=0"=1)
-metrics = c("corr_spear")
-n_cores = 10
-verbose = FALSE
+# data("sppabund")
+# data <- sppabund
+# response <- "ind_ha"
+# predictors <- c("bio1", "bio12", "bio15",  "bio3",  "cfvo", "elevation","sand")
+# predictors_f = NULL
+# fit_formula = NULL
+# partition <- ".part"
+# predict_part = FALSE
+# grid = NULL
+# family = "poisson"
+# weight_rules = c("!=0"=1)
+# metrics = c("corr_spear")
+# n_cores = 10
+# verbose = FALSE
 #
 tune_abund_glm <-
   function(data,
