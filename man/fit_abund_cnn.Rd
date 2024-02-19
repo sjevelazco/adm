@@ -18,7 +18,8 @@ fit_abund_cnn(
   predict_part = FALSE,
   learning_rate = 0.01,
   n_epochs = 10,
-  batch_size = 32
+  batch_size = 32,
+  custom_architecture = NULL
 )
 }
 \arguments{
