@@ -29,14 +29,15 @@ Imports:
     patchwork,
     torch, 
     luz, 
-    torchvision
+    torchvision, 
+    gamlss
 Description: Assist in the construction of abundace-based distribution model workflow
     by incorporating comprehensive tools for data preparation, model fitting, 
     evaluation, and prediction.
 License: GPL (>= 3)
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.1
 Suggests:
     covr,
     knitr,

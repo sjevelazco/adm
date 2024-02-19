@@ -12,9 +12,12 @@ fit_abund_gbm(
   fit_formula = NULL,
   partition,
   predict_part = FALSE,
-  params,
-  nrounds = 500,
-  verbose = 0
+  distribution,
+  n.trees = 100,
+  interaction.depth = 1,
+  n.minobsinnode = 5,
+  shrinkage = 0.1,
+  verbose = TRUE
 )
 }
 \arguments{
