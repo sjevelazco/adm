@@ -33,18 +33,12 @@ fit_abund_glm <-
            fit_formula = NULL,
            partition,
            predict_part = FALSE,
-           family = "poisson",
-           weights_obs = NULL,
-           ziformula = formula("~0")) {
-    # Weighting
-    if(!(is.null(weights_obs))){
-      data$weight <- weights_obs
-    }
-    
+           family) {
+
     # Variables
     variables <- dplyr::bind_rows(c(c = predictors, f = predictors_f))
 
-    # Formula TODO
+    # TODO Formula
     if (is.null(fit_formula)) {
       formula1 <- stats::formula(paste(response, "~", paste(c(
         predictors,
@@ -64,26 +58,21 @@ fit_abund_glm <-
     for (j in 1:length(folds)) {
       message("-- Evaluating with fold ", j, "/", length(folds))
       
-      if (family=="poisson"){
-        data[, response] <- round(data[, response], 0)
-        data[, response] <- as.integer(data[[response]])
-      }
-
+      # if (family=="poisson"){
+      #   data[, response] <- round(data[, response], 0)
+      #   data[, response] <- as.integer(data[[response]])
+      # }
+      
       train_set <- data[data[, partition] != folds[j], ]
       test_set <- data[data[, partition] == folds[j], ]
       
-      wgts <- train_set$weight
-      
-      model <- glmmTMB::glmmTMB(
+      model <- gamlss::gamlss(
         formula = formula1,
         family = family,
-        data = train_set,
-        weights = wgts,
-        ziformula = ziformula
+        data = train_set
       )
       
-      wgts <- test_set$weight
-      pred <- predict(model, test_set, type = "response")
+      pred <- predict(model, newdata = test_set, data = train_set, type = "response")
       observed <- dplyr::pull(test_set, response)
       eval_partial[[j]] <- dplyr::tibble(
         model = "glm",
@@ -96,15 +85,11 @@ fit_abund_glm <-
     }
     
     # fit final model with all data
-    wgts <- data$weight
-    full_model <- glmmTMB::glmmTMB(
+    full_model <- gamlss::gamlss(
       formula = formula1,
       family = family,
-      data = data,
-      weights = wgts,
-      ziformula = ziformula
+      data = data
     )
-
 
     # bind predicted evaluation
     eval_partial <- eval_partial %>%
@@ -130,7 +115,7 @@ fit_abund_glm <-
 
     # Final object
     data_list <- list(
-      model = model,
+      model = full_model,
       predictors = variables,
       performance = eval_final,
       performance_part = eval_partial,

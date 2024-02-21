@@ -27,9 +27,8 @@ fit_abund_gam <-
            fit_formula = NULL,
            partition,
            predict_part = FALSE,
-           k = 10,
-           family = "poisson",
-           method = "REML") {
+           family,
+           inter) {
     # Variables
     variables <- dplyr::bind_rows(c(c = predictors, f = predictors_f))
 
@@ -37,7 +36,7 @@ fit_abund_gam <-
     if (is.null(fit_formula)) {
       formula1 <-
         paste(c(
-          paste("s(", predictors, paste0(", k = ", k, ")"), collapse = " + ", sep = ""),
+          paste("pb(", predictors, paste0(", inter = ", inter, ")"), collapse = " + ", sep = ""),
           predictors_f
         ), collapse = " + ")
       formula1 <- stats::formula(paste(
@@ -57,19 +56,16 @@ fit_abund_gam <-
     for (j in 1:length(folds)) {
       message("-- Evaluating with fold ", j, "/", length(folds))
 
-      data[, response] <- as.integer(round(data[, response], 0))
-
       train_set <- data[data[, partition] != folds[j], ]
       test_set <- data[data[, partition] == folds[j], ]
 
-      model <- mgcv::gam(
+      model <- gamlss::gamlss(
         formula = formula1,
         family = family,
-        data = train_set,
-        method = method
+        data = train_set
       )
 
-      pred <- stats::predict(model, test_set, type = "response")
+      pred <- predict(model, newdata = test_set, data = train_set, type = "response")
       observed <- dplyr::pull(test_set, response)
       eval_partial[[j]] <- dplyr::tibble(
         model = "gam",
@@ -80,13 +76,12 @@ fit_abund_gam <-
         part_pred[[j]] <- data.frame(partition = folds[j], observed, predicted = pred)
       }
     }
-
+    
     # fit final model with all data
-    full_model <- mgcv::gam(
+    full_model <- gamlss::gamlss(
       formula = formula1,
       family = family,
-      data = train_set,
-      method = method
+      data = data
     )
 
 
@@ -114,7 +109,7 @@ fit_abund_gam <-
 
     # Final object
     data_list <- list(
-      model = model,
+      model = full_model,
       predictors = variables,
       performance = eval_final,
       performance_part = eval_partial,

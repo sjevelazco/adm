@@ -1,4 +1,4 @@
-tune_abund_glm <-
+tune_abund_gam <-
   function(data,
            response,
            predictors,
@@ -25,12 +25,15 @@ tune_abund_glm <-
     # making grid
     if (is.null(grid)){
       message("Families not provided. Picking recommended families to fit data.")
-      grid <- family_selector(data,response)
-    } else if (is.vector(grid) & all(grid %in% families_bank$family_call)) {
-      message("Testing with provided families.")
-      grid <- data.frame(family_call = grid)
+      family_call <- family_selector(data,response)$family_call
+      inter <- seq(1,2*length(variables),1)
+      grid <- expand.grid(family_call = family_call, inter = inter)
       grid <- dplyr::left_join(grid,families_bank,by="family_call") %>% 
-        select(family_call,discrete)
+        select(family_call,discrete,inter)
+    } else if (is.data.frame(grid) & all(names(grid) %in% c("family_call","inter")) & all(grid$family_call %in% families_bank$family_call)) {
+      message("Testing with provided families.")
+      grid <- dplyr::left_join(grid,families_bank,by="family_call") %>% 
+        select(family_call,discrete,inter)
     } else {
       stop("Grid expected to be a vector of gamlss family calls.")
     }
@@ -44,7 +47,7 @@ tune_abund_glm <-
     cl <- parallel::makeCluster(n_cores)
     doParallel::registerDoParallel(cl)
     
-    hyper_combinations <- foreach::foreach(i = 1:nrow(grid), .export = c("fit_abund_glm","adm_eval"), .packages = c("dplyr")) %dopar% {
+    hyper_combinations <- foreach::foreach(i = 1:nrow(grid), .export = c("fit_abund_gam","adm_eval"), .packages = c("dplyr","gamlss")) %dopar% {
       data_fam <- data
       if (grid[i,"discrete"]==1){
         data_fam[,response] <- round(data[,response])
@@ -52,7 +55,7 @@ tune_abund_glm <-
       
       model <- tryCatch({
         model <-
-          fit_abund_glm(
+          fit_abund_gam(
             data = data,
             response = response,
             predictors = predictors,
@@ -60,14 +63,15 @@ tune_abund_glm <-
             fit_formula = fit_formula,
             partition = partition,
             predict_part = predict_part,
-            family = grid[i,"family_call"]
+            family = grid[i,"family_call"],
+            inter = grid[i,"inter"]
           )
       }, error = function(err) {
         print("error")
         model <- list(performance = "error")
       })
       
-      l <- list(cbind(grid[i,c("comb_id","family_call")], model$performance))
+      l <- list(cbind(grid[i,c("comb_id","family_call","inter")], model$performance))
       names(l) <- grid[i, "comb_id"]
       l
     }
@@ -94,7 +98,7 @@ tune_abund_glm <-
     
     message("Fitting the best model...")
     final_model <-
-      fit_abund_glm(
+      fit_abund_gam(
         data = full_data,
         response = response,
         predictors = predictors,
@@ -102,13 +106,16 @@ tune_abund_glm <-
         fit_formula = fit_formula,
         partition = partition,
         predict_part = predict_part,
-        family = choosen_family
+        family = choosen_family,
+        inter = ranked_combinations[[1]][1,"inter"]
       )
-
+    
     message(
-      "The best model was a GLM with:", 
+      "The best model was a GAM with:", 
       "\n family = ",
-      choosen_family
+      choosen_family,
+      "\n inter = ",
+      ranked_combinations[[1]][1,"inter"]
     )
     
     final_list <- c(final_model, ranked_combinations)
