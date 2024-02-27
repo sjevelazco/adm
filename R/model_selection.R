@@ -11,12 +11,16 @@ model_selection <- function(hyper_combinations, metrics) {
     mae = grep("^mae", performance_var),
     inter = grep("^inter", performance_var),
     slope = grep("^slope", performance_var),
-    p_disp = grep("^pdisp", performance_var)
+    pdisp = grep("^pdisp", performance_var)
   )
 
   cols_idx <- unlist(performance_dict[metrics])
   perf_means <- performance_var[cols_idx[cols_idx %in% grep("_mean$", performance_var)]]
-
+  if ("pdisp" %in% metrics){
+    hyper_combinations$pdisp_dist <- ((1-hyper_combinations$pdisp_mean %>% abs())*-1)
+    perf_means[which(perf_means=="pdisp_mean")] <- "pdisp_dist"
+  }
+  
   not_selected_combinations <- hyper_combinations
   while (nrow(hyper_combinations) > 1) {
     for (i in perf_means) {
@@ -34,6 +38,13 @@ model_selection <- function(hyper_combinations, metrics) {
 
   hyper_combinations[, mae_columns] <- -1 * hyper_combinations[, mae_columns]  
   not_selected_combinations[, mae_columns] <- -1 * not_selected_combinations[, mae_columns]
+  
+  if ("pdisp" %in% metrics){
+    hyper_combinations <- hyper_combinations %>% 
+      select(-pdisp_dist)
+    not_selected_combinations <- not_selected_combinations %>%
+      select(-pdisp_dist)
+  }
   
   return_list <- list(
     "optimal_combination" = hyper_combinations,
