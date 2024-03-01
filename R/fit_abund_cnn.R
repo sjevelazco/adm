@@ -93,19 +93,19 @@ fit_abund_cnn <-
     part_pred <- list()
     for (j in 1:length(folds)) {
       message("-- Evaluating with fold ", j, "/", length(folds))
-      print("train-dataloader") # DEBUG 
+      
       train_dataloader <-
         data[data[, partition] != folds[j], c(longitude, latitude, response)] %>%
         cnn_make_samples(longitude, latitude, response, rasters, crop_size) %>%
         create_dataset() %>%
         torch::dataloader(batch_size = batch_size, shuffle = TRUE)
-      print("test-dataloader") # DEBUG
+      
       test_dataloader <-
         data[data[, partition] == folds[j], c(longitude, latitude, response)] %>%
         cnn_make_samples(longitude = longitude, latitude = latitude, response = response, raster = rasters, size = crop_size) %>%
         create_dataset() %>%
         torch::dataloader(batch_size = batch_size, shuffle = TRUE)
-      print("fit-model") # DEBUG
+      
       # fit model
       model <- net %>%
         luz::setup(
