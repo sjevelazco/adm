@@ -7,7 +7,7 @@ tune_abund_dnn <-
            partition,
            predict_part = FALSE,
            grid = NULL,
-           architechtures = NULL,
+           architectures = NULL,
            metrics = NULL,
            n_cores = 1,
            verbose = FALSE) {
