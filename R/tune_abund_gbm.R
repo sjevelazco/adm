@@ -1,3 +1,22 @@
+#' Title
+#'
+#' @param data 
+#' @param response 
+#' @param predictors 
+#' @param predictors_f 
+#' @param fit_formula 
+#' @param partition 
+#' @param predict_part 
+#' @param grid 
+#' @param distribution 
+#' @param metrics 
+#' @param n_cores 
+#' @param verbose 
+#'
+#' @return
+#' @export
+#'
+#' @examples
 tune_abund_gbm <-
   function(data,
            response,

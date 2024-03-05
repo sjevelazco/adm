@@ -12,9 +12,8 @@ fit_abund_gam(
   fit_formula = NULL,
   partition,
   predict_part = FALSE,
-  k = 10,
-  family = "poisson",
-  method = "REML"
+  family,
+  inter
 )
 }
 \arguments{
