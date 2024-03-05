@@ -12,9 +12,7 @@ fit_abund_glm(
   fit_formula = NULL,
   partition,
   predict_part = FALSE,
-  family = "poisson",
-  weights_obs = NULL,
-  ziformula = formula("~0")
+  family
 )
 }
 \arguments{

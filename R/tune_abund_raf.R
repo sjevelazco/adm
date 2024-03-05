@@ -23,10 +23,10 @@
 #' @param verbose
 #'
 #' @importFrom doParallel registerDoParallel
-#' @importFrom dplyr bind_rows left_join
-#' @importFrom foreach foreach
-#' @importFrom parallel makeCluster
-#'
+#' @importFrom dplyr bind_rows
+#' @importFrom foreach foreach "%dopar%"
+#' @importFrom parallel makeCluster stopCluster 
+#' 
 #' @return
 #' @export
 #'
@@ -95,8 +95,8 @@ tune_abund_raf <-
     }
     parallel::stopCluster(cl)
 
-    hyper_combinations <- lapply(hyper_combinations, function(x) bind_rows(x)) %>% 
-      bind_rows()
+    hyper_combinations <- lapply(hyper_combinations, function(x) dplyr::bind_rows(x)) %>% 
+      dplyr::bind_rows()
     
     ranked_combinations <- model_selection(hyper_combinations, metrics)
 

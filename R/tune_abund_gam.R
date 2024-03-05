@@ -1,3 +1,32 @@
+#' Fit and validate Generalized Additive Models with exploration of hyper-parameters that optimize performance
+#'
+#' @param data 
+#' @param response character. Column name with species abundance data (e.g., 0, 1, 45).
+#' @param predictors character. Vector with the column names of quantitative predictor variables
+#' (i.e. continuous variables). Usage predictors = c("temperature", "sand", "elevation")
+#' @param predictors_f character. Vector with the column names of qualitative predictor variables
+#' (i.e. ordinal or nominal variables type). Usage predictors_f = c("landform")
+#' @param fit_formula formula. A formula object with response and predictor
+#' variables (e.g. formula(abund ~ temp + sand + pH + landform)).
+#' Note that the variables used here must be consistent with those used in
+#' response, predictors, and predictors_f arguments. Default NULL
+#' @param partition  character. Column name with training and validation partition groups.
+#' @param predict_part 
+#' @param grid 
+#' @param metrics 
+#' @param n_cores 
+#' @param verbose 
+#' 
+#' @importFrom doParallel registerDoParallel
+#' @importFrom dplyr bind_rows left_join select "%>%"
+#' @importFrom foreach foreach
+#' @importFrom parallel makeCluster stopCluster
+#' @importFrom stats na.omit
+#' 
+#' @return
+#' @export
+#'
+#' @examples
 tune_abund_gam <-
   function(data,
            response,
@@ -10,6 +39,7 @@ tune_abund_gam <-
            metrics = NULL,
            n_cores = 1,
            verbose = FALSE) {
+    discrete <- i <- NULL
     
     if (is.null(metrics) |
         !all(metrics %in% c("corr_spear", "corr_pear", "mae", "inter", "slope", "pdisp"))) {
@@ -29,7 +59,7 @@ tune_abund_gam <-
       inter <- seq(1,2*length(variables),1)
       grid <- expand.grid(family_call = family_call, inter = inter)
       grid <- dplyr::left_join(grid,families_bank,by="family_call") %>% 
-        select(family_call,discrete,inter)
+        dplyr::select(family_call,discrete,inter)
     } else if (is.data.frame(grid) & all(names(grid) %in% c("family_call","inter")) & all(grid$family_call %in% families_bank$family_call)) {
       message("Testing with provided families.")
       grid <- dplyr::left_join(grid,families_bank,by="family_call") %>% 
@@ -71,7 +101,7 @@ tune_abund_gam <-
         model <- list(performance = "error")
       })
       
-      l <- list(cbind(grid[i,c("comb_id","family_call","inter")], model$performance))
+      l <- list(cbind(grid[i,c("comb_id","family_call","inter")], model[, "performance"]))
       names(l) <- grid[i, "comb_id"]
       l
     }
@@ -81,8 +111,8 @@ tune_abund_gam <-
       bind_rows()
     
     hyper_combinations <- hyper_combinations %>% 
-      select(-`model$performance`) %>% 
-      na.omit()
+      dplyr::select(-`model$performance`) %>% 
+      stats::na.omit()
     
     row.names(hyper_combinations) <- NULL
     

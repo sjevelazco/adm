@@ -30,6 +30,15 @@ croppin_hood <- function(occ, longitude, latitude, raster, size) {
   return(cropped)
 }
 
+#' Title
+#'
+#' @param data 
+#' @param response 
+#'
+#' @return
+#' @export
+#'
+#' @examples
 family_selector <-
   function(data,
            response){
