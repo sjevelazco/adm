@@ -1,13 +1,15 @@
 #' Merge model performance tables
 #'
-#' @param models list of one or more models fitted with fit_ or tune_ family function outputs. A list a single or several models fitted with some of fit_ or tune_ functions. Usage models = list(mod1, mod2, mod3)
+#' @param models list. A list a single or several models fitted with some of fit_ or tune_ functions. Usage models = list(mod1, mod2, mod3)
 #'
 #' @importFrom dplyr bind_rows relocate tibble select
 #'
 #' @return Combined model performance table for all input models. Models fit with tune will include model performance for the best hyperparameters.
 #'
 #' @export
-#'
+#' 
+#' @importFrom dplyr bind_rows relocate tibble select
+#' 
 #' @examples
 #' \dontrun{
 #' require(dplyr)

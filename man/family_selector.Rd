@@ -2,15 +2,13 @@
 % Please edit documentation in R/auxiliary_functions.R
 \name{family_selector}
 \alias{family_selector}
-\title{Title}
+\title{Select family distribution for GAM and GLM}
 \usage{
 family_selector(data, response)
 }
 \arguments{
-\item{data}{}
-
 \item{response}{}
 }
 \description{
-Title
+Select family distribution suited for a given response variables (e.g., count, zero-inflated) used to fit GAM and GLM models
 }
