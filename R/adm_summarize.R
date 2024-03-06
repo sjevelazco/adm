@@ -8,8 +8,6 @@
 #'
 #' @export
 #' 
-#' @importFrom dplyr bind_rows relocate tibble select
-#' 
 #' @examples
 #' \dontrun{
 #' require(dplyr)

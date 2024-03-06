@@ -1,3 +1,28 @@
+#' Fit and validate Deep Neural Network model with exploration of hyper-parameters that optimize performance
+#' 
+#' @param data 
+#' @param response 
+#' @param predictors 
+#' @param predictors_f 
+#' @param fit_formula 
+#' @param partition 
+#' @param predict_part 
+#' @param grid 
+#' @param architectures 
+#' @param metrics 
+#' @param n_cores 
+#' @param verbose 
+#'
+#' @importFrom doParallel registerDoParallel
+#' @importFrom dplyr bind_rows
+#' @importFrom foreach foreach
+#' @importFrom parallel makeCluster stopCluster
+#' @importFrom stringr str_extract_all
+#' 
+#' @return
+#' @export
+#'
+#' @examples
 tune_abund_dnn <-
   function(data,
            response,
@@ -99,8 +124,8 @@ tune_abund_dnn <-
     }
     parallel::stopCluster(cl)
     
-    hyper_combinations <- lapply(hyper_combinations, function(x) bind_rows(x)) %>% 
-      bind_rows()
+    hyper_combinations <- lapply(hyper_combinations, function(x) dplyr::bind_rows(x)) %>% 
+      dplyr::bind_rows()
     
     ranked_combinations <- model_selection(hyper_combinations, metrics)
     

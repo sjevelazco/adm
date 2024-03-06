@@ -1,3 +1,21 @@
+#' Title 
+#'
+#' @param type 
+#' @param number_of_features 
+#' @param number_of_outputs 
+#' @param n_layers 
+#' @param n_neurons 
+#' @param sample_size 
+#' @param number_of_fc_layers 
+#' @param fc_layers_size 
+#'
+#' @importFrom dplyr rename
+#' @importFrom tidyr unnest_wider
+#' 
+#' @return
+#' @export
+#'
+#' @examples
 generate_arch_list <-
   function(type,
            number_of_features,

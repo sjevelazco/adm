@@ -73,8 +73,8 @@ tune_abund_glm <-
     }
     parallel::stopCluster(cl)
     
-    hyper_combinations <- lapply(hyper_combinations, function(x) bind_rows(x)) %>% 
-      bind_rows()
+    hyper_combinations <- lapply(hyper_combinations, function(x) dplyr::bind_rows(x)) %>% 
+      dplyr::bind_rows()
     
     hyper_combinations <- hyper_combinations %>% 
       select(-`model$performance`) %>% 

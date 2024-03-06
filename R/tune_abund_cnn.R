@@ -17,6 +17,9 @@
 #' @param n_cores 
 #' @param verbose 
 #'
+#' @importFrom dplyr bind_rows
+#' @importFrom stringr str_extract_all
+#' 
 #' @return
 #' @export
 #'
@@ -156,8 +159,8 @@ tune_abund_cnn <-
     # }
     # parallel::stopCluster(cl)
     
-    hyper_combinations <- lapply(hyper_combinations, function(x) bind_rows(x)) %>% 
-      bind_rows()
+    hyper_combinations <- lapply(hyper_combinations, function(x) dplyr::bind_rows(x)) %>% 
+      adm::bind_rows()
     
     ranked_combinations <- model_selection(hyper_combinations, metrics)
     
