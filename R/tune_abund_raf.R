@@ -24,8 +24,8 @@
 #'
 #' @importFrom doParallel registerDoParallel
 #' @importFrom dplyr bind_rows
-#' @importFrom foreach foreach "%dopar%"
-#' @importFrom parallel makeCluster stopCluster 
+#' @importFrom foreach foreach
+#' @importFrom parallel makeCluster stopCluster
 #' 
 #' @return
 #' @export
