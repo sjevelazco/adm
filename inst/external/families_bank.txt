@@ -1,0 +1,87 @@
+family_name	family_call	no_parameters	discrete	accepts_zero	one_restricted	accepts_one
+Beta	BE	2	0	0	1	0
+Beta one inflated	BEOI	3	0	0	1	1
+Box-Cox Cole and Green	BCCG	3	0	0	0	1
+Box-Cox Power Exponential	BCPE	4	0	0	0	1
+Box-Cox-t	BCT	4	0	0	0	1
+Exponential	EXP	1	0	0	0	1
+Gamma	GA	2	0	0	0	1
+Generalized Beta type 1	GB1	4	0	0	1	0
+Generalized Beta type 2	GB2	4	0	0	0	1
+Generalized Gamma	GG	3	0	0	0	1
+Generalized Inverse Gaussian	GIG	3	0	0	0	1
+Inverse Gamma	IGAMMA	2	0	0	0	1
+Inverse Gaussian	IG	2	0	0	0	1
+Logit-Normal	LOGITNO	2	0	0	1	0
+log-Normal	LOGNO	2	0	0	0	1
+log-Normal (Box-Cox)	LNO	3	0	0	0	1
+Pareto type 2	PARETO2	2	0	0	0	1
+Pareto type 2 original	PARETO2o	2	0	0	0	1
+Weibull	WEI	2	0	0	0	1
+Weibull(PH parameterization)	WEI2	2	0	0	0	1
+Weibull (mu as mean)	WEI3	2	0	0	0	1
+Beta zero inflated	BEZI	3	0	1	1	0
+Beta inflated	BEINF	4	0	1	1	1
+Exponential Gaussian	exGAUS	3	0	1	0	1
+Exponential generalized Beta type 2	EGB2	4	0	1	0	1
+Generalized t	GT	4	0	1	0	1
+Gumbel	GU	2	0	1	0	1
+Johnson's SU	JSU	4	0	1	0	1
+Logistic	LO	2	0	1	0	1
+Normal Exponential t	NET	4	0	1	0	1
+Normal	NO	2	0	1	0	1
+Normal Family	NOF	3	0	1	0	1
+Power Exponential	PE	3	0	1	0	1
+Reverse generalized extreme	RGE	3	0	1	0	1
+Reverse Gumbel	RG	2	0	1	0	1
+Skew Power Exponential type 1	SEP1	4	0	1	0	1
+Skew Power Exponential type 2	SEP2	4	0	1	0	1
+Skew Power Exponential type 3	SEP3	4	0	1	0	1
+Skew Power Exponential type 4	SEP4	4	0	1	0	1
+Shash	SHASH	4	0	1	0	1
+Shash original	SHASHo	4	0	1	0	1
+Shash original 2	SHASHo2	4	0	1	0	1
+Skew t type 1	ST1	3	0	1	0	1
+Skew t type 2	ST2	3	0	1	0	1
+Skew t type 3	ST3	3	0	1	0	1
+Skew t type 4	ST4	3	0	1	0	1
+Skew t type 5	ST5	3	0	1	0	1
+t-distribution	TF	3	0	1	0	1
+Zero adjusted IG	ZAIG	2	0	1	0	1
+Normal Linear Quadratic	LQNO	2	0	1	0	1
+Power Exponential type 2	PE2	3	0	1	0	1
+Simplex	SIMPLEX	2	0	1	1	1
+Logarithmic	LG	1	1	0	0	1
+Zipf	ZIPF	1	1	0	0	1
+Beta Binomial	BB	2	1	1	0	1
+Binomial	BI	1	1	1	0	1
+Delaporte	DEL	3	1	1	0	1
+Geometric	GEOM	1	1	1	0	1
+Negative Binomial type I	NBI	2	1	1	0	1
+Negative Binomial type II	NBII	2	1	1	0	1
+Poisson	PO	1	1	1	0	1
+Poisson inverse Gaussian	PIG	2	1	1	0	1
+Sichel (original)	SI	3	1	1	0	1
+Sichel (? as the mean)	SICHEL	3	1	1	0	1
+Waring	WARING	1	1	1	0	1
+Yule	YULE	1	1	1	0	1
+Zero adjusted binomial	ZABI	2	1	1	0	1
+Zero adjusted logarithmic	ZALG	2	1	1	0	1
+Zero adjusted neg. bin.	ZANBI	3	1	1	0	1
+Zero adjusted poisson	ZAP	2	1	1	0	1
+Zero inflated binomial	ZIBI	2	1	1	0	1
+Zero inflated poisson	ZIP	2	1	1	0	1
+Zero inf. poiss.(mu as mean)	ZIP2	2	1	1	0	1
+Zero inflated PIG	ZIPIG	3	1	1	0	1
+Beta negative binomial	BNB	3	1	1	0	1
+Discrete Burr XII	DBURR12	3	1	1	0	1
+Double Poisson	DPO	2	1	1	0	1
+Double binomial	DBI	2	1	1	0	1
+Geometric (original)	GEOMo	1	1	1	0	1
+Negative Binomial family	NBF	3	1	1	0	1
+Zero adjusted beta neg. bin.	ZABNB	4	1	1	0	1
+Zero adjusted Sichel	ZASICHEL	4	1	1	0	1
+Zero adjusted Zipf	ZAZIPF	2	1	1	0	1
+Zero inflated beta neg. bin.	ZIBNB	4	1	1	0	1
+Zero inflated neg. bin.	ZINBI	3	1	1	0	1
+Zero inflated Sichel	ZISICHEL	4	1	1	0	1

@@ -4,7 +4,7 @@
 #                                                          #
 ## %######################################################%##
 
-#' croppin_hood TODO write an informative title
+#' TODO write an informative title
 #'
 #' @param occ
 #' @param x character. Column name with longitude data
@@ -17,23 +17,23 @@
 croppin_hood <- function(occ, x, y, raster, size) {
   long <- as.numeric(occ[, longitude])
   lat <- as.numeric(occ[, latitude])
-
+  
   rst.col <- terra::colFromX(raster, long)
   rst.row <- terra::rowFromY(raster, lat)
-
+  
   x.max <- terra::xFromCol(raster, rst.col + size)
   x.min <- terra::xFromCol(raster, rst.col - size)
   y.max <- terra::yFromRow(raster, rst.row - size)
   y.min <- terra::yFromRow(raster, rst.row + size)
-
+  
   r <- terra::rast()
   terra::ext(r) <- c(x.min, x.max, y.min, y.max)
-
+  
   cropped <- terra::crop(raster, r, snap = "out")
   return(cropped)
 }
 
-#' Select family distribution for GAM and GLM
+#' Select probability distributions for GAM and GLM
 #'
 #' @description
 #' Select family distribution suited for a given response variables (e.g., count, zero-inflated) used to fit GAM and GLM models
@@ -41,7 +41,10 @@ croppin_hood <- function(occ, x, y, raster, size) {
 #'
 #' @param data
 #' @param response
-#'
+#' 
+#' @importFrom dplyr filter select
+#' @importFrom utils read.delim
+#' 
 #' @return
 #' @export
 #'
@@ -49,9 +52,10 @@ croppin_hood <- function(occ, x, y, raster, size) {
 family_selector <-
   function(data,
            response) {
+    families_bank <-
+      system.file("external/families_bank.txt", package = "adm") %>%
+      utils::read.delim(., header = TRUE, quote = "\t")
     
-    data("gamlss_families_table", envir = environment())
-
     if (all(round(data[, response]) == data[, response])) {
       # discrete <- TRUE
       message("Response variable is discrete. Both continuous and discrete families will be tested.")

@@ -2,7 +2,7 @@
 % Please edit documentation in R/auxiliary_functions.R
 \name{family_selector}
 \alias{family_selector}
-\title{Select family distribution for GAM and GLM}
+\title{Select probability distributions for GAM and GLM}
 \usage{
 family_selector(data, response)
 }
