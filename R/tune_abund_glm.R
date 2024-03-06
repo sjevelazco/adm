@@ -1,3 +1,27 @@
+#' Fit and validate Generalized Linear Models with exploration of hyper-parameters that optimize performance
+#'
+#' @param data 
+#' @param response 
+#' @param predictors 
+#' @param predictors_f 
+#' @param fit_formula 
+#' @param partition 
+#' @param predict_part 
+#' @param grid 
+#' @param metrics 
+#' @param n_cores 
+#' @param verbose 
+#'
+#' @importFrom doParallel registerDoParallel
+#' @importFrom dplyr bind_rows left_join select
+#' @importFrom foreach foreach
+#' @importFrom parallel makeCluster stopCluster
+#' @importFrom stats na.omit
+#' 
+#' @return
+#' @export
+#'
+#' @examples
 tune_abund_glm <-
   function(data,
            response,
@@ -30,7 +54,7 @@ tune_abund_glm <-
       message("Testing with provided families.")
       grid <- data.frame(family_call = grid)
       grid <- dplyr::left_join(grid,families_bank,by="family_call") %>% 
-        select(family_call,discrete)
+        dplyr::select(family_call,discrete)
     } else {
       stop("Grid expected to be a vector of gamlss family calls.")
     }
@@ -77,8 +101,8 @@ tune_abund_glm <-
       dplyr::bind_rows()
     
     hyper_combinations <- hyper_combinations %>% 
-      select(-`model$performance`) %>% 
-      na.omit()
+      dplyr::select(-`model$performance`) %>% 
+      stats::na.omit()
     
     row.names(hyper_combinations) <- NULL
     

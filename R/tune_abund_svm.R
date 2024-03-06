@@ -1,3 +1,27 @@
+#' Fit and validate Support Vector Machine models with exploration of hyper-parameters that optimize performance
+
+#'
+#' @param data 
+#' @param response 
+#' @param predictors 
+#' @param predictors_f 
+#' @param fit_formula 
+#' @param partition 
+#' @param predict_part 
+#' @param grid 
+#' @param metrics 
+#' @param n_cores 
+#' @param verbose 
+#'
+#' @importFrom doParallel registerDoParallel
+#' @importFrom dplyr bind_rows
+#' @importFrom foreach foreach
+#' @importFrom parallel makeCluster stopCluster
+#' 
+#' @return
+#' @export
+#'
+#' @examples
 tune_abund_svm <-
   function(data,
            response,
@@ -75,8 +99,8 @@ tune_abund_svm <-
     }
     parallel::stopCluster(cl)
     
-    hyper_combinations <- lapply(hyper_combinations, function(x) bind_rows(x)) %>% 
-      bind_rows()
+    hyper_combinations <- lapply(hyper_combinations, function(x) dplyr::bind_rows(x)) %>% 
+      dplyr::bind_rows()
     
     ranked_combinations <- model_selection(hyper_combinations, metrics)
     

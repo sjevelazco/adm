@@ -1,4 +1,4 @@
-#' Title
+#' Fit and validate Generalized Boosted Regression models with exploration of hyper-parameters that optimize performance
 #'
 #' @param data 
 #' @param response 
@@ -13,6 +13,11 @@
 #' @param n_cores 
 #' @param verbose 
 #'
+#' @importFrom doParallel registerDoParallel
+#' @importFrom dplyr bind_rows
+#' @importFrom foreach foreach
+#' @importFrom parallel makeCluster stopCluster
+#' 
 #' @return
 #' @export
 #'
@@ -97,8 +102,8 @@ tune_abund_gbm <-
     }
     parallel::stopCluster(cl)
     
-    hyper_combinations <- lapply(hyper_combinations, function(x) bind_rows(x)) %>% 
-      bind_rows()
+    hyper_combinations <- lapply(hyper_combinations, function(x) dplyr::bind_rows(x)) %>% 
+      dplyr::bind_rows()
       
     ranked_combinations <- model_selection(hyper_combinations, metrics)
     
