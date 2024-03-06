@@ -2,7 +2,7 @@
 % Please edit documentation in R/fit_abund_cnn.R
 \name{fit_abund_cnn}
 \alias{fit_abund_cnn}
-\title{Fit and train Convolutional Neural Network Model}
+\title{Fit and validate Convolutional Neural Network Model}
 \usage{
 fit_abund_cnn(
   data,
@@ -52,5 +52,5 @@ fit_abund_cnn(
 \item{batch_size}{numeric. A batch is a subset of the training set used in a single iteration of the training process. The size of each batch is referred to as the batch size. Default = 32}
 }
 \description{
-Fit and train Convolutional Neural Network Model
+Fit and validate Convolutional Neural Network Model
 }

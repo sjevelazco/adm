@@ -28,7 +28,8 @@ Imports:
     torch, 
     luz, 
     torchvision, 
-    gamlss
+    gamlss,
+    xgboost
 Description: Assist in the construction of abundace-based distribution model workflow
     by incorporating comprehensive tools for data preparation, model fitting, 
     evaluation, and prediction.

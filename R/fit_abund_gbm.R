@@ -1,4 +1,4 @@
-#' Fit and validate Random Forests models
+#' Fit and validate Generalized Boosted Regression models
 #'
 #' @param data tibble or data.frame. Database with response, predictors, and partition values
 #' @param response character. Column name with species abundance.
@@ -11,6 +11,10 @@
 #' @param predict_part logical. Save predicted abundance for testing data. Default = FALSE
 #' @param mtry numeric. Number of variables randomly sampled as candidates at each split. Default sqrt(length(c(predictors, predictors_f)))
 #'
+#' @importFrom dplyr bind_rows pull tibble as_tibble group_by summarise across
+#' @importFrom gbm gbm
+#' @importFrom stats formula predict sd
+#' 
 #' @return
 #'
 #' A list object with:

@@ -1,3 +1,24 @@
+#' Fit and validate Extreme Gradient Boosting models
+#'
+#' @param data 
+#' @param response 
+#' @param predictors 
+#' @param predictors_f 
+#' @param fit_formula 
+#' @param partition 
+#' @param predict_part 
+#' @param params 
+#' @param nrounds 
+#' @param verbose 
+#'
+#' @importFrom dplyr bind_rows pull tibble as_tibble group_by summarise across
+#' @importFrom stats predict sd
+#' @importFrom xgboost xgboost
+#' 
+#' @return
+#' @export
+#'
+#' @examples
 fit_abund_xgt <-
   function(data,
            response,

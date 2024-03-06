@@ -1,4 +1,4 @@
-#' Fit and validate GLM models
+#' Fit and validate Generalized Linear Models
 #'
 #' @param data tibble or data.frame. Database with response, predictors, and partition values
 #' @param response character. Column name with species abundance.
@@ -10,6 +10,10 @@
 #' @param partition character. Column name with training and validation partition groups.
 #' @param predict_part logical. Save predicted abundance for testing data. Default = FALSE
 #' @param family character. The distribution family assumed for the data.
+#' 
+#' @importFrom dplyr bind_rows pull tibble as_tibble group_by summarise across
+#' @importFrom gamlss gamlss
+#' @importFrom stats formula sd
 #'
 #' @return
 #'
@@ -22,6 +26,7 @@
 #' \item predicted_part: Observed and predicted abundance for each test partition.
 #' }
 #'
+#' 
 #' @export
 #'
 #' @examples

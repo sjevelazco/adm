@@ -12,6 +12,10 @@
 #' @param mtry numeric. Number of variables randomly sampled as candidates at each split. Default (length(c(predictors, predictors_f))/3)
 #' @param ntree numeric. Number of trees to grow. This should not be set to too small a number, to ensure that every input row gets predicted at least a few times. Default 500
 #'
+#' @importFrom dplyr bind_rows pull tibble as_tibble group_by summarise across
+#' @importFrom randomForest randomForest
+#' @importFrom stats formula predict sd
+#' 
 #' @return
 #'
 #' A list object with:

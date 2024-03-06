@@ -8,7 +8,7 @@
 #'
 #' @param occ
 #' @param x character. Column name with longitude data
-#' @param y character. Column name with y data
+#' @param y character. Column name with latitude data
 #' @param raster SpatRaster. Raster with TODO
 #' @param size
 #'

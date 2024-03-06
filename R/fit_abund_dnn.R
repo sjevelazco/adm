@@ -1,5 +1,4 @@
-#####
-#' Fit and train Deep Neural Network Model
+#' Fit and validate Deep Neural Network model
 #'
 #' @param data tibble or data.frame. Database with response, predictors, and partition values
 #' @param response character. Column name with species abundance.
@@ -13,6 +12,11 @@
 #' @param batch_size numeric. A batch is a subset of the training set used in a single iteration of the training process. The size of each batch is referred to as the batch size. Default = 32
 #' @param custom_architecture a Torch nn_module_generator object. A neural network architecture to be used instead of the internal default one. Default NULL
 #'
+#' @importFrom dplyr bind_rows pull tibble as_tibble group_by summarise across
+#' @importFrom luz setup set_opt_hparams fit
+#' @importFrom stats sd
+#' @importFrom torch dataset torch_tensor torch_manual_seed nn_module nn_linear nnf_relu dataloader nn_l1_loss optim_adam
+#' 
 #' @return
 #' @export
 #'
