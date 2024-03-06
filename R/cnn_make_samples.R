@@ -1,8 +1,8 @@
-#' cnn_make_samples
+#' TODO cnn_make_samples
 #'
 #' @param df
-#' @param longitude
-#' @param latitude
+#' @param x
+#' @param y
 #' @param response
 #' @param raster
 #' @param size
@@ -12,8 +12,8 @@
 #'
 #' @examples
 cnn_make_samples <- function(df,
-                             longitude,
-                             latitude,
+                             x,
+                             y,
                              response,
                              raster,
                              size = 5) {
@@ -24,8 +24,8 @@ cnn_make_samples <- function(df,
   for (i in 1:nrow(data)) {
     x <- croppin_hood(
       occ = data[i, ],
-      longitude = longitude,
-      latitude = latitude,
+      x = x,
+      y = y,
       raster = raster,
       size = size
     ) %>%

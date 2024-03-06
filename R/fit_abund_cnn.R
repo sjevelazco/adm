@@ -5,8 +5,8 @@
 #' @param response character. Column name with species abundance.
 #' @param predictors character. Vector with the column names of quantitative predictor variables (i.e. continuous variables). Usage predictors = c("temp", "precipt", "sand")
 #' @param predictors_f character. Vector with the column names of qualitative predictor variables (i.e. ordinal or nominal variables type). Usage predictors_f = c("landform")
-#' @param longitude character. The name of the column containing longitude information for each observation.
-#' @param latitude character. The name of the column containing latitude information for each observation.
+#' @param x character. The name of the column containing longitude information for each observation.
+#' @param y character. The name of the column containing latitude information for each observation.
 #' @param rasters a terra SpatRaster object. A raster containing the predictor variables to be cropped around each observation.
 #' @param crop_size numeric. An integer defining the range of pixels around the observation from the raster object passed to rasters parameter. Default = 5
 #' @param fit_formula formula. A formula object with response and predictor variables (e.g. formula(abund ~ temp + precipt + sand + landform)). Note that the variables used here must be consistent with those used in response, predictors, and predictors_f arguments. Default NULL
@@ -25,8 +25,8 @@ fit_abund_cnn <-
            response,
            predictors,
            predictors_f = NULL,
-           longitude,
-           latitude,
+           x,
+           y,
            rasters,
            crop_size = 5,
            fit_formula = NULL,
@@ -95,14 +95,14 @@ fit_abund_cnn <-
       message("-- Evaluating with fold ", j, "/", length(folds))
       
       train_dataloader <-
-        data[data[, partition] != folds[j], c(longitude, latitude, response)] %>%
-        cnn_make_samples(longitude, latitude, response, rasters, crop_size) %>%
+        data[data[, partition] != folds[j], c(x, y, response)] %>%
+        cnn_make_samples(x, y, response, rasters, crop_size) %>%
         create_dataset() %>%
         torch::dataloader(batch_size = batch_size, shuffle = TRUE)
       
       test_dataloader <-
-        data[data[, partition] == folds[j], c(longitude, latitude, response)] %>%
-        cnn_make_samples(longitude = longitude, latitude = latitude, response = response, raster = rasters, size = crop_size) %>%
+        data[data[, partition] == folds[j], c(x, y, response)] %>%
+        cnn_make_samples(x = x, y = y, response = response, raster = rasters, size = crop_size) %>%
         create_dataset() %>%
         torch::dataloader(batch_size = batch_size, shuffle = TRUE)
       
@@ -131,8 +131,8 @@ fit_abund_cnn <-
 
     # nota: precisa criar um torch dataset e um dataloader para todos os dados
 
-    full_dataloader <- data[, c(longitude, latitude, response)] %>%
-      cnn_make_samples(longitude, latitude, response, rasters, crop_size) %>%
+    full_dataloader <- data[, c(x, y, response)] %>%
+      cnn_make_samples(x, y, response, rasters, crop_size) %>%
       create_dataset() %>%
       torch::dataloader(batch_size = batch_size, shuffle = TRUE)
 

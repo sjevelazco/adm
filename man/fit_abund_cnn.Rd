@@ -9,8 +9,8 @@ fit_abund_cnn(
   response,
   predictors,
   predictors_f = NULL,
-  longitude,
-  latitude,
+  x,
+  y,
   rasters,
   crop_size = 5,
   fit_formula = NULL,
@@ -31,9 +31,9 @@ fit_abund_cnn(
 
 \item{predictors_f}{character. Vector with the column names of qualitative predictor variables (i.e. ordinal or nominal variables type). Usage predictors_f = c("landform")}
 
-\item{longitude}{character. The name of the column containing longitude information for each observation.}
+\item{x}{character. The name of the column containing longitude information for each observation.}
 
-\item{latitude}{character. The name of the column containing latitude information for each observation.}
+\item{y}{character. The name of the column containing latitude information for each observation.}
 
 \item{rasters}{a terra SpatRaster object. A raster containing the predictor variables to be cropped around each observation.}
 
