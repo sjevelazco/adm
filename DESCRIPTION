@@ -12,8 +12,9 @@ Maintainer: Santiago J.E. Velazco <sjevelazco@gmail.com>
 Depends: R (>= 3.5.0)
 Imports: 
     doParallel,
-    dplyr,
     foreach,
+    dplyr,
+    stringr,
     gbm,
     grDevices,
     kernlab,
@@ -29,7 +30,8 @@ Imports:
     luz, 
     torchvision, 
     gamlss,
-    xgboost
+    xgboost,
+    tidyr
 Description: Assist in the construction of abundace-based distribution model workflow
     by incorporating comprehensive tools for data preparation, model fitting, 
     evaluation, and prediction.

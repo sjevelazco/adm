@@ -15,9 +15,6 @@
 #' @importFrom gamlss gamlss
 #' @importFrom stats formula sd
 #' 
-#' @importFrom dplyr bind_rows pull tibble as_tibble group_by summarise across
-#' @importFrom stats formula predict sd
-#'
 #' @return
 #' @export
 #'

@@ -1,3 +1,23 @@
+#' Title
+#'
+#' @param number_of_features 
+#' @param number_of_outputs 
+#' @param sample_size 
+#' @param number_of_conv_layers 
+#' @param conv_layers_size 
+#' @param conv_layers_kernel 
+#' @param conv_layers_stride 
+#' @param conv_layers_padding 
+#' @param number_of_fc_layers 
+#' @param fc_layers_size 
+#' @param verbose 
+#'
+#' @importFrom torch nn_module nn_conv2d nn_linear nnf_relu torch_flatten torch_manual_seed
+#'
+#' @return
+#' @export
+#'
+#' @examples
 generate_cnn_architecture <-
   function(number_of_features = 7,
            number_of_outputs = 1,

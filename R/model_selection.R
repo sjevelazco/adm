@@ -1,3 +1,14 @@
+#' Title TODO
+#'
+#' @param hyper_combinations 
+#' @param metrics 
+#'
+#' @importFrom dplyr filter select
+#'
+#' @return
+#' @export
+#'
+#' @examples
 model_selection <- function(hyper_combinations, metrics) {
   metrics <- as.vector(metrics)
   performance_var <- names(hyper_combinations)
@@ -41,9 +52,9 @@ model_selection <- function(hyper_combinations, metrics) {
   
   if ("pdisp" %in% metrics){
     hyper_combinations <- hyper_combinations %>% 
-      select(-pdisp_dist)
+      dplyr::select(-pdisp_dist)
     not_selected_combinations <- not_selected_combinations %>%
-      select(-pdisp_dist)
+      dplyr::select(-pdisp_dist)
   }
   
   return_list <- list(

@@ -1,3 +1,17 @@
+#' Title
+#'
+#' @param number_of_features 
+#' @param number_of_outputs 
+#' @param number_of_hidden_layers 
+#' @param hidden_layers_size 
+#' @param verbose 
+#'
+#' @importFrom torch nn_module nn_linear nnf_relu torch_manual_seed
+#'
+#' @return
+#' @export
+#'
+#' @examples
 generate_dnn_architecture <-
   function(number_of_features = 7,
            number_of_outputs = 1,

@@ -18,7 +18,7 @@
 #' @param verbose 
 #' 
 #' @importFrom doParallel registerDoParallel
-#' @importFrom dplyr bind_rows left_join select "%>%"
+#' @importFrom dplyr bind_rows left_join select
 #' @importFrom foreach foreach
 #' @importFrom parallel makeCluster stopCluster
 #' @importFrom stats na.omit
@@ -68,7 +68,7 @@ tune_abund_gam <-
       stop("Grid expected to be a vector of gamlss family calls.")
     }
     
-    comb_id <- paste("comb_", 1:nrow(grid), sep = "")
+    comb_id <- paste("comb_", 1:dplyr::select(grid), sep = "")
     grid <- cbind(comb_id,grid)
     
     # looping the grid
@@ -108,7 +108,7 @@ tune_abund_gam <-
     parallel::stopCluster(cl)
     
     hyper_combinations <- lapply(hyper_combinations, function(x) bind_rows(x)) %>% 
-      bind_rows()
+      dplyr::bind_rows()
     
     hyper_combinations <- hyper_combinations %>% 
       dplyr::select(-`model$performance`) %>% 
@@ -116,7 +116,7 @@ tune_abund_gam <-
     
     row.names(hyper_combinations) <- NULL
     
-    ranked_combinations <- model_selection(hyper_combinations, metrics)
+    ranked_combinations <- dplyr::bind_rows(hyper_combinations, metrics)
     
     # fit final model
     
