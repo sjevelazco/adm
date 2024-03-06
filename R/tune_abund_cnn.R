@@ -1,10 +1,33 @@
+#' Fit and validate Convolutional Neural Network with exploration of hyper-parameters that optimize performance
+#'
+#' @param data 
+#' @param response 
+#' @param predictors 
+#' @param predictors_f 
+#' @param x character. Column name with longitude data
+#' @param y character. Column name with latitude data
+#' @param rasters SpatRaster. Raster with TODO
+#' @param crop_size 
+#' @param fit_formula 
+#' @param partition 
+#' @param predict_part 
+#' @param grid 
+#' @param architectures 
+#' @param metrics 
+#' @param n_cores 
+#' @param verbose 
+#'
+#' @return
+#' @export
+#'
+#' @examples
 tune_abund_cnn <-
   function(data,
            response,
            predictors,
            predictors_f = NULL,
-           longitude,
-           latitude,
+           x,
+           y,
            rasters,
            crop_size = 5,
            fit_formula = NULL,
@@ -88,8 +111,8 @@ tune_abund_cnn <-
           response = response,
           predictors = predictors,
           predictors_f = predictors_f,
-          longitude = longitude,
-          latitude = latitude,
+          x = x,
+          y = y,
           rasters = rasters,
           crop_size = crop_size,
           fit_formula = fit_formula,
@@ -115,8 +138,8 @@ tune_abund_cnn <-
     #       response = response,
     #       predictors = predictors,
     #       predictors_f = predictors_f,
-    #       longitude = longitude,
-    #       latitude = latitude,
+    #       x = x,
+    #       y = y,
     #       rasters = rasters,
     #       crop_size = crop_size,
     #       fit_formula = fit_formula,
@@ -146,8 +169,8 @@ tune_abund_cnn <-
         response = response,
         predictors = predictors,
         predictors_f = predictors_f,
-        longitude = longitude,
-        latitude = latitude,
+        x = x,
+        y = y,
         rasters = rasters,
         crop_size = crop_size,
         fit_formula = fit_formula,

@@ -2,13 +2,13 @@
 % Please edit documentation in R/cnn_make_samples.R
 \name{cnn_make_samples}
 \alias{cnn_make_samples}
-\title{cnn_make_samples}
+\title{TODO cnn_make_samples}
 \usage{
-cnn_make_samples(df, longitude, latitude, response, raster, size = 5)
+cnn_make_samples(df, x, y, response, raster, size = 5)
 }
 \arguments{
 \item{size}{}
 }
 \description{
-cnn_make_samples
+TODO cnn_make_samples
 }

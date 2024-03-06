@@ -8,15 +8,15 @@
 #'
 #' @param occ
 #' @param x character. Column name with longitude data
-#' @param y character. Column name with latitude data
+#' @param y character. Column name with y data
 #' @param raster SpatRaster. Raster with TODO
 #' @param size
 #'
 #' @importFrom terra colFromX rowFromY xFromCol yFromRow rast ext crop
 #' @noRd
 croppin_hood <- function(occ, x, y, raster, size) {
-  long <- as.numeric(occ[, longitude])
-  lat <- as.numeric(occ[, latitude])
+  long <- as.numeric(occ[, x])
+  lat <- as.numeric(occ[, y])
   
   rst.col <- terra::colFromX(raster, long)
   rst.row <- terra::rowFromY(raster, lat)
@@ -49,9 +49,7 @@ croppin_hood <- function(occ, x, y, raster, size) {
 #' @export
 #'
 #' @examples
-family_selector <-
-  function(data,
-           response) {
+family_selector <- function(data, response) {
     families_bank <-
       system.file("external/families_bank.txt", package = "adm") %>%
       utils::read.delim(., header = TRUE, quote = "\t")
