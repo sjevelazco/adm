@@ -160,7 +160,7 @@ tune_abund_cnn <-
     # parallel::stopCluster(cl)
     
     hyper_combinations <- lapply(hyper_combinations, function(x) dplyr::bind_rows(x)) %>% 
-      adm::bind_rows()
+      dplyr::bind_rows()
     
     ranked_combinations <- model_selection(hyper_combinations, metrics)
     
