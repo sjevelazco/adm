@@ -7,6 +7,10 @@
 cnn_make_samples(df, x, y, response, raster, size = 5)
 }
 \arguments{
+\item{x}{character. Column name with longitude data}
+
+\item{y}{character. Column name with latitude data}
+
 \item{size}{}
 }
 \description{

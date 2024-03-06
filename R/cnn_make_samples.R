@@ -1,8 +1,8 @@
 #' TODO cnn_make_samples
 #'
 #' @param df
-#' @param x
-#' @param y
+#' @param x character. Column name with longitude data
+#' @param y character. Column name with latitude data
 #' @param response
 #' @param raster
 #' @param size

@@ -2,7 +2,7 @@
 % Please edit documentation in R/fit_abund_gbm.R
 \name{fit_abund_gbm}
 \alias{fit_abund_gbm}
-\title{Fit and validate Random Forests models}
+\title{Fit and validate Generalized Boosted Regression models}
 \usage{
 fit_abund_gbm(
   data,
@@ -50,5 +50,5 @@ A list object with:
 }
 }
 \description{
-Fit and validate Random Forests models
+Fit and validate Generalized Boosted Regression models
 }

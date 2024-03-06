@@ -1,5 +1,4 @@
-###
-#' Fit and train Convolutional Neural Network Model
+#' Fit and validate Convolutional Neural Network Model
 #'
 #' @param data tibble or data.frame. Database with response, predictors, and partition values
 #' @param response character. Column name with species abundance.
@@ -16,6 +15,12 @@
 #' @param n_epochs numeric. How many times the learning algorithm will work through the training set. Default = 10
 #' @param batch_size numeric. A batch is a subset of the training set used in a single iteration of the training process. The size of each batch is referred to as the batch size. Default = 32
 #'
+#' @importFrom dplyr bind_rows pull tibble as_tibble group_by summarise across
+#' @importFrom luz setup set_opt_hparams fit
+#' @importFrom stats sd
+#' @importFrom torch dataset torch_tensor torch_manual_seed nn_module nn_conv2d nn_linear nnf_relu torch_flatten dataloader nn_l1_loss optim_adam
+#' @importFrom torchvision transform_to_tensor
+#' 
 #' @return
 #' @export
 #'

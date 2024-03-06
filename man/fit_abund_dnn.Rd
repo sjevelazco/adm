@@ -2,7 +2,7 @@
 % Please edit documentation in R/fit_abund_dnn.R
 \name{fit_abund_dnn}
 \alias{fit_abund_dnn}
-\title{Fit and train Deep Neural Network Model}
+\title{Fit and validate Deep Neural Network model}
 \usage{
 fit_abund_dnn(
   data,
@@ -42,5 +42,5 @@ fit_abund_dnn(
 \item{custom_architecture}{a Torch nn_module_generator object. A neural network architecture to be used instead of the internal default one. Default NULL}
 }
 \description{
-Fit and train Deep Neural Network Model
+Fit and validate Deep Neural Network model
 }

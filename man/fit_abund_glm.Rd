@@ -2,7 +2,7 @@
 % Please edit documentation in R/fit_abund_glm.R
 \name{fit_abund_glm}
 \alias{fit_abund_glm}
-\title{Fit and validate GLM models}
+\title{Fit and validate Generalized Linear Models}
 \usage{
 fit_abund_glm(
   data,
@@ -45,5 +45,5 @@ A list object with:
 }
 }
 \description{
-Fit and validate GLM models
+Fit and validate Generalized Linear Models
 }

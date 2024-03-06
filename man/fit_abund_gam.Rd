@@ -2,7 +2,7 @@
 % Please edit documentation in R/fit_abund_gam.R
 \name{fit_abund_gam}
 \alias{fit_abund_gam}
-\title{fit_abund_gam}
+\title{Fit and validate Generalized Additive Models}
 \usage{
 fit_abund_gam(
   data,
@@ -20,5 +20,5 @@ fit_abund_gam(
 \item{method}{}
 }
 \description{
-fit_abund_gam
+Fit and validate Generalized Additive Models
 }

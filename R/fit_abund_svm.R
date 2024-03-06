@@ -12,6 +12,10 @@
 #' @param C numeric. Cost of constraints violation, the 'C'-constant of the regularization term in the Lagrange formulation. Default 1
 #' @param predict_part logical. Save predicted abundance for testing data. Default = FALSE
 #'
+#' @importFrom dplyr pull tibble bind_rows as_tibble group_by summarise across
+#' @importFrom kernlab ksvm predict
+#' @importFrom stats formula sd
+#' 
 #' @return
 #'
 #' A list object with:

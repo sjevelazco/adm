@@ -1,4 +1,4 @@
-#' fit_abund_gam
+#' Fit and validate Generalized Additive Models
 #'
 #' @param data
 #' @param response
@@ -10,9 +10,12 @@
 #' @param k
 #' @param family
 #' @param method
-#'
+#' 
 #' @importFrom dplyr bind_rows pull tibble as_tibble group_by summarise across
-#' @importFrom mgcv gam
+#' @importFrom gamlss gamlss
+#' @importFrom stats formula sd
+#' 
+#' @importFrom dplyr bind_rows pull tibble as_tibble group_by summarise across
 #' @importFrom stats formula predict sd
 #'
 #' @return
