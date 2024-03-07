@@ -34,6 +34,7 @@ fit_abund_xgt <-
            colsample_bytree = 1,
            min_child_weight = 1,
            subsample = 0.5,
+           objective,
            verbose = TRUE) {
     # Variables
     if (!is.null(predictors_f)){
@@ -88,7 +89,8 @@ fit_abund_xgt <-
           gamma = gamma,
           colsample_bytree = colsample_bytree,
           min_child_weight = min_child_weight,
-          subsample = subsample
+          subsample = subsample,
+          objective = objective
         ),
         nrounds = nrounds,
         verbose = verbose
@@ -118,7 +120,8 @@ fit_abund_xgt <-
         gamma = gamma,
         colsample_bytree = colsample_bytree,
         min_child_weight = min_child_weight,
-        subsample = subsample
+        subsample = subsample,
+        objective = objective
       ),
       nrounds = nrounds,
       verbose = verbose

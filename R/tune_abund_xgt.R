@@ -92,15 +92,13 @@ tune_abund_xgt <-
           fit_formula = fit_formula,
           partition = partition,
           predict_part = predict_part,
-          params = list(
-            max_depth = grid[i,"max_depth"],
-            eta = grid[i,"eta"],
-            gamma = grid[i,"gamma"],
-            colsample_bytree = grid[i,"colsample_bytree"],
-            min_child_weight = grid[i,"min_child_weight"],
-            subsample = grid[i,"subsample"],
-            objective = objective
-          ),
+          max_depth = grid[i,"max_depth"],
+          eta = grid[i,"eta"],
+          gamma = grid[i,"gamma"],
+          colsample_bytree = grid[i,"colsample_bytree"],
+          min_child_weight = grid[i,"min_child_weight"],
+          subsample = grid[i,"subsample"],
+          objective = objective,
           nrounds = grid[i,"nrounds"],
           verbose = TRUE
         )
@@ -126,15 +124,13 @@ tune_abund_xgt <-
         fit_formula = fit_formula,
         partition = partition,
         predict_part = predict_part,
-        params = list(
-          max_depth = ranked_combinations[[1]][1,"max_depth"],
-          eta = ranked_combinations[[1]][1,"eta"],
-          gamma = ranked_combinations[[1]][1,"gamma"],
-          colsample_bytree = ranked_combinations[[1]][1,"colsample_bytree"],
-          min_child_weight = ranked_combinations[[1]][1,"min_child_weight"],
-          subsample = ranked_combinations[[1]][1,"subsample"],
-          objective = objective
-        ),
+        max_depth = ranked_combinations[[1]][1,"max_depth"],
+        eta = ranked_combinations[[1]][1,"eta"],
+        gamma = ranked_combinations[[1]][1,"gamma"],
+        colsample_bytree = ranked_combinations[[1]][1,"colsample_bytree"],
+        min_child_weight = ranked_combinations[[1]][1,"min_child_weight"],
+        subsample = ranked_combinations[[1]][1,"subsample"],
+        objective = objective,
         nrounds = ranked_combinations[[1]][1,"nrounds"],
         verbose = TRUE
       )
