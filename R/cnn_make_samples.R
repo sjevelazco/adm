@@ -22,25 +22,25 @@ cnn_make_samples <- function(df,
   predictors <- list()
   responses <- list()
   for (i in 1:nrow(data)) {
-    x <- croppin_hood(
+    pred_x  <- croppin_hood(
       occ = data[i, ],
       x = x,
       y = y,
       raster = raster,
       size = size
-    ) %>%
-      as.array()
+    ) 
+    pred_x  <- terra::as.array(pred_x)
 
-    for (j in 1:dim(x)[3]) {
-      ary <- x[, , j]
+    for (j in 1:dim(pred_x )[3]) {
+      ary <- pred_x[, , j]
       ary <- ifelse(is.na(ary), mean(ary, na.rm = TRUE), ary)
-      x[, , j] <- ary
+      pred_x[, , j] <- ary
     }
 
-    y <- data[[i, response]]
+    pred_y <- data[[i, response]]
 
-    predictors <- append(predictors, list(x))
-    responses <- append(responses, y)
+    predictors <- append(predictors, list(pred_x))
+    responses <- append(responses, pred_y)
   }
 
   data_list <- list(
