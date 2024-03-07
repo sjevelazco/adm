@@ -27,8 +27,13 @@ fit_abund_xgt <-
            fit_formula = NULL,
            partition,
            predict_part = FALSE,
-           params,
-           nrounds = 500,
+           nrounds = 100,
+           max_depth = 4,
+           eta = 0.2,
+           gamma = 5,
+           colsample_bytree = 1,
+           min_child_weight = 1,
+           subsample = 0.5,
            verbose = TRUE) {
     # Variables
     if (!is.null(predictors_f)){
@@ -76,7 +81,15 @@ fit_abund_xgt <-
       part_model <- xgboost::xgboost(
         data = sp_train$data,
         label = sp_train$target[[1]],
-        params = params,
+        params = list(
+          nrounds = nrounds,
+          max_depth = max_depth,
+          eta = eta,
+          gamma = gamma,
+          colsample_bytree = colsample_bytree,
+          min_child_weight = min_child_weight,
+          subsample = subsample
+        ),
         nrounds = nrounds,
         verbose = verbose
       )
@@ -98,7 +111,15 @@ fit_abund_xgt <-
     model <- xgboost::xgboost(
       data = as.matrix(data[, variables]),
       label = data[, response][[1]],
-      params = params,
+      params = list(
+        nrounds = nrounds,
+        max_depth = max_depth,
+        eta = eta,
+        gamma = gamma,
+        colsample_bytree = colsample_bytree,
+        min_child_weight = min_child_weight,
+        subsample = subsample
+      ),
       nrounds = nrounds,
       verbose = verbose
     )
