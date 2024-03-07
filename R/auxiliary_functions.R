@@ -4,16 +4,19 @@
 #                                                          #
 ## %######################################################%##
 
-#' TODO write an informative title
+
+#' Crop rasters to build samples for Convolutional Neural Networks
 #'
-#' @param occ
-#' @param x character. Column name with longitude data
-#' @param y character. Column name with latitude data
-#' @param raster SpatRaster. Raster with TODO
-#' @param size
+#' @param occ 
+#' @param x 
+#' @param y 
+#' @param raster 
+#' @param size 
 #'
-#' @importFrom terra colFromX rowFromY xFromCol yFromRow rast ext crop
-#' @noRd
+#' @return
+#' @export
+#'
+#' @examples
 croppin_hood <- function(occ, x, y, raster, size) {
   long <- as.numeric(occ[, x])
   lat <- as.numeric(occ[, y])

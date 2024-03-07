@@ -12,8 +12,14 @@ fit_abund_xgt(
   fit_formula = NULL,
   partition,
   predict_part = FALSE,
-  params,
-  nrounds = 500,
+  nrounds = 100,
+  max_depth = 4,
+  eta = 0.2,
+  gamma = 5,
+  colsample_bytree = 1,
+  min_child_weight = 1,
+  subsample = 0.5,
+  objective,
   verbose = TRUE
 )
 }
@@ -32,11 +38,11 @@ fit_abund_xgt(
 
 \item{predict_part}{}
 
-\item{params}{}
-
 \item{nrounds}{}
 
 \item{verbose}{}
+
+\item{params}{}
 }
 \description{
 Fit and validate Extreme Gradient Boosting models
