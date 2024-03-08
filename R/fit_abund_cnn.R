@@ -120,7 +120,9 @@ fit_abund_cnn <-
         luz::set_opt_hparams(lr = learning_rate) %>%
         luz::fit(train_dataloader, epochs = n_epochs, valid_data = test_dataloader)
 
-      pred <- predict(model, test_dataloader) %>% as.numeric()
+      pred <- predict(model, test_dataloader) # cuda atualization
+      pred <- pred$to(device = "cpu")# 
+      pred <- as.numeric(pred) #
       observed <- test_dataloader$dataset$response_variable %>% as.numeric()
       eval_partial[[j]] <- dplyr::tibble(
         model = "cnn",
