@@ -196,17 +196,17 @@ tune_abund_cnn <-
       ranked_combinations[[1]][1,"batch_size"]
     )
     
-    if (ranked_combinations[[1]][1,"arch"] != "fit_intern"){
-      nConv_layers <- as.numeric(arch_indexes[[1]][1])
-      nFc_layers <- as.numeric(arch_indexes[[1]][2])
-      n_comb <- as.numeric(arch_indexes[[1]][3])
-      
-      structure <- arch_dict[[ranked_combinations[[1]][1,"arch"]]][,n_comb]
-      message("Used a ", nConv_layers," convolutional and ",nFc_layers," fully connected layers CNN structured as ",
-              paste0(structure, collapse = "-"))
-    }
+    # if (ranked_combinations[[1]][1,"arch"] != "fit_intern"){
+    #   nConv_layers <- as.numeric(arch_indexes[[1]][1])
+    #   nFc_layers <- as.numeric(arch_indexes[[1]][2])
+    #   n_comb <- as.numeric(arch_indexes[[1]][3])
+    #   
+    #   structure <- arch_dict[[ranked_combinations[[1]][1,"arch"]]][,n_comb]
+    #   message("Used a ", nConv_layers," convolutional and ",nFc_layers," fully connected layers CNN structured as ",
+    #           paste0(structure, collapse = "-"))
+    # }
     
-    final_list <- c(final_model, ranked_combinations)
+    final_list <- c(final_model, ranked_combinations, list("selected_arch" = arch_dict[[ranked_combinations[[1]][1,"arch"]]]))
     
     return(final_list)
   }
