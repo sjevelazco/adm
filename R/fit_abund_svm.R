@@ -34,7 +34,7 @@ fit_abund_svm <-
   function(data,
            response,
            predictors,
-           predictors_f,
+           predictors_f = NULL,
            fit_formula = NULL,
            partition,
            predict_part = FALSE,

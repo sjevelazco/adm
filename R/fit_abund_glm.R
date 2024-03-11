@@ -34,7 +34,7 @@ fit_abund_glm <-
   function(data,
            response,
            predictors,
-           predictors_f,
+           predictors_f = NULL,
            fit_formula = NULL,
            partition,
            predict_part = FALSE,
@@ -74,7 +74,8 @@ fit_abund_glm <-
       model <- gamlss::gamlss(
         formula = formula1,
         family = family,
-        data = train_set
+        data = train_set, 
+        trace = FALSE
       )
       
       pred <- predict(model, newdata = test_set, data = train_set, type = "response")
@@ -93,7 +94,8 @@ fit_abund_glm <-
     full_model <- gamlss::gamlss(
       formula = formula1,
       family = family,
-      data = data
+      data = data, 
+      trace = FALSE
     )
 
     # bind predicted evaluation
