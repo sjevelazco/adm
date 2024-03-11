@@ -93,33 +93,79 @@ fit_abund_cnn <-
       )
     }
     ##
-
+    samples_list <- list()
+    for (fold in folds) {
+      fold_mtx <- data[data[, partition] == fold, c(x, y, response)] %>%
+        cnn_make_samples(x, y, response, rasters, crop_size) %>%
+        list()
+      
+      names(fold_mtx) <- fold
+      
+      samples_list <- append(samples_list, fold_mtx)
+    }
+    
+    ##
     eval_partial <- list()
     part_pred <- list()
     for (j in 1:length(folds)) {
       message("-- Evaluating with fold ", j, "/", length(folds))
       
-      train_dataloader <-
-        data[data[, partition] != folds[j], c(x, y, response)] %>%
-        cnn_make_samples(x, y, response, rasters, crop_size) %>%
-        create_dataset() %>%
+      train_samples <- samples_list[folds[folds!=j]]
+      train_samples <- unlist(train_samples, recursive = FALSE)
+      
+      train_response_folds <- names(train_samples)[grep("\\.response$", names(train_samples))]
+      train_concatened_responses <- list()
+      for (fold in train_response_folds) {
+        train_concatened_responses <- c(train_concatened_responses,train_samples[[fold]])
+      }
+      
+      train_predictors_folds <- names(train_samples)[grep("\\.predictors$", names(train_samples))]
+      train_concatened_predictors <- list()
+      for (fold in train_predictors_folds) {
+        train_concatened_predictors <- c(train_concatened_predictors,train_samples[[fold]])
+      }
+      
+      
+      train_data_list <- list(predictors = train_concatened_predictors,
+                              response = train_concatened_responses)
+      
+      train_dataloader <- create_dataset(train_data_list) %>%
         torch::dataloader(batch_size = batch_size, shuffle = TRUE)
       
-      test_dataloader <-
-        data[data[, partition] == folds[j], c(x, y, response)] %>%
-        cnn_make_samples(x = x, y = y, response = response, raster = rasters, size = crop_size) %>%
-        create_dataset() %>%
+      
+      test_samples <- samples_list[folds[folds==j]]
+      test_samples <- unlist(test_samples, recursive = FALSE)
+      
+      test_response_folds <- names(test_samples)[grep("\\.response$", names(test_samples))]
+      test_concatened_responses <- list()
+      for (fold in test_response_folds) {
+        test_concatened_responses <- c(test_concatened_responses,test_samples[[fold]])
+      }
+      
+      test_predictors_folds <- names(test_samples)[grep("\\.predictors$", names(test_samples))]
+      test_concatened_predictors <- list()
+      for (fold in test_predictors_folds) {
+        test_concatened_predictors <- c(test_concatened_predictors,test_samples[[fold]])
+      }
+      
+      
+      test_data_list <- list(predictors = test_concatened_predictors,
+                             response = test_concatened_responses)
+      
+      test_dataloader <- create_dataset(test_data_list) %>%
         torch::dataloader(batch_size = batch_size, shuffle = TRUE)
       
       # fit model
-      model <- net %>%
-        luz::setup(
-          loss = torch::nn_l1_loss(),
-          optimizer = torch::optim_adam
-        ) %>%
-        luz::set_opt_hparams(lr = learning_rate) %>%
-        luz::fit(train_dataloader, epochs = n_epochs, valid_data = test_dataloader)
-
+      suppressMessages(
+        model <- net %>%
+          luz::setup(
+            loss = torch::nn_l1_loss(),
+            optimizer = torch::optim_adam
+          ) %>%
+          luz::set_opt_hparams(lr = learning_rate) %>%
+          luz::fit(train_dataloader, epochs = n_epochs, valid_data = test_dataloader)
+      )
+      
       pred <- predict(model, test_dataloader) # cuda atualization
       pred <- pred$to(device = "cpu")# 
       pred <- as.numeric(pred) #
@@ -138,19 +184,38 @@ fit_abund_cnn <-
 
     # nota: precisa criar um torch dataset e um dataloader para todos os dados
 
-    full_dataloader <- data[, c(x, y, response)] %>%
-      cnn_make_samples(x, y, response, rasters, crop_size) %>%
-      create_dataset() %>%
+    
+    full_samples <- unlist(samples_list, recursive = FALSE)
+    
+    full_response_folds <- names(full_samples)[grep("\\.response$", names(full_samples))]
+    full_concatened_responses <- list()
+    for (fold in full_response_folds) {
+      full_concatened_responses <- c(full_concatened_responses,full_samples[[fold]])
+    }
+    
+    full_predictors_folds <- names(full_samples)[grep("\\.predictors$", names(full_samples))]
+    full_concatened_predictors <- list()
+    for (fold in full_predictors_folds) {
+      full_concatened_predictors <- c(full_concatened_predictors,full_samples[[fold]])
+    }
+    
+    
+    full_data_list <- list(predictors = full_concatened_predictors,
+                           response = full_concatened_responses)
+    
+    full_dataloader <- create_dataset(full_data_list) %>%
       torch::dataloader(batch_size = batch_size, shuffle = TRUE)
 
     # nota: na sequência abaixo ele fitta um modelo com todos os dados
-    full_model <- net %>%
-      luz::setup(
-        loss = torch::nn_l1_loss(),
-        optimizer = torch::optim_adam
-      ) %>%
-      luz::set_opt_hparams(lr = 0.1) %>%
-      luz::fit(full_dataloader, epochs = 10)
+    suppressMessages(
+      full_model <- net %>%
+        luz::setup(
+          loss = torch::nn_l1_loss(),
+          optimizer = torch::optim_adam
+        ) %>%
+        luz::set_opt_hparams(lr = learning_rate) %>%
+        luz::fit(full_dataloader, epochs = n_epochs)
+    )
 
     # bind predicted evaluation
     eval_partial <- eval_partial %>%
