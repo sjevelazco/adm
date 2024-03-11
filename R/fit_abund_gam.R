@@ -23,7 +23,7 @@ fit_abund_gam <-
   function(data,
            response,
            predictors,
-           predictors_f,
+           predictors_f = NULL,
            fit_formula = NULL,
            partition,
            predict_part = FALSE,
@@ -45,6 +45,11 @@ fit_abund_gam <-
     } else {
       formula1 <- fit_formula
     }
+    
+    message(
+      "Formula used for model fitting:\n",
+      Reduce(paste, deparse(formula1)) %>% gsub(paste("  ", "   ", collapse = "|"), " ", .),
+      "\n")
 
     folds <- data %>%
       dplyr::pull(partition) %>%
@@ -62,7 +67,8 @@ fit_abund_gam <-
       model <- gamlss::gamlss(
         formula = formula1,
         family = family,
-        data = train_set
+        data = train_set, 
+        trace = FALSE
       )
 
       pred <- predict(model, newdata = test_set, data = train_set, type = "response")
@@ -81,7 +87,8 @@ fit_abund_gam <-
     full_model <- gamlss::gamlss(
       formula = formula1,
       family = family,
-      data = data
+      data = data, 
+      trace = FALSE
     )
 
 
