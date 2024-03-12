@@ -33,7 +33,7 @@ model_selection <- function(hyper_combinations, metrics) {
   }
   
   not_selected_combinations <- hyper_combinations
-  hyper_combinations <- hyper_combinations[duplicated(hyper_combinations%>%dplyr::select(-comb_id)),]
+  hyper_combinations <- hyper_combinations[!duplicated(hyper_combinations%>%dplyr::select(-comb_id)),]
   while (nrow(hyper_combinations) > 1) {
     for (i in perf_means) {
       hyper_combinations <- hyper_combinations[which(hyper_combinations[i] >= summary(hyper_combinations[[i]])[5]), ]
