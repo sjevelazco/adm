@@ -206,7 +206,13 @@ tune_abund_cnn <-
     #           paste0(structure, collapse = "-"))
     # }
     
-    final_list <- c(final_model, ranked_combinations, list("selected_arch" = arch_dict[[ranked_combinations[[1]][1,"arch"]]]))
+    selected_arch <- ranked_combinations[[1]][1,"arch"] %>% 
+      as.character()
+    selected_arch <- gsub("arch-","", selected_arch)
+    selected_arch <- paste0(substr(selected_arch, 1, nchar(selected_arch) - 2), "-net")
+    n_comb <- as.numeric(arch_indexes[[1]][3])
+    
+    final_list <- c(final_model, ranked_combinations, list("selected_arch" = arch_dict[[selected_arch]][,n_comb]))
     
     return(final_list)
   }

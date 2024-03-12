@@ -24,7 +24,7 @@ model_selection <- function(hyper_combinations, metrics) {
     slope = grep("^slope", performance_var),
     pdisp = grep("^pdisp", performance_var)
   )
-
+  
   cols_idx <- unlist(performance_dict[metrics])
   perf_means <- performance_var[cols_idx[cols_idx %in% grep("_mean$", performance_var)]]
   if ("pdisp" %in% metrics){
@@ -33,6 +33,7 @@ model_selection <- function(hyper_combinations, metrics) {
   }
   
   not_selected_combinations <- hyper_combinations
+  hyper_combinations <- hyper_combinations[duplicated(hyper_combinations%>%dplyr::select(-comb_id)),]
   while (nrow(hyper_combinations) > 1) {
     for (i in perf_means) {
       hyper_combinations <- hyper_combinations[which(hyper_combinations[i] >= summary(hyper_combinations[[i]])[5]), ]
