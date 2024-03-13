@@ -102,8 +102,12 @@ tune_abund_glm <-
     hyper_combinations <- lapply(hyper_combinations, function(x) dplyr::bind_rows(x)) %>% 
       dplyr::bind_rows()
     
+    if ("model$performance" %in% names(hyper_combinations)){
+      hyper_combinations <- hyper_combinations %>% 
+        dplyr::select(-`model$performance`) 
+    }
+    
     hyper_combinations <- hyper_combinations %>% 
-      dplyr::select(-`model$performance`) %>% 
       stats::na.omit()
     
     row.names(hyper_combinations) <- NULL
