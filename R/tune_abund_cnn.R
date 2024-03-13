@@ -164,7 +164,7 @@ tune_abund_cnn <-
     
     for (i in 1:ncol(hyper_combinations)) { 
      if (all(is.na(hyper_combinations[[i]]))){
-       stop(paste0("The net was unable to fit to the data. Try changing the hyperparameters."))
+       stop(paste0("The net was unable to fit the data. Try changing the hyperparameters."))
      }
     }
     
