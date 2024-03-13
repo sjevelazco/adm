@@ -44,7 +44,9 @@ tune_abund_glm <-
       t() %>%
       as.vector()
     
-    data("gamlss_families_table", envir = environment()) # families_bank
+    families_bank <-
+      system.file("external/families_bank.txt", package = "adm") %>%
+      utils::read.delim(., header = TRUE, quote = "\t") # families_bank
     
     # making grid
     if (is.null(grid)){
