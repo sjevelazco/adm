@@ -64,6 +64,14 @@ fit_abund_cnn <-
         length(self$response_variable)
       }
     )
+    
+    # loading rasters
+    if (class(rasters) %in% "character"){
+      rasters <- terra::rast(rasters)
+      rasters <- rasters[c(predictors,predictors_f)]
+    } else {
+      stop("Please, provide a path to the raster file.")
+    }
 
     ##
     torch::torch_manual_seed(13)
