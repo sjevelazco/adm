@@ -93,7 +93,7 @@ fit_abund_xgt <-
           objective = objective
         ),
         nrounds = nrounds,
-        verbose = verbose
+        verbose = 0
       )
       #
       

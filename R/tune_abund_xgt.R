@@ -136,7 +136,7 @@ tune_abund_xgt <-
       )
     
     message(
-      "The best model was a GBM with: \n max_depth = ",
+      "The best model was a XGBoost with: \n max_depth = ",
       ranked_combinations[[1]][1,"max_depth"],
       "\n eta = ",
       ranked_combinations[[1]][1,"eta"],
