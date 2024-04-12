@@ -34,7 +34,7 @@ tune_abund_xgt <-
            objective,
            metrics = NULL,
            n_cores = 1,
-           verbose = FALSE) {
+           verbose = TRUE) {
     
     if (is.null(metrics) |
         !all(metrics %in% c("corr_spear", "corr_pear", "mae", "inter", "slope", "pdisp"))) {
@@ -100,7 +100,7 @@ tune_abund_xgt <-
           subsample = grid[i,"subsample"],
           objective = objective,
           nrounds = grid[i,"nrounds"],
-          verbose = TRUE
+          verbose = verbose
         )
       l <- list(cbind(grid[i,], model$performance))
       names(l) <- grid[i, "comb_id"]
@@ -132,7 +132,7 @@ tune_abund_xgt <-
         subsample = ranked_combinations[[1]][1,"subsample"],
         objective = objective,
         nrounds = ranked_combinations[[1]][1,"nrounds"],
-        verbose = TRUE
+        verbose = verbose
       )
     
     message(
