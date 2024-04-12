@@ -68,7 +68,7 @@ fit_abund_cnn <-
     # loading rasters
     if (class(rasters) %in% "character"){
       rasters <- terra::rast(rasters)
-      rasters <- rasters[c(predictors,predictors_f)]
+      rasters <- rasters[[c(predictors,predictors_f)]]
     } else {
       stop("Please, provide a path to the raster file.")
     }
@@ -164,7 +164,7 @@ fit_abund_cnn <-
         torch::dataloader(batch_size = batch_size, shuffle = TRUE)
       
       # fit model
-      suppressMessages(
+      #suppressMessages(
         model <- net %>%
           luz::setup(
             loss = torch::nn_l1_loss(),
@@ -172,7 +172,7 @@ fit_abund_cnn <-
           ) %>%
           luz::set_opt_hparams(lr = learning_rate) %>%
           luz::fit(train_dataloader, epochs = n_epochs, valid_data = test_dataloader)
-      )
+      #)
       
       pred <- predict(model, test_dataloader) # cuda atualization
       pred <- pred$to(device = "cpu")# 
