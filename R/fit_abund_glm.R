@@ -38,20 +38,73 @@ fit_abund_glm <-
            fit_formula = NULL,
            partition,
            predict_part = FALSE,
-           family) {
+           family,
+           poly,
+           inter_order) {
 
     # Variables
     variables <- dplyr::bind_rows(c(c = predictors, f = predictors_f))
 
     # TODO Formula
     if (is.null(fit_formula)) {
-      formula1 <- stats::formula(paste(response, "~", paste(c(
-        predictors,
-        predictors_f
-      ), collapse = " + ")))
+      if (poly >= 2) {
+        forpoly <- lapply(2:poly, function(x) {
+          paste("I(", predictors, "^", x, ")",
+                sep = "", collapse = " + "
+          )
+        }) %>% paste(collapse = " + ")
+        formula1 <- paste(c(predictors, predictors_f), collapse = " + ") %>%
+          paste(., forpoly, sep = " + ")
+      } else {
+        formula1 <-
+          paste(c(predictors, predictors_f), collapse = " + ")
+      }
+      
+      if (inter_order > 0) {
+        forinter <- c(predictors, predictors_f)
+        if (inter_order > length(forinter)) {
+          stop("value of inter_order is higher than number of predicors ", "(", length(forinter), ")")
+        }
+        forinter_l <- list()
+        
+        for (i in 1:inter_order) {
+          forinter_l[[i]] <- do.call(
+            "expand.grid",
+            c(lapply(1:(i + 1), function(x) {
+              forinter
+            }), stringsAsFactors = FALSE)
+          )
+          forinter_l[[i]] <- apply(forinter_l[[i]], 1, function(x) {
+            x <- unique(sort(x))
+            if (length(x) > i) {
+              paste(x, collapse = ":")
+            }
+          }) %>%
+            unlist() %>%
+            unique()
+        }
+        forinter <- sapply(forinter_l, paste, collapse = " + ")
+        forinter <- do.call("paste", c(as.list(forinter), sep = " + "))
+      }
+      
+      if (exists("forinter")) {
+        formula1 <- paste(formula1, forinter, sep = " + ")
+        formula1 <- stats::formula(paste(
+          response, "~", formula1
+        ))
+      } else {
+        formula1 <- stats::formula(paste(
+          response, "~", formula1
+        ))
+      }
     } else {
       formula1 <- fit_formula
     }
+    message(
+      "Formula used for model fitting:\n",
+      Reduce(paste, deparse(formula1)) %>% gsub(paste("  ", "   ", collapse = "|"), " ", .),
+      "\n"
+    )
 
     folds <- data %>%
       dplyr::pull(partition) %>%
