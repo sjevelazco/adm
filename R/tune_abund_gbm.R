@@ -78,8 +78,12 @@ tune_abund_gbm <-
     
     cl <- parallel::makeCluster(n_cores)
     doParallel::registerDoParallel(cl)
+    doSNOW::registerDoSNOW(cl)
+    pb <- txtProgressBar(max = nrow(grid), style = 3)
+    progress <- function(n) setTxtProgressBar(pb, n)
+    opts <- list(progress = progress)
     
-    hyper_combinations <- foreach::foreach(i = 1:nrow(grid), .export = c("fit_abund_gbm","adm_eval"), .packages = c("dplyr")) %dopar% {
+    hyper_combinations <- foreach::foreach(i = 1:nrow(grid),.options.snow = opts, .export = c("fit_abund_gbm","adm_eval"), .packages = c("dplyr")) %dopar% {
       model <-
         fit_abund_gbm(
           data = data,
