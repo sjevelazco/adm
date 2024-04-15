@@ -50,15 +50,21 @@ tune_abund_glm <-
     
     # making grid
     if (is.null(grid)){
-      message("Families not provided. Picking recommended families to fit data.")
-      grid <- family_selector(data,response)
-    } else if (is.vector(grid) & all(grid %in% families_bank$family_call)) {
-      message("Testing with provided families.")
-      grid <- data.frame(family_call = grid)
+      message("Grid not provided. Using the default one for GLM.")
+      families_hp <- family_selector(data,response)
+      grid <- list(
+        poly = c(1,2,3),
+        inter_order = c(0,1,2),
+        family_call = families_hp$family_call
+      ) %>%
+        expand.grid() %>%
+        dplyr::left_join(families_hp, by = "family_call")
+    } else if (is.data.frame(grid) & all(names(grid)%in%c("family_call","poly","inter_order")) & all(grid$family_call %in% families_bank$family_call)){
+      message("Testing with provided grid.")
       grid <- dplyr::left_join(grid,families_bank,by="family_call") %>% 
-        dplyr::select(family_call,discrete)
+        dplyr::select(poly,inter_order,family_call,discrete)
     } else {
-      stop("Grid expected to be a vector of gamlss family calls.")
+      stop('Grid expected to be any combination between "poly", "inter_order" and "family_call" hyperparameters.')
     }
     
     comb_id <- paste("comb_", 1:nrow(grid), sep = "")
@@ -69,8 +75,12 @@ tune_abund_glm <-
     
     cl <- parallel::makeCluster(n_cores)
     doParallel::registerDoParallel(cl)
+    doSNOW::registerDoSNOW(cl)
+    pb <- txtProgressBar(max = nrow(grid), style = 3)
+    progress <- function(n) setTxtProgressBar(pb, n)
+    opts <- list(progress = progress)
     
-    hyper_combinations <- foreach::foreach(i = 1:nrow(grid), .export = c("fit_abund_glm","adm_eval"), .packages = c("dplyr")) %dopar% {
+    hyper_combinations <- foreach::foreach(i = 1:nrow(grid), .options.snow = opts, .export = c("fit_abund_glm","adm_eval"), .packages = c("dplyr")) %dopar% {
       data_fam <- data
       if (grid[i,"discrete"]==1){
         data_fam[,response] <- round(data[,response])
@@ -86,14 +96,17 @@ tune_abund_glm <-
             fit_formula = fit_formula,
             partition = partition,
             predict_part = predict_part,
-            family = grid[i,"family_call"]
+            family = grid[i,"family_call"],
+            poly = grid[i,"poly"],
+            inter_order = grid[i,"inter_order"],
+            verbose = FALSE
           )
       }, error = function(err) {
         print("error")
         model <- list(performance = "error")
       })
       
-      l <- list(cbind(grid[i,c("comb_id","family_call")], model$performance))
+      l <- list(cbind(grid[i,c("comb_id","family_call","poly","inter_order")], model$performance))
       names(l) <- grid[i, "comb_id"]
       l
     }
@@ -117,6 +130,8 @@ tune_abund_glm <-
     # fit final model
     
     choosen_family <- ranked_combinations[[1]][1,"family_call"]
+    choosen_poly <- ranked_combinations[[1]][1,"poly"]
+    choosen_inter_order <- ranked_combinations[[1]][1,"inter_order"]
     full_data <- data
     if (families_bank[which(families_bank$family_call == choosen_family),"discrete"]==1){
       full_data[,"ind_ha"] <- round(full_data[,"ind_ha"])
@@ -132,13 +147,19 @@ tune_abund_glm <-
         fit_formula = fit_formula,
         partition = partition,
         predict_part = predict_part,
-        family = choosen_family
+        family = choosen_family,
+        poly = choosen_poly,
+        inter_order = choosen_inter_order
       )
 
     message(
       "The best model was a GLM with:", 
       "\n family = ",
-      choosen_family
+      choosen_family,
+      "\n poly = ",
+      choosen_poly,
+      "\n inter_order = ",
+      choosen_inter_order
     )
     
     final_list <- c(final_model, ranked_combinations)
