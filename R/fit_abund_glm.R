@@ -40,7 +40,8 @@ fit_abund_glm <-
            predict_part = FALSE,
            family,
            poly,
-           inter_order) {
+           inter_order,
+           verbose = TRUE) {
 
     # Variables
     variables <- dplyr::bind_rows(c(c = predictors, f = predictors_f))
@@ -100,11 +101,14 @@ fit_abund_glm <-
     } else {
       formula1 <- fit_formula
     }
-    message(
-      "Formula used for model fitting:\n",
-      Reduce(paste, deparse(formula1)) %>% gsub(paste("  ", "   ", collapse = "|"), " ", .),
-      "\n"
-    )
+    
+    if(verbose){
+      message(
+        "Formula used for model fitting:\n",
+        Reduce(paste, deparse(formula1)) %>% gsub(paste("  ", "   ", collapse = "|"), " ", .),
+        "\n"
+      )
+    }
 
     folds <- data %>%
       dplyr::pull(partition) %>%
@@ -114,7 +118,10 @@ fit_abund_glm <-
     eval_partial <- list()
     part_pred <- list()
     for (j in 1:length(folds)) {
-      message("-- Evaluating with fold ", j, "/", length(folds))
+      if (verbose){
+        message("-- Evaluating with fold ", j, "/", length(folds))
+      }
+      
       
       # if (family=="poisson"){
       #   data[, response] <- round(data[, response], 0)
