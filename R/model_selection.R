@@ -45,8 +45,8 @@ model_selection <- function(hyper_combinations, metrics) {
 
   selected_comb <- hyper_combinations$comb_id[1]
 
-  not_selected_combinations <- not_selected_combinations %>%
-    dplyr::filter(comb_id != selected_comb)
+  # not_selected_combinations <- not_selected_combinations %>%
+  #   dplyr::filter(comb_id != selected_comb)
 
   hyper_combinations[, mae_columns] <- -1 * hyper_combinations[, mae_columns]  
   not_selected_combinations[, mae_columns] <- -1 * not_selected_combinations[, mae_columns]
@@ -60,7 +60,7 @@ model_selection <- function(hyper_combinations, metrics) {
   
   return_list <- list(
     "optimal_combination" = hyper_combinations,
-    "not_optimal_combinations" = not_selected_combinations
+    "all_combinations" = not_selected_combinations
   )
 
   return(return_list)
