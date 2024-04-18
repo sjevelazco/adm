@@ -63,14 +63,14 @@ tune_abund_gam <-
       grid <- dplyr::left_join(grid,families_bank,by="family_call") %>% 
         dplyr::select(family_call,discrete,inter)
     } else if (is.data.frame(grid) & all(names(grid) %in% c("family_call","inter")) & all(grid$family_call %in% families_bank$family_call)) {
-      message("Testing with provided families.")
+      message("Testing with provided grid.")
       grid <- dplyr::left_join(grid,families_bank,by="family_call") %>% 
         select(family_call,discrete,inter)
     } else {
       stop("Grid expected to be a vector of gamlss family calls.")
     }
     
-    comb_id <- paste("comb_", 1:dplyr::select(grid), sep = "")
+    comb_id <- paste("comb_", 1:nrow(grid), sep = "")
     grid <- cbind(comb_id,grid)
     
     # looping the grid
