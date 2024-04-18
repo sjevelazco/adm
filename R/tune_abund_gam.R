@@ -76,8 +76,12 @@ tune_abund_gam <-
     
     cl <- parallel::makeCluster(n_cores)
     doParallel::registerDoParallel(cl)
+    doSNOW::registerDoSNOW(cl)
+    pb <- txtProgressBar(max = nrow(grid), style = 3)
+    progress <- function(n) setTxtProgressBar(pb, n)
+    opts <- list(progress = progress)
     
-    hyper_combinations <- foreach::foreach(i = 1:nrow(grid), .export = c("fit_abund_gam","adm_eval"), .packages = c("dplyr","gamlss")) %dopar% {
+    hyper_combinations <- foreach::foreach(i = 1:nrow(grid), .options.snow = opts, .export = c("fit_abund_gam","adm_eval"), .packages = c("dplyr","gamlss")) %dopar% {
       data_fam <- data
       if (grid[i,"discrete"]==1){
         data_fam[,response] <- round(data[,response])
