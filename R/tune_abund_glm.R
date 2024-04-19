@@ -89,7 +89,7 @@ tune_abund_glm <-
       model <- tryCatch({
         model <-
           fit_abund_glm(
-            data = data,
+            data = data_fam,
             response = response,
             predictors = predictors,
             predictors_f = predictors_f,
@@ -115,10 +115,10 @@ tune_abund_glm <-
     hyper_combinations <- lapply(hyper_combinations, function(x) dplyr::bind_rows(x)) %>% 
       dplyr::bind_rows()
     
-    if ("model$performance" %in% names(hyper_combinations)){
-      hyper_combinations <- hyper_combinations %>% 
-        dplyr::select(-`model$performance`) 
-    }
+    # if ("model$performance" %in% names(hyper_combinations)){
+    #   hyper_combinations <- hyper_combinations %>% 
+    #     dplyr::select(-`model$performance`) 
+    # }
     
     hyper_combinations <- hyper_combinations %>% 
       stats::na.omit()
