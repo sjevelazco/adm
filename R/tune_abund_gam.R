@@ -92,7 +92,7 @@ tune_abund_gam <-
       model <- tryCatch({
         model <-
           fit_abund_gam(
-            data = data,
+            data = data_fam,
             response = response,
             predictors = predictors,
             predictors_f = predictors_f,
@@ -107,7 +107,7 @@ tune_abund_gam <-
         model <- list(performance = "error")
       })
       
-      l <- list(cbind(grid[i,c("comb_id","family_call","inter")], model[, "performance"]))
+      l <- list(cbind(grid[i,c("comb_id","family_call","inter")], model$performance))
       names(l) <- grid[i, "comb_id"]
       l
     }
@@ -117,12 +117,11 @@ tune_abund_gam <-
       dplyr::bind_rows()
     
     hyper_combinations <- hyper_combinations %>% 
-      dplyr::select(-`model$performance`) %>% 
       stats::na.omit()
     
     row.names(hyper_combinations) <- NULL
     
-    ranked_combinations <- dplyr::bind_rows(hyper_combinations, metrics)
+    ranked_combinations <- model_selection(hyper_combinations, metrics)
     
     # fit final model
     
