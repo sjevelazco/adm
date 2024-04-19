@@ -83,7 +83,6 @@ fit_abund_xgt <-
         data = sp_train$data,
         label = sp_train$target[[1]],
         params = list(
-          nrounds = nrounds,
           max_depth = max_depth,
           eta = eta,
           gamma = gamma,
@@ -114,7 +113,6 @@ fit_abund_xgt <-
       data = as.matrix(data[, variables]),
       label = data[, response][[1]],
       params = list(
-        nrounds = nrounds,
         max_depth = max_depth,
         eta = eta,
         gamma = gamma,
@@ -126,6 +124,8 @@ fit_abund_xgt <-
       nrounds = nrounds,
       verbose = 0
     )
+    
+    
 
     # bind predicted evaluation
     eval_partial <- eval_partial %>%
