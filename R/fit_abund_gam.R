@@ -12,7 +12,7 @@
 #' @param method
 #' 
 #' @importFrom dplyr bind_rows pull tibble as_tibble group_by summarise across
-#' @importFrom gamlss gamlss
+#' @importFrom gamlss gamlss pb
 #' @importFrom stats formula sd
 #' 
 #' @return

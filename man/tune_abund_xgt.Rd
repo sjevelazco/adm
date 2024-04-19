@@ -16,7 +16,7 @@ tune_abund_xgt(
   objective,
   metrics = NULL,
   n_cores = 1,
-  verbose = FALSE
+  verbose = TRUE
 )
 }
 \arguments{

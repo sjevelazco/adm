@@ -12,7 +12,10 @@ fit_abund_glm(
   fit_formula = NULL,
   partition,
   predict_part = FALSE,
-  family
+  family,
+  poly,
+  inter_order,
+  verbose = TRUE
 )
 }
 \arguments{
