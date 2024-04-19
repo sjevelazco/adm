@@ -28,24 +28,35 @@ fit_abund_gam <-
            partition,
            predict_part = FALSE,
            family,
-           inter) {
+           inter = "automatic") {
     # Variables
     variables <- dplyr::bind_rows(c(c = predictors, f = predictors_f))
 
     # Formula
     if (is.null(fit_formula)) {
-      formula1 <-
-        paste(c(
-          paste("pb(", predictors, paste0(", inter = ", inter, ")"), collapse = " + ", sep = ""),
-          predictors_f
-        ), collapse = " + ")
-      formula1 <- stats::formula(paste(
-        response, "~", formula1
-      ))
+      if (inter=="automatic"){
+        formula1 <-
+          paste(c(
+            paste("pb(", predictors,")", collapse = " + ", sep = ""),
+            predictors_f
+          ), collapse = " + ")
+        formula1 <- stats::formula(paste(
+          response, "~", formula1
+        ))
+      } else {
+        formula1 <-
+          paste(c(
+            paste("pb(", predictors, paste0(", inter = ", inter, ")"), collapse = " + ", sep = ""),
+            predictors_f
+          ), collapse = " + ")
+        formula1 <- stats::formula(paste(
+          response, "~", formula1
+        ))
+      }
     } else {
       formula1 <- fit_formula
     }
-    
+  
     message(
       "Formula used for model fitting:\n",
       Reduce(paste, deparse(formula1)) %>% gsub(paste("  ", "   ", collapse = "|"), " ", .),
