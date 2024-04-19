@@ -64,7 +64,7 @@ tune_abund_glm <-
       grid <- dplyr::left_join(grid,families_bank,by="family_call") %>% 
         dplyr::select(poly,inter_order,family_call,discrete)
     } else {
-      stop('Grid expected to be any combination between "poly", "inter_order" and "family_call" hyperparameters.')
+      stop("Grid names expected to be 'family_call', 'poly' and 'inter_order'.")
     }
     
     comb_id <- paste("comb_", 1:nrow(grid), sep = "")
@@ -115,10 +115,10 @@ tune_abund_glm <-
     hyper_combinations <- lapply(hyper_combinations, function(x) dplyr::bind_rows(x)) %>% 
       dplyr::bind_rows()
     
-    # if ("model$performance" %in% names(hyper_combinations)){
-    #   hyper_combinations <- hyper_combinations %>% 
-    #     dplyr::select(-`model$performance`) 
-    # }
+    if ("model$performance" %in% names(hyper_combinations)){
+      hyper_combinations <- hyper_combinations %>% 
+        dplyr::select(-`model$performance`) 
+    }
     
     hyper_combinations <- hyper_combinations %>% 
       stats::na.omit()

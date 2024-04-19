@@ -58,7 +58,7 @@ tune_abund_gam <-
     if (is.null(grid)){
       message("Families not provided. Picking recommended families to fit data.")
       family_call <- family_selector(data,response)$family_call
-      inter <- seq(1,2*length(variables),1)
+      inter <- "automatic"
       grid <- expand.grid(family_call = family_call, inter = inter)
       grid <- dplyr::left_join(grid,families_bank,by="family_call") %>% 
         dplyr::select(family_call,discrete,inter)
@@ -67,7 +67,7 @@ tune_abund_gam <-
       grid <- dplyr::left_join(grid,families_bank,by="family_call") %>% 
         select(family_call,discrete,inter)
     } else {
-      stop("Grid expected to be a vector of gamlss family calls.")
+      stop("Grid names expected to be 'family_call' and 'inter'.")
     }
     
     comb_id <- paste("comb_", 1:nrow(grid), sep = "")
@@ -115,6 +115,11 @@ tune_abund_gam <-
     
     hyper_combinations <- lapply(hyper_combinations, function(x) bind_rows(x)) %>% 
       dplyr::bind_rows()
+    
+    if ("model$performance" %in% names(hyper_combinations)){
+      hyper_combinations <- hyper_combinations %>% 
+        dplyr::select(-`model$performance`) 
+    }
     
     hyper_combinations <- hyper_combinations %>% 
       stats::na.omit()
