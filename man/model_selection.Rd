@@ -2,7 +2,7 @@
 % Please edit documentation in R/model_selection.R
 \name{model_selection}
 \alias{model_selection}
-\title{Title TODO}
+\title{Best hyperparameter selection}
 \usage{
 model_selection(hyper_combinations, metrics)
 }
@@ -12,5 +12,5 @@ model_selection(hyper_combinations, metrics)
 \item{metrics}{}
 }
 \description{
-Title TODO
+Best hyperparameter selection
 }

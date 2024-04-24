@@ -1,9 +1,9 @@
-#' Title TODO
+#' Best hyperparameter selection
 #'
 #' @param hyper_combinations 
 #' @param metrics 
 #'
-#' @importFrom dplyr filter select
+#' @importFrom dplyr filter select %>% 
 #'
 #' @return
 #' @export

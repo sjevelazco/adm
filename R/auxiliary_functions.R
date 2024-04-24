@@ -13,6 +13,8 @@
 #' @param raster 
 #' @param size 
 #'
+#' @importFrom terra colFromX rowFromY xFromCol yFromRow rast ext crop
+#'
 #' @return
 #' @export
 #'

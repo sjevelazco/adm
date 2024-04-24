@@ -15,7 +15,7 @@
 #'
 #' @importFrom doParallel registerDoParallel
 #' @importFrom dplyr bind_rows
-#' @importFrom foreach foreach
+#' @importFrom foreach foreach %dopar%
 #' @importFrom parallel makeCluster stopCluster
 #' @importFrom stringr str_extract_all
 #' 
