@@ -2,7 +2,7 @@
 % Please edit documentation in R/generate_cnn_architecture.R
 \name{generate_cnn_architecture}
 \alias{generate_cnn_architecture}
-\title{Title}
+\title{Generate Convolutional Neural Network architecture}
 \usage{
 generate_cnn_architecture(
   number_of_features = 7,
@@ -42,5 +42,5 @@ generate_cnn_architecture(
 \item{verbose}{}
 }
 \description{
-Title
+Generate Convolutional Neural Network architecture
 }

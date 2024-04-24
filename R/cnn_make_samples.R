@@ -7,6 +7,8 @@
 #' @param raster
 #' @param size
 #'
+#' @importFrom terra as.array
+#' 
 #' @return
 #' @export
 #'

@@ -18,6 +18,7 @@
 #' @importFrom dplyr bind_rows pull tibble as_tibble group_by summarise across
 #' @importFrom luz setup set_opt_hparams fit
 #' @importFrom stats sd
+#' @importFrom terra rast
 #' @importFrom torch dataset torch_tensor torch_manual_seed nn_module nn_conv2d nn_linear nnf_relu torch_flatten dataloader nn_l1_loss optim_adam
 #' @importFrom torchvision transform_to_tensor
 #' 

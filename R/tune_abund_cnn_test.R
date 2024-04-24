@@ -17,7 +17,10 @@
 #' @param n_cores 
 #' @param verbose 
 #'
+#' @importFrom doParallel registerDoParallel
 #' @importFrom dplyr bind_rows
+#' @importFrom foreach foreach
+#' @importFrom parallel makeCluster stopCluster
 #' @importFrom stringr str_extract_all
 #' 
 #' @return

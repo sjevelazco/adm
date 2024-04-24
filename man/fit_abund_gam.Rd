@@ -13,7 +13,7 @@ fit_abund_gam(
   partition,
   predict_part = FALSE,
   family,
-  inter
+  inter = "automatic"
 )
 }
 \arguments{

@@ -1,4 +1,4 @@
-#' Title
+#' Generate Convolutional Neural Network architecture
 #'
 #' @param number_of_features 
 #' @param number_of_outputs 

@@ -5,8 +5,8 @@
 #' @param obs numeric. Observed abundance
 #' @param pred numeric. Predicted abundance
 #'
-#' @importFrom stats cor lm sd
 #' @importFrom dplyr as_tibble
+#' @importFrom stats cor lm sd
 #'
 #' @return a tibble with next columns: corr_spear, corr_pear, mae, inter, slope, and pdisp(see details)
 #'

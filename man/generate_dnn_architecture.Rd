@@ -2,7 +2,7 @@
 % Please edit documentation in R/generate_dnn_architecture.R
 \name{generate_dnn_architecture}
 \alias{generate_dnn_architecture}
-\title{Title}
+\title{Generate Deep Neural Network architecture}
 \usage{
 generate_dnn_architecture(
   number_of_features = 7,
@@ -24,5 +24,5 @@ generate_dnn_architecture(
 \item{verbose}{}
 }
 \description{
-Title
+Generate Deep Neural Network architecture
 }
