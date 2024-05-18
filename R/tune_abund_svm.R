@@ -1,5 +1,4 @@
 #' Fit and validate Support Vector Machine models with exploration of hyper-parameters that optimize performance
-
 #'
 #' @param data
 #' @param response
