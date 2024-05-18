@@ -1,7 +1,7 @@
 #' Fit and validate Convolutional Neural Network Model
 #'
 #' @description This function is used to fit a convolutional neural network (CNN) model for abundance.
-#' 
+#'
 #' @param data tibble or data.frame. Database with response, predictors, and partition values
 #' @param response character. Column name with species abundance.
 #' @param predictors character. Vector with the column names of quantitative predictor variables (i.e. continuous variables). Usage predictors = c("temp", "precipt", "sand")
@@ -16,7 +16,7 @@
 #' @param learning_rate numeric. The size of the step taken during the optimization process. Default = 0.01
 #' @param n_epochs numeric. How many times the learning algorithm will work through the training set. Default = 10
 #' @param batch_size numeric. A batch is a subset of the training set used in a single iteration of the training process. The size of each batch is referred to as the batch size. Default = 32
-#' @param nn_module. An optional custom architecture for the CNN model. 
+#' @param nn_module. An optional custom architecture for the CNN model.
 #' 
 #' @importFrom dplyr bind_rows pull tibble as_tibble group_by summarise across
 #' @importFrom luz setup set_opt_hparams fit
@@ -45,7 +45,7 @@ fit_abund_cnn <-
            n_epochs = 10,
            batch_size = 32,
            custom_architecture = NULL) {
-    corr_spear <- pdisp <- NULL
+    self <- corr_spear <- pdisp <- NULL
     # Variables
     variables <- dplyr::bind_rows(c(c = predictors, f = predictors_f))
 
@@ -203,13 +203,13 @@ fit_abund_cnn <-
     full_response_folds <- names(full_samples)[grep("\\.response$", names(full_samples))]
     full_concatened_responses <- list()
     for (fold in full_response_folds) {
-      full_concatened_responses <- c(full_concatened_responses,full_samples[[fold]])
+      full_concatened_responses <- c(full_concatened_responses, full_samples[[fold]])
     }
     
     full_predictors_folds <- names(full_samples)[grep("\\.predictors$", names(full_samples))]
     full_concatened_predictors <- list()
     for (fold in full_predictors_folds) {
-      full_concatened_predictors <- c(full_concatened_predictors,full_samples[[fold]])
+      full_concatened_predictors <- c(full_concatened_predictors, full_samples[[fold]])
     }
     
     
