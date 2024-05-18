@@ -15,7 +15,7 @@
 #' @importFrom dplyr bind_rows pull tibble as_tibble group_by summarise across
 #' @importFrom randomForest randomForest
 #' @importFrom stats formula predict sd
-#' 
+#'
 #' @return
 #'
 #' A list object with:

@@ -13,14 +13,6 @@ generate_dnn_architecture(
 )
 }
 \arguments{
-\item{number_of_features}{}
-
-\item{number_of_outputs}{}
-
-\item{number_of_hidden_layers}{}
-
-\item{hidden_layers_size}{}
-
 \item{verbose}{}
 }
 \description{

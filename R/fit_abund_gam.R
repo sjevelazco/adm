@@ -10,11 +10,11 @@
 #' @param k
 #' @param family
 #' @param method
-#' 
+#'
 #' @importFrom dplyr bind_rows pull tibble as_tibble group_by summarise across
 #' @importFrom gamlss gamlss pb
 #' @importFrom stats formula sd
-#' 
+#'
 #' @return
 #' @export
 #'
@@ -34,10 +34,10 @@ fit_abund_gam <-
 
     # Formula
     if (is.null(fit_formula)) {
-      if (inter=="automatic"){
+      if (inter == "automatic") {
         formula1 <-
           paste(c(
-            paste("pb(", predictors,")", collapse = " + ", sep = ""),
+            paste("pb(", predictors, ")", collapse = " + ", sep = ""),
             predictors_f
           ), collapse = " + ")
         formula1 <- stats::formula(paste(
@@ -56,11 +56,12 @@ fit_abund_gam <-
     } else {
       formula1 <- fit_formula
     }
-  
+
     message(
       "Formula used for model fitting:\n",
       Reduce(paste, deparse(formula1)) %>% gsub(paste("  ", "   ", collapse = "|"), " ", .),
-      "\n")
+      "\n"
+    )
 
     folds <- data %>%
       dplyr::pull(partition) %>%
@@ -78,7 +79,7 @@ fit_abund_gam <-
       model <- gamlss::gamlss(
         formula = formula1,
         family = family,
-        data = train_set, 
+        data = train_set,
         trace = FALSE
       )
 
@@ -93,12 +94,12 @@ fit_abund_gam <-
         part_pred[[j]] <- data.frame(partition = folds[j], observed, predicted = pred)
       }
     }
-    
+
     # fit final model with all data
     full_model <- gamlss::gamlss(
       formula = formula1,
       family = family,
-      data = data, 
+      data = data,
       trace = FALSE
     )
 

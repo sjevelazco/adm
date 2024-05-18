@@ -7,8 +7,6 @@
 model_selection(hyper_combinations, metrics)
 }
 \arguments{
-\item{hyper_combinations}{}
-
 \item{metrics}{}
 }
 \description{

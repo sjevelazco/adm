@@ -19,8 +19,6 @@ tune_abund_gam(
 )
 }
 \arguments{
-\item{data}{}
-
 \item{response}{character. Column name with species abundance data (e.g., 0, 1, 45).}
 
 \item{predictors}{character. Vector with the column names of quantitative predictor variables
@@ -35,14 +33,6 @@ Note that the variables used here must be consistent with those used in
 response, predictors, and predictors_f arguments. Default NULL}
 
 \item{partition}{character. Column name with training and validation partition groups.}
-
-\item{predict_part}{}
-
-\item{grid}{}
-
-\item{metrics}{}
-
-\item{n_cores}{}
 
 \item{verbose}{}
 }
