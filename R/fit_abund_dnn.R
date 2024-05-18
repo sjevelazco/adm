@@ -16,7 +16,7 @@
 #' @importFrom luz setup set_opt_hparams fit
 #' @importFrom stats sd
 #' @importFrom torch dataset torch_tensor torch_manual_seed nn_module nn_linear nnf_relu dataloader nn_l1_loss optim_adam
-#' 
+#'
 #' @return
 #' @export
 #'

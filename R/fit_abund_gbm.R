@@ -14,7 +14,7 @@
 #' @importFrom dplyr bind_rows pull tibble as_tibble group_by summarise across
 #' @importFrom gbm gbm
 #' @importFrom stats formula predict sd
-#' 
+#'
 #' @return
 #'
 #' A list object with:
@@ -44,13 +44,13 @@ fit_abund_gbm <-
            shrinkage = 0.1,
            verbose = TRUE) {
     # Variables
-    if (!is.null(predictors_f)){
+    if (!is.null(predictors_f)) {
       variables <- dplyr::bind_rows(c(c = predictors, f = predictors_f))
     } else {
       variables <- predictors
     }
-    
-    
+
+
     # ---- Formula ----
     if (is.null(fit_formula)) {
       formula1 <- stats::formula(paste(response, "~", paste(c(
@@ -60,71 +60,71 @@ fit_abund_gbm <-
     } else {
       formula1 <- fit_formula
     }
-    
+
     folds <- data %>%
       dplyr::pull(partition) %>%
       unique() %>%
       sort()
-    
+
     # ---- Distribution ----
-    if(distribution == "poisson"){
-      data[,response] <- round(data[,response])
+    if (distribution == "poisson") {
+      data[, response] <- round(data[, response])
     }
-    
+
     eval_partial <- list()
     part_pred <- list()
     for (j in 1:length(folds)) {
-      if(verbose){
+      if (verbose) {
         message("-- Evaluating with fold ", j, "/", length(folds))
       }
-      
+
       train_set <- data[data[, partition] != folds[j], ]
       test_set <- data[data[, partition] == folds[j], ]
-      
+
       #
       part_model <- gbm::gbm(
         formula = formula1,
         data = train_set,
         distribution = distribution,
         n.trees = n.trees,
-        interaction.depth	= interaction.depth,
+        interaction.depth = interaction.depth,
         n.minobsinnode = n.minobsinnode,
         shrinkage = shrinkage,
         bag.fraction = 0.9
       )
-      
+
       #
-      
+
       pred <- stats::predict(part_model, test_set, type = "response")
       observed <- test_set$ind_ha
       eval_partial[[j]] <- dplyr::tibble(
         model = "gbm",
         adm_eval(obs = observed, pred = pred)
       )
-      
+
       if (predict_part) {
         part_pred[[j]] <- data.frame(partition = folds[j], observed, predicted = pred)
       }
     }
-    
+
     # fit final model with all data
     model <- gbm::gbm(
       formula = formula1,
       data = data,
       distribution = distribution,
       n.trees = n.trees,
-      interaction.depth	= interaction.depth,
+      interaction.depth = interaction.depth,
       n.minobsinnode = n.minobsinnode,
       shrinkage = shrinkage,
       bag.fraction = 0.9
     )
-    
-    
+
+
     # bind predicted evaluation
     eval_partial <- eval_partial %>%
       dplyr::bind_rows() %>%
       dplyr::as_tibble()
-    
+
     # bind predicted partition
     if (predict_part) {
       part_pred <- part_pred %>%
@@ -133,7 +133,7 @@ fit_abund_gbm <-
     } else {
       part_pred <- NULL
     }
-    
+
     # Summarize performance
     eval_final <- eval_partial %>%
       dplyr::group_by(model) %>%
@@ -141,7 +141,7 @@ fit_abund_gbm <-
         mean = mean,
         sd = stats::sd
       )), .groups = "drop")
-    
+
     # Final object
     data_list <- list(
       model = model,

@@ -24,25 +24,7 @@ fit_abund_xgt(
 )
 }
 \arguments{
-\item{data}{}
-
-\item{response}{}
-
-\item{predictors}{}
-
-\item{predictors_f}{}
-
-\item{fit_formula}{}
-
-\item{partition}{}
-
-\item{predict_part}{}
-
-\item{nrounds}{}
-
 \item{verbose}{}
-
-\item{params}{}
 }
 \description{
 Fit and validate Extreme Gradient Boosting models
