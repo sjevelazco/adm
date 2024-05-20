@@ -25,8 +25,9 @@ Imports:
     torchvision, 
     gamlss,
     xgboost,
-    tidyr
-Description: Assist in the construction of abundace-based distribution model workflow
+    tidyr,
+    doSNOW
+Description: Assist in the construction of abundance-based distribution model workflow
     by incorporating comprehensive tools for data preparation, model fitting, 
     evaluation, and prediction.
 License: GPL (>= 3)
