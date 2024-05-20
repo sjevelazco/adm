@@ -17,11 +17,12 @@
 #' @param n_cores 
 #' @param verbose 
 #' 
-#' @importFrom doParallel registerDoParallel
+#' @importFrom doSNOW registerDoSNOW
 #' @importFrom dplyr bind_rows left_join select
 #' @importFrom foreach foreach
 #' @importFrom parallel makeCluster stopCluster
 #' @importFrom stats na.omit
+#' @importFrom utils read.delim txtProgressBar setTxtProgressBar
 #' 
 #' @return
 #' @export
@@ -65,7 +66,7 @@ tune_abund_gam <-
     } else if (is.data.frame(grid) & all(names(grid) %in% c("family_call","inter")) & all(grid$family_call %in% families_bank$family_call)) {
       message("Testing with provided grid.")
       grid <- dplyr::left_join(grid,families_bank,by="family_call") %>% 
-        select(family_call,discrete,inter)
+        dplyr::select(family_call,discrete,inter)
     } else {
       stop("Grid names expected to be 'family_call' and 'inter'.")
     }
@@ -77,10 +78,9 @@ tune_abund_gam <-
     message("Searching for optimal hyperparameters...")
     
     cl <- parallel::makeCluster(n_cores)
-    doParallel::registerDoParallel(cl)
     doSNOW::registerDoSNOW(cl)
-    pb <- txtProgressBar(max = nrow(grid), style = 3)
-    progress <- function(n) setTxtProgressBar(pb, n)
+    pb <- utils::txtProgressBar(max = nrow(grid), style = 3)
+    progress <- function(n) utils::setTxtProgressBar(pb, n)
     opts <- list(progress = progress)
     
     hyper_combinations <- foreach::foreach(i = 1:nrow(grid), .options.snow = opts, .export = c("fit_abund_gam","adm_eval"), .packages = c("dplyr","gamlss")) %dopar% {
@@ -113,7 +113,7 @@ tune_abund_gam <-
     }
     parallel::stopCluster(cl)
     
-    hyper_combinations <- lapply(hyper_combinations, function(x) bind_rows(x)) %>% 
+    hyper_combinations <- lapply(hyper_combinations, function(x) dplyr::bind_rows(x)) %>% 
       dplyr::bind_rows()
     
     if ("model$performance" %in% names(hyper_combinations)){

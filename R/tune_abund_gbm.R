@@ -13,10 +13,11 @@
 #' @param n_cores 
 #' @param verbose 
 #'
-#' @importFrom doParallel registerDoParallel
+#' @importFrom doSNOW registerDoSNOW
 #' @importFrom dplyr bind_rows
 #' @importFrom foreach foreach
 #' @importFrom parallel makeCluster stopCluster
+#' @importFrom utils txtProgressBar setTxtProgressBar
 #' 
 #' @return
 #' @export
@@ -77,10 +78,9 @@ tune_abund_gbm <-
     message("Searching for optimal hyperparameters...")
     
     cl <- parallel::makeCluster(n_cores)
-    doParallel::registerDoParallel(cl)
     doSNOW::registerDoSNOW(cl)
-    pb <- txtProgressBar(max = nrow(grid), style = 3)
-    progress <- function(n) setTxtProgressBar(pb, n)
+    pb <- utils::txtProgressBar(max = nrow(grid), style = 3)
+    progress <- function(n) utils::setTxtProgressBar(pb, n)
     opts <- list(progress = progress)
     
     hyper_combinations <- foreach::foreach(i = 1:nrow(grid),.options.snow = opts, .export = c("fit_abund_gbm","adm_eval"), .packages = c("dplyr")) %dopar% {
