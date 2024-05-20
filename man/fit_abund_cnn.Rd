@@ -50,7 +50,9 @@ fit_abund_cnn(
 \item{n_epochs}{numeric. How many times the learning algorithm will work through the training set. Default = 10}
 
 \item{batch_size}{numeric. A batch is a subset of the training set used in a single iteration of the training process. The size of each batch is referred to as the batch size. Default = 32}
+
+\item{nn_module.}{An optional custom architecture for the CNN model.}
 }
 \description{
-Fit and validate Convolutional Neural Network Model
+This function is used to fit a convolutional neural network (CNN) model for abundance.
 }

@@ -7,6 +7,8 @@
 #' @param raster
 #' @param size
 #'
+#' @importFrom terra as.array
+#'
 #' @return
 #' @export
 #'
@@ -22,16 +24,16 @@ cnn_make_samples <- function(df,
   predictors <- list()
   responses <- list()
   for (i in 1:nrow(data)) {
-    pred_x  <- croppin_hood(
+    pred_x <- croppin_hood(
       occ = data[i, ],
       x = x,
       y = y,
       raster = raster,
       size = size
-    ) 
-    pred_x  <- terra::as.array(pred_x)
+    )
+    pred_x <- terra::as.array(pred_x)
 
-    for (j in 1:dim(pred_x )[3]) {
+    for (j in 1:dim(pred_x)[3]) {
       ary <- pred_x[, , j]
       ary <- ifelse(is.na(ary), mean(ary, na.rm = TRUE), ary)
       pred_x[, , j] <- ary

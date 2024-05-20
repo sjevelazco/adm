@@ -48,12 +48,11 @@ tune_abund_raf <-
            metrics = NULL,
            n_cores = 1,
            verbose = FALSE) {
-    
     if (is.null(metrics) |
-        !all(metrics %in% c("corr_spear", "corr_pear", "mae", "inter", "slope", "pdisp"))) {
+      !all(metrics %in% c("corr_spear", "corr_pear", "mae", "inter", "slope", "pdisp"))) {
       stop("Metrics is needed to be defined in 'metric' argument")
     }
-    
+
     # making grid
     if (is.null(grid)) {
       message("Grid not provided. Using the default one for Random Forest.")
@@ -69,7 +68,7 @@ tune_abund_raf <-
     }
 
     comb_id <- paste("comb_", 1:nrow(grid), sep = "")
-    grid <- cbind(comb_id,grid)
+    grid <- cbind(comb_id, grid)
 
     # looping the grid
     message("Searching for optimal hyperparameters...")
@@ -93,15 +92,15 @@ tune_abund_raf <-
           mtry = grid[i, "mtry"],
           ntree = grid[i, "ntree"]
         )
-      l <- list(cbind(grid[i,], model$performance))
+      l <- list(cbind(grid[i, ], model$performance))
       names(l) <- grid[i, "comb_id"]
       l
     }
     parallel::stopCluster(cl)
 
-    hyper_combinations <- lapply(hyper_combinations, function(x) dplyr::bind_rows(x)) %>% 
+    hyper_combinations <- lapply(hyper_combinations, function(x) dplyr::bind_rows(x)) %>%
       dplyr::bind_rows()
-    
+
     ranked_combinations <- model_selection(hyper_combinations, metrics)
 
     # fit final model

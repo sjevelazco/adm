@@ -1,16 +1,16 @@
-#' Title
+#' Generate Convolutional Neural Network architecture
 #'
-#' @param number_of_features 
-#' @param number_of_outputs 
-#' @param sample_size 
-#' @param number_of_conv_layers 
-#' @param conv_layers_size 
-#' @param conv_layers_kernel 
-#' @param conv_layers_stride 
-#' @param conv_layers_padding 
-#' @param number_of_fc_layers 
-#' @param fc_layers_size 
-#' @param verbose 
+#' @param number_of_features
+#' @param number_of_outputs
+#' @param sample_size
+#' @param number_of_conv_layers
+#' @param conv_layers_size
+#' @param conv_layers_kernel
+#' @param conv_layers_stride
+#' @param conv_layers_padding
+#' @param number_of_fc_layers
+#' @param fc_layers_size
+#' @param verbose
 #'
 #' @importFrom torch nn_module nn_conv2d nn_linear nnf_relu torch_flatten torch_manual_seed
 #'
@@ -53,7 +53,7 @@ generate_cnn_architecture <-
 
       conv_layers_definition[[i]] <- layer
     }
-    
+
     # simulates the resolution loss across the convolutional layers
     for (i in 1:number_of_conv_layers) {
       sample_size[[1]] <- ((sample_size[[1]] + (2 * conv_layers_padding[[i]]) - conv_layers_kernel[[i]]) / conv_layers_stride[[i]]) + 1
@@ -118,8 +118,8 @@ generate_cnn_architecture <-
     if (verbose == TRUE) {
       cat(arch)
     }
-    
-    return_list <- list(net=net, arch=arch)
-    
+
+    return_list <- list(net = net, arch = arch)
+
     return(return_list)
   }

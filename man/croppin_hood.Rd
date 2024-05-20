@@ -7,14 +7,6 @@
 croppin_hood(occ, x, y, raster, size)
 }
 \arguments{
-\item{occ}{}
-
-\item{x}{}
-
-\item{y}{}
-
-\item{raster}{}
-
 \item{size}{}
 }
 \description{

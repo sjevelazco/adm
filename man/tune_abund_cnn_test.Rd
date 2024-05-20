@@ -24,35 +24,11 @@ tune_abund_cnn_test(
 )
 }
 \arguments{
-\item{data}{}
-
-\item{response}{}
-
-\item{predictors}{}
-
-\item{predictors_f}{}
-
 \item{x}{character. Column name with longitude data}
 
 \item{y}{character. Column name with latitude data}
 
 \item{rasters}{SpatRaster. Raster with TODO}
-
-\item{crop_size}{}
-
-\item{fit_formula}{}
-
-\item{partition}{}
-
-\item{predict_part}{}
-
-\item{grid}{}
-
-\item{architectures}{}
-
-\item{metrics}{}
-
-\item{n_cores}{}
 
 \item{verbose}{}
 }

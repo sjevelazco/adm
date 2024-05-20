@@ -10,7 +10,7 @@
 #' @param partition character. Column name with training and validation partition groups.
 #' @param predict_part logical. Save predicted abundance for testing data. Default = FALSE
 #' @param family character. The distribution family assumed for the data.
-#' 
+#'
 #' @importFrom dplyr bind_rows pull tibble as_tibble group_by summarise across
 #' @importFrom gamlss gamlss
 #' @importFrom stats formula sd
@@ -26,7 +26,7 @@
 #' \item predicted_part: Observed and predicted abundance for each test partition.
 #' }
 #'
-#' 
+#'
 #' @export
 #'
 #' @examples
@@ -42,7 +42,6 @@ fit_abund_glm <-
            poly,
            inter_order,
            verbose = TRUE) {
-
     # Variables
     variables <- dplyr::bind_rows(c(c = predictors, f = predictors_f))
 
@@ -51,7 +50,7 @@ fit_abund_glm <-
       if (poly >= 2) {
         forpoly <- lapply(2:poly, function(x) {
           paste("I(", predictors, "^", x, ")",
-                sep = "", collapse = " + "
+            sep = "", collapse = " + "
           )
         }) %>% paste(collapse = " + ")
         formula1 <- paste(c(predictors, predictors_f), collapse = " + ") %>%
@@ -60,14 +59,14 @@ fit_abund_glm <-
         formula1 <-
           paste(c(predictors, predictors_f), collapse = " + ")
       }
-      
+
       if (inter_order > 0) {
         forinter <- c(predictors, predictors_f)
         if (inter_order > length(forinter)) {
           stop("value of inter_order is higher than number of predicors ", "(", length(forinter), ")")
         }
         forinter_l <- list()
-        
+
         for (i in 1:inter_order) {
           forinter_l[[i]] <- do.call(
             "expand.grid",
@@ -87,7 +86,7 @@ fit_abund_glm <-
         forinter <- sapply(forinter_l, paste, collapse = " + ")
         forinter <- do.call("paste", c(as.list(forinter), sep = " + "))
       }
-      
+
       if (exists("forinter")) {
         formula1 <- paste(formula1, forinter, sep = " + ")
         formula1 <- stats::formula(paste(
@@ -101,8 +100,8 @@ fit_abund_glm <-
     } else {
       formula1 <- fit_formula
     }
-    
-    if(verbose){
+
+    if (verbose) {
       message(
         "Formula used for model fitting:\n",
         Reduce(paste, deparse(formula1)) %>% gsub(paste("  ", "   ", collapse = "|"), " ", .),
@@ -118,26 +117,26 @@ fit_abund_glm <-
     eval_partial <- list()
     part_pred <- list()
     for (j in 1:length(folds)) {
-      if (verbose){
+      if (verbose) {
         message("-- Evaluating with fold ", j, "/", length(folds))
       }
-      
-      
+
+
       # if (family=="poisson"){
       #   data[, response] <- round(data[, response], 0)
       #   data[, response] <- as.integer(data[[response]])
       # }
-      
+
       train_set <- data[data[, partition] != folds[j], ]
       test_set <- data[data[, partition] == folds[j], ]
-      
+
       model <- gamlss::gamlss(
         formula = formula1,
         family = family,
-        data = train_set, 
+        data = train_set,
         trace = FALSE
       )
-      
+
       pred <- predict(model, newdata = test_set, data = train_set, type = "response")
       observed <- dplyr::pull(test_set, response)
       eval_partial[[j]] <- dplyr::tibble(
@@ -149,12 +148,12 @@ fit_abund_glm <-
         part_pred[[j]] <- data.frame(partition = folds[j], observed, predicted = pred)
       }
     }
-    
+
     # fit final model with all data
     full_model <- gamlss::gamlss(
       formula = formula1,
       family = family,
-      data = data, 
+      data = data,
       trace = FALSE
     )
 

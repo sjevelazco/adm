@@ -5,8 +5,8 @@
 #' @param obs numeric. Observed abundance
 #' @param pred numeric. Predicted abundance
 #'
-#' @importFrom stats cor lm sd
 #' @importFrom dplyr as_tibble
+#' @importFrom stats cor lm sd
 #'
 #' @return a tibble with next columns: corr_spear, corr_pear, mae, inter, slope, and pdisp(see details)
 #'
@@ -29,11 +29,11 @@
 #' @examples
 #' \dontrun{
 #' require(dplyr)
-#' 
-#' pred_a <- c(3, 2, 0, 0, 2, 5, 1, 3, 1, 2, 1, 1, 2, 5, 4, 1, 2, 5, 3, 3, 4, 3, 2, 0, 2, 1, 2, 2, 1, 4, 4, 2, 2, 1, 6, 1, 1, 3, 5, 0, 1, 1,  0, 1, 2)
+#'
+#' pred_a <- c(3, 2, 0, 0, 2, 5, 1, 3, 1, 2, 1, 1, 2, 5, 4, 1, 2, 5, 3, 3, 4, 3, 2, 0, 2, 1, 2, 2, 1, 4, 4, 2, 2, 1, 6, 1, 1, 3, 5, 0, 1, 1, 0, 1, 2)
 #' obs_a <- c(3, 1, 1, 3, 2, 3, 0, 3, 5, 3, 4, 2, 0, 5, 2, 1, 2, 2, 3, 6, 3, 2, 4, 2, 1, 2, 3, 5, 0, 3, 3, 2, 1, 2, 3, 2, 2, 1, 2, 3, 3, 1, 2, 1, 4)
-#' 
-#' adm_eval(obs = obs_a,pred = pred_a)
+#'
+#' adm_eval(obs = obs_a, pred = pred_a)
 #' }
 adm_eval <- function(obs, pred) {
   # Discrimination
