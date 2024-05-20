@@ -11,19 +11,20 @@
 #' Note that the variables used here must be consistent with those used in
 #' response, predictors, and predictors_f arguments. Default NULL
 #' @param partition  character. Column name with training and validation partition groups.
-#' @param predict_part
-#' @param grid
-#' @param metrics
-#' @param n_cores
-#' @param verbose
 #'
-#' @importFrom doParallel registerDoParallel
+#' @param predict_part 
+#' @param grid 
+#' @param metrics 
+#' @param n_cores 
+#' @param verbose 
+#' 
+#' @importFrom doSNOW registerDoSNOW
 #' @importFrom dplyr bind_rows left_join select
 #' @importFrom foreach foreach
 #' @importFrom parallel makeCluster stopCluster
 #' @importFrom stats na.omit
 #' @importFrom utils read.delim txtProgressBar setTxtProgressBar
-#'
+#' 
 #' @return
 #' @export
 #'
@@ -78,8 +79,7 @@ tune_abund_gam <-
     message("Searching for optimal hyperparameters...")
 
     cl <- parallel::makeCluster(n_cores)
-    doParallel::registerDoParallel(cl)
-    # doSNOW::registerDoSNOW(cl)
+    doSNOW::registerDoSNOW(cl)
     pb <- utils::txtProgressBar(max = nrow(grid), style = 3)
     progress <- function(n) utils::setTxtProgressBar(pb, n)
     opts <- list(progress = progress)
@@ -116,8 +116,8 @@ tune_abund_gam <-
       l
     }
     parallel::stopCluster(cl)
-
-    hyper_combinations <- lapply(hyper_combinations, function(x) dplyr::bind_rows(x)) %>%
+    
+    hyper_combinations <- lapply(hyper_combinations, function(x) dplyr::bind_rows(x)) %>% 
       dplyr::bind_rows()
 
     if ("model$performance" %in% names(hyper_combinations)) {
