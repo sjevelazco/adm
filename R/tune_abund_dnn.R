@@ -106,9 +106,12 @@ tune_abund_dnn <-
     message("Searching for optimal hyperparameters...")
 
     cl <- parallel::makeCluster(n_cores)
-    doParallel::registerDoParallel(cl)
+    doSNOW::registerDoSNOW(cl)
+    pb <- utils::txtProgressBar(max = nrow(grid), style = 3)
+    progress <- function(n) utils::setTxtProgressBar(pb, n)
+    opts <- list(progress = progress)
 
-    hyper_combinations <- foreach::foreach(i = 1:nrow(grid), .export = c("fit_abund_dnn", "adm_eval"), .packages = c("dplyr")) %dopar% {
+    hyper_combinations <- foreach::foreach(i = 1:nrow(grid), .options.snow = opts, .export = c("fit_abund_dnn", "adm_eval","nnf_dropout"), .packages = c("dplyr","torch")) %dopar% {
       model <-
         fit_abund_dnn(
           data = data,
@@ -162,16 +165,16 @@ tune_abund_dnn <-
       ranked_combinations[[1]][1, "batch_size"]
     )
 
-    if (ranked_combinations[[1]][1, "arch"] != "fit_intern") {
-      n_layers <- as.numeric(arch_indexes[[1]][1])
-      n_comb <- as.numeric(arch_indexes[[1]][2])
-
-      structure <- arch_dict[[n_layers]][, n_comb]
-      message(
-        "Used a ", n_layers, " hidden layers DNN structured as ",
-        paste0(structure, collapse = "-")
-      )
-    }
+    # if (ranked_combinations[[1]][1, "arch"] != "fit_intern") {
+    #   n_layers <- as.numeric(arch_indexes[[1]][1])
+    #   n_comb <- as.numeric(arch_indexes[[1]][2])
+    # 
+    #   structure <- arch_dict[[n_layers]][, n_comb]
+    #   message(
+    #     "Used a ", n_layers, " hidden layers DNN structured as ",
+    #     paste0(structure, collapse = "-")
+    #   )
+    # }
 
     final_list <- c(final_model, ranked_combinations)
 
