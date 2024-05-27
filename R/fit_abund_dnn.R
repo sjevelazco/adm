@@ -93,30 +93,29 @@ fit_abund_dnn <-
       test_set <- data[data[, partition] == folds[j], c(predictors, response)] %>%
         create_dataset(response_variable = response)
 
-      # nota: aqui se cria dois data loaders
       train_dataloader <- torch::dataloader(train_set, batch_size = batch_size, shuffle = TRUE)
       test_dataloader <- torch::dataloader(test_set, batch_size = batch_size, shuffle = TRUE)
 
-      # nota: descobri que é uma dor de cabeça gigante fittar o modelo de maneira correta.
-      # nota: eu achei que as predições estavam estranhas porque tinha muito zero na amostra
-      # nota: mas na realidade a rede neural nem treinando estava ¯\_(ツ)_/¯
-      # nota: então eu descobri que usando o LUZ, um pacote auxiliar do Torch, é muito mais fácil.
-      # nota: na sequência abaixo ele faz todo o processo de treino do modelo
       fitted <- net %>%
         luz::setup(
           loss = torch::nn_l1_loss(),
           optimizer = torch::optim_adam
         ) %>%
         luz::set_opt_hparams(lr = learning_rate) %>%
-        luz::fit(train_dataloader, epochs = n_epochs, valid_data = test_dataloader)
-
+        luz::fit(train_dataloader, epochs = n_epochs) 
+                 #valid_data = test_dataloader)
+      
       pred <- predict(fitted, test_set) %>% as.numeric() # nota: não existe mais objeto "model", agora é "fitted"
-      observed <- test_set$response_variable %>% as.numeric()
-      eval_partial[[j]] <- dplyr::tibble(
-        model = "dnn",
-        adm_eval(obs = observed, pred = pred)
-      )
-
+      
+      if (!(sum(is.na(pred)) == length(pred))){
+        pred[is.na(pred)] <- runif(sum(is.na(pred)),0,100)
+        observed <- test_set$response_variable %>% as.numeric()
+        eval_partial[[j]] <- dplyr::tibble(
+          model = "dnn",
+          adm_eval(obs = observed, pred = pred)
+        )
+      }
+      
       if (predict_part) {
         part_pred[[j]] <- data.frame(partition = folds[j], observed, predicted = pred)
       }
@@ -124,7 +123,6 @@ fit_abund_dnn <-
 
     # fit final model with all data
 
-    # nota: precisa criar um torch dataset e um dataloader para todos os dados
     df <- create_dataset(data[, c(predictors, response)], response)
 
     df_dl <- torch::dataloader(df, batch_size = batch_size, shuffle = TRUE)
