@@ -155,14 +155,19 @@ tune_abund_dnn <-
       )
 
     arch_indexes <- stringr::str_extract_all(ranked_combinations[[1]][1, "arch"], "\\d+")
-
+    layer_index <- arch_indexes[[1]][[1]]
+    size_index <- arch_indexes[[1]][[2]]
+    
     message(
-      "The best model was a DNN with learning_rate = ",
+      "The best model was a DNN with: \n learning_rate = ",
       ranked_combinations[[1]][1, "learning_rate"],
-      ", n_epochs = ",
+      "\n n_epochs = ",
       ranked_combinations[[1]][1, "n_epochs"],
-      ", batch_size = ",
-      ranked_combinations[[1]][1, "batch_size"]
+      "\n batch_size = ",
+      ranked_combinations[[1]][1, "batch_size"],
+      "\n arch = ",
+      layer_index, " layers with ", 
+      arch_dict[[layer_index %>% as.numeric()]][[size_index %>% as.numeric()]], " neurons "
     )
 
     # if (ranked_combinations[[1]][1, "arch"] != "fit_intern") {
@@ -176,7 +181,13 @@ tune_abund_dnn <-
     #   )
     # }
 
-    final_list <- c(final_model, ranked_combinations)
+    selected_arch <- ranked_combinations[[1]][1, "arch"] %>%
+      as.character()
+    selected_arch <- gsub("arch-", "", selected_arch)
+    selected_arch <- paste0(substr(selected_arch, 1, nchar(selected_arch) - 2), "_layer_net")
+    n_comb <- as.numeric(arch_indexes[[1]][2])
+    
+    final_list <- c(final_model, ranked_combinations, list("selected_arch" = arch_dict[[selected_arch]][, n_comb]))
 
     return(final_list)
   }
