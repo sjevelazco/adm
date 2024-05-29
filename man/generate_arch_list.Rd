@@ -10,6 +10,8 @@ generate_arch_list(
   number_of_outputs,
   n_layers = c(1, 2),
   n_neurons = c(7),
+  batch_norm = TRUE,
+  dropout = 0.2,
   sample_size = c(11, 11),
   number_of_fc_layers = 1,
   fc_layers_size = c(14)

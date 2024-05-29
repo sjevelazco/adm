@@ -34,6 +34,14 @@ response, predictors, and predictors_f arguments. Default NULL}
 
 \item{partition}{character. Column name with training and validation partition groups.}
 
+\item{predict_part}{}
+
+\item{grid}{}
+
+\item{metrics}{}
+
+\item{n_cores}{}
+
 \item{verbose}{}
 }
 \description{
