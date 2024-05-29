@@ -51,7 +51,7 @@ tune_abund_dnn <-
         )
         arch_list <- architectures$arch_list
         arch_dict <- architectures$arch_dict
-      } else if (!all(names(architectures) %in% c("arch_list", "arch_dict"))) {
+      } else if (!all(names(architectures) %in% c("arch_list", "arch_dict","changes"))) {
         stop("architectures expected to be a list with two other lists, arch_list and arch_dict, or 'fit_intern'.")
       } else {
         arch_list <- architectures$arch_list
@@ -134,6 +134,12 @@ tune_abund_dnn <-
 
     hyper_combinations <- lapply(hyper_combinations, function(x) dplyr::bind_rows(x)) %>%
       dplyr::bind_rows()
+    
+    for (i in 1:ncol(hyper_combinations)) {
+      if (all(is.na(hyper_combinations[[i]]))) {
+        stop(paste0("The net was unable to fit the data. Try changing the hyperparameters."))
+      }
+    }
 
     ranked_combinations <- model_selection(hyper_combinations, metrics)
 
@@ -155,7 +161,8 @@ tune_abund_dnn <-
       )
 
     arch_indexes <- stringr::str_extract_all(ranked_combinations[[1]][1, "arch"], "\\d+")
-    layer_index <- arch_indexes[[1]][[1]]
+    n_layers <- arch_indexes[[1]][[1]]
+    layer_index <- paste0(n_layers,"_layer_net")
     size_index <- arch_indexes[[1]][[2]]
     
     message(
@@ -166,8 +173,8 @@ tune_abund_dnn <-
       "\n batch_size = ",
       ranked_combinations[[1]][1, "batch_size"],
       "\n arch = ",
-      layer_index, " layers with ", 
-      arch_dict[[layer_index %>% as.numeric()]][[size_index %>% as.numeric()]], " neurons "
+      n_layers, " layers with ", 
+      paste(arch_dict[[layer_index]][,size_index %>% as.numeric()], collapse = "->"), " neurons "
     )
 
     # if (ranked_combinations[[1]][1, "arch"] != "fit_intern") {

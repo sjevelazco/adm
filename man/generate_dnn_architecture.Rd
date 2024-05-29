@@ -9,6 +9,8 @@ generate_dnn_architecture(
   number_of_outputs = 1,
   number_of_hidden_layers = 2,
   hidden_layers_size = c(14, 7),
+  batch_norm = TRUE,
+  dropout = 0.2,
   verbose = FALSE
 )
 }
