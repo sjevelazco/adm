@@ -37,6 +37,7 @@ model_selection <- function(hyper_combinations, metrics) {
   while (nrow(hyper_combinations) > 1) {
     for (i in perf_means) {
       hyper_combinations <- hyper_combinations[which(hyper_combinations[i] >= summary(hyper_combinations[[i]])[5]), ]
+      hyper_combinations <- hyper_combinations[!duplicated(hyper_combinations[,perf_means]), ]
       if (nrow(hyper_combinations == 1)) {
         break
       }
