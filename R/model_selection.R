@@ -38,12 +38,13 @@ model_selection <- function(hyper_combinations, metrics) {
     for (i in perf_means) {
       hyper_combinations <- hyper_combinations[which(hyper_combinations[i] >= summary(hyper_combinations[[i]])[5]), ]
       hyper_combinations <- hyper_combinations[!duplicated(hyper_combinations[,perf_means] %>% round(digits = 4)), ]
-      if (nrow(hyper_combinations == 1)) {
+      if (nrow(hyper_combinations) == 1) {
         break
       }
     }
   }
 
+  
   selected_comb <- hyper_combinations$comb_id[1]
 
   # not_selected_combinations <- not_selected_combinations %>%
