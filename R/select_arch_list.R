@@ -17,7 +17,7 @@
 select_arch_list <- 
   function(
     arch_list,
-    type = "dnn", #TODO
+    type = c("dnn","cnn"), 
     method = "percentile", #TODO
     n_samples = 1, #TODO
     min_max = TRUE #TODO
@@ -44,10 +44,16 @@ select_arch_list <-
     
     arch_indexes <- stringr::str_extract_all(net_size_df[["arch"]], "\\d+")
     deep <- c()
-    for (x in arch_indexes) {
-      deep <- append(deep, x[[1]] %>% as.numeric()) 
+    if (type == "dnn") {
+      for (x in arch_indexes) {
+        deep <- append(deep, x[[1]] %>% as.numeric()) 
+      }
+    } else if (type == "cnn") {
+      for (x in arch_indexes) {
+        deep <- append(deep, x[[1]] %>% as.numeric() + x[[2]] %>% as.numeric()) 
+      }
     }
-    
+
     net_size_df$deep <- deep
     
     if (min_max){
@@ -97,14 +103,26 @@ select_arch_list <-
     
     layer_classes <- c()
     combination_numbers <- c()
-    for (arch in names(new_arch_list)) {
-      arch_indexes <- stringr::str_extract_all(arch, "\\d+")[[1]] %>% 
-        as.numeric()
-      layer_class <- paste0(arch_indexes[[1]],"_layer_net")
-      combination_number <- arch_indexes[[2]]
-      
-      layer_classes <- append(layer_classes, layer_class)
-      combination_numbers <- append(combination_numbers, combination_number)
+    if (type == "dnn") {
+      for (arch in names(new_arch_list)) {
+        arch_indexes <- stringr::str_extract_all(arch, "\\d+")[[1]] %>% 
+          as.numeric()
+        layer_class <- paste0(arch_indexes[[1]],"_layer_net")
+        combination_number <- arch_indexes[[2]]
+        
+        layer_classes <- append(layer_classes, layer_class)
+        combination_numbers <- append(combination_numbers, combination_number)
+      }
+    } else if (type == "cnn") {
+      for (arch in names(new_arch_list)) {
+        arch_indexes <- stringr::str_extract_all(arch, "\\d+")[[1]] %>% 
+          as.numeric()
+        layer_class <- paste0("conv",arch_indexes[[1]],"-fc",arch_indexes[[2]],"-net")
+        combination_number <- arch_indexes[[3]]
+        
+        layer_classes <- append(layer_classes, layer_class)
+        combination_numbers <- append(combination_numbers, combination_number)
+      }
     }
     
     class_comb_df <- data.frame(
@@ -115,17 +133,31 @@ select_arch_list <-
     classes_df <- list()
     new_arch_dict <- list()
     for (layer_class in unique(class_comb_df$class)) {
-      class_df <- class_comb_df[class_comb_df$class==layer_class,]
-      layer_class_dict <- architectures$arch_dict[[layer_class]][,class_df[["combination"]]] %>%
-        as.matrix() %>%
-        list()
-      
-      class_number <- stringr::str_extract_all(layer_class, "\\d+")[[1]]
-      class_df$new_name <- paste0(paste0("arch-",class_number,"-"), 1:ncol(layer_class_dict[[1]]))
-      classes_df <- append(classes_df,list(class_df))
-      
-      names(layer_class_dict) <- layer_class
-      new_arch_dict <- append(new_arch_dict, layer_class_dict)
+      if (type=="dnn") {
+        class_df <- class_comb_df[class_comb_df$class==layer_class,]
+        layer_class_dict <- architectures$arch_dict[[layer_class]][,class_df[["combination"]]] %>%
+          as.matrix() %>%
+          list()
+        
+        class_number <- stringr::str_extract_all(layer_class, "\\d+")[[1]]
+        class_df$new_name <- paste0(paste0("arch-",class_number,"-"), 1:ncol(layer_class_dict[[1]]))
+        classes_df <- append(classes_df,list(class_df))
+        
+        names(layer_class_dict) <- layer_class
+        new_arch_dict <- append(new_arch_dict, layer_class_dict)
+      } else if (type == "cnn") {
+        class_df <- class_comb_df[class_comb_df$class==layer_class,]
+        layer_class_dict <- architectures$arch_dict[[layer_class]][,class_df[["combination"]]] %>%
+          as.matrix() %>%
+          list()
+        
+        class_number <- stringr::str_extract_all(layer_class, "\\d+")[[1]]
+        class_df$new_name <- paste0(paste0("arch-conv",class_number[[1]],"-fc",class_number[[2]],"-"), 1:ncol(layer_class_dict[[1]]))
+        classes_df <- append(classes_df,list(class_df))
+        
+        names(layer_class_dict) <- layer_class
+        new_arch_dict <- append(new_arch_dict, layer_class_dict)
+      }
     }
     class_comb_df <- dplyr::bind_rows(classes_df) %>%
       dplyr::rename(old_name = name)

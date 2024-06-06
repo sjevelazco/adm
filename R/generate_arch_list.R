@@ -22,11 +22,15 @@ generate_arch_list <-
            number_of_outputs,
            n_layers = c(1, 2),
            n_neurons = c(7),
-           batch_norm = TRUE,
-           dropout = 0.2,
            sample_size = c(11, 11),
            number_of_fc_layers = 1,
-           fc_layers_size = c(14)) {
+           fc_layers_size = c(14),
+           conv_layers_kernel = 3,
+           conv_layers_stride = 1,
+           conv_layers_padding = 0,
+           pooling = TRUE,
+           batch_norm = TRUE,
+           dropout = FALSE) {
     if (type == "dnn") {
       arch_dict <- list()
       for (i in n_layers) {
@@ -141,11 +145,14 @@ generate_arch_list <-
               sample_size = sample_size,
               number_of_conv_layers = number_of_conv_layers,
               conv_layers_size = conv_layers_size,
-              conv_layers_kernel = rep(3, number_of_conv_layers),
-              conv_layers_stride = rep(1, number_of_conv_layers),
-              conv_layers_padding = rep(0, number_of_conv_layers),
+              conv_layers_kernel = conv_layers_kernel,
+              conv_layers_stride = conv_layers_stride,
+              conv_layers_padding = conv_layers_padding,
               number_of_fc_layers = number_of_fc_layers,
               fc_layers_size = fc_layers_size,
+              pooling = pooling,
+              batch_norm = batch_norm,
+              dropout = dropout,
               verbose = FALSE
             )
 
