@@ -57,7 +57,7 @@ tune_abund_cnn <-
         )
         arch_list <- architectures$arch_list
         arch_dict <- architectures$arch_dict
-      } else if (!all(names(architectures) %in% c("arch_list", "arch_dict"))) {
+      } else if (!all(names(architectures) %in% c("arch_list", "arch_dict", "changes"))) {
         stop("architectures expected to be a list with two other lists, arch_list and arch_dict, or 'fit_intern'.")
       } else {
         arch_list <- architectures$arch_list
