@@ -6,7 +6,7 @@
 \usage{
 select_arch_list(
   arch_list,
-  type = "dnn",
+  type = c("dnn", "cnn"),
   method = "percentile",
   n_samples = 1,
   min_max = TRUE

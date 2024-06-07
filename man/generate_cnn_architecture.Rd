@@ -10,11 +10,14 @@ generate_cnn_architecture(
   sample_size = c(11, 11),
   number_of_conv_layers = 2,
   conv_layers_size = c(14, 28),
-  conv_layers_kernel = rep(3, number_of_conv_layers),
-  conv_layers_stride = rep(1, number_of_conv_layers),
-  conv_layers_padding = rep(0, number_of_conv_layers),
+  conv_layers_kernel = 3,
+  conv_layers_stride = 1,
+  conv_layers_padding = 0,
   number_of_fc_layers = 1,
   fc_layers_size = c(28),
+  pooling = FALSE,
+  batch_norm = TRUE,
+  dropout = FALSE,
   verbose = FALSE
 )
 }
