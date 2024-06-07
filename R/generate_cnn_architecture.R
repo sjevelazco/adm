@@ -38,6 +38,10 @@ generate_cnn_architecture <-
       stop("Sample dimension is too small for the choosen configuration.")
     }
     
+    if (pooling & !is.numeric(pooling)){
+      stop("Layer pooling should be a numeric valor describing the pooling kernel size.")
+    }
+    
     ##
     arch <- "net <- torch::nn_module(
   'conv_neural_net',

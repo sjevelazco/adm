@@ -8,7 +8,7 @@
 #' @param predictors_f character. Vector with the column names of qualitative predictor variables (i.e. ordinal or nominal variables type). Usage predictors_f = c("landform")
 #' @param x character. The name of the column containing longitude information for each observation.
 #' @param y character. The name of the column containing latitude information for each observation.
-#' @param rasters a terra SpatRaster object. A raster containing the predictor variables to be cropped around each observation.
+#' @param rasters character. A path to raster containing the predictor variables to be cropped around each observation.
 #' @param crop_size numeric. An integer defining the range of pixels around the observation from the raster object passed to rasters parameter. Default = 5
 #' @param fit_formula formula. A formula object with response and predictor variables (e.g. formula(abund ~ temp + precipt + sand + landform)). Note that the variables used here must be consistent with those used in response, predictors, and predictors_f arguments. Default NULL
 #' @param partition character. Column name with training and validation partition groups.
