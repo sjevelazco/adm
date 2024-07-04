@@ -1,17 +1,17 @@
 #' Fit and validate Extreme Gradient Boosting models with exploration of hyper-parameters that optimize performance
 #'
-#' @param data
-#' @param response
-#' @param predictors
-#' @param predictors_f
-#' @param fit_formula
-#' @param partition
-#' @param predict_part
-#' @param grid
-#' @param objective
-#' @param metrics
-#' @param n_cores
-#' @param verbose
+#' @param data tibble or data.frame. Database with response, predictors, and partition values
+#' @param response character. Column name with species abundance.
+#' @param predictors character. Vector with the column names of quantitative predictor variables (i.e. continuous variables). Usage predictors = c("temp", "precipt", "sand")
+#' @param predictors_f character. Vector with the column names of qualitative predictor variables (i.e. ordinal or nominal variables type). Usage predictors_f = c("landform")
+#' @param fit_formula formula. A formula object with response and predictor variables (e.g. formula(abund ~ temp + precipt + sand + landform)). Note that the variables used here must be consistent with those used in response, predictors, and predictors_f arguments. Default NULL
+#' @param partition character. Column name with training and validation partition groups.
+#' @param predict_part logical. Save predicted abundance for testing data. Default = FALSE
+#' @param grid tibble or data.frame. A dataframe with "n.trees", "interaction.depth", "n.minobsinnode" and "shrinkage" as columns and its values combinations as rows.
+#' @param objective character. The learning task and the corresponding learning objective. Default is "reg:squarederror", regression with squared loss.
+#' @param metrics character. Vector with one or more metrics from c("corr_spear","corr_pear","mae","pdisp","inter","slope").
+#' @param n_cores numeric. Number of cores used in parallel processing.
+#' @param verbose logical. If FALSE, disables all console messages. Default TRUE
 #'
 #' @importFrom doSNOW registerDoSNOW
 #' @importFrom dplyr bind_rows
@@ -20,10 +20,22 @@
 #' @importFrom utils txtProgressBar setTxtProgressBar
 #' 
 #' @return
+#' 
+#' A list object with:
+#' \itemize{
+#' \item model: A "xgb.Booster" object from xgboost package. This object can be used to predicting.
+#' \item predictors: A tibble with quantitative (c column names) and qualitative (f column names) variables use for modeling.
+#' \item performance: A tibble with selected model's performance metrics calculated in adm_eval.
+#' \item performance_part: A tibble with performance metrics for each test partition.
+#' \item predicted_part: A tibble with predicted abundance for each test partition.
+#' \item optimal_combination: A tibble with the selected hyperparameter combination and its performance.
+#' \item all_combinations: A tibble with all hyperparameters combinations and its performance.
+#' }
+#' 
 #' @export
 #'
 #' @examples
-tune_abund_xgt <-
+tune_abund_xgb <-
   function(data,
            response,
            predictors,
@@ -32,7 +44,7 @@ tune_abund_xgt <-
            partition,
            predict_part = FALSE,
            grid = NULL,
-           objective,
+           objective = "reg:squarrederror",
            metrics = NULL,
            n_cores = 1,
            verbose = TRUE) {
@@ -89,9 +101,9 @@ tune_abund_xgt <-
     progress <- function(n) utils::setTxtProgressBar(pb, n)
     opts <- list(progress = progress)
 
-    hyper_combinations <- foreach::foreach(i = 1:nrow(grid), .options.snow = opts, .export = c("fit_abund_xgt", "adm_eval"), .packages = c("dplyr")) %dopar% {
+    hyper_combinations <- foreach::foreach(i = 1:nrow(grid), .options.snow = opts, .export = c("fit_abund_xgb", "adm_eval"), .packages = c("dplyr")) %dopar% {
       model <-
-        fit_abund_xgt(
+        fit_abund_xgb(
           data = data,
           response = response,
           predictors = predictors,
@@ -123,7 +135,7 @@ tune_abund_xgt <-
     # fit final model
     message("Fitting the best model...")
     final_model <-
-      fit_abund_xgt(
+      fit_abund_xgb(
         data = data,
         response = response,
         predictors = predictors,

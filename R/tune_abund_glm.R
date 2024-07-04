@@ -1,16 +1,16 @@
 #' Fit and validate Generalized Linear Models with exploration of hyper-parameters that optimize performance
 #'
-#' @param data
-#' @param response
-#' @param predictors
-#' @param predictors_f
-#' @param fit_formula
-#' @param partition
-#' @param predict_part
-#' @param grid
-#' @param metrics
-#' @param n_cores
-#' @param verbose
+#' @param data tibble or data.frame. Database with response, predictors, and partition values
+#' @param response character. Column name with species abundance.
+#' @param predictors character. Vector with the column names of quantitative predictor variables (i.e. continuous variables). Usage predictors = c("temp", "precipt", "sand")
+#' @param predictors_f character. Vector with the column names of qualitative predictor variables (i.e. ordinal or nominal variables type). Usage predictors_f = c("landform")
+#' @param fit_formula formula. A formula object with response and predictor variables (e.g. formula(abund ~ temp + precipt + sand + landform)). Note that the variables used here must be consistent with those used in response, predictors, and predictors_f arguments. Default NULL
+#' @param partition character. Column name with training and validation partition groups.
+#' @param predict_part logical. Save predicted abundance for testing data. Default = FALSE
+#' @param grid tibble or data.frame. A dataframe with "family_call", "poly", "inter_order" as columns and its values combinations as rows.
+#' @param metrics character. Vector with one or more metrics from c("corr_spear","corr_pear","mae","pdisp","inter","slope").
+#' @param n_cores numeric. Number of cores used in parallel processing.
+#' @param verbose logical. If FALSE, disables all console messages. Default TRUE
 #'
 #' @importFrom doSNOW registerDoSNOW
 #' @importFrom dplyr bind_rows left_join select
@@ -20,6 +20,18 @@
 #' @importFrom utils read.delim txtProgressBar setTxtProgressBar
 #' 
 #' @return
+#' 
+#' A list object with:
+#' \itemize{
+#' \item model: A "gamlss" object from gamlss package. This object can be used to predicting.
+#' \item predictors: A tibble with quantitative (c column names) and qualitative (f column names) variables use for modeling.
+#' \item performance: A tibble with selected model's performance metrics calculated in adm_eval.
+#' \item performance_part: A tibble with performance metrics for each test partition.
+#' \item predicted_part: A tibble with predicted abundance for each test partition.
+#' \item optimal_combination: A tibble with the selected hyperparameter combination and its performance.
+#' \item all_combinations: A tibble with all hyperparameters combinations and its performance.
+#' }
+#' 
 #' @export
 #'
 #' @examples

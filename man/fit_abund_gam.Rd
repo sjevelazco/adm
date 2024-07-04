@@ -17,7 +17,35 @@ fit_abund_gam(
 )
 }
 \arguments{
-\item{method}{}
+\item{data}{tibble or data.frame. Database with response, predictors, and partition values}
+
+\item{response}{character. Column name with species abundance.}
+
+\item{predictors}{character. Vector with the column names of quantitative predictor variables (i.e. continuous variables). Usage predictors = c("temp", "precipt", "sand")}
+
+\item{predictors_f}{character. Vector with the column names of qualitative predictor variables (i.e. ordinal or nominal variables type). Usage predictors_f = c("landform")}
+
+\item{fit_formula}{formula. A formula object with response and predictor variables (e.g. formula(abund ~ temp + precipt + sand + landform)). Note that the variables used here must be consistent with those used in response, predictors, and predictors_f arguments. Default NULL}
+
+\item{partition}{character. Column name with training and validation partition groups.}
+
+\item{predict_part}{logical. Save predicted abundance for testing data. Default = FALSE}
+
+\item{family}{character. A string specifying the distribution to be used. See gamlss::gamlss documentation for details.}
+
+\item{inter}{integer. Number of knots in x-axis. Default "automatic"}
+
+\item{verbose}{logical. If FALSE, disables all console messages. Default TRUE}
+}
+\value{
+A list object with:
+\itemize{
+\item model: A "gamlss" class object from gamlss package. This object can be used for predicting.
+\item predictors: A tibble with quantitative (c column names) and qualitative (f column names) variables use for modeling.
+\item performance: Averaged performance metrics (see \code{\link{adm_eval}}).
+\item performance_part: Performance metrics for each partition.
+\item predicted_part: Observed and predicted abundance for each test partition.
+}
 }
 \description{
 Fit and validate Generalized Additive Models

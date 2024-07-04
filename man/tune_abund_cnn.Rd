@@ -24,13 +24,50 @@ tune_abund_cnn(
 )
 }
 \arguments{
-\item{x}{character. Column name with longitude data}
+\item{data}{tibble or data.frame. Database with response, predictors, and partition values}
 
-\item{y}{character. Column name with latitude data}
+\item{response}{character. Column name with species abundance.}
 
-\item{rasters}{SpatRaster. Raster with TODO}
+\item{predictors}{character. Vector with the column names of quantitative predictor variables (i.e. continuous variables). Usage predictors = c("temp", "precipt", "sand")}
 
-\item{verbose}{}
+\item{predictors_f}{character. Vector with the column names of qualitative predictor variables (i.e. ordinal or nominal variables type). Usage predictors_f = c("landform")}
+
+\item{x}{character. Column name with longitude data.}
+
+\item{y}{character. Column name with latitude data.}
+
+\item{rasters}{character. Path to the raster file of environmental variables.}
+
+\item{crop_size}{numeric. The size, in pixels, of raster samples. See cnn_make_samples beforehand. Default 5}
+
+\item{fit_formula}{formula. A formula object with response and predictor variables (e.g. formula(abund ~ temp + precipt + sand + landform)). Note that the variables used here must be consistent with those used in response, predictors, and predictors_f arguments. Default NULL}
+
+\item{partition}{character. Column name with training and validation partition groups.}
+
+\item{predict_part}{logical. Save predicted abundance for testing data. Default = FALSE}
+
+\item{grid}{tibble or data.frame. A dataframe with "batch_size", "n_epochs", "learning_rate" as columns and its values combinations as rows.}
+
+\item{architectures}{list or character. A list object containing a list of architectures (nn_modules_generators from torch), called "arch_list", and a list of matrices describing each architecture, called ("arch_dict"); use generate_arch_list function to create it. It's also possible to use "fit_intern", what will construct the default neural network architecture of fit_abund_cnn. If NULL, a list of architectures will be generated. Default NULL}
+
+\item{metrics}{character. Vector with one or more metrics from c("corr_spear","corr_pear","mae","pdisp","inter","slope").}
+
+\item{n_cores}{numeric. Number of cores used in parallel processing.}
+
+\item{verbose}{logical. If FALSE, disables all console messages. Default TRUE}
+}
+\value{
+A list object with:
+\itemize{
+\item model: A "luz_module_fitted" object from luz (torch framework). This object can be used to predicting.
+\item predictors: A tibble with quantitative (c column names) and qualitative (f column names) variables use for modeling.
+\item performance: A tibble with selected model's performance metrics calculated in adm_eval.
+\item performance_part: A tibble with performance metrics for each test partition.
+\item predicted_part: A tibble with predicted abundance for each test partition.
+\item optimal_combination: A tibble with the selected hyperparameter combination and its performance.
+\item all_combinations: A tibble with all hyperparameters combinations and its performance.
+\item selected_arch: A numeric vector describing the selected architecture layers.
+}
 }
 \description{
 Fit and validate Convolutional Neural Network with exploration of hyper-parameters that optimize performance

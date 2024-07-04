@@ -2,14 +2,15 @@
 #'
 #' @param data tibble or data.frame. Database with response, predictors, and partition values
 #' @param response character. Column name with species abundance.
-#' @param predictors character. Vector with the column names of quantitative
-#' predictor variables (i.e. continuous variables). Usage predictors = c("temp", "precipt", "sand")
-#' @param predictors_f character. Vector with the column names of qualitative predictor
-#' variables (i.e. ordinal or nominal variables type). Usage predictors_f = c("landform")
+#' @param predictors character. Vector with the column names of quantitative predictor variables (i.e. continuous variables). Usage predictors = c("temp", "precipt", "sand")
+#' @param predictors_f character. Vector with the column names of qualitative predictor variables (i.e. ordinal or nominal variables type). Usage predictors_f = c("landform")
 #' @param fit_formula formula. A formula object with response and predictor variables (e.g. formula(abund ~ temp + precipt + sand + landform)). Note that the variables used here must be consistent with those used in response, predictors, and predictors_f arguments. Default NULL
 #' @param partition character. Column name with training and validation partition groups.
-#' @param predict_part logical. Save predicted abundance for testing data. Default = FALSE
-#' @param family character. The distribution family assumed for the data.
+#' @param predict_part logical. Save predicted abundance for testing data. Default is FALSE.
+#' @param family character. A string specifying the distribution to be used. See gamlss::gamlss documentation for details.
+#' @param poly interger >= 2. If used with values >= 2 model will use polynomials for those continuous variables (i.e. used in predictors argument). Default is 0.
+#' @param inter_order interger >= 0. The interaction order between explanatory variables. Default is 0.
+#' @param verbose logical. If FALSE, disables all console messages. Default TRUE
 #'
 #' @importFrom dplyr bind_rows pull tibble as_tibble group_by summarise across
 #' @importFrom gamlss gamlss
@@ -19,7 +20,7 @@
 #'
 #' A list object with:
 #' \itemize{
-#' \item model: A "randomForest" class object from randomForest package. This object can be used for predicting.
+#' \item model: A "gamlss" class object from gamlss package. This object can be used for predicting.
 #' \item predictors: A tibble with quantitative (c column names) and qualitative (f column names) variables use for modeling.
 #' \item performance: Averaged performance metrics (see \code{\link{adm_eval}}).
 #' \item performance_part: Performance metrics for each partition.
@@ -39,8 +40,8 @@ fit_abund_glm <-
            partition,
            predict_part = FALSE,
            family,
-           poly,
-           inter_order,
+           poly = 0,
+           inter_order = 0,
            verbose = TRUE) {
     # Variables
     variables <- dplyr::bind_rows(c(c = predictors, f = predictors_f))

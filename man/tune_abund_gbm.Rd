@@ -20,7 +20,42 @@ tune_abund_gbm(
 )
 }
 \arguments{
-\item{verbose}{}
+\item{data}{tibble or data.frame. Database with response, predictors, and partition values}
+
+\item{response}{character. Column name with species abundance.}
+
+\item{predictors}{character. Vector with the column names of quantitative predictor variables (i.e. continuous variables). Usage predictors = c("temp", "precipt", "sand")}
+
+\item{predictors_f}{character. Vector with the column names of qualitative predictor variables (i.e. ordinal or nominal variables type). Usage predictors_f = c("landform")}
+
+\item{fit_formula}{formula. A formula object with response and predictor variables (e.g. formula(abund ~ temp + precipt + sand + landform)). Note that the variables used here must be consistent with those used in response, predictors, and predictors_f arguments. Default NULL}
+
+\item{partition}{character. Column name with training and validation partition groups.}
+
+\item{predict_part}{logical. Save predicted abundance for testing data. Default = FALSE}
+
+\item{grid}{tibble or data.frame. A dataframe with "n.trees", "interaction.depth", "n.minobsinnode" and "shrinkage" as columns and its values as rows.}
+
+\item{distribution}{character. A string specifying the distribution to be used. See gbm::gbm documentation for details.}
+
+\item{metrics}{character. Vector with one or more metrics from c("corr_spear","corr_pear","mae","pdisp","inter","slope").}
+
+\item{n_cores}{numeric. Number of cores used in parallel processing.}
+
+\item{verbose}{logical. If FALSE, disables all console messages. Default TRUE}
+}
+\value{
+A list object with:
+\itemize{
+\item model: A "gbm" object from gbm package. This object can be used to predicting.
+\item predictors: A tibble with quantitative (c column names) and qualitative (f column names) variables use for modeling.
+\item performance: A tibble with selected model's performance metrics calculated in adm_eval.
+\item performance_part: A tibble with performance metrics for each test partition.
+\item predicted_part: A tibble with predicted abundance for each test partition.
+\item optimal_combination: A tibble with the selected hyperparameter combination and its performance.
+\item all_combinations: A tibble with all hyperparameters combinations and its performance.
+\item selected_arch: A numeric vector describing the selected architecture layers.
+}
 }
 \description{
 Fit and validate Generalized Boosted Regression models with exploration of hyper-parameters that optimize performance
