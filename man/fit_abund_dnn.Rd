@@ -41,6 +41,16 @@ fit_abund_dnn(
 
 \item{custom_architecture}{a Torch nn_module_generator object. A neural network architecture to be used instead of the internal default one. Default NULL}
 }
+\value{
+A list object with:
+\itemize{
+\item model: A "luz_module_fitted" object from luz (torch framework). This object can be used to predicting.
+\item predictors: A tibble with quantitative (c column names) and qualitative (f column names) variables use for modeling.
+\item performance: Averaged performance metrics (see \code{\link{adm_eval}}).
+\item performance_part: Performance metrics for each partition.
+\item predicted_part: Observed and predicted abundance for each test partition.
+}
+}
 \description{
 Fit and validate Deep Neural Network model
 }

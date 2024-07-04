@@ -2,15 +2,14 @@
 #'
 #' @param data tibble or data.frame. Database with response, predictors, and partition values
 #' @param response character. Column name with species abundance.
-#' @param predictors character. Vector with the column names of quantitative
-#' predictor variables (i.e. continuous variables). Usage predictors = c("temp", "precipt", "sand")
-#' @param predictors_f character. Vector with the column names of qualitative predictor
-#' variables (i.e. ordinal or nominal variables type). Usage predictors_f = c("landform")
+#' @param predictors character. Vector with the column names of quantitative predictor variables (i.e. continuous variables). Usage predictors = c("temp", "precipt", "sand")
+#' @param predictors_f character. Vector with the column names of qualitative predictor variables (i.e. ordinal or nominal variables type). Usage predictors_f = c("landform")
 #' @param fit_formula formula. A formula object with response and predictor variables (e.g. formula(abund ~ temp + precipt + sand + landform)). Note that the variables used here must be consistent with those used in response, predictors, and predictors_f arguments. Default NULL
 #' @param partition character. Column name with training and validation partition groups.
-#' @param sigma numeric. Inverse kernel width for the Radial Basis kernel function "rbfdot". Default "automatic".
-#' @param C numeric. Cost of constraints violation, the 'C'-constant of the regularization term in the Lagrange formulation. Default 1
-#' @param predict_part logical. Save predicted abundance for testing data. Default = FALSE
+#' @param predict_part logical. Save predicted abundance for testing data. Default is FALSE.
+#' @param kernel character. A string defining the kernel used in the algorithm. Default is "rbfdot".
+#' @param sigma numeric or character. Either "automatic" (recommended) or the inverse kernel width for the Radial Basis kernel function "rbfdot" and the Laplacian kernel "laplacedot". Default is "automatic".
+#' @param C numeric. Cost of constraints violation. Default is 1.
 #'
 #' @importFrom dplyr pull tibble bind_rows as_tibble group_by summarise across
 #' @importFrom kernlab ksvm predict

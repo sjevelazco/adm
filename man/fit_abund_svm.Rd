@@ -22,21 +22,21 @@ fit_abund_svm(
 
 \item{response}{character. Column name with species abundance.}
 
-\item{predictors}{character. Vector with the column names of quantitative
-predictor variables (i.e. continuous variables). Usage predictors = c("temp", "precipt", "sand")}
+\item{predictors}{character. Vector with the column names of quantitative predictor variables (i.e. continuous variables). Usage predictors = c("temp", "precipt", "sand")}
 
-\item{predictors_f}{character. Vector with the column names of qualitative predictor
-variables (i.e. ordinal or nominal variables type). Usage predictors_f = c("landform")}
+\item{predictors_f}{character. Vector with the column names of qualitative predictor variables (i.e. ordinal or nominal variables type). Usage predictors_f = c("landform")}
 
 \item{fit_formula}{formula. A formula object with response and predictor variables (e.g. formula(abund ~ temp + precipt + sand + landform)). Note that the variables used here must be consistent with those used in response, predictors, and predictors_f arguments. Default NULL}
 
 \item{partition}{character. Column name with training and validation partition groups.}
 
-\item{predict_part}{logical. Save predicted abundance for testing data. Default = FALSE}
+\item{predict_part}{logical. Save predicted abundance for testing data. Default is FALSE.}
 
-\item{sigma}{numeric. Inverse kernel width for the Radial Basis kernel function "rbfdot". Default "automatic".}
+\item{kernel}{character. A string defining the kernel used in the algorithm. Default is "rbfdot".}
 
-\item{C}{numeric. Cost of constraints violation, the 'C'-constant of the regularization term in the Lagrange formulation. Default 1}
+\item{sigma}{numeric or character. Either "automatic" (recommended) or the inverse kernel width for the Radial Basis kernel function "rbfdot" and the Laplacian kernel "laplacedot". Default is "automatic".}
+
+\item{C}{numeric. Cost of constraints violation. Default is 1.}
 }
 \value{
 A list object with:

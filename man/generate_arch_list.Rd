@@ -16,7 +16,7 @@ generate_arch_list(
   conv_layers_kernel = 3,
   conv_layers_stride = 1,
   conv_layers_padding = 0,
-  pooling = TRUE,
+  pooling = FALSE,
   batch_norm = TRUE,
   dropout = FALSE
 )

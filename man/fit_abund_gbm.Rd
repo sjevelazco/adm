@@ -14,7 +14,7 @@ fit_abund_gbm(
   predict_part = FALSE,
   distribution,
   n.trees = 100,
-  interaction.depth = 1,
+  interaction.depth = 5,
   n.minobsinnode = 5,
   shrinkage = 0.1,
   verbose = TRUE
@@ -25,11 +25,9 @@ fit_abund_gbm(
 
 \item{response}{character. Column name with species abundance.}
 
-\item{predictors}{character. Vector with the column names of quantitative
-predictor variables (i.e. continuous variables). Usage predictors = c("temp", "precipt", "sand")}
+\item{predictors}{character. Vector with the column names of quantitative predictor variables (i.e. continuous variables). Usage predictors = c("temp", "precipt", "sand")}
 
-\item{predictors_f}{character. Vector with the column names of qualitative predictor
-variables (i.e. ordinal or nominal variables type). Usage predictors_f = c("landform")}
+\item{predictors_f}{character. Vector with the column names of qualitative predictor variables (i.e. ordinal or nominal variables type). Usage predictors_f = c("landform")}
 
 \item{fit_formula}{formula. A formula object with response and predictor variables (e.g. formula(abund ~ temp + precipt + sand + landform)). Note that the variables used here must be consistent with those used in response, predictors, and predictors_f arguments. Default NULL}
 
@@ -37,12 +35,22 @@ variables (i.e. ordinal or nominal variables type). Usage predictors_f = c("land
 
 \item{predict_part}{logical. Save predicted abundance for testing data. Default = FALSE}
 
-\item{mtry}{numeric. Number of variables randomly sampled as candidates at each split. Default sqrt(length(c(predictors, predictors_f)))}
+\item{distribution}{character. A string specifying the distribution to be used. See gbm::gbm documentation for details.}
+
+\item{n.trees}{integer. The total number of trees to fit.}
+
+\item{interaction.depth}{integer. The maximum depth of each tree. Default 5}
+
+\item{n.minobsinnode}{integer. The minimum number of observations in the terminal nodes of the trees. Default 5}
+
+\item{shrinkage}{numeric. The learning rate of the algorithm. Default 0.1}
+
+\item{verbose}{logical. If FALSE, disables all console messages. Default TRUE}
 }
 \value{
 A list object with:
 \itemize{
-\item model: A "randomForest" class object from randomForest package. This object can be used for predicting.
+\item model: A "gbm" class object from gbm package. This object can be used for predicting.
 \item predictors: A tibble with quantitative (c column names) and qualitative (f column names) variables use for modeling.
 \item performance: Averaged performance metrics (see \code{\link{adm_eval}}).
 \item performance_part: Performance metrics for each partition.

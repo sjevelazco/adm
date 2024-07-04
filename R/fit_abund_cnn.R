@@ -16,7 +16,7 @@
 #' @param learning_rate numeric. The size of the step taken during the optimization process. Default = 0.01
 #' @param n_epochs numeric. How many times the learning algorithm will work through the training set. Default = 10
 #' @param batch_size numeric. A batch is a subset of the training set used in a single iteration of the training process. The size of each batch is referred to as the batch size. Default = 32
-#' @param nn_module. An optional custom architecture for the CNN model.
+#' @param custom_architecture a Torch nn_module_generator object. A neural network architecture to be used instead of the internal default one. Default NULL
 #'
 #' @importFrom dplyr bind_rows pull tibble as_tibble group_by summarise across
 #' @importFrom luz setup set_opt_hparams fit
@@ -26,6 +26,16 @@
 #' @importFrom torchvision transform_to_tensor
 #'
 #' @return
+#' 
+#' A list object with:
+#' \itemize{
+#' \item model: A "luz_module_fitted" object from luz (torch framework). This object can be used to predicting.
+#' \item predictors: A tibble with quantitative (c column names) and qualitative (f column names) variables use for modeling.
+#' \item performance: Averaged performance metrics (see \code{\link{adm_eval}}).
+#' \item performance_part: Performance metrics for each partition.
+#' \item predicted_part: Observed and predicted abundance for each test partition.
+#' }
+#' 
 #' @export
 #'
 #' @examples

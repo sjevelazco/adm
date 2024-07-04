@@ -19,37 +19,39 @@ tune_abund_raf(
 )
 }
 \arguments{
-\item{data}{data.frame. Database with response (i.e., abundance) and predictors values.}
+\item{data}{tibble or data.frame. Database with response, predictors, and partition values}
 
-\item{response}{character. Column name with species abundance data (e.g., 0, 1, 45).}
+\item{response}{character. Column name with species abundance.}
 
-\item{predictors}{character. Vector with the column names of quantitative predictor variables
-(i.e. continuous variables). Usage predictors = c("temperature", "sand", "elevation")}
+\item{predictors}{character. Vector with the column names of quantitative predictor variables (i.e. continuous variables). Usage predictors = c("temp", "precipt", "sand")}
 
-\item{predictors_f}{character. Vector with the column names of qualitative predictor variables
-(i.e. ordinal or nominal variables type). Usage predictors_f = c("landform")}
+\item{predictors_f}{character. Vector with the column names of qualitative predictor variables (i.e. ordinal or nominal variables type). Usage predictors_f = c("landform")}
 
-\item{fit_formula}{formula. A formula object with response and predictor
-variables (e.g. formula(abund ~ temp + sand + pH + landform)).
-Note that the variables used here must be consistent with those used in
-response, predictors, and predictors_f arguments. Default NULL}
+\item{fit_formula}{formula. A formula object with response and predictor variables (e.g. formula(abund ~ temp + precipt + sand + landform)). Note that the variables used here must be consistent with those used in response, predictors, and predictors_f arguments. Default NULL}
 
 \item{partition}{character. Column name with training and validation partition groups.}
 
 \item{predict_part}{logical. Save predicted abundance for testing data. Default = FALSE}
 
-\item{grid}{data.frame. A data frame object with algorithm hyper-parameters values to be tested.
-It is recommended to generate this data.frame with the grid() function. Hyper-parameter needed
-for tuning is 'mtry' and 'ntree'. The maximum mtry cannot exceed the total number of predictors.}
+\item{grid}{tibble or data.frame. A dataframe with "mtry" and "ntree" as columns and its values combinations as rows.}
 
-\item{metrics}{character. Performance metric used for selecting the best
-combination of hyper-parameter values. One or more of the following metrics can be
- used: xxx, xxx, xxx (related to accuracy), xxx, xxx, xxx (related to discrimination)
-xxx, xxx, xxx (related to precision). Usage metrics = c(corr_spear, slope)}
+\item{metrics}{character. Vector with one or more metrics from c("corr_spear","corr_pear","mae","pdisp","inter","slope").}
 
-\item{n_cores}{numeric. Number of cores use for parallelization. Default 1}
+\item{n_cores}{numeric. Number of cores used in parallel processing.}
 
-\item{verbose}{}
+\item{verbose}{logical. If FALSE, disables all console messages. Default TRUE}
+}
+\value{
+A list object with:
+\itemize{
+\item model: A "randomForest" class object from randomForest package. This object can be used for predicting.
+\item predictors: A tibble with quantitative (c column names) and qualitative (f column names) variables use for modeling.
+\item performance: A tibble with selected model's performance metrics calculated in adm_eval.
+\item performance_part: A tibble with performance metrics for each test partition.
+\item predicted_part: A tibble with predicted abundance for each test partition.
+\item optimal_combination: A tibble with the selected hyperparameter combination and its performance.
+\item all_combinations: A tibble with all hyperparameters combinations and its performance.
+}
 }
 \description{
 Fit and validate Random Forest models with exploration of hyper-parameters that optimize performance

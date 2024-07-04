@@ -21,17 +21,15 @@ fit_abund_raf(
 
 \item{response}{character. Column name with species abundance.}
 
-\item{predictors}{character. Vector with the column names of quantitative
-predictor variables (i.e. continuous variables). Usage predictors = c("temp", "precipt", "sand")}
+\item{predictors}{character. Vector with the column names of quantitative predictor variables (i.e. continuous variables). Usage predictors = c("temp", "precipt", "sand")}
 
-\item{predictors_f}{character. Vector with the column names of qualitative predictor
-variables (i.e. ordinal or nominal variables type). Usage predictors_f = c("landform")}
+\item{predictors_f}{character. Vector with the column names of qualitative predictor variables (i.e. ordinal or nominal variables type). Usage predictors_f = c("landform")}
 
 \item{fit_formula}{formula. A formula object with response and predictor variables (e.g. formula(abund ~ temp + precipt + sand + landform)). Note that the variables used here must be consistent with those used in response, predictors, and predictors_f arguments. Default NULL}
 
 \item{partition}{character. Column name with training and validation partition groups.}
 
-\item{predict_part}{logical. Save predicted abundance for testing data. Default = FALSE}
+\item{predict_part}{logical. Save predicted abundance for testing data. Default is FALSE.}
 
 \item{mtry}{numeric. Number of variables randomly sampled as candidates at each split. Default (length(c(predictors, predictors_f))/3)}
 
