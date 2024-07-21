@@ -28,7 +28,7 @@ model_selection <- function(hyper_combinations, metrics) {
   cols_idx <- unlist(performance_dict[metrics])
   perf_means <- performance_var[cols_idx[cols_idx %in% grep("_mean$", performance_var)]]
   if ("pdisp" %in% metrics) {
-    hyper_combinations$pdisp_dist <- ((1 - hyper_combinations$pdisp_mean %>% abs()) * -1)
+    hyper_combinations$pdisp_dist <- (abs(1-hyper_combinations$pdisp_mean)*-1)
     perf_means[which(perf_means == "pdisp_mean")] <- "pdisp_dist"
   }
 
