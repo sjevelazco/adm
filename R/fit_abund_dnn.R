@@ -18,7 +18,7 @@
 #' @importFrom torch dataset torch_tensor torch_manual_seed nn_module nn_linear nnf_relu dataloader nn_l1_loss optim_adam
 #'
 #' @return
-#' 
+#'
 #' A list object with:
 #' \itemize{
 #' \item model: A "luz_module_fitted" object from luz (torch framework). This object can be used to predicting.
@@ -27,7 +27,7 @@
 #' \item performance_part: Performance metrics for each partition.
 #' \item predicted_part: Observed and predicted abundance for each test partition.
 #' }
-#' 
+#'
 #' @export
 #'
 #' @examples
@@ -112,20 +112,20 @@ fit_abund_dnn <-
           optimizer = torch::optim_adam
         ) %>%
         luz::set_opt_hparams(lr = learning_rate) %>%
-        luz::fit(train_dataloader, epochs = n_epochs) 
-                 #valid_data = test_dataloader)
-      
+        luz::fit(train_dataloader, epochs = n_epochs)
+      # valid_data = test_dataloader)
+
       pred <- predict(fitted, test_set) %>% as.numeric() # nota: não existe mais objeto "model", agora é "fitted"
-      
-      if (!(sum(is.na(pred)) == length(pred))){
-        pred[is.na(pred)] <- runif(sum(is.na(pred)),0,100)
+
+      if (!(sum(is.na(pred)) == length(pred))) {
+        pred[is.na(pred)] <- runif(sum(is.na(pred)), 0, 100)
         observed <- test_set$response_variable %>% as.numeric()
         eval_partial[[j]] <- dplyr::tibble(
           model = "dnn",
           adm_eval(obs = observed, pred = pred)
         )
       }
-      
+
       if (predict_part) {
         part_pred[[j]] <- data.frame(partition = folds[j], observed, predicted = pred)
       }

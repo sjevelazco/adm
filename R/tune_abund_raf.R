@@ -17,9 +17,9 @@
 #' @importFrom foreach foreach
 #' @importFrom parallel makeCluster stopCluster
 #' @importFrom utils txtProgressBar setTxtProgressBar
-#' 
+#'
 #' @return
-#' 
+#'
 #' A list object with:
 #' \itemize{
 #' \item model: A "randomForest" class object from randomForest package. This object can be used for predicting.
@@ -30,7 +30,7 @@
 #' \item optimal_combination: A tibble with the selected hyperparameter combination and its performance.
 #' \item all_combinations: A tibble with all hyperparameters combinations and its performance.
 #' }
-#' 
+#'
 #' @export
 #'
 #' @examples
@@ -81,7 +81,7 @@ tune_abund_raf <-
     progress <- function(n) utils::setTxtProgressBar(pb, n)
     opts <- list(progress = progress)
 
-    hyper_combinations <- foreach::foreach(i = 1:nrow(grid), .options.snow = opts, .export = c("fit_abund_raf","adm_eval"), .packages = c("dplyr")) %dopar% {
+    hyper_combinations <- foreach::foreach(i = 1:nrow(grid), .options.snow = opts, .export = c("fit_abund_raf", "adm_eval"), .packages = c("dplyr")) %dopar% {
       model <-
         fit_abund_raf(
           data = data,

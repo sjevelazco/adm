@@ -18,9 +18,9 @@
 #' @importFrom parallel makeCluster stopCluster
 #' @importFrom stats na.omit
 #' @importFrom utils read.delim txtProgressBar setTxtProgressBar
-#' 
+#'
 #' @return
-#' 
+#'
 #' A list object with:
 #' \itemize{
 #' \item model: A "gamlss" object from gamlss package. This object can be used to predicting.
@@ -31,7 +31,7 @@
 #' \item optimal_combination: A tibble with the selected hyperparameter combination and its performance.
 #' \item all_combinations: A tibble with all hyperparameters combinations and its performance.
 #' }
-#' 
+#'
 #' @export
 #'
 #' @examples

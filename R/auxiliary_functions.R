@@ -96,7 +96,7 @@ family_selector <- function(data, response) {
 #' Select probability distributions for GAM and GLM
 #'
 #' @description
-#' 
+#'
 #'
 #'
 #' @param type
@@ -114,13 +114,12 @@ res_calculate <-
            in_res,
            kernel_size,
            stride,
-           padding)
-  {
+           padding) {
     if (type == "layer") {
       out_res <- (((in_res - kernel_size + (2 * padding)) / stride) + 1)
     } else if (type == "pooling") {
       out_res <- floor(in_res / kernel_size)
     }
-    
+
     return(out_res)
   }

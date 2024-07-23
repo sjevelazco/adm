@@ -13,14 +13,6 @@ select_arch_list(
 )
 }
 \arguments{
-\item{arch_list}{}
-
-\item{type}{}
-
-\item{method}{}
-
-\item{n_samples}{}
-
 \item{min_max}{}
 }
 \description{

@@ -11,16 +11,16 @@
 #' @param metrics character. Vector with one or more metrics from c("corr_spear","corr_pear","mae","pdisp","inter","slope").
 #' @param n_cores numeric. Number of cores used in parallel processing.
 #' @param verbose logical. If FALSE, disables all console messages. Default TRUE
-#' 
+#'
 #' @importFrom doSNOW registerDoSNOW
 #' @importFrom dplyr bind_rows left_join select
 #' @importFrom foreach foreach
 #' @importFrom parallel makeCluster stopCluster
 #' @importFrom stats na.omit
 #' @importFrom utils read.delim txtProgressBar setTxtProgressBar
-#' 
+#'
 #' @return
-#' 
+#'
 #' A list object with:
 #' \itemize{
 #' \item model: A "gamlss" object from gamlss package. This object can be used to predicting.
@@ -31,7 +31,7 @@
 #' \item optimal_combination: A tibble with the selected hyperparameter combination and its performance.
 #' \item all_combinations: A tibble with all hyperparameters combinations and its performance.
 #' }
-#' 
+#'
 #' @export
 #'
 #' @examples
@@ -122,8 +122,8 @@ tune_abund_gam <-
       l
     }
     parallel::stopCluster(cl)
-    
-    hyper_combinations <- lapply(hyper_combinations, function(x) dplyr::bind_rows(x)) %>% 
+
+    hyper_combinations <- lapply(hyper_combinations, function(x) dplyr::bind_rows(x)) %>%
       dplyr::bind_rows()
 
     if ("model$performance" %in% names(hyper_combinations)) {

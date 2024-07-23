@@ -8,7 +8,7 @@
 #' @param partition character. Column name with training and validation partition groups.
 #' @param predict_part logical. Save predicted abundance for testing data. Default = FALSE
 #' @param grid tibble or data.frame. A dataframe with "batch_size", "n_epochs", "learning_rate" as columns and its values combinations as rows.
-#' @param architectures list or character. A list object containing a list of architectures (nn_modules_generators from torch), called "arch_list", and a list of matrices describing each architecture, called ("arch_dict"); use generate_arch_list function to create it. It's also possible to use "fit_intern", what will construct the default neural network architecture of fit_abund_dnn. If NULL, a list of architectures will be generated. Default NULL 
+#' @param architectures list or character. A list object containing a list of architectures (nn_modules_generators from torch), called "arch_list", and a list of matrices describing each architecture, called ("arch_dict"); use generate_arch_list function to create it. It's also possible to use "fit_intern", what will construct the default neural network architecture of fit_abund_dnn. If NULL, a list of architectures will be generated. Default NULL
 #' @param metrics character. Vector with one or more metrics from c("corr_spear","corr_pear","mae","pdisp","inter","slope").
 #' @param n_cores numeric. Number of cores used in parallel processing.
 #' @param verbose logical. If FALSE, disables all console messages. Default TRUE
@@ -20,7 +20,7 @@
 #' @importFrom stringr str_extract_all
 #'
 #' @return
-#' 
+#'
 #' A list object with:
 #' \itemize{
 #' \item model: A "luz_module_fitted" object from luz (torch framework). This object can be used to predicting.
@@ -32,8 +32,8 @@
 #' \item all_combinations: A tibble with all hyperparameters combinations and its performance.
 #' \item selected_arch: A numeric vector describing the selected architecture layers.
 #' }
-#' 
-#' 
+#'
+#'
 #' @export
 #'
 #' @examples
@@ -65,7 +65,7 @@ tune_abund_dnn <-
         )
         arch_list <- architectures$arch_list
         arch_dict <- architectures$arch_dict
-      } else if (!all(names(architectures) %in% c("arch_list", "arch_dict","changes"))) {
+      } else if (!all(names(architectures) %in% c("arch_list", "arch_dict", "changes"))) {
         stop("architectures expected to be a list with two other lists, arch_list and arch_dict, or 'fit_intern'.")
       } else {
         arch_list <- architectures$arch_list
@@ -125,7 +125,7 @@ tune_abund_dnn <-
     progress <- function(n) utils::setTxtProgressBar(pb, n)
     opts <- list(progress = progress)
 
-    hyper_combinations <- foreach::foreach(i = 1:nrow(grid), .options.snow = opts, .export = c("fit_abund_dnn", "adm_eval","nnf_dropout"), .packages = c("dplyr","torch")) %dopar% {
+    hyper_combinations <- foreach::foreach(i = 1:nrow(grid), .options.snow = opts, .export = c("fit_abund_dnn", "adm_eval", "nnf_dropout"), .packages = c("dplyr", "torch")) %dopar% {
       model <-
         fit_abund_dnn(
           data = data,
@@ -148,7 +148,7 @@ tune_abund_dnn <-
 
     hyper_combinations <- lapply(hyper_combinations, function(x) dplyr::bind_rows(x)) %>%
       dplyr::bind_rows()
-    
+
     for (i in 1:ncol(hyper_combinations)) {
       if (all(is.na(hyper_combinations[[i]]))) {
         stop(paste0("The net was unable to fit the data. Try changing the hyperparameters."))
@@ -176,9 +176,9 @@ tune_abund_dnn <-
 
     arch_indexes <- stringr::str_extract_all(ranked_combinations[[1]][1, "arch"], "\\d+")
     n_layers <- arch_indexes[[1]][[1]]
-    layer_index <- paste0(n_layers,"_layer_net")
+    layer_index <- paste0(n_layers, "_layer_net")
     size_index <- arch_indexes[[1]][[2]]
-    
+
     message(
       "The best model was a DNN with: \n learning_rate = ",
       ranked_combinations[[1]][1, "learning_rate"],
@@ -187,14 +187,14 @@ tune_abund_dnn <-
       "\n batch_size = ",
       ranked_combinations[[1]][1, "batch_size"],
       "\n arch = ",
-      n_layers, " layers with ", 
-      paste(arch_dict[[layer_index]][,size_index %>% as.numeric()], collapse = "->"), " neurons "
+      n_layers, " layers with ",
+      paste(arch_dict[[layer_index]][, size_index %>% as.numeric()], collapse = "->"), " neurons "
     )
 
     # if (ranked_combinations[[1]][1, "arch"] != "fit_intern") {
     #   n_layers <- as.numeric(arch_indexes[[1]][1])
     #   n_comb <- as.numeric(arch_indexes[[1]][2])
-    # 
+    #
     #   structure <- arch_dict[[n_layers]][, n_comb]
     #   message(
     #     "Used a ", n_layers, " hidden layers DNN structured as ",
@@ -207,7 +207,7 @@ tune_abund_dnn <-
     selected_arch <- gsub("arch-", "", selected_arch)
     selected_arch <- paste0(substr(selected_arch, 1, nchar(selected_arch) - 2), "_layer_net")
     n_comb <- as.numeric(arch_indexes[[1]][2])
-    
+
     final_list <- c(final_model, ranked_combinations, list("selected_arch" = arch_dict[[selected_arch]][, n_comb]))
 
     return(final_list)
