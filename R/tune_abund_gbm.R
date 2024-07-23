@@ -18,9 +18,9 @@
 #' @importFrom foreach foreach
 #' @importFrom parallel makeCluster stopCluster
 #' @importFrom utils txtProgressBar setTxtProgressBar
-#' 
+#'
 #' @return
-#' 
+#'
 #' A list object with:
 #' \itemize{
 #' \item model: A "gbm" object from gbm package. This object can be used to predicting.

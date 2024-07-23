@@ -10,7 +10,7 @@
 #' @param inter integer. Number of knots in x-axis. Default "automatic"
 #' @param family character. A string specifying the distribution to be used. See gamlss::gamlss documentation for details.
 #' @param verbose logical. If FALSE, disables all console messages. Default TRUE
-#' 
+#'
 #' @importFrom dplyr bind_rows pull tibble as_tibble group_by summarise across
 #' @importFrom gamlss gamlss pb
 #' @importFrom stats formula sd
@@ -25,7 +25,7 @@
 #' \item performance_part: Performance metrics for each partition.
 #' \item predicted_part: Observed and predicted abundance for each test partition.
 #' }
-#' 
+#'
 #' @export
 #'
 #' @examples

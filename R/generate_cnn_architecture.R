@@ -34,14 +34,14 @@ generate_cnn_architecture <-
            dropout = FALSE,
            verbose = FALSE) {
     ##
-    if (any(sample_size < (conv_layers_kernel + conv_layers_padding))){
+    if (any(sample_size < (conv_layers_kernel + conv_layers_padding))) {
       stop("Sample dimension is too small for the choosen configuration.")
     }
-    
-    if (pooling & !is.numeric(pooling)){
+
+    if (pooling & !is.numeric(pooling)) {
       stop("Pooling should be a numeric value.")
     }
-    
+
     ##
     arch <- "net <- torch::nn_module(
   'conv_neural_net',
@@ -69,51 +69,52 @@ generate_cnn_architecture <-
 
     # simulates the resolution loss across the convolutional layers
     for (i in 1:number_of_conv_layers) {
-      if (any(sample_size < (conv_layers_kernel + conv_layers_padding))){
+      if (any(sample_size < (conv_layers_kernel + conv_layers_padding))) {
         stop("Sample dimension is too small for the choosen configuration.")
       }
-      
+
       if (is.numeric(pooling)) {
         sample_size[[1]] <- res_calculate(
           "layer",
-          sample_size[[1]], 
-          conv_layers_kernel, 
-          conv_layers_stride, 
+          sample_size[[1]],
+          conv_layers_kernel,
+          conv_layers_stride,
           conv_layers_padding
         )
-        
+
         sample_size[[1]] <- res_calculate(
           "pooling",
-          sample_size[[1]], 
-          pooling)
-        
+          sample_size[[1]],
+          pooling
+        )
+
         sample_size[[2]] <- res_calculate(
           "layer",
-          sample_size[[2]], 
-          conv_layers_kernel, 
-          conv_layers_stride, 
+          sample_size[[2]],
+          conv_layers_kernel,
+          conv_layers_stride,
           conv_layers_padding
         )
-        
+
         sample_size[[2]] <- res_calculate(
           "pooling",
-          sample_size[[2]], 
-          pooling)
-        
+          sample_size[[2]],
+          pooling
+        )
       } else if (!pooling) {
         sample_size[[1]] <- res_calculate(
           "layer",
-          sample_size[[1]], 
-          conv_layers_kernel, 
-          conv_layers_stride, 
+          sample_size[[1]],
+          conv_layers_kernel,
+          conv_layers_stride,
           conv_layers_padding
         )
-        
+
         sample_size[[2]] <- res_calculate(
           "layer",
-          sample_size[[2]], 
-          conv_layers_kernel, 
-          conv_layers_stride, 
+          sample_size[[2]],
+          conv_layers_kernel,
+          conv_layers_stride,
           conv_layers_padding
         )
       }
@@ -145,7 +146,7 @@ generate_cnn_architecture <-
       append(fc_layers_definition) %>%
       append(out_layer) %>%
       paste0(collapse = "")
-    
+
     #
     if (batch_norm) {
       # convolutional layers
@@ -153,15 +154,15 @@ generate_cnn_architecture <-
       for (i in 1:length(batch_normalization_conv)) {
         bn_layer <- batch_normalization_conv[[i]] %>% paste("bn_conv", i, sep = "")
         stripped <- strsplit(bn_layer, split = "")[[1]]
-        
+
         if (i == 1) {
-          bn_layer <- paste(bn_layer, "<-torch::nn_batch_norm2d(num_features=", conv_layers_size[[1]],")", sep = "")
+          bn_layer <- paste(bn_layer, "<-torch::nn_batch_norm2d(num_features=", conv_layers_size[[1]], ")", sep = "")
         } else if (i == number_of_conv_layers) {
           bn_layer <- paste(bn_layer, "<-torch::nn_batch_norm2d(num_features=", conv_layers_size[[length(conv_layers_size)]], ")", sep = "")
         } else {
-          bn_layer <- paste(bn_layer, "<-torch::nn_batch_norm2d(num_features=", conv_layers_size[[i]],")", sep = "")
+          bn_layer <- paste(bn_layer, "<-torch::nn_batch_norm2d(num_features=", conv_layers_size[[i]], ")", sep = "")
         }
-        
+
         batch_normalization_conv[[i]] <- bn_layer
       }
       # fully connected layers
@@ -169,29 +170,29 @@ generate_cnn_architecture <-
       for (i in 1:length(batch_normalization_fc)) {
         bn_layer <- batch_normalization_fc[[i]] %>% paste("bn_linear", i, sep = "")
         stripped <- strsplit(bn_layer, split = "")[[1]]
-        
+
         if (i == 1) {
-          bn_layer <- paste(bn_layer, "<-torch::nn_batch_norm1d(num_features=", fc_layers_size[[1]],")", sep = "")
+          bn_layer <- paste(bn_layer, "<-torch::nn_batch_norm1d(num_features=", fc_layers_size[[1]], ")", sep = "")
         } else if (i == number_of_fc_layers) {
           bn_layer <- paste(bn_layer, "<-torch::nn_batch_norm1d(num_features=", fc_layers_size[[length(fc_layers_size)]], ")", sep = "")
         } else {
-          bn_layer <- paste(bn_layer, "<-torch::nn_batch_norm1d(num_features=", fc_layers_size[[i]],")", sep = "")
+          bn_layer <- paste(bn_layer, "<-torch::nn_batch_norm1d(num_features=", fc_layers_size[[i]], ")", sep = "")
         }
-        
+
         batch_normalization_fc[[i]] <- bn_layer
       }
-      
+
       batch_normalization_conv <- batch_normalization_conv %>%
         paste0(collapse = "")
-      
+
       batch_normalization_fc <- batch_normalization_fc %>%
         paste0(collapse = "")
-      
-      batch_normalization <- paste0(batch_normalization_conv,batch_normalization_fc)
-      #batch_normalization <- paste("{", batch_normalization, "\n  }", sep = "")
-      layers_definition <- paste0(layers_definition,batch_normalization)
+
+      batch_normalization <- paste0(batch_normalization_conv, batch_normalization_fc)
+      # batch_normalization <- paste("{", batch_normalization, "\n  }", sep = "")
+      layers_definition <- paste0(layers_definition, batch_normalization)
     }
-    
+
     layers_definition <- paste("{", layers_definition, "\n  }", sep = "")
     #
 
@@ -199,34 +200,34 @@ generate_cnn_architecture <-
     conv_foward <- c()
     for (i in 1:length(conv_layer_names)) {
       seq <- paste("\n      ", paste(conv_layer_names[i], "()", sep = ""), " %>%\n      torch::nnf_relu() %>%", sep = "")
-      
-      if (batch_norm){
-        seq <- paste0(seq,"\n      self$bn_conv",i,"() %>%")
+
+      if (batch_norm) {
+        seq <- paste0(seq, "\n      self$bn_conv", i, "() %>%")
       }
-      
+
       if (is.numeric(pooling)) {
-        seq <- paste0(seq,"\n      nnf_avg_pool2d(",pooling,") %>%")
+        seq <- paste0(seq, "\n      nnf_avg_pool2d(", pooling, ") %>%")
       }
-      
-      if (dropout & dropout > 0 & dropout < 1 & is.numeric(dropout)){
-        seq <- paste0(seq,"\n      torch::nnf_dropout(p=",dropout,") %>%")
+
+      if (dropout & dropout > 0 & dropout < 1 & is.numeric(dropout)) {
+        seq <- paste0(seq, "\n      torch::nnf_dropout(p=", dropout, ") %>%")
       }
-      
+
       conv_foward <- append(conv_foward, seq)
     }
 
     fc_foward <- c()
     for (i in 1:length(fc_layer_names)) {
       seq <- paste("\n      ", paste(fc_layer_names[i], "()", sep = ""), " %>%\n      torch::nnf_relu() %>%", sep = "")
-      
-      if (batch_norm){
-        seq <- paste0(seq,"\n      self$bn_linear",i,"() %>%")
+
+      if (batch_norm) {
+        seq <- paste0(seq, "\n      self$bn_linear", i, "() %>%")
       }
-      
-      if (dropout & dropout > 0 & dropout < 1 & is.numeric(dropout) & i < length(fc_layer_names)){
-        seq <- paste0(seq,"\n      torch::nnf_dropout(p=",dropout,") %>%")
+
+      if (dropout & dropout > 0 & dropout < 1 & is.numeric(dropout) & i < length(fc_layer_names)) {
+        seq <- paste0(seq, "\n      torch::nnf_dropout(p=", dropout, ") %>%")
       }
-      
+
       fc_foward <- append(fc_foward, seq)
     }
 

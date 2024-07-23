@@ -12,7 +12,7 @@
 #' @param partition character. Column name with training and validation partition groups.
 #' @param predict_part logical. Save predicted abundance for testing data. Default = FALSE
 #' @param grid tibble or data.frame. A dataframe with "batch_size", "n_epochs", "learning_rate" as columns and its values combinations as rows.
-#' @param architectures list or character. A list object containing a list of architectures (nn_modules_generators from torch), called "arch_list", and a list of matrices describing each architecture, called ("arch_dict"); use generate_arch_list function to create it. It's also possible to use "fit_intern", what will construct the default neural network architecture of fit_abund_cnn. If NULL, a list of architectures will be generated. Default NULL 
+#' @param architectures list or character. A list object containing a list of architectures (nn_modules_generators from torch), called "arch_list", and a list of matrices describing each architecture, called ("arch_dict"); use generate_arch_list function to create it. It's also possible to use "fit_intern", what will construct the default neural network architecture of fit_abund_cnn. If NULL, a list of architectures will be generated. Default NULL
 #' @param metrics character. Vector with one or more metrics from c("corr_spear","corr_pear","mae","pdisp","inter","slope").
 #' @param n_cores numeric. Number of cores used in parallel processing.
 #' @param verbose logical. If FALSE, disables all console messages. Default TRUE
@@ -24,7 +24,7 @@
 #' @importFrom stringr str_extract_all
 #'
 #' @return
-#' 
+#'
 #' A list object with:
 #' \itemize{
 #' \item model: A "luz_module_fitted" object from luz (torch framework). This object can be used to predicting.
@@ -36,7 +36,7 @@
 #' \item all_combinations: A tibble with all hyperparameters combinations and its performance.
 #' \item selected_arch: A numeric vector describing the selected architecture layers.
 #' }
-#' 
+#'
 #' @export
 #'
 #' @examples

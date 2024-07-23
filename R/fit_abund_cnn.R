@@ -26,7 +26,7 @@
 #' @importFrom torchvision transform_to_tensor
 #'
 #' @return
-#' 
+#'
 #' A list object with:
 #' \itemize{
 #' \item model: A "luz_module_fitted" object from luz (torch framework). This object can be used to predicting.
@@ -35,7 +35,7 @@
 #' \item performance_part: Performance metrics for each partition.
 #' \item predicted_part: Observed and predicted abundance for each test partition.
 #' }
-#' 
+#'
 #' @export
 #'
 #' @examples

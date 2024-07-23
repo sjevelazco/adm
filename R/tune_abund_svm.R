@@ -17,9 +17,9 @@
 #' @importFrom foreach foreach
 #' @importFrom parallel makeCluster stopCluster
 #' @importFrom utils txtProgressBar setTxtProgressBar
-#' 
+#'
 #' @return
-#' 
+#'
 #' A list object with:
 #' \itemize{
 #' \item model: A "ksvm" class object from kernlab package. This object can be used for predicting.
@@ -95,8 +95,8 @@ tune_abund_svm <-
     pb <- utils::txtProgressBar(max = nrow(grid), style = 3)
     progress <- function(n) utils::setTxtProgressBar(pb, n)
     opts <- list(progress = progress)
-    
-    hyper_combinations <- foreach::foreach(i = 1:nrow(grid), .options.snow = opts, .export = c("fit_abund_svm","adm_eval"), .packages = c("dplyr")) %dopar% {
+
+    hyper_combinations <- foreach::foreach(i = 1:nrow(grid), .options.snow = opts, .export = c("fit_abund_svm", "adm_eval"), .packages = c("dplyr")) %dopar% {
       model <-
         fit_abund_svm(
           data = data,
