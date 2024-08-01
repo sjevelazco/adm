@@ -58,7 +58,7 @@ family_selector <- function(data, response) {
   families_bank <-
     system.file("external/families_bank.txt", package = "adm") %>%
     utils::read.delim(., header = TRUE, quote = "\t")
-
+  
   if (all(round(data[, response]) == data[, response])) {
     # discrete <- TRUE
     message("Response variable is discrete. Both continuous and discrete families will be tested.")
@@ -66,30 +66,36 @@ family_selector <- function(data, response) {
     # discrete <- FALSE
     message("Response variable is continuous and will be rounded in order to test for discrete families.")
   }
-
-  # tests if response data has zeros
+  
+  # response has negative values?
+  if (any(data[,response] < 0)){
+    families_bank <- families_bank %>%
+      filter(accepts_negatives == 1)
+  }
+  
+  # response haz zeros?
   if (any(data[, response] == 0)) {
     families_bank <- families_bank %>%
       dplyr::filter(accepts_zero == 1)
   }
-
-  # tests if response data is inside (0,1) interval
+  
+  # response has ones?
+  if (any(data[, response] == 1)) {
+    families_bank <- families_bank %>%
+      dplyr::filter(accepts_one == 1)
+  }
+  
+  # response has value > 1?
   if (any(data[, response] > 1)) {
     families_bank <- families_bank %>%
       dplyr::filter(one_restricted == 0)
-  } else if (any(data[, response] == 1)) {
-    families_bank <- families_bank %>%
-      dplyr::filter(accepts_one == 1)
-  } else {
-    families_bank <- families_bank %>%
-      dplyr::filter(accepts_one == 0)
   }
-
+  
   testing_families <- families_bank %>%
-    dplyr::select(family_call, discrete)
-
+    dplyr::select(family_name, family_call, range, discrete)
+  
   message("Selected ", nrow(testing_families), " suitable families for the data.")
-
+  
   return(testing_families)
 }
 
