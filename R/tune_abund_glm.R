@@ -108,7 +108,7 @@ tune_abund_glm <-
               fit_formula = fit_formula,
               partition = partition,
               predict_part = predict_part,
-              family = grid[i, "family_call"],
+              distribution = grid[i, "family_call"],
               poly = grid[i, "poly"],
               inter_order = grid[i, "inter_order"],
               verbose = FALSE

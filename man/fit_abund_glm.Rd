@@ -12,7 +12,7 @@ fit_abund_glm(
   fit_formula = NULL,
   partition,
   predict_part = FALSE,
-  family,
+  distribution = NULL,
   poly = 0,
   inter_order = 0,
   verbose = TRUE
@@ -33,11 +33,11 @@ fit_abund_glm(
 
 \item{predict_part}{logical. Save predicted abundance for testing data. Default is FALSE.}
 
-\item{family}{character. A string specifying the distribution to be used. See gamlss::gamlss documentation for details.}
+\item{distribution}{character. A string specifying the distribution to be used. See \link[gamlss.dist]{gamlss.family} documentation for details. Use distribution = gamlss.dist::NO(). Default NULL}
 
-\item{poly}{interger >= 2. If used with values >= 2 model will use polynomials for those continuous variables (i.e. used in predictors argument). Default is 0.}
+\item{poly}{integer >= 2. If used with values >= 2 model will use polynomials for those continuous variables (i.e. used in predictors argument). Default is 0.}
 
-\item{inter_order}{interger >= 0. The interaction order between explanatory variables. Default is 0.}
+\item{inter_order}{integer >= 0. The interaction order between explanatory variables. Default is 0.}
 
 \item{verbose}{logical. If FALSE, disables all console messages. Default TRUE}
 }
@@ -47,7 +47,7 @@ A list object with:
 \item model: A "gamlss" class object from gamlss package. This object can be used for predicting.
 \item predictors: A tibble with quantitative (c column names) and qualitative (f column names) variables use for modeling.
 \item performance: Averaged performance metrics (see \code{\link{adm_eval}}).
-\item performance_part: Performance metrics for each partition.
+\item performance_part: Performance metrics for each replica and partition.
 \item predicted_part: Observed and predicted abundance for each test partition.
 }
 }

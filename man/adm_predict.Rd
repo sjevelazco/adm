@@ -21,7 +21,7 @@ adm_predict(
 \item{pred}{SpatRaster. Raster layer with predictor variables. Names of layers must exactly
 match those used in model fitting.}
 
-\item{nchunk}{interger. Number of chunks to split data used to predict models (i.e., SpatRaster
+\item{nchunk}{integer. Number of chunks to split data used to predict models (i.e., SpatRaster
 used in pred argument). Predicting models in chunks helps reduce memory requirements in cases
 where models are predicted for large scales and high resolution. Default = 1}
 
@@ -70,26 +70,27 @@ continuous or continuous and binary predictions for one or more thresholds
 require(dplyr)
 require(terra)
 
-data("spp")
-somevar <- system.file("external/somevar.tif", package = "flexsdm")
-somevar <- terra::rast(somevar)
+data("sppabund")
+envar <- system.file("external/envar.tif", package = "adm")
+envar <- terra::rast(envar)
 
 # Extract data
-some_sp <- spp \%>\%
-  filter(species == "sp3")
+some_sp <- sppabund \%>\%
+  dplyr::filter(species == "Species one") \%>\% 
+  dplyr::select(species, ind_ha, x,y)
 
 some_sp <-
-  sdm_extract(
+  adm_extract(
     data = some_sp,
     x = "x",
     y = "y",
-    env_layer = somevar
+    env_layer = envar
   )
 
 # Partition
-some_sp <- part_random(
+some_sp <- flexsdm::part_random(
   data = some_sp,
-  pr_ab = "pr_ab",
+  pr_ab = "ind_ha",
   method = c(method = "rep_kfold", folds = 3, replicates = 5)
 )
 
@@ -100,13 +101,12 @@ some_sp <- part_random(
 #                                                          #
 ## \%######################################################\%##
 # Fit some models
-mglm <- fit_glm(
+abund_glm <- fit_abund_gam(
   data = some_sp,
-  response = "pr_ab",
-  predictors = c("CFP_1", "CFP_2", "CFP_3", "CFP_4"),
-  partition = ".part",
-  poly = 2
-)
+  response = "ind_ha",
+  predictors = c("elevation", "sand", "bio3", "bio12"),
+  partition = ".part", 
+  distribution = gamlss.dist::NO())
 mraf <- fit_raf(
   data = some_sp,
   response = "pr_ab",

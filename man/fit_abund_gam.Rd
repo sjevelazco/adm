@@ -12,8 +12,9 @@ fit_abund_gam(
   fit_formula = NULL,
   partition,
   predict_part = FALSE,
-  family,
-  inter = "automatic"
+  distribution = NULL,
+  inter = "automatic",
+  verbose = TRUE
 )
 }
 \arguments{
@@ -31,7 +32,7 @@ fit_abund_gam(
 
 \item{predict_part}{logical. Save predicted abundance for testing data. Default = FALSE}
 
-\item{family}{character. A string specifying the distribution to be used. See gamlss::gamlss documentation for details.}
+\item{distribution}{character. A string specifying the distribution to be used. See \link[gamlss.dist]{gamlss.family} documentation for details. Use distribution = gamlss.dist::NO(). Default NULL}
 
 \item{inter}{integer. Number of knots in x-axis. Default "automatic"}
 
@@ -43,7 +44,7 @@ A list object with:
 \item model: A "gamlss" class object from gamlss package. This object can be used for predicting.
 \item predictors: A tibble with quantitative (c column names) and qualitative (f column names) variables use for modeling.
 \item performance: Averaged performance metrics (see \code{\link{adm_eval}}).
-\item performance_part: Performance metrics for each partition.
+\item performance_part: Performance metrics for each replica and partition.
 \item predicted_part: Observed and predicted abundance for each test partition.
 }
 }
