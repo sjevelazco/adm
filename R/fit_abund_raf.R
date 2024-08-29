@@ -59,7 +59,7 @@ fit_abund_raf <-
     eval_partial <- list()
     part_pred <- list()
     for (j in 1:length(folds)) {
-      # message("-- Evaluating with fold ", j, "/", length(folds))
+      message("-- Partition number ", j, "/", length(folds))
 
       train_set <- data[data[, partition] != folds[j], ]
       test_set <- data[data[, partition] == folds[j], ]

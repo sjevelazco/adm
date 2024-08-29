@@ -131,7 +131,7 @@ fit_abund_cnn <-
     eval_partial <- list()
     part_pred <- list()
     for (j in 1:length(folds)) {
-      message("-- Evaluating with fold ", j, "/", length(folds))
+      message("-- Partition number ", j, "/", length(folds))
 
       train_samples <- samples_list[folds[folds != j]]
       train_samples <- unlist(train_samples, recursive = FALSE)

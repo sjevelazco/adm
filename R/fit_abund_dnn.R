@@ -95,7 +95,7 @@ fit_abund_dnn <-
     eval_partial <- list()
     part_pred <- list()
     for (j in 1:length(folds)) {
-      message("-- Evaluating with fold ", j, "/", length(folds))
+      message("-- Partition number ", j, "/", length(folds))
 
       # nota: nesta parte se cria dois torch datasets, um para treino, outro para teste
       train_set <- data[data[, partition] != folds[j], c(predictors, response)] %>%
