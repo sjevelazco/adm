@@ -44,7 +44,7 @@ A list object with:
 \item model: A "ksvm" class object from kernlab package. This object can be used for predicting.
 \item predictors: A tibble with quantitative (c column names) and qualitative (f column names) variables use for modeling.
 \item performance: Averaged performance metrics (see \code{\link{adm_eval}}).
-\item performance_part: Performance metrics for each partition.
+\item performance_part: Performance metrics for each replica and partition.
 \item predicted_part: Observed and predicted abundance for each test partition.
 }
 }
