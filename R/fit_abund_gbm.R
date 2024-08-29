@@ -78,7 +78,7 @@ fit_abund_gbm <-
     part_pred <- list()
     for (j in 1:length(folds)) {
       if (verbose) {
-        message("-- Evaluating with fold ", j, "/", length(folds))
+        message("-- Partition number ", j, "/", length(folds))
       }
 
       train_set <- data[data[, partition] != folds[j], ]

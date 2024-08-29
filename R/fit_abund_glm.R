@@ -45,6 +45,12 @@ fit_abund_glm <-
            verbose = TRUE) {
     # Variables
     variables <- dplyr::bind_rows(c(c = predictors, f = predictors_f))
+    
+    # Adequate database
+    data <- adapt_df(data = data,
+                     predictors = predictors,
+                     predictors_f = predictors_f)
+    
 
     # TODO Formula
     if (is.null(fit_formula)) {
@@ -109,46 +115,52 @@ fit_abund_glm <-
         "\n"
       )
     }
-
-    folds <- data %>%
-      dplyr::pull(partition) %>%
-      unique() %>%
-      sort()
-
+    
+    np <- ncol(data %>% dplyr::select(dplyr::starts_with(partition)))
+    p_names <- names(data %>% dplyr::select(dplyr::starts_with(partition)))
+    
     eval_partial <- list()
     part_pred <- list()
-    for (j in 1:length(folds)) {
+    
+    for (h in 1:np) {
       if (verbose) {
-        message("-- Evaluating with fold ", j, "/", length(folds))
+        message("Replica number: ", h, "/", np)
       }
-
-
-      # if (family=="poisson"){
-      #   data[, response] <- round(data[, response], 0)
-      #   data[, response] <- as.integer(data[[response]])
-      # }
-
-      train_set <- data[data[, partition] != folds[j], ]
-      test_set <- data[data[, partition] == folds[j], ]
-
-      model <- gamlss::gamlss(
-        formula = formula1,
-        family = family,
-        data = train_set,
-        trace = FALSE
-      )
-
-      pred <- predict(model, newdata = test_set, data = train_set, type = "response")
-      observed <- dplyr::pull(test_set, response)
-      eval_partial[[j]] <- dplyr::tibble(
-        model = "glm",
-        adm_eval(obs = observed, pred = pred)
-      )
-
-      if (predict_part) {
-        part_pred[[j]] <- data.frame(partition = folds[j], observed, predicted = pred)
+      # out <- pre_tr_te(data, p_names, h)
+      
+      folds <- data %>% dplyr::pull(p_names[h]) %>% unique() %>% sort()
+      
+      eval_partial <- as.list(rep(NA, length(folds)))
+      pred_test <- list()
+      
+      for (j in 1:length(folds)) {
+        if (verbose) {
+          message("-- Partition number ", j, "/", length(folds))
+        }
+        
+        train_set <- data[data[, p_names[j]] != folds[j], ]
+        test_set <- data[data[, p_names[j]] == folds[j], ]
+        
+        model <- gamlss::gamlss(
+          formula = formula1,
+          family = family,
+          data = train_set,
+          trace = FALSE
+        )
+        
+        pred <- predict(model, newdata = test_set, data = train_set, type = "response")
+        observed <- dplyr::pull(test_set, response)
+        eval_partial[[j]] <- dplyr::tibble(
+          model = "glm",
+          adm_eval(obs = observed, pred = pred)
+        )
+        
+        if (predict_part) {
+          part_pred[[j]] <- data.frame(partition = folds[j], observed, predicted = pred)
+        }
       }
     }
+    
 
     # fit final model with all data
     full_model <- gamlss::gamlss(

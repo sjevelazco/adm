@@ -4,6 +4,58 @@
 #                                                          #
 ## %######################################################%##
 
+#' adapt_df
+#'
+#' @noRd
+adapt_df <- function(data, predictors, predictors_f){
+  data <- data.frame(data)
+  if (is.null(predictors_f)) {
+    data <- data %>%
+      dplyr::select(dplyr::all_of(response), dplyr::all_of(predictors), dplyr::starts_with(partition))
+    data <- data.frame(data)
+  } else {
+    data <- data %>%
+      dplyr::select(dplyr::all_of(response), dplyr::all_of(predictors), dplyr::all_of(predictors_f), dplyr::starts_with(partition))
+    data <- data.frame(data)
+    for (i in predictors_f) {
+      data[, i] <- as.factor(data[, i])
+    }
+  }
+}
+
+
+#' pre_tr_te
+#'
+#' @noRd
+pre_tr_te <- function(data, p_names, h) {
+  train <- list()
+  test <- list()
+  
+  if (any(c("train", "train-test", "test")
+          %in%
+          unique(data[, p_names[h]]))) {
+    np2 <- 1
+    
+    filt <- grepl("train", data[, p_names[h]])
+    train[[1]] <- data[filt, ] %>%
+      dplyr::select(-p_names[!p_names == p_names[h]])
+    
+    filt <- grepl("test", data[, p_names[h]])
+    test[[1]] <- data[filt, ] %>%
+      dplyr::select(-p_names[!p_names == p_names[h]])
+  } else {
+    np2 <- max(data[p_names[h]])
+    
+    for (i in 1:np2) {
+      train[[i]] <- data[data[p_names[h]] != i, ] %>%
+        dplyr::select(-p_names[!p_names == p_names[h]])
+      
+      test[[i]] <- data[data[p_names[h]] == i, ] %>%
+        dplyr::select(-p_names[!p_names == p_names[h]])
+    }
+  }
+  return(list(train = train, test = test, np2 = np2))
+}
 
 #' Crop rasters to build samples for Convolutional Neural Networks
 #'
