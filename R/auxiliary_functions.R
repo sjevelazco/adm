@@ -7,7 +7,7 @@
 #' adapt_df
 #'
 #' @noRd
-adapt_df <- function(data, predictors, predictors_f){
+adapt_df <- function(data, predictors, predictors_f, response, partition){
   data <- data.frame(data)
   if (is.null(predictors_f)) {
     data <- data %>%
