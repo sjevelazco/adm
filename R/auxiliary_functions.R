@@ -7,8 +7,14 @@
 #' adapt_df
 #'
 #' @noRd
-adapt_df <- function(data, predictors, predictors_f, response, partition){
+adapt_df <- function(data, predictors, predictors_f, response, partition, xy = NULL){
   data <- data.frame(data)
+  if (is.vector(xy)) {
+    xy_cols <- data %>%
+      dplyr::select(dplyr::all_of(xy))
+    xy_cols <- data.frame(xy_cols)
+  }
+  
   if (is.null(predictors_f)) {
     data <- data %>%
       dplyr::select(dplyr::all_of(response), dplyr::all_of(predictors), dplyr::starts_with(partition))
@@ -21,6 +27,12 @@ adapt_df <- function(data, predictors, predictors_f, response, partition){
       data[, i] <- as.factor(data[, i])
     }
   }
+  
+  if (is.vector(xy)) {
+    data <- bind_cols(data,xy_cols)
+  }
+  
+  return(data)
 }
 
 

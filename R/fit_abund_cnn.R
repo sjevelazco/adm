@@ -54,16 +54,44 @@ fit_abund_cnn <-
            learning_rate = 0.01,
            n_epochs = 10,
            batch_size = 32,
-           custom_architecture = NULL) {
+           custom_architecture = NULL,
+           verbose = TRUE) {
     self <- corr_spear <- pdisp <- NULL
     # Variables
-    variables <- dplyr::bind_rows(c(c = predictors, f = predictors_f))
-
-    folds <- data %>%
-      dplyr::pull(partition) %>%
-      unique() %>%
-      sort()
-
+    if (!is.null(predictors_f)) {
+      variables <- dplyr::bind_rows(c(c = predictors, f = predictors_f))
+    } else {
+      variables <- predictors
+    }
+    
+    # Adequate database
+    data <- adapt_df(data = data,
+                     predictors = predictors,
+                     predictors_f = predictors_f,
+                     response = response,
+                     partition = partition,
+                     xy = c("x","y"))
+    
+    # # ---- Formula ----
+    # if (is.null(fit_formula)) {
+    #   formula1 <- stats::formula(paste(response, "~", paste(c(
+    #     predictors,
+    #     predictors_f
+    #   ), collapse = " + ")))
+    # } else {
+    #   formula1 <- fit_formula
+    # }
+    
+    # if (verbose) {
+    #   message(
+    #     "Formula used for model fitting:\n",
+    #     Reduce(paste, deparse(formula1)) %>% gsub(paste("  ", "   ", collapse = "|"), " ", .),
+    #     "\n"
+    #   )
+    # }
+    
+    
+    # create_dataset definition
     create_dataset <- torch::dataset(
       "dataset",
       initialize = function(data_list) {
@@ -79,138 +107,167 @@ fit_abund_cnn <-
         length(self$response_variable)
       }
     )
-
+    
     # loading rasters
     if (class(rasters) %in% "character") {
       rasters <- terra::rast(rasters)
       rasters <- rasters[[c(predictors, predictors_f)]]
+    } else if (class(envar) %in% "SpatRaster") {
+      rasters <- rasters[[c(predictors, predictors_f)]]
     } else {
-      stop("Please, provide a path to the raster file.")
+      stop("Please, provide a SpatRaster object or a path to the raster file.")
     }
-
-    ##
+    
+    # architecture setup
     torch::torch_manual_seed(13)
-
+    
     if (!is.null(custom_architecture)) {
+      if ("arch" %in% names(custom_architecture)){
+        custom_architecture <- custom_architecture$net
+      }
       net <- custom_architecture
     } else {
-      net <- torch::nn_module(
-        "cnn",
-        initialize = function() {
-          self$conv1 <- torch::nn_conv2d(in_channels = 7, out_channels = 14, kernel_size = 3, padding = 0)
-          self$conv2 <- torch::nn_conv2d(in_channels = 14, out_channels = 28, kernel_size = 3, padding = 0)
-          self$fc1 <- torch::nn_linear(in_features = 7 * 7 * 28, out_features = 28)
-          self$fc2 <- torch::nn_linear(in_features = 28, out_features = 1)
-        },
-        forward = function(x) {
-          x %>%
-            self$conv1() %>%
-            torch::nnf_relu() %>%
-            self$conv2() %>%
-            torch::nnf_relu() %>%
-            torch::torch_flatten(start_dim = 2) %>%
-            self$fc1() %>%
-            torch::nnf_relu() %>%
-            self$fc2()
+      net <- generate_cnn_architecture(
+        number_of_features = length(variables),
+        number_of_outputs = 1,
+        sample_size = rep((crop_size*2)+1,2),
+        number_of_conv_layers = 2,
+        conv_layers_size = c(length(variables),length(variables)),
+        conv_layers_kernel = 3,
+        conv_layers_stride = 1,
+        conv_layers_padding = 0,
+        number_of_fc_layers = 1,
+        fc_layers_size = c(length(variables)),
+        pooling = FALSE,
+        batch_norm = TRUE,
+        dropout = FALSE,
+        verbose = FALSE)$net
+    }
+    
+    # Fit models
+    np <- ncol(data %>% dplyr::select(dplyr::starts_with(partition)))
+    p_names <- names(data %>% dplyr::select(dplyr::starts_with(partition)))
+    
+    part_pred_list <- list()
+    eval_partial_list <- list()
+    
+    for (h in 1:np) {
+      if (verbose) {
+        message("Replica number: ", h, "/", np)
+      }
+      # out <- pre_tr_te(data, p_names, h)
+      
+      folds <- data %>% dplyr::pull(p_names[h]) %>% unique() %>% sort()
+      
+      samples_list <- list()
+      for (fold in folds) {
+        fold_mtx <- data[data[, p_names[h]] == fold, c(x, y, response)] %>%
+          cnn_make_samples(x, y, response, rasters, crop_size) %>%
+          list()
+        
+        names(fold_mtx) <- fold
+        
+        samples_list <- append(samples_list, fold_mtx)
+      }
+      
+      eval_partial <- list()
+      pred_test <- list()
+      part_pred <- list()
+      
+      for (j in 1:length(folds)) {
+        if (verbose) {
+          message("-- Partition number ", j, "/", length(folds))
         }
-      )
-    }
-    ##
-    samples_list <- list()
-    for (fold in folds) {
-      fold_mtx <- data[data[, partition] == fold, c(x, y, response)] %>%
-        cnn_make_samples(x, y, response, rasters, crop_size) %>%
-        list()
-
-      names(fold_mtx) <- fold
-
-      samples_list <- append(samples_list, fold_mtx)
-    }
-
-    ##
-    eval_partial <- list()
-    part_pred <- list()
-    for (j in 1:length(folds)) {
-      message("-- Partition number ", j, "/", length(folds))
-
-      train_samples <- samples_list[folds[folds != j]]
-      train_samples <- unlist(train_samples, recursive = FALSE)
-
-      train_response_folds <- names(train_samples)[grep("\\.response$", names(train_samples))]
-      train_concatened_responses <- list()
-      for (fold in train_response_folds) {
-        train_concatened_responses <- c(train_concatened_responses, train_samples[[fold]])
+        
+        train_samples <- samples_list[folds[folds != j]]
+        train_samples <- unlist(train_samples, recursive = FALSE)
+        
+        train_response_folds <- names(train_samples)[grep("\\.response$", names(train_samples))]
+        train_concatened_responses <- list()
+        for (fold in train_response_folds) {
+          train_concatened_responses <- c(train_concatened_responses, train_samples[[fold]])
+        }
+        
+        train_predictors_folds <- names(train_samples)[grep("\\.predictors$", names(train_samples))]
+        train_concatened_predictors <- list()
+        for (fold in train_predictors_folds) {
+          train_concatened_predictors <- c(train_concatened_predictors, train_samples[[fold]])
+        }
+        
+        train_data_list <- list(
+          predictors = train_concatened_predictors,
+          response = train_concatened_responses
+        )
+        
+        train_dataloader <- create_dataset(train_data_list) %>%
+          torch::dataloader(batch_size = batch_size, shuffle = TRUE)
+        
+        
+        test_samples <- samples_list[folds[folds == j]]
+        test_samples <- unlist(test_samples, recursive = FALSE)
+        
+        test_response_folds <- names(test_samples)[grep("\\.response$", names(test_samples))]
+        test_concatened_responses <- list()
+        for (fold in test_response_folds) {
+          test_concatened_responses <- c(test_concatened_responses, test_samples[[fold]])
+        }
+        
+        test_predictors_folds <- names(test_samples)[grep("\\.predictors$", names(test_samples))]
+        test_concatened_predictors <- list()
+        for (fold in test_predictors_folds) {
+          test_concatened_predictors <- c(test_concatened_predictors, test_samples[[fold]])
+        }
+        
+        test_data_list <- list(
+          predictors = test_concatened_predictors,
+          response = test_concatened_responses
+        )
+        
+        test_dataloader <- create_dataset(test_data_list) %>%
+          torch::dataloader(batch_size = batch_size, shuffle = TRUE)
+        
+        # fit model
+        suppressMessages(
+          model <- net %>%
+            luz::setup(
+              loss = torch::nn_l1_loss(),
+              optimizer = torch::optim_adam
+            ) %>%
+            luz::set_opt_hparams(lr = learning_rate) %>%
+            luz::fit(train_dataloader, epochs = n_epochs, valid_data = test_dataloader)
+        )
+        
+        pred <- predict(model, test_dataloader)
+        pred <- pred$to(device = "cpu") 
+        pred <- as.numeric(pred) 
+        observed <- test_dataloader$dataset$response_variable %>% as.numeric()
+        eval_partial[[j]] <- dplyr::tibble(
+          model = "cnn",
+          adm_eval(obs = observed, pred = pred)
+        )
+        
+        if (predict_part) {
+          part_pred[[j]] <- data.frame(partition = folds[j], observed, predicted = pred)
+        }
       }
-
-      train_predictors_folds <- names(train_samples)[grep("\\.predictors$", names(train_samples))]
-      train_concatened_predictors <- list()
-      for (fold in train_predictors_folds) {
-        train_concatened_predictors <- c(train_concatened_predictors, train_samples[[fold]])
-      }
-
-
-      train_data_list <- list(
-        predictors = train_concatened_predictors,
-        response = train_concatened_responses
-      )
-
-      train_dataloader <- create_dataset(train_data_list) %>%
-        torch::dataloader(batch_size = batch_size, shuffle = TRUE)
-
-
-      test_samples <- samples_list[folds[folds == j]]
-      test_samples <- unlist(test_samples, recursive = FALSE)
-
-      test_response_folds <- names(test_samples)[grep("\\.response$", names(test_samples))]
-      test_concatened_responses <- list()
-      for (fold in test_response_folds) {
-        test_concatened_responses <- c(test_concatened_responses, test_samples[[fold]])
-      }
-
-      test_predictors_folds <- names(test_samples)[grep("\\.predictors$", names(test_samples))]
-      test_concatened_predictors <- list()
-      for (fold in test_predictors_folds) {
-        test_concatened_predictors <- c(test_concatened_predictors, test_samples[[fold]])
-      }
-
-
-      test_data_list <- list(
-        predictors = test_concatened_predictors,
-        response = test_concatened_responses
-      )
-
-      test_dataloader <- create_dataset(test_data_list) %>%
-        torch::dataloader(batch_size = batch_size, shuffle = TRUE)
-
-      # fit model
-      suppressMessages(
-        model <- net %>%
-          luz::setup(
-            loss = torch::nn_l1_loss(),
-            optimizer = torch::optim_adam
-          ) %>%
-          luz::set_opt_hparams(lr = learning_rate) %>%
-          luz::fit(train_dataloader, epochs = n_epochs, valid_data = test_dataloader)
-      )
-
-      pred <- predict(model, test_dataloader) # cuda atualization
-      pred <- pred$to(device = "cpu") #
-      pred <- as.numeric(pred) #
-      observed <- test_dataloader$dataset$response_variable %>% as.numeric()
-      eval_partial[[j]] <- dplyr::tibble(
-        model = "cnn",
-        adm_eval(obs = observed, pred = pred)
-      )
-
+      
+      # Create final database with parameter performance
+      names(eval_partial) <- 1:length(folds)
+      eval_partial <-
+        eval_partial[sapply(eval_partial, function(x) !is.null(dim(x)))] %>%
+        dplyr::bind_rows(., .id = "partition")
+      eval_partial_list[[h]] <- eval_partial
+      
       if (predict_part) {
-        part_pred[[j]] <- data.frame(partition = folds[j], observed, predicted = pred)
+        names(part_pred) <- 1:length(folds)
+        part_pred <-
+          part_pred[sapply(part_pred, function(x) !is.null(dim(x)))] %>%
+          dplyr::bind_rows(., .id = "partition")
+        part_pred_list[[h]] <- part_pred
       }
     }
 
     # fit final model with all data
-
-    # nota: precisa criar um torch dataset e um dataloader para todos os dados
-
 
     full_samples <- unlist(samples_list, recursive = FALSE)
 
@@ -235,7 +292,6 @@ fit_abund_cnn <-
     full_dataloader <- create_dataset(full_data_list) %>%
       torch::dataloader(batch_size = batch_size, shuffle = TRUE)
 
-    # nota: na sequência abaixo ele fitta um modelo com todos os dados
     suppressMessages(
       full_model <- net %>%
         luz::setup(
@@ -247,20 +303,19 @@ fit_abund_cnn <-
     )
 
     # bind predicted evaluation
-    eval_partial <- eval_partial %>%
-      dplyr::bind_rows() %>%
+    eval_partial <- eval_partial_list %>%
+      dplyr::bind_rows(.id = "replica") %>%
       dplyr::as_tibble()
-
+    
     # bind predicted partition
     if (predict_part) {
-      part_pred <- part_pred %>%
-        dplyr::bind_rows() %>%
-        dplyr::as_tibble()
+      part_pred <- part_pred_list %>%
+        dplyr::bind_rows(.id = "replica")
     } else {
       part_pred <- NULL
     }
-
-    # Summarize performance
+    
+    # Sumarize performance
     eval_final <- eval_partial %>%
       dplyr::group_by(model) %>%
       dplyr::summarise(dplyr::across(corr_spear:pdisp, list(

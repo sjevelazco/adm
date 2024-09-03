@@ -142,7 +142,6 @@ fit_abund_svm <-
       }
     }
     
-    
     # fit final model with all data
     full_model <- kernlab::ksvm(
       formula1,
@@ -153,7 +152,6 @@ fit_abund_svm <-
       C = C
     )
 
-    
     # bind predicted evaluation
     eval_partial <- eval_partial_list %>%
       dplyr::bind_rows(.id = "replica") %>%
