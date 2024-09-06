@@ -103,8 +103,8 @@ fit_abund_gam <-
           message("-- Partition number ", j, "/", length(folds))
         }
         
-        train_set <- data[data[, p_names[j]] != folds[j], ]
-        test_set <- data[data[, p_names[j]] == folds[j], ]
+        train_set <- data[data[, p_names[h]] != folds[j], ]
+        test_set <- data[data[, p_names[h]] == folds[j], ]
         
         model <- gamlss::gamlss(
           formula = formula1,
