@@ -40,7 +40,6 @@ fit_abund_xgb <-
            response,
            predictors,
            predictors_f,
-           fit_formula = NULL,
            partition,
            predict_part = FALSE,
            nrounds = 100,
