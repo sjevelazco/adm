@@ -48,7 +48,6 @@ fit_abund_cnn <-
            y,
            rasters,
            crop_size = 5,
-           fit_formula = NULL,
            partition,
            predict_part = FALSE,
            learning_rate = 0.01,
@@ -318,10 +317,13 @@ fit_abund_cnn <-
     # Sumarize performance
     eval_final <- eval_partial %>%
       dplyr::group_by(model) %>%
-      dplyr::summarise(dplyr::across(corr_spear:pdisp, list(
-        mean = mean,
-        sd = stats::sd
-      )), .groups = "drop")
+      dplyr::summarise(
+        dplyr::across(c(corr_spear:pdisp), 
+                      list(mean = ~mean(.x, na.rm = TRUE), 
+                           sd = ~sd(.x, na.rm = TRUE)
+                      )), 
+        .groups = "drop"
+      )
 
     # Final object
     data_list <- list(

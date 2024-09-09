@@ -36,7 +36,6 @@ fit_abund_dnn <-
            response,
            predictors,
            predictors_f = NULL,
-           fit_formula = NULL,
            partition,
            predict_part = FALSE,
            learning_rate = 0.01,
@@ -220,10 +219,13 @@ fit_abund_dnn <-
     # Sumarize performance
     eval_final <- eval_partial %>%
       dplyr::group_by(model) %>%
-      dplyr::summarise(dplyr::across(corr_spear:pdisp, list(
-        mean = mean,
-        sd = stats::sd
-      )), .groups = "drop")
+      dplyr::summarise(
+        dplyr::across(c(corr_spear:pdisp), 
+                      list(mean = ~mean(.x, na.rm = TRUE), 
+                           sd = ~sd(.x, na.rm = TRUE)
+                      )), 
+        .groups = "drop"
+      )
 
     # Final object
     data_list <- list(
