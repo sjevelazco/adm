@@ -76,8 +76,10 @@ envar <- terra::rast(envar)
 
 # Extract data
 some_sp <- sppabund \%>\%
-  dplyr::filter(species == "Species one") \%>\% 
+  dplyr::filter(species == "Species one") \%>\%
   dplyr::select(species, ind_ha, x,y)
+
+some_sp
 
 some_sp <-
   adm_extract(
@@ -91,7 +93,7 @@ some_sp <-
 some_sp <- flexsdm::part_random(
   data = some_sp,
   pr_ab = "ind_ha",
-  method = c(method = "rep_kfold", folds = 3, replicates = 5)
+  method = c(method = "rep_kfold", folds = 3, replicates = 3)
 )
 
 
@@ -101,52 +103,44 @@ some_sp <- flexsdm::part_random(
 #                                                          #
 ## \%######################################################\%##
 # Fit some models
-abund_glm <- fit_abund_gam(
+# require(gamlss)
+# m1 <- gamlss::fitDist(some_sp$ind_ha, type="realline")
+# m1$fits
+# m1$failed
+# 
+# m1 <- gamlss(ind_ha ~ pb(elevation) + pb(sand) + pb(bio3) + pb(bio12), family=NO, data=some_sp)
+# choosen_dist <- gamlss::chooseDist(m1, parallel="snow", ncpus=4, type="realAll")
+
+a_gam <- fit_abund_gam(
   data = some_sp,
   response = "ind_ha",
   predictors = c("elevation", "sand", "bio3", "bio12"),
-  partition = ".part", 
+  partition = ".part",
   distribution = gamlss.dist::NO())
-mraf <- fit_raf(
+
+mraf <- fit_abund_raf(
   data = some_sp,
-  response = "pr_ab",
-  predictors = c("CFP_1", "CFP_2", "CFP_3", "CFP_4"),
+  response = "ind_ha",
+  predictors = c("elevation", "sand", "bio3", "bio12"),
   partition = ".part",
 )
-mgbm <- fit_gbm(
-  data = some_sp,
-  response = "pr_ab",
-  predictors = c("CFP_1", "CFP_2", "CFP_3", "CFP_4"),
-  partition = ".part"
-)
 
-# Fit an ensemble model
-mensemble <- fit_ensemble(
-  models = list(mglm, mraf, mgbm),
-  ens_method = "meansup",
-  thr = NULL,
-  thr_model = "max_sens_spec",
-  metric = "TSS"
-)
-
-# Fit a model with the Ensembles of Small Models approach
-# Without threshold specification and with kfold
-msmall <- esm_gam(
+mgbm <- fit_abund_gbm(
   data = some_sp,
-  response = "pr_ab",
-  predictors = c("CFP_1", "CFP_2", "CFP_3", "CFP_4"),
+  response = "ind_ha",
+  predictors = c("elevation", "sand", "bio3", "bio12"),
   partition = ".part",
-  thr = NULL
+  distribution = 
 )
 
 
-## \%######################################################\%##
-#                                                           #
-####      Predict different kind of models               ####
-#                                                           #
-## \%######################################################\%##
+##\%######################################################\%##
+#                                                          #
+####            ' ####      Predict models              ####
+#                                                          #
+##\%######################################################\%##
 
-# sdm_predict can be used for predict one or more models fitted with fit_ or tune_ functions
+# adm_predict can be used for predict one or more models fitted with fit_ or tune_ functions
 
 # a single model
 ind_p <- sdm_predict(
