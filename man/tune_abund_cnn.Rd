@@ -13,7 +13,6 @@ tune_abund_cnn(
   y,
   rasters,
   crop_size = 5,
-  fit_formula = NULL,
   partition,
   predict_part = FALSE,
   grid = NULL,
@@ -40,8 +39,6 @@ tune_abund_cnn(
 
 \item{crop_size}{numeric. The size, in pixels, of raster samples. See cnn_make_samples beforehand. Default 5}
 
-\item{fit_formula}{formula. A formula object with response and predictor variables (e.g. formula(abund ~ temp + precipt + sand + landform)). Note that the variables used here must be consistent with those used in response, predictors, and predictors_f arguments. Default NULL}
-
 \item{partition}{character. Column name with training and validation partition groups.}
 
 \item{predict_part}{logical. Save predicted abundance for testing data. Default = FALSE}
@@ -55,6 +52,8 @@ tune_abund_cnn(
 \item{n_cores}{numeric. Number of cores used in parallel processing.}
 
 \item{verbose}{logical. If FALSE, disables all console messages. Default TRUE}
+
+\item{fit_formula}{formula. A formula object with response and predictor variables (e.g. formula(abund ~ temp + precipt + sand + landform)). Note that the variables used here must be consistent with those used in response, predictors, and predictors_f arguments. Default NULL}
 }
 \value{
 A list object with:

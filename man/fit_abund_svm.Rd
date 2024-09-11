@@ -14,7 +14,8 @@ fit_abund_svm(
   predict_part = FALSE,
   kernel = "rbfdot",
   sigma = "automatic",
-  C = 1
+  C = 1,
+  verbose = TRUE
 )
 }
 \arguments{

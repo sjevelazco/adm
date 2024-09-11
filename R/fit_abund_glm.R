@@ -48,14 +48,18 @@ fit_abund_glm <-
       stop("'distribution' argument was not used, a distribution must be specifyied")
     }
     
-    # Variables
-    variables <- dplyr::bind_rows(c(c = predictors, f = predictors_f))
-    
     # Adequate database
     data <- adapt_df(data = data,
+                     response = response,
                      predictors = predictors,
-                     predictors_f = predictors_f)
+                     predictors_f = predictors_f, 
+                     partition = partition)
     
+    
+    # Variables
+    variables <- dplyr::bind_rows(c(c = predictors, f = predictors_f))
+
+   
     # Formula
     if (is.null(fit_formula)) {
       if (poly >= 2) {
@@ -126,6 +130,7 @@ fit_abund_glm <-
     
     part_pred_list <- list()
     eval_partial_list <- list()
+    family <- distribution
     
     for (h in 1:np) {
       if (verbose) {
@@ -149,7 +154,7 @@ fit_abund_glm <-
         
         model <- gamlss::gamlss(
           formula = formula1,
-          family = distribution,
+          family = family,
           data = train_set,
           trace = FALSE
         )
@@ -186,7 +191,7 @@ fit_abund_glm <-
     # fit final model with all data
     full_model <- gamlss::gamlss(
       formula = formula1,
-      family = distribution,
+      family = family,
       data = data,
       trace = FALSE
     )

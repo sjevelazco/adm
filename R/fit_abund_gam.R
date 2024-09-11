@@ -45,6 +45,13 @@ fit_abund_gam <-
       stop("'distribution' argument was not used, a distribution must be specifyied")
     }
     
+    # Adequate database
+    data <- adapt_df(data = data,
+                     response = response,
+                     predictors = predictors,
+                     predictors_f = predictors_f, 
+                     partition = partition)
+    
     # Variables
     variables <- dplyr::bind_rows(c(c = predictors, f = predictors_f))
 
@@ -97,6 +104,7 @@ fit_abund_gam <-
       eval_partial <- list()
       pred_test <- list()
       part_pred <- list()
+      family <- distribution
       
       for (j in 1:length(folds)) {
         if (verbose) {
@@ -108,7 +116,7 @@ fit_abund_gam <-
         
         model <- gamlss::gamlss(
           formula = formula1,
-          family = distribution,
+          family = family,
           data = train_set,
           trace = FALSE
         )
@@ -145,7 +153,7 @@ fit_abund_gam <-
     # fit final model with all data
     full_model <- gamlss::gamlss(
       formula = formula1,
-      family = distribution,
+      family = family,
       data = data,
       trace = FALSE
     )

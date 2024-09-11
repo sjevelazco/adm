@@ -13,13 +13,13 @@ fit_abund_cnn(
   y,
   rasters,
   crop_size = 5,
-  fit_formula = NULL,
   partition,
   predict_part = FALSE,
   learning_rate = 0.01,
   n_epochs = 10,
   batch_size = 32,
-  custom_architecture = NULL
+  custom_architecture = NULL,
+  verbose = TRUE
 )
 }
 \arguments{
@@ -39,8 +39,6 @@ fit_abund_cnn(
 
 \item{crop_size}{numeric. An integer defining the range of pixels around the observation from the raster object passed to rasters parameter. Default = 5}
 
-\item{fit_formula}{formula. A formula object with response and predictor variables (e.g. formula(abund ~ temp + precipt + sand + landform)). Note that the variables used here must be consistent with those used in response, predictors, and predictors_f arguments. Default NULL}
-
 \item{partition}{character. Column name with training and validation partition groups.}
 
 \item{predict_part}{logical. Save predicted abundance for testing data. Default = FALSE}
@@ -52,6 +50,8 @@ fit_abund_cnn(
 \item{batch_size}{numeric. A batch is a subset of the training set used in a single iteration of the training process. The size of each batch is referred to as the batch size. Default = 32}
 
 \item{custom_architecture}{a Torch nn_module_generator object. A neural network architecture to be used instead of the internal default one. Default NULL}
+
+\item{fit_formula}{formula. A formula object with response and predictor variables (e.g. formula(abund ~ temp + precipt + sand + landform)). Note that the variables used here must be consistent with those used in response, predictors, and predictors_f arguments. Default NULL}
 }
 \value{
 A list object with:

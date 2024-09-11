@@ -57,9 +57,9 @@ fit_abund_gbm <-
     
     # Adequate database
     data <- adapt_df(data = data,
-                     predictors = predictors,
-                     predictors_f = predictors_f,
                      response = response,
+                     predictors = predictors,
+                     predictors_f = predictors_f, 
                      partition = partition)
 
     

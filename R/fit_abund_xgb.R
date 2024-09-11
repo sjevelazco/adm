@@ -51,12 +51,7 @@ fit_abund_xgb <-
            subsample = 0.5,
            objective = "reg:squarederror",
            verbose = TRUE) {
-    # Variables
-    if (!is.null(predictors_f)) {
-      variables <- dplyr::bind_rows(c(c = predictors, f = predictors_f))
-    } else {
-      variables <- predictors
-    }
+  
     
     # Adequate database
     data <- adapt_df(data = data,
@@ -64,7 +59,14 @@ fit_abund_xgb <-
                      predictors_f = predictors_f,
                      response = response,
                      partition = partition)
-
+    
+    # Variables
+    if (!is.null(predictors_f)) {
+      variables <- dplyr::bind_rows(c(c = predictors, f = predictors_f))
+    } else {
+      variables <- predictors
+    }
+    
     # # ---- Formula ----
     # if (is.null(fit_formula)) {
     #   formula1 <- stats::formula(paste(response, "~", paste(c(

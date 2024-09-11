@@ -13,7 +13,8 @@ fit_abund_raf(
   partition,
   predict_part = FALSE,
   mtry = length(c(predictors, predictors_f))/3,
-  ntree = 500
+  ntree = 500,
+  verbose = TRUE
 )
 }
 \arguments{
