@@ -156,9 +156,12 @@ tune_abund_cnn <-
     # }
 
     cl <- parallel::makeCluster(n_cores)
-    doParallel::registerDoParallel(cl)
+    doSNOW::registerDoSNOW(cl)
+    pb <- utils::txtProgressBar(max = nrow(grid), style = 3)
+    progress <- function(n) utils::setTxtProgressBar(pb, n)
+    opts <- list(progress = progress)
 
-    hyper_combinations <- foreach::foreach(i = 1:nrow(grid), .export = c("fit_abund_cnn", "adm_eval", "cnn_make_samples", "croppin_hood"), .packages = c("dplyr")) %dopar% {
+    hyper_combinations <- foreach::foreach(i = 1:nrow(grid), .options.snow = opts, .export = c("fit_abund_cnn", "adm_eval", "cnn_make_samples", "croppin_hood"), .packages = c("dplyr")) %dopar% {
       model <-
         fit_abund_cnn(
           data = data,
