@@ -156,7 +156,7 @@ tune_abund_gam <-
         fit_formula = fit_formula,
         partition = partition,
         predict_part = predict_part,
-        family = choosen_family,
+        distribution = choosen_family,
         inter = ranked_combinations[[1]][1, "inter"]
       )
 

@@ -138,7 +138,6 @@ tune_abund_xgb <-
         response = response,
         predictors = predictors,
         predictors_f = predictors_f,
-        fit_formula = fit_formula,
         partition = partition,
         predict_part = predict_part,
         max_depth = ranked_combinations[[1]][1, "max_depth"],
