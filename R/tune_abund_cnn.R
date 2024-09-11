@@ -67,18 +67,18 @@ tune_abund_cnn <-
         message("Architectures not provided. Using the default set for Convolutional Neural Networks.")
         architectures <- generate_arch_list(
           type = "cnn",
-          number_of_features = 7,
-          number_of_outputs = 1
+          number_of_features = length(predictors) + length(predictors_f),
+          number_of_outputs = length(response)
         )
         arch_list <- architectures$arch_list
         arch_dict <- architectures$arch_dict
-      } else if (!all(names(architectures) %in% c("arch_list", "arch_dict"))) {
+      } else if (!all(names(architectures) %in% c("arch_list", "arch_dict", "changes"))) {
         stop("architectures expected to be a list with two other lists, arch_list and arch_dict, or 'fit_intern'.")
       } else {
         arch_list <- architectures$arch_list
         arch_dict <- architectures$arch_dict
         if (!all(sapply(arch_list, class) == c("conv_neural_net", "nn_module", "nn_module_generator"))) {
-          stop('Expected a "neural_net","nn_module","nn_module_generator" objects in arch_list.')
+          stop('Expected "neural_net", "nn_module", "nn_module_generator" objects in arch_list.')
         } else {
           message("Using provided architectures.")
         }

@@ -70,7 +70,7 @@ tune_abund_dnn <-
         arch_list <- architectures$arch_list
         arch_dict <- architectures$arch_dict
         if (!all(sapply(arch_list, class) == c("neural_net", "nn_module", "nn_module_generator"))) {
-          stop('Expected a "neural_net","nn_module","nn_module_generator" objects in arch_list.')
+          stop('Expected "neural_net", "nn_module", "nn_module_generator" objects in arch_list.')
         } else {
           message("Using provided architectures.")
         }
