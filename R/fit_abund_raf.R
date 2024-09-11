@@ -39,13 +39,18 @@ fit_abund_raf <-
            mtry = length(c(predictors, predictors_f)) / 3,
            ntree = 500,
            verbose = TRUE) {
-    # Variables
-    variables <- dplyr::bind_rows(c(c = predictors, f = predictors_f))
     
     # Adequate database
     data <- adapt_df(data = data,
+                     response = response,
                      predictors = predictors,
-                     predictors_f = predictors_f)
+                     predictors_f = predictors_f, 
+                     partition = partition)
+    
+    # Variables
+    variables <- dplyr::bind_rows(c(c = predictors, f = predictors_f))
+    
+    
     # Formula
     if (is.null(fit_formula)) {
       formula1 <- stats::formula(paste(response, "~", paste(c(

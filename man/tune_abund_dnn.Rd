@@ -9,7 +9,6 @@ tune_abund_dnn(
   response,
   predictors,
   predictors_f = NULL,
-  fit_formula = NULL,
   partition,
   predict_part = FALSE,
   grid = NULL,
@@ -28,8 +27,6 @@ tune_abund_dnn(
 
 \item{predictors_f}{character. Vector with the column names of qualitative predictor variables (i.e. ordinal or nominal variables type). Usage predictors_f = c("landform")}
 
-\item{fit_formula}{formula. A formula object with response and predictor variables (e.g. formula(abund ~ temp + precipt + sand + landform)). Note that the variables used here must be consistent with those used in response, predictors, and predictors_f arguments. Default NULL}
-
 \item{partition}{character. Column name with training and validation partition groups.}
 
 \item{predict_part}{logical. Save predicted abundance for testing data. Default = FALSE}
@@ -43,6 +40,8 @@ tune_abund_dnn(
 \item{n_cores}{numeric. Number of cores used in parallel processing.}
 
 \item{verbose}{logical. If FALSE, disables all console messages. Default TRUE}
+
+\item{fit_formula}{formula. A formula object with response and predictor variables (e.g. formula(abund ~ temp + precipt + sand + landform)). Note that the variables used here must be consistent with those used in response, predictors, and predictors_f arguments. Default NULL}
 }
 \value{
 A list object with:

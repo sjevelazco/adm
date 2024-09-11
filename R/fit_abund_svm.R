@@ -41,12 +41,7 @@ fit_abund_svm <-
            sigma = "automatic",
            C = 1,
            verbose = TRUE) {
-    # Variables
-    if (!is.null(predictors_f)) {
-      variables <- dplyr::bind_rows(c(c = predictors, f = predictors_f))
-    } else {
-      variables <- predictors
-    }
+    
     
     # Adequate database
     data <- adapt_df(data = data,
@@ -54,6 +49,13 @@ fit_abund_svm <-
                      predictors_f = predictors_f,
                      response = response,
                      partition = partition)
+    
+    # Variables
+    if (!is.null(predictors_f)) {
+      variables <- dplyr::bind_rows(c(c = predictors, f = predictors_f))
+    } else {
+      variables <- predictors
+    }
     
     # Formula
     if (is.null(fit_formula)) {
