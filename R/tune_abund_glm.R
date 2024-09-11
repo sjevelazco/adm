@@ -161,7 +161,7 @@ tune_abund_glm <-
         fit_formula = fit_formula,
         partition = partition,
         predict_part = predict_part,
-        family = choosen_family,
+        distribution = choosen_family,
         poly = choosen_poly,
         inter_order = choosen_inter_order
       )

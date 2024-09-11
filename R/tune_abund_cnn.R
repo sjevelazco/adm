@@ -205,7 +205,6 @@ tune_abund_cnn <-
         y = y,
         rasters = rasters,
         crop_size = crop_size,
-        fit_formula = fit_formula,
         partition = partition,
         predict_part = predict_part,
         learning_rate = ranked_combinations[[1]][1, "learning_rate"],
