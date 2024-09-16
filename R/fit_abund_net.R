@@ -1,4 +1,4 @@
-#' Fit and validate Support Vector Machine models
+#' Fit and validate Artificial Neural Network models
 #'
 #' @param data tibble or data.frame. Database with response, predictors, and partition values
 #' @param response character. Column name with species abundance.
@@ -7,10 +7,9 @@
 #' @param fit_formula formula. A formula object with response and predictor variables (e.g. formula(abund ~ temp + precipt + sand + landform)). Note that the variables used here must be consistent with those used in response, predictors, and predictors_f arguments. Default NULL
 #' @param partition character. Column name with training and validation partition groups.
 #' @param predict_part logical. Save predicted abundance for testing data. Default is FALSE.
-#' @param kernel character. A string defining the kernel used in the algorithm. Default is "rbfdot".
-#' @param sigma numeric or character. Either "automatic" (recommended) or the inverse kernel width for the Radial Basis kernel function "rbfdot" and the Laplacian kernel "laplacedot". Default is "automatic".
-#' @param C numeric. Cost of constraints violation. Default is 1.
-#'
+#' @param size numerical. The size of the hidden layer.
+#' @param decay numerial. Value for weight decay. Default 0.
+#' 
 #' @importFrom dplyr pull tibble bind_rows as_tibble group_by summarise across
 #' @importFrom kernlab ksvm predict
 #' @importFrom stats formula sd
@@ -29,7 +28,7 @@
 #' @export
 #'
 #' @examples
-fit_abund_svm <-
+fit_abund_net <-
   function(data,
            response,
            predictors,
@@ -37,9 +36,8 @@ fit_abund_svm <-
            fit_formula = NULL,
            partition,
            predict_part = FALSE,
-           kernel = "rbfdot",
-           sigma = "automatic",
-           C = 1,
+           size,
+           decay = 0,
            verbose = TRUE) {
     
     
@@ -74,12 +72,6 @@ fit_abund_svm <-
         "\n"
       )
     }
-
-    if (sigma == "automatic") {
-      kpar_ <- "automatic"
-    } else {
-      kpar_ <- list(sigma = sigma)
-    }
     
     # Fit models
     np <- ncol(data %>% dplyr::select(dplyr::starts_with(partition)))
@@ -107,19 +99,22 @@ fit_abund_svm <-
         train_set <- data[data[, p_names[h]] != folds[j], ]
         test_set <- data[data[, p_names[h]] == folds[j], ]
         
-        model <- kernlab::ksvm(
+        model <- nnet::nnet(
           formula1,
           data = train_set,
-          type = "eps-svr",
-          kernel = kernel,
-          kpar = kpar_,
-          C = C
+          size = size,
+          decay = decay,
+          rang = 0.1,
+          maxit = 1000,
+          reltol = 1e-5,
+          linout = TRUE,
+          trace = FALSE
         )
         
-        pred <- predict(model, newdata = test_set, type = "response")
+        pred <- predict(model, newdata = test_set, type = "raw")
         observed <- dplyr::pull(test_set, response)
         eval_partial[[j]] <- dplyr::tibble(
-          model = "svm",
+          model = "net",
           adm_eval(obs = observed, pred = pred)
         )
         
@@ -145,15 +140,18 @@ fit_abund_svm <-
     }
     
     # fit final model with all data
-    full_model <- kernlab::ksvm(
+    full_model <- nnet::nnet(
       formula1,
       data = data,
-      type = "eps-svr",
-      kernel = kernel,
-      kpar = kpar_,
-      C = C
+      size = size,
+      decay = decay,
+      rang = 0.1,
+      maxit = 1000,
+      reltol = 1e-5,
+      linout = TRUE,
+      trace = FALSE
     )
-
+    
     # bind predicted evaluation
     eval_partial <- eval_partial_list %>%
       dplyr::bind_rows(.id = "replica") %>%
@@ -174,7 +172,7 @@ fit_abund_svm <-
         mean = mean,
         sd = stats::sd
       )), .groups = "drop")
-
+    
     # Final object
     data_list <- list(
       model = full_model,
