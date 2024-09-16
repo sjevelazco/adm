@@ -90,6 +90,8 @@ tune_abund_dnn <-
       # n_epochs <- seq(10,20,by=10)
       n_epochs <- 10
       learning_rate <- seq(from = 0.1, to = 0.2, by = 0.1)
+      validation_patience <- 2
+      fitting_patience <- 5
       grid <- expand.grid(
         arch = archs,
         batch_size = batch_size,
@@ -97,18 +99,22 @@ tune_abund_dnn <-
         learning_rate = learning_rate
       )
     } else {
-      if (all(names(grid) %in% c("batch_size", "n_epochs", "learning_rate")) & length(names(grid)) == 3) {
+      if (all(names(grid) %in% c("batch_size", "n_epochs", "learning_rate", "validation_patience","fitting_patience")) & length(names(grid)) == 5) {
         batch_size <- unique(grid[, "batch_size"])
         n_epochs <- unique(grid[, "n_epochs"])
         learning_rate <- unique(grid[, "learning_rate"])
+        validation_patience <- unique(grid[, "validation_patience"])
+        fitting_patience <- unique(grid[, "fitting_patience"])
         grid <- expand.grid(
           arch = archs,
           batch_size = batch_size,
           n_epochs = n_epochs,
-          learning_rate = learning_rate
+          learning_rate = learning_rate,
+          validation_patience = validation_patience,
+          fitting_patience = fitting_patience
         )
       } else {
-        stop("Grid names expected to be batch_size, n_epochs and learning_rate")
+        stop("Grid names expected to be batch_size, n_epochs, learning_rate, validation_patience, fitting_patience")
       }
     }
 
@@ -124,7 +130,7 @@ tune_abund_dnn <-
     progress <- function(n) utils::setTxtProgressBar(pb, n)
     opts <- list(progress = progress)
 
-    hyper_combinations <- foreach::foreach(i = 1:nrow(grid), .options.snow = opts, .export = c("fit_abund_dnn", "adm_eval", "nnf_dropout"), .packages = c("dplyr", "torch")) %dopar% {
+    hyper_combinations <- foreach::foreach(i = 1:nrow(grid), .options.snow = opts, .export = c("fit_abund_dnn", "adm_eval", "nnf_dropout","adapt_df"), .packages = c("dplyr", "torch")) %dopar% {
       model <-
         fit_abund_dnn(
           data = data,
@@ -136,7 +142,9 @@ tune_abund_dnn <-
           learning_rate = grid[i, "learning_rate"],
           n_epochs = grid[i, "n_epochs"],
           batch_size = grid[i, "batch_size"],
-          custom_architecture = arch_list[[grid[i, "arch"]]]
+          custom_architecture = arch_list[[grid[i, "arch"]]],
+          validation_patience = grid[i, "validation_patience"],
+          fitting_patience = grid[i, "fitting_patience"]
         )
       l <- list(cbind(grid[i, ], model$performance))
       names(l) <- grid[i, "comb_id"]
@@ -168,7 +176,9 @@ tune_abund_dnn <-
         learning_rate = ranked_combinations[[1]][1, "learning_rate"],
         n_epochs = ranked_combinations[[1]][1, "n_epochs"],
         batch_size = ranked_combinations[[1]][1, "batch_size"],
-        custom_architecture = arch_list[[ranked_combinations[[1]][1, "arch"]]]
+        custom_architecture = arch_list[[ranked_combinations[[1]][1, "arch"]]],
+        validation_patience = ranked_combinations[[1]][1, "validation_patience"],
+        fitting_patience = ranked_combinations[[1]][1, "fitting_patience"]
       )
 
     arch_indexes <- stringr::str_extract_all(ranked_combinations[[1]][1, "arch"], "\\d+")
@@ -181,6 +191,10 @@ tune_abund_dnn <-
       ranked_combinations[[1]][1, "learning_rate"],
       "\n n_epochs = ",
       ranked_combinations[[1]][1, "n_epochs"],
+      "\n patience = ",
+      ranked_combinations[[1]][1, "validation_patience"],
+      " and ",
+      ranked_combinations[[1]][1, "fitting_patience"],
       "\n batch_size = ",
       ranked_combinations[[1]][1, "batch_size"],
       "\n arch = ",
