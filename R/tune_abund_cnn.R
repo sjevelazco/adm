@@ -7,7 +7,7 @@
 #' @param x character. Column name with longitude data.
 #' @param y character. Column name with latitude data.
 #' @param rasters character. Path to the raster file of environmental variables.
-#' @param crop_size numeric. The size, in pixels, of raster samples. See cnn_make_samples beforehand. Default 5
+#' @param sample_size numeric. The dimension, in pixels, of raster samples. See cnn_make_samples beforehand. Default 5
 #' @param fit_formula formula. A formula object with response and predictor variables (e.g. formula(abund ~ temp + precipt + sand + landform)). Note that the variables used here must be consistent with those used in response, predictors, and predictors_f arguments. Default NULL
 #' @param partition character. Column name with training and validation partition groups.
 #' @param predict_part logical. Save predicted abundance for testing data. Default = FALSE
@@ -48,7 +48,7 @@ tune_abund_cnn <-
            x,
            y,
            rasters,
-           crop_size = 5,
+           sample_size,
            partition,
            predict_part = FALSE,
            grid = NULL,
@@ -102,25 +102,33 @@ tune_abund_cnn <-
       # n_epochs <- seq(10,20,by=10)
       n_epochs <- 10
       learning_rate <- seq(from = 0.1, to = 0.2, by = 0.1)
+      validation_patience <- 2
+      fitting_patience <- 5
       grid <- expand.grid(
         arch = archs,
         batch_size = batch_size,
         n_epochs = n_epochs,
-        learning_rate = learning_rate
+        learning_rate = learning_rate,
+        validation_patience = validation_patience,
+        fitting_patience = fitting_patience
       )
     } else {
-      if (all(names(grid) %in% c("batch_size", "n_epochs", "learning_rate")) & length(names(grid)) == 3) {
+      if (all(names(grid) %in% c("batch_size", "n_epochs", "learning_rate","validation_patience","fitting_patience")) & length(names(grid)) == 5) {
         batch_size <- unique(grid[, "batch_size"])
         n_epochs <- unique(grid[, "n_epochs"])
         learning_rate <- unique(grid[, "learning_rate"])
+        validation_patience <- unique(grid[, "validation_patience"])
+        fitting_patience <- unique(grid[, "fitting_patience"])
         grid <- expand.grid(
           arch = archs,
           batch_size = batch_size,
           n_epochs = n_epochs,
-          learning_rate = learning_rate
+          learning_rate = learning_rate,
+          validation_patience = validation_patience,
+          fitting_patience = fitting_patience
         )
       } else {
-        stop("Grid names expected to be batch_size, n_epochs and learning_rate")
+        stop("Grid names expected to be batch_size, n_epochs, learning_rate, validation_patience and fitting_patience")
       }
     }
 
@@ -141,7 +149,7 @@ tune_abund_cnn <-
     #       x = x,
     #       y = y,
     #       rasters = rasters,
-    #       crop_size = crop_size,
+    #       sample_size = sample_size,
     #       fit_formula = fit_formula,
     #       partition = partition,
     #       predict_part = predict_part,
@@ -171,13 +179,15 @@ tune_abund_cnn <-
           x = x,
           y = y,
           rasters = rasters,
-          crop_size = crop_size,
+          sample_size = sample_size,
           partition = partition,
           predict_part = predict_part,
           learning_rate = grid[i, "learning_rate"],
           n_epochs = grid[i, "n_epochs"],
           batch_size = grid[i, "batch_size"],
-          custom_architecture = arch_list[[grid[i, "arch"]]]
+          custom_architecture = arch_list[[grid[i, "arch"]]],
+          validation_patience = grid[i, "validation_patience"],
+          fitting_patience = grid[i, "fitting_patience"]
         )
       l <- list(cbind(grid[i, ], model$performance))
       names(l) <- grid[i, "comb_id"]
@@ -207,13 +217,15 @@ tune_abund_cnn <-
         x = x,
         y = y,
         rasters = rasters,
-        crop_size = crop_size,
+        sample_size = sample_size,
         partition = partition,
         predict_part = predict_part,
         learning_rate = ranked_combinations[[1]][1, "learning_rate"],
         n_epochs = ranked_combinations[[1]][1, "n_epochs"],
         batch_size = ranked_combinations[[1]][1, "batch_size"],
-        custom_architecture = arch_list[[ranked_combinations[[1]][1, "arch"]]]
+        custom_architecture = arch_list[[ranked_combinations[[1]][1, "arch"]]],
+        validation_patience = ranked_combinations[[1]][1, "validation_patience"],
+        fitting_patience = ranked_combinations[[1]][1, "fitting_patience"]
       )
 
     arch_indexes <- stringr::str_extract_all(ranked_combinations[[1]][1, "arch"], "\\d+")
@@ -221,6 +233,10 @@ tune_abund_cnn <-
     message(
       "The best model was a DNN with learning_rate = ",
       ranked_combinations[[1]][1, "learning_rate"],
+      "\n patience = ",
+      ranked_combinations[[1]][1, "validation_patience"],
+      " and ",
+      ranked_combinations[[1]][1, "fitting_patience"],
       ", n_epochs = ",
       ranked_combinations[[1]][1, "n_epochs"],
       ", batch_size = ",
