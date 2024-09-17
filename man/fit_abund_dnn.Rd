@@ -14,6 +14,8 @@ fit_abund_dnn(
   learning_rate = 0.01,
   n_epochs = 10,
   batch_size = 32,
+  validation_patience = 2,
+  fitting_patience = 5,
   custom_architecture = NULL,
   verbose = TRUE
 )
@@ -33,7 +35,7 @@ fit_abund_dnn(
 
 \item{learning_rate}{numeric. The size of the step taken during the optimization process. Default = 0.01}
 
-\item{n_epochs}{numeric. How many times the learning algorithm will work through the training set. Default = 10}
+\item{n_epochs}{numeric. Max number of times the learning algorithm will work through the training set. Default = 10}
 
 \item{batch_size}{numeric. A batch is a subset of the training set used in a single iteration of the training process. The size of each batch is referred to as the batch size. Default = 32}
 
