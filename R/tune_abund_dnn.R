@@ -96,7 +96,9 @@ tune_abund_dnn <-
         arch = archs,
         batch_size = batch_size,
         n_epochs = n_epochs,
-        learning_rate = learning_rate
+        learning_rate = learning_rate,
+        validation_patience = validation_patience,
+        fitting_patience = fitting_patience
       )
     } else {
       if (all(names(grid) %in% c("batch_size", "n_epochs", "learning_rate", "validation_patience","fitting_patience")) & length(names(grid)) == 5) {
@@ -114,7 +116,7 @@ tune_abund_dnn <-
           fitting_patience = fitting_patience
         )
       } else {
-        stop("Grid names expected to be batch_size, n_epochs, learning_rate, validation_patience, fitting_patience")
+        stop("Grid names expected to be batch_size, n_epochs, learning_rate, validation_patience and fitting_patience")
       }
     }
 

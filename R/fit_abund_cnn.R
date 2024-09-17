@@ -47,12 +47,14 @@ fit_abund_cnn <-
            x,
            y,
            rasters,
-           crop_size = 5,
+           sample_size,
            partition,
            predict_part = FALSE,
            learning_rate = 0.01,
            n_epochs = 10,
            batch_size = 32,
+           validation_patience = 2,
+           fitting_patience = 5,
            custom_architecture = NULL,
            verbose = TRUE) {
     self <- corr_spear <- pdisp <- NULL
@@ -70,6 +72,15 @@ fit_abund_cnn <-
                      response = response,
                      partition = partition,
                      xy = c("x","y"))
+    
+    # Get cropsize
+    if(!is.vector(sample_size)){
+      stop("Please, provide a vector containing the sample size c(width,height)")
+    } else if (!(sample_size[[1]]==sample_size[[2]])){
+      stop("adm currently only accepts square samples.")
+    } else {
+      crop_size <- floor(sample_size[[1]]/2)
+    }
     
     # # ---- Formula ----
     # if (is.null(fit_formula)) {
@@ -226,15 +237,19 @@ fit_abund_cnn <-
           torch::dataloader(batch_size = batch_size, shuffle = TRUE)
         
         # fit model
-        suppressMessages(
+        #suppressMessages(
           model <- net %>%
             luz::setup(
               loss = torch::nn_l1_loss(),
               optimizer = torch::optim_adam
             ) %>%
             luz::set_opt_hparams(lr = learning_rate) %>%
-            luz::fit(train_dataloader, epochs = n_epochs, valid_data = test_dataloader)
-        )
+            luz::fit(train_dataloader, 
+                     epochs = n_epochs, 
+                     valid_data = test_dataloader,
+                     callbacks = luz::luz_callback_early_stopping(patience = validation_patience))
+        #)
+        
         
         pred <- predict(model, test_dataloader)
         pred <- pred$to(device = "cpu") 
@@ -291,15 +306,19 @@ fit_abund_cnn <-
     full_dataloader <- create_dataset(full_data_list) %>%
       torch::dataloader(batch_size = batch_size, shuffle = TRUE)
 
-    suppressMessages(
+    #suppressMessages(
       full_model <- net %>%
         luz::setup(
           loss = torch::nn_l1_loss(),
           optimizer = torch::optim_adam
         ) %>%
         luz::set_opt_hparams(lr = learning_rate) %>%
-        luz::fit(full_dataloader, epochs = n_epochs)
-    )
+        luz::fit(full_dataloader, 
+                 epochs = n_epochs,
+                 callbacks = luz::luz_callback_early_stopping(
+                   monitor = "train_loss", 
+                   patience = fitting_patience))
+    #)
 
     # bind predicted evaluation
     eval_partial <- eval_partial_list %>%
