@@ -7,7 +7,7 @@
 #' @param x character. Column name with longitude data.
 #' @param y character. Column name with latitude data.
 #' @param rasters character. Path to the raster file of environmental variables.
-#' @param sample_size numeric. The dimension, in pixels, of raster samples. See cnn_make_samples beforehand. Default 5
+#' @param sample_size numeric. The dimension, in pixels, of raster samples. See cnn_make_samples beforehand. Default c(11,11)
 #' @param fit_formula formula. A formula object with response and predictor variables (e.g. formula(abund ~ temp + precipt + sand + landform)). Note that the variables used here must be consistent with those used in response, predictors, and predictors_f arguments. Default NULL
 #' @param partition character. Column name with training and validation partition groups.
 #' @param predict_part logical. Save predicted abundance for testing data. Default = FALSE
