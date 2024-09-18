@@ -37,7 +37,7 @@ tune_abund_cnn(
 
 \item{rasters}{character. Path to the raster file of environmental variables.}
 
-\item{sample_size}{numeric. The dimension, in pixels, of raster samples. See cnn_make_samples beforehand. Default 5}
+\item{sample_size}{numeric. The dimension, in pixels, of raster samples. See cnn_make_samples beforehand. Default c(11,11)}
 
 \item{partition}{character. Column name with training and validation partition groups.}
 
