@@ -100,6 +100,7 @@
 #'   data = some_sp,
 #'   response = "ind_ha",
 #'   predictors = c("elevation", "sand", "bio3", "bio12"),
+#'   predictors_f = "eco",
 #'   partition = ".part",
 #'   distribution = gamlss.dist::NO())
 #' 
@@ -247,37 +248,6 @@ adm_predict <-
         tolower() %>%
         gsub(".formula", "", .)
     }
-    
-    #### Ensemble predictions
-    if (!is.null(ensembles)) {
-      # Prepare model list
-      m <- lapply(ensembles$models, function(x) x[["model"]])
-      names(m) <- paste0("m_", 1:length(m))
-      
-      # Extract model names object
-      clss <- sapply(m, function(x) {
-        class(x)[1]
-      }) %>%
-        tolower() %>%
-        gsub(".formula", "", .)
-    }
-    
-    #### ESM predictions
-    if (!is.null(esm)) {
-      # Prepare model list
-      m <- esm$esm_model
-      names(m) <- paste0("m_", 1:length(m))
-      
-      # Extract model names object
-      clss <- sapply(m, function(x) {
-        class(x)[1]
-      }) %>%
-        tolower() %>%
-        gsub(".formula", "", .)
-    }
-    
-    
-    
     
     # Transform raster to data.frame
     
