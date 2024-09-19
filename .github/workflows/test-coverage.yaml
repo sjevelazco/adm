@@ -27,14 +27,3 @@ jobs:
       - name: Test coverage
         run: covr::codecov(quiet = FALSE)
         shell: Rscript {0}
-        
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v4
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          
-      - name: Upload test results to Codecov
-        if: ${{ !cancelled() }}
-        uses: codecov/test-results-action@v1
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
