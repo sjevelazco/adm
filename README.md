@@ -1,3 +1,4 @@
+[![License](https://img.shields.io/badge/license-GPL%20%28%3E=%203%29-lightgrey.svg?style=flat)](http://www.gnu.org/licenses/gpl-3.0.html)
 [![codecov](https://codecov.io/github/sjevelazco/adm/graph/badge.svg?token=cKRmbNhn0A)](https://codecov.io/github/sjevelazco/adm)
 
 # adm
