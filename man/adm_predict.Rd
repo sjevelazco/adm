@@ -115,6 +115,7 @@ a_gam <- fit_abund_gam(
   data = some_sp,
   response = "ind_ha",
   predictors = c("elevation", "sand", "bio3", "bio12"),
+  predictors_f = "eco",
   partition = ".part",
   distribution = gamlss.dist::NO())
 
