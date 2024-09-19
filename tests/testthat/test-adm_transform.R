@@ -31,6 +31,9 @@ test_that("Test for transformation type zscore", {
   expect_equal(round(sd(result$ind_ha_zscore)),  32)
 })
 
+test_that("Expect erro", {
+  expect_error(adm_transform(some_sp, variable = "ind_ha", method = "zscore_sdf"))
+})
 
 # Clean up
 rm(some_sp)
