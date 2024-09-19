@@ -23,7 +23,7 @@
 #' require(dplyr)
 #'
 #' data("sppabund")
-#' # Extract data
+#' # Select data for a single species
 #' some_sp <- sppabund %>%
 #'   dplyr::filter(species == "Species one") %>%
 #'   dplyr::select(species, ind_ha, x, y)
@@ -70,7 +70,7 @@ adm_transform <- function(data, variable, method) {
     data$.newvar <- ((x - min_) / (max_ - min_))
   } else if (method == "zscore") {
     # zscore transformation
-    data$.newvar <- mean(x, na.rm = TRUE) / sd(x, na.rm = TRUE)
+    data$.newvar <- x - mean(x, na.rm = TRUE) / sd(x, na.rm = TRUE)
   } else if (method == "log") {
     # Log transformation
     data$.newvar <- log(x)

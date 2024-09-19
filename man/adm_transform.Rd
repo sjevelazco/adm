@@ -31,7 +31,7 @@ The available methods are "01", "zscore", "log", and "round".
 require(dplyr)
 
 data("sppabund")
-# Extract data
+# Select data for a single species
 some_sp <- sppabund \%>\%
   dplyr::filter(species == "Species one") \%>\%
   dplyr::select(species, ind_ha, x, y)
