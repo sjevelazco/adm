@@ -152,6 +152,7 @@ fit_abund_glm <-
         train_set <- data[data[, p_names[h]] != folds[j], ]
         test_set <- data[data[, p_names[h]] == folds[j], ]
         
+        set.seed(13)
         model <- gamlss::gamlss(
           formula = formula1,
           family = family,
@@ -189,6 +190,7 @@ fit_abund_glm <-
     
 
     # fit final model with all data
+    set.seed(13)
     full_model <- gamlss::gamlss(
       formula = formula1,
       family = family,

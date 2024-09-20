@@ -153,6 +153,7 @@ fit_abund_dnn <-
         train_dataloader <- torch::dataloader(train_set, batch_size = batch_size, shuffle = TRUE)
         test_dataloader <- torch::dataloader(test_set, batch_size = batch_size, shuffle = TRUE)
         
+        set.seed(13)
         fitted <- net %>%
           luz::setup(
             loss = torch::nn_l1_loss(),
@@ -200,6 +201,7 @@ fit_abund_dnn <-
     df <- create_dataset(data[, c(predictors, response)], response)
     df_dl <- torch::dataloader(df, batch_size = batch_size, shuffle = TRUE)
 
+    set.seed(13)
     full_fitted <- net %>%
       luz::setup(
         loss = torch::nn_l1_loss(),

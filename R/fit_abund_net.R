@@ -99,6 +99,7 @@ fit_abund_net <-
         train_set <- data[data[, p_names[h]] != folds[j], ]
         test_set <- data[data[, p_names[h]] == folds[j], ]
         
+        set.seed(13)
         model <- nnet::nnet(
           formula1,
           data = train_set,
@@ -140,6 +141,7 @@ fit_abund_net <-
     }
     
     # fit final model with all data
+    set.seed(13)
     full_model <- nnet::nnet(
       formula1,
       data = data,

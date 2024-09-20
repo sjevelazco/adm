@@ -95,6 +95,7 @@ fit_abund_raf <-
         train_set <- data[data[, p_names[h]] != folds[j], ]
         test_set <- data[data[, p_names[h]] == folds[j], ]
         
+        set.seed(13)
         model <- randomForest::randomForest(
           formula1,
           data = train_set,
@@ -132,6 +133,7 @@ fit_abund_raf <-
     }
 
     # fit final model with all data
+    set.seed(13)
     full_model <- randomForest::randomForest(formula1,
       data = data,
       mtry = mtry,

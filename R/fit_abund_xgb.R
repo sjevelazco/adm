@@ -122,6 +122,7 @@ fit_abund_xgb <-
           target = test_set[, response]
         )
         
+        set.seed(13)
         model <- xgboost::xgboost(
           data = sp_train$data,
           label = sp_train$target,
@@ -168,6 +169,7 @@ fit_abund_xgb <-
     
     
     # fit final model with all data
+    set.seed(13)
     full_model <- xgboost::xgboost(
       data = as.matrix(data[, variables]),
       label = data[, response],
