@@ -107,6 +107,7 @@ fit_abund_svm <-
         train_set <- data[data[, p_names[h]] != folds[j], ]
         test_set <- data[data[, p_names[h]] == folds[j], ]
         
+        set.seed(13)
         model <- kernlab::ksvm(
           formula1,
           data = train_set,
@@ -145,6 +146,7 @@ fit_abund_svm <-
     }
     
     # fit final model with all data
+    set.seed(13)
     full_model <- kernlab::ksvm(
       formula1,
       data = data,

@@ -237,6 +237,7 @@ fit_abund_cnn <-
           torch::dataloader(batch_size = batch_size, shuffle = TRUE)
         
         # fit model
+        set.seed(13)
         #suppressMessages(
           model <- net %>%
             luz::setup(
@@ -306,6 +307,7 @@ fit_abund_cnn <-
     full_dataloader <- create_dataset(full_data_list) %>%
       torch::dataloader(batch_size = batch_size, shuffle = TRUE)
 
+    set.seed(13)
     #suppressMessages(
       full_model <- net %>%
         luz::setup(
