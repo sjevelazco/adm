@@ -232,7 +232,7 @@ fit_abund_dnn <-
     eval_final <- eval_partial %>%
       dplyr::group_by(model) %>%
       dplyr::summarise(
-        dplyr::across(c(corr_spear:pdisp), 
+        dplyr::across(c(mae:pdisp), 
                       list(mean = ~mean(.x, na.rm = TRUE), 
                            sd = ~sd(.x, na.rm = TRUE)
                       )), 
