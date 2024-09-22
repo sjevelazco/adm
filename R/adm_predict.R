@@ -289,6 +289,36 @@ adm_predict <-
       #                                                          #
       ## %######################################################%##
       
+      #### dnn models ####
+      # create_dataset definition
+      create_dataset <- torch::dataset(
+        "dataset",
+        initialize = function(df, response_variable=0) {
+          self$df <- df
+        },
+        .getitem = function(index) {
+          x <- torch::torch_tensor(as.numeric(self$df[index, ]))
+          list(x = x)
+        },
+        .length = function() {
+          nrow(self$df)
+        }
+      )
+      
+      pred_dataset <- create_dataset(pred_df)
+      
+      wm <- which(clss == "luz_module_fitted")
+      if (length(wm) > 0){
+        wm <- names(wm)
+        for (i in wm) {
+          r <- pred[[!terra::is.factor(pred)]][[1]]
+          r[!is.na(r)] <- NA
+          r[as.numeric(rownames(pred_df))] <-
+            suppressMessages(stats::predict(m[[i]], pred_dataset) %>% as.numeric())
+          
+          model_c[[i]][rowset] <- r[rowset]
+        }
+      }
       
       #### gam models ####
       wm <- which(clss == "gam")
@@ -518,6 +548,7 @@ adm_predict <-
     
     df <- data.frame(
       alg = c(
+        "luz_module_fitted",
         "gam",
         "graf",
         "glm",
@@ -527,7 +558,7 @@ adm_predict <-
         "randomforest",
         "ksvm"
       ),
-      names = c("gam", "gau", "glm", "gbm", "max", "net", "raf", "svm")
+      names = c("dnn","gam", "gau", "glm", "gbm", "max", "net", "raf", "svm")
     )
     
     names(model_c) <-
