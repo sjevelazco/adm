@@ -188,6 +188,7 @@
 adm_predict <-
   function(models,
            pred,
+           training_data = NULL,
            nchunk = 1,
            thr = NULL,
            con_thr = FALSE,
@@ -289,6 +290,20 @@ adm_predict <-
       #                                                          #
       ## %######################################################%##
       
+      #### xgboost models ####
+      wm <- which(clss == "xgb.booster")
+      if (length(clss) > 0){
+        wm <- names(wm)
+        for (i in wm) {
+          r <- pred[[!terra::is.factor(pred)]][[1]]
+          r[!is.na(r)] <- NA
+          r[as.numeric(rownames(pred_df))] <-
+            suppressMessages(stats::predict(m[[i]], as.matrix(pred_df), type = "response"))
+          
+          model_c[[i]][rowset] <- r[rowset]
+        }
+      }
+      
       #### dnn models ####
       # create_dataset definition
       create_dataset <- torch::dataset(
@@ -315,6 +330,20 @@ adm_predict <-
           r[!is.na(r)] <- NA
           r[as.numeric(rownames(pred_df))] <-
             suppressMessages(stats::predict(m[[i]], pred_dataset) %>% as.numeric())
+          
+          model_c[[i]][rowset] <- r[rowset]
+        }
+      }
+      
+      #### gam and glm ####
+      wm <- which(clss == "gamlss")
+      if (length(wm) > 0){
+        wm <- names(wm)
+        for (i in wm) {
+          r <- pred[[!terra::is.factor(pred)]][[1]]
+          r[!is.na(r)] <- NA
+          r[as.numeric(rownames(pred_df))] <-
+            suppressMessages(stats::predict(m[[i]], newdata = pred_df, data = training_data, type = "response"))
           
           model_c[[i]][rowset] <- r[rowset]
         }
@@ -549,16 +578,14 @@ adm_predict <-
     df <- data.frame(
       alg = c(
         "luz_module_fitted",
-        "gam",
-        "graf",
-        "glm",
+        "gamlss",
+        "gamlss",
         "gbm",
-        "maxnet",
         "nnet",
         "randomforest",
         "ksvm"
       ),
-      names = c("dnn","gam", "gau", "glm", "gbm", "max", "net", "raf", "svm")
+      names = c("dnn", "gam", "glm", "gbm", "net", "raf", "svm")
     )
     
     names(model_c) <-
@@ -668,7 +695,7 @@ adm_predict <-
     ####              Get binary predictions                ####
     #                                                          #
     ## %######################################################%##
-    
+    # TODO
     if (is.null(thr)) {
       return(model_c)
     } else {
