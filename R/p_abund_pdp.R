@@ -54,6 +54,14 @@ p_abund_pdp <-
     #   v <- attr(model$terms, "dataClasses")[flt]
     # }
     
+    if (class(model)[1] == "xgb.Booster"){
+      if (!is.null(training_data)){
+        v <- training_data[model$feature_names] %>% sapply(class)
+      } else {
+        stop("Training data needed.")
+      }
+    }
+    
     if (class(model)[1] == "gbm") {
       v <- attr(model$Terms, "dataClasses")[-1]
     }
@@ -90,7 +98,7 @@ p_abund_pdp <-
           xn <- data.frame(crv[[1]])[, 1]
           p[[i]] <-
             ggplot2::ggplot(crv[[1]], ggplot2::aes(x = !!xn, y = Abundance)) +
-            ggplot2::scale_y_continuous(limits = c(0, 1)) +
+            #ggplot2::scale_y_continuous(limits = c(0, 1)) +
             ggplot2::labs(x = names(crv[[1]])[1]) +
             {
               if (resid) {
@@ -117,7 +125,7 @@ p_abund_pdp <-
           xn <- data.frame(crv[[1]])[, 1]
           p[[i]] <-
             ggplot2::ggplot(crv[[1]], ggplot2::aes(!!xn, Abundance)) +
-            ggplot2::scale_y_continuous(limits = c(0, 1)) +
+            #ggplot2::scale_y_continuous(limits = c(0, 1)) +
             ggplot2::geom_col(fill = rev(colorl)[1]) +
             ggplot2::labs(x = names(crv[[1]])[1])
         }
@@ -178,7 +186,7 @@ p_abund_pdp <-
           xn <- crv[[1]] %>% dplyr::pull(names(crv[[1]])[1])
           p[[i]] <-
             ggplot2::ggplot(crv[[1]], ggplot2::aes(!!xn, Abundance)) +
-            ggplot2::scale_y_continuous(limits = c(0, 1)) +
+            #ggplot2::scale_y_continuous(limits = c(0, 1)) +
             ggplot2::geom_col(fill = rev(colorl)[1]) +
             ggplot2::labs(x = names(crv[[1]])[1])
         }
