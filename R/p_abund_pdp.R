@@ -1,3 +1,26 @@
+#' ADM Partial Dependent Plot
+#'
+#' @param model 
+#' @param predictors 
+#' @param resolution 
+#' @param resid 
+#' @param training_data 
+#' @param projection_data 
+#' @param clamping 
+#' @param rug 
+#' @param colorl 
+#' @param colorp 
+#' @param alpha 
+#' @param theme 
+#'
+#' @importFrom dplyr pull
+#' @importFrom ggplot2 ggplot aes scale_y_continuous labs geom_point geom_line geom_rug geom_col scale_color_manual geom_vline theme element_blank
+#' @importFrom patchwork wrap_plots plot_layout
+#' 
+#' @return
+#' @export
+#'
+#' @examples
 p_abund_pdp <-
   function(model,
            predictors = NULL,
@@ -53,7 +76,7 @@ p_abund_pdp <-
     if (is.null(projection_data)) {
       for (i in 1:length(v)) {
         crv <-
-          data_pdp(
+          data_abund_pdp(
             model = model,
             predictors = names(v[i]),
             resolution = resolution,
@@ -66,7 +89,7 @@ p_abund_pdp <-
         if (v[i] == "numeric") {
           xn <- data.frame(crv[[1]])[, 1]
           p[[i]] <-
-            ggplot2::ggplot(crv[[1]], ggplot2::aes(x = !!xn, y = Suitability)) +
+            ggplot2::ggplot(crv[[1]], ggplot2::aes(x = !!xn, y = Abundance)) +
             ggplot2::scale_y_continuous(limits = c(0, 1)) +
             ggplot2::labs(x = names(crv[[1]])[1]) +
             {
@@ -74,7 +97,7 @@ p_abund_pdp <-
                 xn2 <- data.frame(crv[[2]])[, 1]
                 ggplot2::geom_point(
                   data = crv[[2]], color = colorp,
-                  ggplot2::aes(!!xn2, Suitability), alpha = alpha
+                  ggplot2::aes(!!xn2, Abundance), alpha = alpha
                 )
               }
             } +
@@ -85,7 +108,7 @@ p_abund_pdp <-
             p[[i]] <- p[[i]] +
               ggplot2::geom_rug(
                 data = crv[[2]],
-                ggplot2::aes(!!xn2, Suitability),
+                ggplot2::aes(!!xn2, Abundance),
                 sides = "b",
                 alpha = 0.3
               )
@@ -93,7 +116,7 @@ p_abund_pdp <-
         } else {
           xn <- data.frame(crv[[1]])[, 1]
           p[[i]] <-
-            ggplot2::ggplot(crv[[1]], ggplot2::aes(!!xn, Suitability)) +
+            ggplot2::ggplot(crv[[1]], ggplot2::aes(!!xn, Abundance)) +
             ggplot2::scale_y_continuous(limits = c(0, 1)) +
             ggplot2::geom_col(fill = rev(colorl)[1]) +
             ggplot2::labs(x = names(crv[[1]])[1])
