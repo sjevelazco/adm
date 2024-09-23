@@ -1,3 +1,23 @@
+#' Calculate data to construct ADM partial dependence plots
+#'
+#' @param model 
+#' @param predictors 
+#' @param resolution 
+#' @param resid 
+#' @param training_data 
+#' @param projection_data 
+#' @param clamping 
+#'
+#' @importFrom dplyr select tibble
+#' @importFrom gbm predict.gbm
+#' @importFrom kernlab predict
+#' @importFrom stats na.omit predict
+#' @importFrom terra minmax
+#' 
+#' @return
+#' @export
+#'
+#' @examples
 data_abund_pdp <-
   function(model,
            predictors,
