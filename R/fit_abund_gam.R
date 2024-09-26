@@ -40,6 +40,7 @@ fit_abund_gam <-
            distribution = NULL,
            inter = "automatic",
            verbose = TRUE) {
+    . <- mae <- pdisp <-  NULL
     
     if (is.null(distribution)) {
       stop("'distribution' argument was not used, a distribution must be specifyied")

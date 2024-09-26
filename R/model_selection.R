@@ -10,6 +10,8 @@
 #'
 #' @examples
 model_selection <- function(hyper_combinations, metrics) {
+  comb_id <- pdisp_dist <- NULL
+
   metrics <- as.vector(metrics)
   performance_var <- names(hyper_combinations)
 
@@ -43,7 +45,7 @@ model_selection <- function(hyper_combinations, metrics) {
       }
     }
   }
-
+  
 
   selected_comb <- hyper_combinations$comb_id[1]
 

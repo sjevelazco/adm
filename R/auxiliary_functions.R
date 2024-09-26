@@ -29,7 +29,7 @@ adapt_df <- function(data, predictors, predictors_f, response, partition, xy = N
   }
   
   if (is.vector(xy)) {
-    data <- bind_cols(data,xy_cols)
+    data <- dplyr::bind_cols(data,xy_cols)
   }
   
   return(data)
@@ -119,6 +119,8 @@ croppin_hood <- function(occ, x, y, raster, size) {
 #'
 #' @examples
 family_selector <- function(data, response) {
+  . <- discrete <- accepts_negatives <- accepts_zero <- 
+    accepts_one <- one_restricted <- family_name <- family_call <- NULL
   families_bank <-
     system.file("external/families_bank.txt", package = "adm") %>%
     utils::read.delim(., header = TRUE, quote = "\t")

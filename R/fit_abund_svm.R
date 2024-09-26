@@ -42,6 +42,7 @@ fit_abund_svm <-
            C = 1,
            verbose = TRUE) {
     
+    . <- mae <- pdisp <-  NULL
     
     # Adequate database
     data <- adapt_df(data = data,

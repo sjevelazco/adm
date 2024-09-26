@@ -41,6 +41,7 @@ fit_abund_net <-
            decay = 0,
            verbose = TRUE) {
     
+    . <- mae <- pdisp <-  NULL
     
     # Adequate database
     data <- adapt_df(data = data,
