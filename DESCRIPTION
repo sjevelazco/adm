@@ -12,21 +12,22 @@ Maintainer: Santiago J.E. Velazco <sjevelazco@gmail.com>
 Depends: R (>= 3.5.0)
 Imports: 
     doParallel,
-    foreach,
+    doSNOW,
     dplyr,
-    stringr,
-    gbm,
-    kernlab,
-    randomForest,
-    terra (>= 1.5-21),
-    utils,
-    torch, 
-    luz, 
-    torchvision, 
+    foreach,
     gamlss,
-    xgboost,
+    gbm,
+    ggplot2,
+    kernlab,
+    luz, 
+    randomForest,
+    stringr,
+    terra (>= 1.5-21),
     tidyr,
-    doSNOW
+    torch, 
+    torchvision, 
+    utils,
+    xgboost
 Description: Assist in the construction of abundance-based distribution model workflow
     by incorporating comprehensive tools for data preparation, model fitting, 
     evaluation, and prediction.
