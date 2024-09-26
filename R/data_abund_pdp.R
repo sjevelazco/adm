@@ -11,7 +11,7 @@
 #' @importFrom dplyr select tibble
 #' @importFrom gbm predict.gbm
 #' @importFrom kernlab predict
-#' @importFrom stats na.omit predict
+#' @importFrom stats na.omit
 #' @importFrom terra minmax
 #' 
 #' @return
@@ -146,11 +146,11 @@ data_abund_pdp <-
     # if (class(model)[1] == "glm") {
     #   suit_c <-
     #     data.frame(suit_c[1],
-    #                Suitability = stats::predict.glm(model, newdata = suit_c, type = "response")
+    #                Suitability = gamlss::predictAll(model, newdata = suit_c, type = "response")
     #     )
     #   if (resid) {
     #     suit_r <-
-    #       data.frame(x[predictors], Suitability = stats::predict.glm(model, type = "response"))
+    #       data.frame(x[predictors], Suitability = gamlss::predictAll(model, type = "response"))
     #     result <- list("pdpdata" = suit_c, "resid" = suit_r)
     #   } else {
     #     result <- list("pdpdata" = suit_c, "resid" = NA)
@@ -198,10 +198,16 @@ data_abund_pdp <-
     
     if (class(model)[1] == "nnet.formula") {
       suit_c <-
-        data.frame(suit_c[1], Abundance = stats::predict(model, newdata = suit_c, type = "raw"))
+        data.frame(suit_c[1], Abundance =
+                     suppressMessages(stats::predict(
+                       model, newdata = suit_c, type = "raw"
+                     )))
       if (resid) {
         suit_r <-
-          data.frame(x[predictors], Abundance = stats::predict(model, type = "raw"))
+          data.frame(x[predictors], Abundance =
+                       suppressMessages(stats::predict(
+                         model, type = "raw"
+                         )))
         result <- list("pdpdata" = suit_c, "resid" = suit_r)
       } else {
         result <- list("pdpdata" = suit_c, "resid" = NA)
@@ -211,10 +217,12 @@ data_abund_pdp <-
     # TODO mudar tipo das responses
     if (class(model)[1] == "randomForest.formula") {
       suit_c <-
-        data.frame(suit_c[1], Suitability = stats::predict(model, suit_c, type = "prob")[, 2])
+        data.frame(suit_c[1], Suitability = 
+                     suppressMessages(stats::predict(model, suit_c, type = "prob")[, 2]))
       if (resid) {
         suit_r <-
-          data.frame(x[predictors], Suitability = stats::predict(model, type = "prob")[, 2])
+          data.frame(x[predictors], Suitability = 
+                       suppressMessages(stats::predict(model, type = "prob")[, 2]))
         result <- list("pdpdata" = suit_c, "resid" = suit_r)
       } else {
         result <- list("pdpdata" = suit_c, "resid" = NA)

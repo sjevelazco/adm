@@ -18,7 +18,7 @@
 #' @param verbose logical. If FALSE, disables all console messages. Default TRUE.
 #'
 #' @importFrom dplyr bind_rows pull tibble as_tibble group_by summarise across
-#' @importFrom stats predict sd
+#' @importFrom stats sd
 #' @importFrom xgboost xgboost
 #'
 #' @return
@@ -139,7 +139,8 @@ fit_abund_xgb <-
           verbose = 0
         )
         
-        pred <- stats::predict(model, sp_test$data, type = "response")
+        pred <-
+          suppressMessages(stats::predict(model, sp_test$data, type = "response"))
         observed <- sp_test$target
         eval_partial[[j]] <- dplyr::tibble(
           model = "xgb",

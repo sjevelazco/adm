@@ -15,8 +15,8 @@
 #' @param verbose logical. If FALSE, disables all console messages. Default TRUE
 #'
 #' @importFrom dplyr bind_rows pull tibble as_tibble group_by summarise across
-#' @importFrom gbm gbm
-#' @importFrom stats formula predict sd
+#' @importFrom gbm gbm predict.gbm
+#' @importFrom stats formula sd
 #'
 #' @return
 #'
@@ -125,7 +125,7 @@ fit_abund_gbm <-
           bag.fraction = 0.9
         )
         
-        pred <- stats::predict(model, test_set, type = "response")
+        pred <- gbm::predict.gbm(model, test_set, type = "response")
         observed <- dplyr::pull(test_set, response)
         eval_partial[[j]] <- dplyr::tibble(
           model = "gbm",

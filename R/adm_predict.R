@@ -46,8 +46,8 @@
 #'
 #' @importFrom dplyr mutate across left_join pull bind_rows filter  select
 #' @importFrom kernlab predict
-#' @importFrom mgcv predict.gam
 #' @importFrom stats median
+#' @importFrom gamlss predictAll
 #' @importFrom terra vect crop mask as.data.frame is.factor rast app weighted.mean lapp crs
 #'
 #' @examples
@@ -298,7 +298,6 @@ adm_predict <-
           r <- pred[[!terra::is.factor(pred)]][[1]]
           r[!is.na(r)] <- NA
           r[as.numeric(rownames(pred_df))] <-
-            suppressMessages(stats::predict(m[[i]], as.matrix(pred_df), type = "response"))
           
           model_c[[i]][rowset] <- r[rowset]
         }
@@ -343,7 +342,7 @@ adm_predict <-
           r <- pred[[!terra::is.factor(pred)]][[1]]
           r[!is.na(r)] <- NA
           r[as.numeric(rownames(pred_df))] <-
-            suppressMessages(stats::predict(m[[i]], newdata = pred_df, data = training_data, type = "response"))
+            suppressMessages(predict(m[[i]], newdata = pred_df, data = training_data, type = "response"))
           
           model_c[[i]][rowset] <- r[rowset]
         }
@@ -384,12 +383,12 @@ adm_predict <-
           if (sum(vfilter) > 0) {
             v <- rep(0, nrow(pred_df))
             v[!vfilter] <-
-              c(mgcv::predict.gam(m[[i]], pred_df[!vfilter, ], type = "response"))
+              c(predict(m[[i]], pred_df[!vfilter, ], type = "response"))
             r[as.numeric(rownames(pred_df))] <- v
             rm(v)
           } else {
             r[as.numeric(rownames(pred_df))] <-
-              c(mgcv::predict.gam(m[[i]], pred_df, type = "response"))
+              c(predict(m[[i]], pred_df, type = "response"))
           }
           
           model_c[[i]][rowset] <- r[rowset]
@@ -429,12 +428,12 @@ adm_predict <-
           if (sum(vfilter) > 0) {
             v <- rep(0, nrow(pred_df))
             v[!vfilter] <-
-              stats::predict(m[[i]], pred_df[!vfilter, ], type = "response")
+              gamlss::predictAll(m[[i]], pred_df[!vfilter, ], type = "response")
             r[as.numeric(rownames(pred_df))] <- v
             rm(v)
           } else {
             r[as.numeric(rownames(pred_df))] <-
-              stats::predict(m[[i]], pred_df, type = "response")
+              gamlss::predictAll(m[[i]], pred_df, type = "response")
           }
           
           model_c[[i]][rowset] <- r[rowset]
@@ -450,7 +449,7 @@ adm_predict <-
           r <- pred[[!terra::is.factor(pred)]][[1]]
           r[!is.na(r)] <- NA
           r[as.numeric(rownames(pred_df))] <-
-            suppressMessages(stats::predict(m[[i]], pred_df, type = "response"))
+            suppressMessages(gamlss::predictAll(m[[i]], pred_df, type = "response"))
           
           model_c[[i]][rowset] <- r[rowset]
         }
@@ -497,7 +496,7 @@ adm_predict <-
           if (sum(vfilter) > 0) {
             v <- rep(0, nrow(pred_df))
             v[!vfilter] <-
-              stats::predict(m[[i]], pred_df[!vfilter, ] %>%
+              suppressMessages(stats::predict(m[[i]], pred_df[!vfilter, ]) %>%
                                dplyr::mutate(dplyr::across(
                                  .cols = names(f),
                                  .fns = ~ droplevels(.)
@@ -508,7 +507,7 @@ adm_predict <-
             rm(v)
           } else {
             r[as.numeric(rownames(pred_df))] <-
-              stats::predict(m[[i]], pred_df, type = "prob")[, 2]
+              suppressMessages(stats::predict(m[[i]], pred_df, type = "prob")[, 2])
           }
           
           model_c[[i]][rowset] <- r[rowset]

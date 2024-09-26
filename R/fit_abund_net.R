@@ -112,7 +112,7 @@ fit_abund_net <-
           trace = FALSE
         )
         
-        pred <- predict(model, newdata = test_set, type = "raw")
+        pred <- suppressMessages(stats::predict(model, newdata = test_set, type = "raw"))
         observed <- dplyr::pull(test_set, response)
         eval_partial[[j]] <- dplyr::tibble(
           model = "net",

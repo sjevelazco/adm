@@ -12,7 +12,7 @@
 #'
 #' @importFrom dplyr bind_rows pull tibble as_tibble group_by summarise across
 #' @importFrom randomForest randomForest
-#' @importFrom stats formula predict sd
+#' @importFrom stats formula sd
 #'
 #' @return
 #'
@@ -104,7 +104,7 @@ fit_abund_raf <-
           importance = FALSE
         )
         
-        pred <- stats::predict(model, test_set, type = "response")
+        pred <- suppressMessages(stats::predict(model, test_set, type = "response"))
         observed <- dplyr::pull(test_set, response)
         eval_partial[[j]] <- dplyr::tibble(
           model = "raf",

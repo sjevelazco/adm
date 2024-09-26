@@ -7,10 +7,10 @@
 adm_summarize(models)
 }
 \arguments{
-\item{models}{list. A list a single or several models fitted with some of fit_ or tune_ functions. Usage models = list(mod1, mod2, mod3)}
+\item{models}{list. A list of a single or several models fitted with some of fit_ or tune_ functions. Usage models = list(mod1, mod2, mod3)}
 }
 \value{
-Combined model performance table for all input models. Models fit with tune will include model performance for the best hyperparameters.
+A tibble object with combined model performance for all input models. Models fit with tune will include model performance for the best hyperparameters.
 }
 \description{
 Merge model performance tables
@@ -24,13 +24,13 @@ data("sppabund")
 envar <- system.file("external/envar.tif", package = "adm")
 envar <- terra::rast(envar)
 
-# Extract data
+# Species abundance data, coordinates, and partition
 some_sp <- sppabund \%>\%
   dplyr::filter(species == "Species one") \%>\%
   dplyr::select(species, ind_ha, x, y, .part)
-
 some_sp
 
+# Extract data
 some_sp <-
   adm_extract(
     data = some_sp,
