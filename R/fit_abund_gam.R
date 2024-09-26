@@ -12,7 +12,7 @@
 #' @param verbose logical. If FALSE, disables all console messages. Default TRUE
 #'
 #' @importFrom dplyr bind_rows pull tibble as_tibble group_by summarise across
-#' @importFrom gamlss gamlss pb
+#' @importFrom gamlss gamlss pb predictAll
 #' @importFrom stats formula sd
 #'
 #' @return
@@ -122,7 +122,7 @@ fit_abund_gam <-
           trace = FALSE
         )
         
-        pred <- predict(model, newdata = test_set, data = train_set, type = "response")
+        pred <- gamlss::predictAll(model, newdata = test_set, data = train_set, type = "response")[[1]]
         observed <- dplyr::pull(test_set, response)
         eval_partial[[j]] <- dplyr::tibble(
           model = "gam",

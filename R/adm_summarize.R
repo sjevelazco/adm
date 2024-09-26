@@ -1,10 +1,10 @@
 #' Merge model performance tables
 #'
-#' @param models list. A list a single or several models fitted with some of fit_ or tune_ functions. Usage models = list(mod1, mod2, mod3)
+#' @param models list. A list of a single or several models fitted with some of fit_ or tune_ functions. Usage models = list(mod1, mod2, mod3)
 #'
 #' @importFrom dplyr bind_rows relocate tibble select %>%
 #'
-#' @return Combined model performance table for all input models. Models fit with tune will include model performance for the best hyperparameters.
+#' @return A tibble object with combined model performance for all input models. Models fit with tune will include model performance for the best hyperparameters.
 #'
 #' @export
 #'
@@ -17,13 +17,13 @@
 #' envar <- system.file("external/envar.tif", package = "adm")
 #' envar <- terra::rast(envar)
 #' 
-#' # Extract data
+#' # Species abundance data, coordinates, and partition
 #' some_sp <- sppabund %>%
 #'   dplyr::filter(species == "Species one") %>%
 #'   dplyr::select(species, ind_ha, x, y, .part)
-#' 
 #' some_sp
 #' 
+#' # Extract data
 #' some_sp <-
 #'   adm_extract(
 #'     data = some_sp,
