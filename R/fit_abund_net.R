@@ -13,6 +13,7 @@
 #' @importFrom dplyr pull tibble bind_rows as_tibble group_by summarise across
 #' @importFrom kernlab ksvm predict
 #' @importFrom stats formula sd
+#' @importFrom nnet nnet
 #'
 #' @return
 #'

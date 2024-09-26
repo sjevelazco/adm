@@ -27,8 +27,8 @@ test_that("Test for transformation type round", {
 test_that("Test for transformation type zscore", {
   
   result <- adm_transform(some_sp, variable = "ind_ha", method = "zscore") 
-  expect_equal(round(mean(result$ind_ha_zscore)),  16)
-  expect_equal(round(sd(result$ind_ha_zscore)),  32)
+  expect_equal(round(mean(result$ind_ha_zscore)),  0)
+  expect_equal(round(sd(result$ind_ha_zscore)),  1)
 })
 
 test_that("Expect erro", {

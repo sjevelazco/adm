@@ -14,7 +14,7 @@
 #'
 #' @importFrom dplyr bind_rows pull tibble as_tibble group_by summarise across
 #' @importFrom luz setup set_opt_hparams fit
-#' @importFrom stats sd
+#' @importFrom stats sd runif
 #' @importFrom torch dataset torch_tensor torch_manual_seed nn_module nn_linear nnf_relu dataloader nn_l1_loss optim_adam
 #'
 #' @return
@@ -168,7 +168,7 @@ fit_abund_dnn <-
         pred <- predict(fitted, test_set) %>% as.numeric()
         
         if (!(sum(is.na(pred)) == length(pred))) {
-          pred[is.na(pred)] <- runif(sum(is.na(pred)), min(data[[response]]), max(data[[response]]))
+          pred[is.na(pred)] <- stats::runif(sum(is.na(pred)), min(data[[response]]), max(data[[response]]))
           observed <- test_set$response_variable %>% as.numeric()
           eval_partial[[j]] <- dplyr::tibble(
             model = "dnn",

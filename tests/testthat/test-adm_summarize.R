@@ -1,6 +1,7 @@
 test_that("multiplication works", {
   require(dplyr)
-  
+  envar <- system.file("external/envar.tif", package = "adm")
+  envar <- terra::rast(envar)
   data("sppabund")
   
   # Extract data

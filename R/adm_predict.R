@@ -42,8 +42,6 @@
 #'
 #' @export
 #'
-#' @seealso \code{\link{fit_ensemble}}
-#'
 #' @importFrom dplyr mutate across left_join pull bind_rows filter  select
 #' @importFrom kernlab predict
 #' @importFrom stats median
@@ -496,12 +494,12 @@ adm_predict <-
           if (sum(vfilter) > 0) {
             v <- rep(0, nrow(pred_df))
             v[!vfilter] <-
-              suppressMessages(stats::predict(m[[i]], pred_df[!vfilter, ]) %>%
+              suppressMessages(stats::predict(m[[i]], pred_df[!vfilter, ] %>%
                                dplyr::mutate(dplyr::across(
                                  .cols = names(f),
                                  .fns = ~ droplevels(.)
                                )),
-                             type = "prob"
+                             type = "prob")
               )[, 2]
             r[as.numeric(rownames(pred_df))] <- v
             rm(v)
