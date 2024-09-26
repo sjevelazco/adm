@@ -193,7 +193,7 @@ adm_predict <-
            predict_area = NULL,
            clamp = TRUE,
            pred_type = "cloglog") {
-    . <- model <- threshold <- thr_value <- NULL
+    . <- model <- threshold <- thr_value <- self <- NULL
     
     # TODO write codes to predict CNN ANN adapt GLM and GAM to use gamlss
     

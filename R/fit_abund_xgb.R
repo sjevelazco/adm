@@ -52,6 +52,7 @@ fit_abund_xgb <-
            objective = "reg:squarederror",
            verbose = TRUE) {
   
+    . <- mae <- pdisp <-  NULL
     
     # Adequate database
     data <- adapt_df(data = data,

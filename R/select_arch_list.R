@@ -22,6 +22,9 @@ select_arch_list <-
       n_samples = 1, # TODO
       min_max = TRUE # TODO
       ) {
+    
+    parameters <- name <- combination <- old_name <- NULL
+    
     architectures <- arch_list
 
     net_size_df <- list()

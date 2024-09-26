@@ -40,6 +40,8 @@ fit_abund_raf <-
            ntree = 500,
            verbose = TRUE) {
     
+    . <- mae <- pdisp <-  NULL
+    
     # Adequate database
     data <- adapt_df(data = data,
                      response = response,

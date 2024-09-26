@@ -46,6 +46,7 @@ fit_abund_gbm <-
            n.minobsinnode = 5,
            shrinkage = 0.1,
            verbose = TRUE) {
+    . <- mae <- pdisp <-  NULL
     
     # Variables
     if (!is.null(predictors_f)) {

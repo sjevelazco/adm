@@ -43,7 +43,7 @@ fit_abund_glm <-
            poly = 0,
            inter_order = 0,
            verbose = TRUE) {
-    . <- poly <- NULL
+    . <- poly <- mae <- pdisp <- NULL
     if (is.null(distribution)) {
       stop("'distribution' argument was not used, a distribution must be specifyied")
     }
