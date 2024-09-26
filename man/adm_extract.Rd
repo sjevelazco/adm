@@ -2,21 +2,21 @@
 % Please edit documentation in R/adm_extract.R
 \name{adm_extract}
 \alias{adm_extract}
-\title{Extract environmental data values from a spatial raster based on x and y coordinates}
+\title{Extract values from a spatial raster based on x and y coordinates}
 \usage{
 adm_extract(data, x, y, env_layer, variables = NULL, filter_na = TRUE)
 }
 \arguments{
-\item{data}{data.frame. Database with species abundance with x and y coordinates}
+\item{data}{data.frame or tibble. Database with species abundance with x and y coordinates}
 
 \item{x}{character. Column name with spatial x coordinates}
 
 \item{y}{character. Column name with spatial y coordinates}
 
-\item{env_layer}{SpatRaster. Raster or raster stack with environmental variables.}
+\item{env_layer}{SpatRaster. Raster with environmental variables.}
 
 \item{variables}{character. Vector with the variable names of predictor (environmental) variables
-Usage variables. = c("elevation", "sand", "cfvo"). If no variable is specified, function will
+Usage variables = c("elevation", "sand", "cfvo"). If no variable is specified, function will
 return data for all layers. Default NULL}
 
 \item{filter_na}{logical. If filter_na = TRUE (default), the rows with NA values for any of the
@@ -28,7 +28,7 @@ for the extracted environmental variables at each x y location from the SpatRast
 in 'env_layer'
 }
 \description{
-Extract environmental data values from a spatial raster based on x and y coordinates
+The function extracts environmental data at the given x and y coordinates
 }
 \examples{
 \dontrun{

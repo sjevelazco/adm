@@ -17,42 +17,55 @@ Merge model performance tables
 }
 \examples{
 \dontrun{
-require(flexsdm)
+require(dplyr)
+require(terra)
+
 data("sppabund")
+envar <- system.file("external/envar.tif", package = "adm")
+envar <- terra::rast(envar)
 
-sp1 <- sppabund \%>\%
-  dplyr::filter(species == "Species one", ind_ha > 0) \%>\%
-  dplyr::mutate(ind_ha = ind_ha \%>\% round())
-# Families for GAM and GLM
-dis_f <- system.file("external/families_bank.txt", package = "adm") \%>\%
-  utils::read.delim(., header = TRUE, quote = "\t") \%>\%
-  dplyr::as_tibble()
-dis_f$family_name
+# Extract data
+some_sp <- sppabund \%>\%
+  dplyr::filter(species == "Species one") \%>\%
+  dplyr::select(species, ind_ha, x, y, .part)
 
-# Fit GAM
-m_gam <- fit_abund_gam(
-  data = sp1,
-  response = "ind_ha",
-  predictors = c("bio1", "bio12", "bio15", "bio3", "cfvo", "elevation"),
-  partition = ".part",
-  family = "PO",
-  inter = 1
-)
+some_sp
 
-m_svm <- fit_abund_svm(
-  data = sp1,
-  response = "ind_ha",
-  predictors = c("bio1", "bio12", "bio15", "bio3", "cfvo", "elevation"),
-  partition = ".part"
-)
+some_sp <-
+  adm_extract(
+    data = some_sp,
+    x = "x",
+    y = "y",
+    env_layer = envar
+  )
 
+# Fit RAF
 m_raf <- fit_abund_raf(
-  data = sp1,
+  data = some_sp,
   response = "ind_ha",
-  predictors = c("bio1", "bio12", "bio15", "bio3", "cfvo", "elevation"),
+  predictors = c("elevation", "sand", "bio3", "bio12"),
+  partition = ".part",
+)
+
+# Fit SVM
+m_svm <- fit_abund_svm(
+  data = some_sp,
+  response = "ind_ha",
+  predictors = c("elevation", "sand", "bio3", "bio12"),
   partition = ".part"
 )
 
-adm_summarize(list(m_gam, m_svm, m_raf))
+# XGB
+m_xbg <- fit_abund_xgb(
+  data = some_sp,
+  response = "ind_ha",
+  predictors = c("elevation", "sand", "bio3", "bio12"),
+  partition = ".part"
+)
+
+
+perf <- adm_summarize(list(m_svm, m_raf, m_xbg))
+
+perf
 }
 }
