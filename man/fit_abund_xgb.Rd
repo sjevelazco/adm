@@ -8,7 +8,7 @@ fit_abund_xgb(
   data,
   response,
   predictors,
-  predictors_f,
+  predictors_f = NULL,
   partition,
   predict_part = FALSE,
   nrounds = 100,

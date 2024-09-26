@@ -1,11 +1,13 @@
-#' Extract environmental data values from a spatial raster based on x and y coordinates
+#' Extract values from a spatial raster based on x and y coordinates
 #'
-#' @param data data.frame. Database with species abundance with x and y coordinates
+#' @description The function extracts environmental data at the given x and y coordinates
+#' 
+#' @param data data.frame or tibble. Database with species abundance with x and y coordinates
 #' @param x character. Column name with spatial x coordinates
 #' @param y character. Column name with spatial y coordinates
-#' @param env_layer SpatRaster. Raster or raster stack with environmental variables.
+#' @param env_layer SpatRaster. Raster with environmental variables.
 #' @param variables character. Vector with the variable names of predictor (environmental) variables
-#' Usage variables. = c("elevation", "sand", "cfvo"). If no variable is specified, function will
+#' Usage variables = c("elevation", "sand", "cfvo"). If no variable is specified, function will
 #' return data for all layers. Default NULL
 #' @param filter_na logical. If filter_na = TRUE (default), the rows with NA values for any of the
 #' environmental variables are removed from the returned tibble.
@@ -89,19 +91,6 @@ adm_extract <-
       ) %>%
         dplyr::select({{variables}})
     )
-
-    # if(any(is.factor(env_layer))){
-    #   envf <- names(env_layer)[is.factor(env_layer)]
-    #   for(i in 1:length(envf)){
-    #     lvls <- levels(env_layer[[envf[i]]])[[1]]
-    #     extract_data[, envf[i]] <-
-    #       factor(
-    #         extract_data %>% dplyr::pull({{envf[i]}}),
-    #         levels = lvls[, 1],
-    #         labels = lvls[, 2]
-    #       )
-    #   }
-    # }
 
 
     # removes rows with NAs for any environmental variable

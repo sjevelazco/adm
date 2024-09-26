@@ -7,6 +7,7 @@
 adm_predict(
   models,
   pred,
+  training_data = NULL,
   nchunk = 1,
   thr = NULL,
   con_thr = FALSE,

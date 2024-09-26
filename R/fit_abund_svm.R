@@ -117,7 +117,7 @@ fit_abund_svm <-
           C = C
         )
         
-        pred <- predict(model, newdata = test_set, type = "response")
+        pred <- kernlab::predict(model, newdata = test_set, type = "response")
         observed <- dplyr::pull(test_set, response)
         eval_partial[[j]] <- dplyr::tibble(
           model = "svm",
