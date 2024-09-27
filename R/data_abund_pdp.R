@@ -1,4 +1,4 @@
-#' Calculate data to construct ADM partial dependence plots
+#' Calculate data to construct partial dependence plots
 #'
 #' @param model 
 #' @param predictors 
@@ -6,7 +6,6 @@
 #' @param resid 
 #' @param training_data 
 #' @param projection_data 
-#' @param clamping 
 #'
 #' @importFrom dplyr select tibble
 #' @importFrom gbm predict.gbm
@@ -24,8 +23,7 @@ data_abund_pdp <-
            resolution = 50,
            resid = FALSE,
            training_data = NULL,
-           projection_data = NULL,
-           clamping = FALSE) {
+           projection_data = NULL) {
     
     # Extract training data
     # TODO
