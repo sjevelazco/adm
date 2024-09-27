@@ -27,12 +27,14 @@
 #' \dontrun{
 #' require(terra)
 #' 
-#' # Load datasets
+#' # Datasbase with species abundance and x and y coordinates
 #' data("sppabund")
+#' 
+#' # Raster data with environmental variables
 #' envar <- system.file("external/envar.tif", package = "adm")
 #' envar <- terra::rast(envar)
 #' 
-#' # Extract data
+#' # Extract data for a single species
 #' some_sp <- sppabund %>%
 #'   filter(species == "Species one") %>% dplyr::select(species, ind_ha, x,y)
 #' 

@@ -7,8 +7,23 @@
 family_selector(data, response)
 }
 \arguments{
-\item{response}{}
+\item{data}{data.frame or tibble. Database with species abundance}
+
+\item{response}{character. Column name with species abundance}
+}
+\value{
+tibble with family_name, family_call, range, and discrete columns (if family distribution 
+or not discrete)
 }
 \description{
-Select family distribution suited for a given response variables (e.g., count, zero-inflated) used to fit GAM and GLM models
+Select probability distribution available in gamlss.dist suited for a given response variables (e.g., count, zero-inflated) used to fit GAM and GLM models. See \link[gamlss.dist]{gamlss.family} for more details.
+}
+\examples{
+\dontrun{
+data(sppabund)
+
+family_selector(data = sppabund, response = "ind_ha")
+
+}
+
 }

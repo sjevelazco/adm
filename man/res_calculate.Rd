@@ -2,7 +2,7 @@
 % Please edit documentation in R/auxiliary_functions.R
 \name{res_calculate}
 \alias{res_calculate}
-\title{Select probability distributions for GAM and GLM}
+\title{Calculate the output resolution of a layer}
 \usage{
 res_calculate(
   type = c("layer", "pooling"),
@@ -13,12 +13,42 @@ res_calculate(
 )
 }
 \arguments{
-\item{kernel_size}{description}
+\item{type}{string. Accepted values are "layer" and "pooling".}
 
-\item{stride}{description}
+\item{in_res}{integer. It represents the resolution of the input layer.}
 
-\item{padding}{description}
+\item{kernel_size}{integer. It refers to the size of the kernel used in the convolution 
+or pooling operation.}
+
+\item{stride}{integer. It is the stride length for the convolution or pooling operation. 
+Only used when type is "layer".}
+
+\item{padding}{integer. It is the amount padding added to the input layer. 
+Only used when type is "layer"}
+}
+\value{
+The function returns integer which is the output resolution.
 }
 \description{
-Select probability distributions for GAM and GLM
+Calculate the output resolution of a layer or pooling operation in a 
+Convolutional Neural Network.
+}
+\details{
+\itemize{
+\item When type is "layer" the output resolution is calculated as 
+((in_res - kernel_size + (2 * padding)) / stride) + 1.
+\item When type is "pooling", the output resolution is calculated as the floor division 
+of in_res by kernel_size.
+}
+}
+\examples{
+\dontrun{
+
+# Calculating output resolution for a convolution layer
+res_calculate(type = "layer", in_res = 12, kernel_size = 2, stride = 2, padding = 0)
+
+# Calculating output resolution for a pooling layer
+res_calculate(type = "pooling", in_res = 12, kernel_size = 2)
+
+}
 }

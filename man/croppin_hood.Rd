@@ -2,13 +2,47 @@
 % Please edit documentation in R/auxiliary_functions.R
 \name{croppin_hood}
 \alias{croppin_hood}
-\title{Crop rasters to build samples for Convolutional Neural Networks}
+\title{Crop rasters around a point (Convolutional Neural Networks)}
 \usage{
 croppin_hood(occ, x, y, raster, size)
 }
 \arguments{
-\item{size}{}
+\item{occ}{tibble or data.frame. Database with response, predictors, and partition values}
+
+\item{x}{character. Column name with spatial x coordinates}
+
+\item{y}{character. Column name with spatial y coordinates}
+
+\item{raster}{SpatRaster. Raster with environmental variables.}
+
+\item{size}{numeric. Size of the cropped raster, number o cell in each direction of a focal cell}
+}
+\value{
+SpatRaster. Croped raster
 }
 \description{
-Crop rasters to build samples for Convolutional Neural Networks
+Crop rasters for a single spatial point. Function used internally to construct Convolutional Neural Networks
+}
+\examples{
+\dontrun{
+require(terra)
+
+# Datasbase with species abundance and x and y coordinates
+data("sppabund")
+
+# Extract data for a single species
+some_sp <- sppabund \%>\%
+  filter(species == "Species three")
+
+# Raster data with environmental variables
+envar <- system.file("external/envar.tif", package = "adm")
+envar <- terra::rast(envar)
+
+# 
+sampl_r <- croppin_hood(occ = some_sp[1,], x = "x", y = "y", raster = envar, size = 5)
+plot(sampl_r)
+plot(sampl_r[[1]])
+points(some_sp[1,c("x", "y")], pch=19)
+
+}
 }
