@@ -82,11 +82,10 @@ fit_abund_gbm <-
       )
     }
     
-    print("-- distribution --")
     # ---- Distribution ----
-    if (distribution == "poisson") {
-      data[, response] <- round(data[, response])
-    }
+    # if (distribution == "poisson") {
+    #   data[, response] <- round(data[, response])
+    # }
     
     # Fit models
     np <- ncol(data %>% dplyr::select(dplyr::starts_with(partition)))
