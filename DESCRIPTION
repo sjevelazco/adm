@@ -20,16 +20,17 @@ Imports:
     ggplot2,
     patchwork,
     kernlab,
-    luz, 
+    luz,
     nnet,
     randomForest,
     stringr,
     terra (>= 1.5-21),
     tidyr,
-    torch, 
-    torchvision, 
+    torch,
+    torchvision,
     utils,
-    xgboost
+    xgboost,
+    adm
 Description: Assist in the construction of abundance-based distribution model workflow
     by incorporating comprehensive tools for data preparation, model fitting, 
     evaluation, and prediction.
