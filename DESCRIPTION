@@ -29,8 +29,7 @@ Imports:
     torch,
     torchvision,
     utils,
-    xgboost,
-    adm
+    xgboost
 Description: Assist in the construction of abundance-based distribution model workflow
     by incorporating comprehensive tools for data preparation, model fitting, 
     evaluation, and prediction.
