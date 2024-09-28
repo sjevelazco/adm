@@ -28,6 +28,59 @@
 #' @export
 #'
 #' @examples
+#' \dontrun{
+#' require(terra)
+#' require(gamlss)
+#' 
+#' # Datasbase with species abundance and x and y coordinates
+#' data("sppabund")
+#' 
+#' # Raster data with environmental variables
+#' envar <- system.file("external/envar.tif", package = "adm")
+#' envar <- terra::rast(envar)
+#' 
+#' # Extract data for a single species
+#' some_sp <- sppabund %>%
+#'   filter(species == "Species one") %>% 
+#'   dplyr::select(species, ind_ha, x, y,.part )
+#' 
+#' # Extract environmental data from envar raster for all locations in spp
+#' some_sp <-
+#'   adm_extract(
+#'     data = some_sp,
+#'     x = "x",
+#'     y = "y",
+#'     env_layer = envar,
+#'     variables = NULL,
+#'     filter_na = FALSE
+#'   )
+#' 
+#' some_sp
+#' 
+#' # Explor reponse variables
+#' some_sp$ind_ha %>% range
+#' some_sp$ind_ha %>% hist
+#' 
+#' # Here we will roudn data to the nearest integer
+#' some_sp <- some_sp %>% adm_transform("ind_ha", "log1")
+#' some_sp %>% dplyr::select(ind_ha, ind_ha_log)
+#' 
+#' # Explore different family distributions
+#' family_selector(data = some_sp, response = "ind_ha_log1") 
+#' 
+#' # Fit a GAM model
+#' mgam <- fit_abund_gam(
+#'   data = some_sp,
+#'   response = "ind_ha_log1",
+#'   predictors = c("elevation", "sand", "bio3", "bio12"),
+#'   sigma_formula = ~ elevation + bio3 + bio12,
+#'   predictors_f = NULL,
+#'   partition = ".part",
+#'   distribution = gamlss.dist::NO())
+#' 
+#' mgam
+#' 
+#' }
 fit_abund_raf <-
   function(data,
            response,

@@ -134,7 +134,7 @@ croppin_hood <- function(occ, x, y, raster, size) {
 #' @param data data.frame or tibble. Database with species abundance
 #' @param response character. Column name with species abundance
 #'
-#' @importFrom dplyr filter select as_tibble
+#' @importFrom dplyr filter select as_tibble arrange
 #' @importFrom utils read.delim
 #'
 #' @return tibble with family_name, family_call, range, and discrete columns (if family distribution 
@@ -195,7 +195,8 @@ family_selector <- function(data, response) {
 
   message("Selected ", nrow(testing_families), " suitable families for the data.")
 
-  return(dplyr::as_tibble(testing_families))
+  return(dplyr::as_tibble(testing_families) %>% 
+           dplyr::arrange(family_name))
 }
 
 #' Calculate the output resolution of a layer 
