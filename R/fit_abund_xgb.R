@@ -65,7 +65,7 @@ fit_abund_xgb <-
     if (!is.null(predictors_f)) {
       variables <- dplyr::bind_rows(c(c = predictors, f = predictors_f))
     } else {
-      variables <- predictors
+      variables <- dplyr::bind_rows(c(c = predictors))
     }
     
     # # ---- Formula ----
@@ -209,6 +209,14 @@ fit_abund_xgb <-
         sd = stats::sd
       )), .groups = "drop")
 
+    variables <- bind_cols(
+      data.frame(
+        model = "xgb",
+        response = response
+      ),
+      variables
+    ) %>% as_tibble()
+    
     # Final object
     data_list <- list(
       model = full_model,

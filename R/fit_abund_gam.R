@@ -54,8 +54,12 @@ fit_abund_gam <-
                      partition = partition)
     
     # Variables
-    variables <- dplyr::bind_rows(c(c = predictors, f = predictors_f))
-
+    if (!is.null(predictors_f)) {
+      variables <- dplyr::bind_rows(c(c = predictors, f = predictors_f))
+    } else {
+      variables <- dplyr::bind_rows(c(c = predictors))
+    }
+    
     # Formula
     if (is.null(fit_formula)) {
       if (inter == "automatic") {
@@ -183,6 +187,14 @@ fit_abund_gam <-
         sd = stats::sd
       )), .groups = "drop")
 
+    variables <- bind_cols(
+      data.frame(
+        model = "gam",
+        response = response
+      ),
+      variables
+    ) %>% as_tibble()
+    
     # Final object
     data_list <- list(
       model = full_model,

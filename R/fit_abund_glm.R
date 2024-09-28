@@ -43,7 +43,7 @@ fit_abund_glm <-
            poly = 0,
            inter_order = 0,
            verbose = TRUE) {
-    . <- poly <- mae <- pdisp <- NULL
+    . <- mae <- pdisp <- NULL
     if (is.null(distribution)) {
       stop("'distribution' argument was not used, a distribution must be specifyied")
     }
@@ -57,7 +57,11 @@ fit_abund_glm <-
     
     
     # Variables
-    variables <- dplyr::bind_rows(c(c = predictors, f = predictors_f))
+    if (!is.null(predictors_f)) {
+      variables <- dplyr::bind_rows(c(c = predictors, f = predictors_f))
+    } else {
+      variables <- dplyr::bind_rows(c(c = predictors))
+    }
 
    
     # Formula
@@ -74,6 +78,7 @@ fit_abund_glm <-
         formula1 <-
           paste(c(predictors, predictors_f), collapse = " + ")
       }
+      
 
       if (inter_order > 0) {
         forinter <- c(predictors, predictors_f)
@@ -219,6 +224,14 @@ fit_abund_glm <-
         sd = stats::sd
       )), .groups = "drop")
 
+    variables <- bind_cols(
+      data.frame(
+        model = "glm",
+        response = response
+      ),
+      variables
+    ) %>% as_tibble()
+    
     # Final object
     data_list <- list(
       model = full_model,

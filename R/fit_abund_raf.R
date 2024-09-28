@@ -50,7 +50,11 @@ fit_abund_raf <-
                      partition = partition)
     
     # Variables
-    variables <- dplyr::bind_rows(c(c = predictors, f = predictors_f))
+    if (!is.null(predictors_f)) {
+      variables <- dplyr::bind_rows(c(c = predictors, f = predictors_f))
+    } else {
+      variables <- dplyr::bind_rows(c(c = predictors))
+    }
     
     
     # Formula
@@ -165,6 +169,14 @@ fit_abund_raf <-
         sd = stats::sd
       )), .groups = "drop")
 
+    variables <- bind_cols(
+      data.frame(
+        model = "raf",
+        response = response
+      ),
+      variables
+    ) %>% as_tibble()
+    
     # Final object
     data_list <- list(
       model = full_model,

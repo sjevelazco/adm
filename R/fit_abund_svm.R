@@ -55,7 +55,7 @@ fit_abund_svm <-
     if (!is.null(predictors_f)) {
       variables <- dplyr::bind_rows(c(c = predictors, f = predictors_f))
     } else {
-      variables <- predictors
+      variables <- dplyr::bind_rows(c(c = predictors))
     }
     
     # Formula
@@ -178,9 +178,18 @@ fit_abund_svm <-
         sd = stats::sd
       )), .groups = "drop")
 
+    variables <- bind_cols(
+      data.frame(
+        model = "svm",
+        response = response
+      ),
+      variables
+    ) %>% as_tibble()
+    
     # Final object
     data_list <- list(
       model = full_model,
+      predictors = variables,
       performance = eval_final,
       performance_part = eval_partial,
       predicted_part = part_pred
