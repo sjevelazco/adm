@@ -62,7 +62,7 @@ fit_abund_cnn <-
     if (!is.null(predictors_f)) {
       variables <- dplyr::bind_rows(c(c = predictors, f = predictors_f))
     } else {
-      variables <- predictors
+      variables <- dplyr::bind_rows(c(c = predictors))
     }
     
     # Adequate database
@@ -346,6 +346,14 @@ fit_abund_cnn <-
         .groups = "drop"
       )
 
+    variables <- bind_cols(
+      data.frame(
+        model = "cnn",
+        response = response
+      ),
+      variables
+    ) %>% as_tibble()
+    
     # Final object
     data_list <- list(
       model = full_model,

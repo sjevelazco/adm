@@ -45,6 +45,23 @@ data_abund_pdp <-
     #   x <- model$model[flt]
     # }
     
+    if (class(model)[1]=="list"){
+      if(all(names(model) %in% c("model","predictors","performance","performance_part","predicted_part"))
+      ){      
+        variables <- model$predictors 
+        model <- model[[1]]
+      }
+    }
+    
+    if (any(class(model)[1]==c("gamlss","luz_module_fitted"))){
+      if (is.null(training_data)){
+        stop(
+          "For estimating partial plot data for GLM, GAM and DNN it is necessary to provide calibration data in 'training_data' argument"
+        )
+      }
+      x <- training_data[,as.vector(variables[1,])[2:ncol(variables)] %>% unlist]
+    }
+    
     if (any(class(model)[1] == c("nnet.formula", "randomForest.formula", "ksvm", "gbm"))) {
       if (is.null(training_data)) {
         stop(
@@ -98,71 +115,77 @@ data_abund_pdp <-
     names(suit_c)[1] <- predictors
     
     # Predict model
-    # TODO
-    # if (class(model)[1] == "gam") {
-    #   suit_c <-
-    #     data.frame(suit_c[1],
-    #                Suitability = mgcv::predict.gam(model, newdata = suit_c, type = "response")
-    #     )
-    #   if (resid) {
-    #     suit_r <-
-    #       data.frame(x[predictors], Suitability = mgcv::predict.gam(model, type = "response"))
-    #     result <- list("pdpdata" = suit_c, "resid" = suit_r)
-    #   } else {
-    #     result <- list("pdpdata" = suit_c, "resid" = NA)
-    #   }
-    # }
     
-    # TODO
-    # if (class(model)[1] == "graf") {
-    #   suit_c <-
-    #     data.frame(
-    #       suit_c[1],
-    #       Suitability = predict.graf(
-    #         object = model,
-    #         newdata = suit_c[names(model$peak)],
-    #         type = "response",
-    #         CI = NULL
-    #       )[, 1]
-    #     )
-    #   if (resid) {
-    #     suit_r <-
-    #       data.frame(x[predictors],
-    #                  Suitability = predict.graf(
-    #                    object = model,
-    #                    type = "response",
-    #                    CI = NULL
-    #                  )[, 1]
-    #       )
-    #     result <- list("pdpdata" = suit_c, "resid" = suit_r)
-    #   } else {
-    #     result <- list("pdpdata" = suit_c, "resid" = NA)
-    #   }
-    # }
+    if (class(model)[1] == "luz_module_fitted"){
+      create_dataset <- torch::dataset(
+        "dataset",
+        initialize = function(df, response_variable=0) {
+          self$df <- df
+        },
+        .getitem = function(index) {
+          x <- torch::torch_tensor(as.numeric(self$df[index, ]))
+          list(x = x)
+        },
+        .length = function() {
+          nrow(self$df)
+        }
+      )
+      
+      pred_dataset <- create_dataset(suit_c %>% dplyr::select(-variables[["response"]]))
+      pred_dataset_x <- create_dataset(x %>% dplyr::select(-variables[["response"]]))
+      
+      suit_c <-
+        data.frame(suit_c[1],
+                   Abundance = suppressMessages(
+                     stats::predict(
+                       model, 
+                       newdata = pred_dataset,
+                       type = "response") %>% 
+                       as.numeric())
+        )
+      if (resid) {
+        suit_r <-
+          data.frame(x[predictors],
+                     Abundance = suppressMessages(
+                       stats::predict(
+                         model, 
+                         newdata = pred_dataset_x,
+                         type = "response") %>% 
+                         as.numeric())
+          )
+        result <- list("pdpdata" = suit_c, "resid" = suit_r)
+      } else {
+        result <- list("pdpdata" = suit_c, "resid" = NA)
+      }
+    }
     
-    # TODO
-    # if (class(model)[1] == "glm") {
-    #   suit_c <-
-    #     data.frame(suit_c[1],
-    #                Suitability = gamlss::predictAll(model, newdata = suit_c, type = "response")
-    #     )
-    #   if (resid) {
-    #     suit_r <-
-    #       data.frame(x[predictors], Suitability = gamlss::predictAll(model, type = "response"))
-    #     result <- list("pdpdata" = suit_c, "resid" = suit_r)
-    #   } else {
-    #     result <- list("pdpdata" = suit_c, "resid" = NA)
-    #   }
-    # }
+    if (class(model)[1] == "gamlss") {
+      suit_c <-
+        data.frame(suit_c[1],
+                   Abundance = suppressMessages(
+                     predict(
+                       model, 
+                       newdata = suit_c, 
+                       data = training_data, 
+                       type = "response"))
+        )
+      if (resid) {
+        suit_r <-
+          data.frame(x[predictors], Abundance = suppressMessages(predict(model, newdata = x, data = training_data, type = "response")))
+        result <- list("pdpdata" = suit_c, "resid" = suit_r)
+      } else {
+        result <- list("pdpdata" = suit_c, "resid" = NA)
+      }
+    }
     
     if (class(model)[1] == "gbm") {
       suit_c <-
         data.frame(suit_c[1],
-                   Suitability = suppressMessages(gbm::predict.gbm(model, newdata = suit_c, type = "response"))
+                   Abundance = suppressMessages(gbm::predict.gbm(model, newdata = suit_c, type = "response"))
         )
       if (resid) {
         suit_r <-
-          data.frame(x[predictors], Suitability = suppressMessages(gbm::predict.gbm(model, newdata = x, type = "response")))
+          data.frame(x[predictors], Abundance = suppressMessages(gbm::predict.gbm(model, newdata = x, type = "response")))
         result <- list("pdpdata" = suit_c, "resid" = suit_r)
       } else {
         result <- list("pdpdata" = suit_c, "resid" = NA)
@@ -205,22 +228,21 @@ data_abund_pdp <-
           data.frame(x[predictors], Abundance =
                        suppressMessages(stats::predict(
                          model, type = "raw"
-                         )))
+                       )))
         result <- list("pdpdata" = suit_c, "resid" = suit_r)
       } else {
         result <- list("pdpdata" = suit_c, "resid" = NA)
       }
     }
     
-    # TODO mudar tipo das responses
     if (class(model)[1] == "randomForest.formula") {
       suit_c <-
-        data.frame(suit_c[1], Suitability = 
-                     suppressMessages(stats::predict(model, suit_c, type = "prob")[, 2]))
+        data.frame(suit_c[1], Abundance = 
+                     suppressMessages(stats::predict(model, suit_c, type = "response")))
       if (resid) {
         suit_r <-
-          data.frame(x[predictors], Suitability = 
-                       suppressMessages(stats::predict(model, type = "prob")[, 2]))
+          data.frame(x[predictors], Abundance = 
+                       suppressMessages(stats::predict(model, type = "response")))
         result <- list("pdpdata" = suit_c, "resid" = suit_r)
       } else {
         result <- list("pdpdata" = suit_c, "resid" = NA)

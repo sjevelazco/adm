@@ -52,7 +52,7 @@ fit_abund_gbm <-
     if (!is.null(predictors_f)) {
       variables <- dplyr::bind_rows(c(c = predictors, f = predictors_f))
     } else {
-      variables <- predictors
+      variables <- dplyr::bind_rows(c(c = predictors))
     }
     
     
@@ -189,6 +189,14 @@ fit_abund_gbm <-
         sd = stats::sd
       )), .groups = "drop")
 
+    variables <- bind_cols(
+      data.frame(
+        model = "gbm",
+        response = response
+      ),
+      variables
+    ) %>% as_tibble()
+    
     # Final object
     data_list <- list(
       model = full_model,

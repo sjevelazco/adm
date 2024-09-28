@@ -13,7 +13,8 @@ adm_predict(
   con_thr = FALSE,
   predict_area = NULL,
   clamp = TRUE,
-  pred_type = "cloglog"
+  pred_type = "cloglog",
+  transform_negative = TRUE
 )
 }
 \arguments{
@@ -21,6 +22,8 @@ adm_predict(
 
 \item{pred}{SpatRaster. Raster layer with predictor variables. Names of layers must exactly
 match those used in model fitting.}
+
+\item{training_data}{}
 
 \item{nchunk}{integer. Number of chunks to split data used to predict models (i.e., SpatRaster
 used in pred argument). Predicting models in chunks helps reduce memory requirements in cases
@@ -56,6 +59,8 @@ seen during model training. Only valid for Maxent model (see tune_mx and fit_mx)
 \item{pred_type}{character. Type of response required available "link", "exponential",
 "cloglog" and "logistic". Only valid for Maxent model (see tune_mx and fit_mx).
 Default "cloglog".}
+
+\item{transform_negative}{}
 }
 \value{
 A list of SpatRaster with continuous and/or binary predictions

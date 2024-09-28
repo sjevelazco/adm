@@ -37,17 +37,21 @@
 #' @param pred_type character. Type of response required available "link", "exponential",
 #' "cloglog" and "logistic". Only valid for Maxent model (see tune_mx and fit_mx).
 #' Default "cloglog".
+#' @param training_data 
+#' @param transform_negative 
 #'
 #' @return A list of SpatRaster with continuous and/or binary predictions
 #'
 #' @export
 #'
-#' @importFrom dplyr mutate across left_join pull bind_rows filter  select
-#' @importFrom kernlab predict
-#' @importFrom stats median
+#' @importFrom dplyr mutate across left_join pull bind_rows filter select
 #' @importFrom gamlss predictAll
+#' @importFrom kernlab predict
+#' @importFrom stats predict median
+#' @importFrom stringr str_detect
 #' @importFrom terra vect crop mask as.data.frame is.factor rast app weighted.mean lapp crs
-#'
+#' @importFrom torch dataset torch_tensor
+#' 
 #' @examples
 #' \dontrun{
 #' require(dplyr)
@@ -192,7 +196,8 @@ adm_predict <-
            con_thr = FALSE,
            predict_area = NULL,
            clamp = TRUE,
-           pred_type = "cloglog") {
+           pred_type = "cloglog",
+           transform_negative = TRUE) {
     . <- model <- threshold <- thr_value <- self <- NULL
     
     # TODO write codes to predict CNN ANN adapt GLM and GAM to use gamlss
@@ -230,14 +235,13 @@ adm_predict <-
         terra::mask(., predict_area)
     }
     
-    
-    
     #### Model predictions
     if (!is.null(models)) {
       # Prepare model list
       m <- lapply(models, function(x) {
         x[[1]]
       })
+      
       names(m) <- paste0("m_", 1:length(m))
       
       # Extract model names object
@@ -246,6 +250,15 @@ adm_predict <-
       }) %>%
         tolower() %>%
         gsub(".formula", "", .)
+      
+      if (any(lapply(models, function(x){class(x[[1]])[1]}) %>% unlist == "gamlss")){
+        indx <- which(lapply(models, function(x){class(x[[1]])[1]}) %>% unlist == "gamlss")
+        gamlss_classes <- lapply(models[indx], function(x){
+          x$predictors$model
+        }) %>% unlist()
+        
+        clss[indx] <- paste0(clss[indx],"_",gamlss_classes)
+      }
     }
     
     # Transform raster to data.frame
@@ -289,39 +302,39 @@ adm_predict <-
       ## %######################################################%##
       
       #### xgboost models ####
-      wm <- which(clss == "xgb.booster")
-      if (length(clss) > 0){
-        wm <- names(wm)
-        for (i in wm) {
-          r <- pred[[!terra::is.factor(pred)]][[1]]
-          r[!is.na(r)] <- NA
-          r[as.numeric(rownames(pred_df))] <-
-          
-          model_c[[i]][rowset] <- r[rowset]
-        }
-      }
+      # wm <- which(clss == "xgb.booster")
+      # if (length(clss) > 0){
+      #   wm <- names(wm)
+      #   for (i in wm) {
+      #     r <- pred[[!terra::is.factor(pred)]][[1]]
+      #     r[!is.na(r)] <- NA
+      #     r[as.numeric(rownames(pred_df))] <-
+      #     
+      #     model_c[[i]][rowset] <- r[rowset]
+      #   }
+      # }
       
       #### dnn models ####
-      # create_dataset definition
-      create_dataset <- torch::dataset(
-        "dataset",
-        initialize = function(df, response_variable=0) {
-          self$df <- df
-        },
-        .getitem = function(index) {
-          x <- torch::torch_tensor(as.numeric(self$df[index, ]))
-          list(x = x)
-        },
-        .length = function() {
-          nrow(self$df)
-        }
-      )
-      
-      pred_dataset <- create_dataset(pred_df)
-      
       wm <- which(clss == "luz_module_fitted")
       if (length(wm) > 0){
         wm <- names(wm)
+        
+        # create_dataset definition
+        create_dataset <- torch::dataset(
+          "dataset",
+          initialize = function(df, response_variable=0) {
+            self$df <- df
+          },
+          .getitem = function(index) {
+            x <- torch::torch_tensor(as.numeric(self$df[index, ]))
+            list(x = x)
+          },
+          .length = function() {
+            nrow(self$df)
+          }
+        )
+        
+        pred_dataset <- create_dataset(pred_df)
         for (i in wm) {
           r <- pred[[!terra::is.factor(pred)]][[1]]
           r[!is.na(r)] <- NA
@@ -333,7 +346,7 @@ adm_predict <-
       }
       
       #### gam and glm ####
-      wm <- which(clss == "gamlss")
+      wm <- clss[stringr::str_detect(clss,"gamlss")]
       if (length(wm) > 0){
         wm <- names(wm)
         for (i in wm) {
@@ -345,99 +358,6 @@ adm_predict <-
           model_c[[i]][rowset] <- r[rowset]
         }
       }
-      
-      #### gam models ####
-      wm <- which(clss == "gam")
-      if (length(wm) > 0) {
-        wm <- names(wm)
-        for (i in wm) {
-          r <- pred[[!terra::is.factor(pred)]][[1]]
-          r[!is.na(r)] <- NA
-          
-          # Test factor levels
-          f <- names(m[[i]]$xlevels)
-          if (length(f) > 0) {
-            for (ii in 1:length(f)) {
-              vf <- m[[i]]$xlevels[[f[ii]]] %>% unique()
-              vf2 <- pred_df[, (f[ii])] %>% unique()
-              vfilter <- list()
-              if (sum(!vf2 %in% vf) > 0) {
-                vfilter[[ii]] <- !pred_df[, (f[ii])] %in% vf
-              }
-            }
-            if (length(vfilter) > 0) {
-              if (length(vfilter) > 1) {
-                vfilter <- vapply(do.call("rbind", vfilter), any, logical(1))
-              } else {
-                vfilter <- vfilter[[1]]
-              }
-            } else {
-              vfilter <- 0
-            }
-          } else {
-            vfilter <- 0
-          }
-          
-          if (sum(vfilter) > 0) {
-            v <- rep(0, nrow(pred_df))
-            v[!vfilter] <-
-              c(predict(m[[i]], pred_df[!vfilter, ], type = "response"))
-            r[as.numeric(rownames(pred_df))] <- v
-            rm(v)
-          } else {
-            r[as.numeric(rownames(pred_df))] <-
-              c(predict(m[[i]], pred_df, type = "response"))
-          }
-          
-          model_c[[i]][rowset] <- r[rowset]
-        }
-      }
-      
-      
-      #### glm models ####
-      wm <- which(clss == "glm")
-      if (length(wm) > 0) {
-        wm <- names(wm)
-        for (i in wm) {
-          # Test factor levels
-          f <- which(sapply(m[[i]]$data, class) == "factor")
-          if (length(f) > 0) {
-            for (ii in 1:length(f)) {
-              vf <- m[[i]]$data[, f[ii]] %>% unique()
-              vf2 <- pred_df[, names(f[ii])] %>% unique()
-              vfilter <- list()
-              if (sum(!vf2 %in% vf) > 0) {
-                vfilter[[ii]] <- !pred_df[, names(f[ii])] %in% vf
-              }
-            }
-            if (length(vfilter) > 0) {
-              if (length(vfilter) > 1) {
-                vfilter <- vapply(do.call("rbind", vfilter), any, logical(1))
-              } else {
-                vfilter <- vfilter[[1]]
-              }
-            } else {
-              vfilter <- 0
-            }
-          } else {
-            vfilter <- 0
-          }
-          
-          if (sum(vfilter) > 0) {
-            v <- rep(0, nrow(pred_df))
-            v[!vfilter] <-
-              gamlss::predictAll(m[[i]], pred_df[!vfilter, ], type = "response")
-            r[as.numeric(rownames(pred_df))] <- v
-            rm(v)
-          } else {
-            r[as.numeric(rownames(pred_df))] <-
-              gamlss::predictAll(m[[i]], pred_df, type = "response")
-          }
-          
-          model_c[[i]][rowset] <- r[rowset]
-        }
-      }
-      
       
       #### gbm models ####
       wm <- which(clss == "gbm")
@@ -499,13 +419,13 @@ adm_predict <-
                                  .cols = names(f),
                                  .fns = ~ droplevels(.)
                                )),
-                             type = "prob")
-              )[, 2]
+                             type = "response")
+              )
             r[as.numeric(rownames(pred_df))] <- v
             rm(v)
           } else {
             r[as.numeric(rownames(pred_df))] <-
-              suppressMessages(stats::predict(m[[i]], pred_df, type = "prob")[, 2])
+              suppressMessages(stats::predict(m[[i]], pred_df, type = "response"))
           }
           
           model_c[[i]][rowset] <- r[rowset]
@@ -558,12 +478,12 @@ adm_predict <-
                                  dplyr::mutate(dplyr::across(
                                    .cols = names(f),
                                    .fns = ~ droplevels(.)
-                                 )), type = "prob")[, 2]
+                                 )), type = "response")[, 2]
             r[as.numeric(rownames(pred_df))] <- v
             rm(v)
           } else {
             r[as.numeric(rownames(pred_df))] <-
-              kernlab::predict(m[[i]], pred_df, type = "prob")[, 2]
+              kernlab::predict(m[[i]], pred_df, type = "response")[, 2]
           }
           model_c[[i]][rowset] <- r[rowset]
         }
@@ -575,8 +495,8 @@ adm_predict <-
     df <- data.frame(
       alg = c(
         "luz_module_fitted",
-        "gamlss",
-        "gamlss",
+        "gamlss_gam",
+        "gamlss_glm",
         "gbm",
         "nnet",
         "randomforest",
@@ -694,6 +614,16 @@ adm_predict <-
     ## %######################################################%##
     # TODO
     if (is.null(thr)) {
+      
+      if (transform_negative) {
+        for (i in 1:length(model_c)) {
+          x <- model_c[[i]]
+          x[x<0] <- 0
+          model_c[[i]] <- x
+        }
+        rm(x)
+      }
+      
       return(model_c)
     } else {
       if (any("all" == thr)) {

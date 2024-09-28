@@ -54,11 +54,37 @@ p_abund_pdp <-
     #   v <- attr(model$terms, "dataClasses")[flt]
     # }
     
-    if (class(model)[1] == "xgb.Booster"){
+    # TODO
+    # if (class(model)[1] == "xgb.Booster"){
+    #   if (!is.null(training_data)){
+    #     v <- training_data[model$feature_names] %>% sapply(class)
+    #   } else {
+    #     stop("Training data needed.")
+    #   }
+    # }
+    
+    if (class(model)[1]=="list"){
+      if(all(names(model) %in% c("model","predictors","performance","performance_part","predicted_part"))
+      ){      
+        variables <- model$predictors 
+        model <- model[[1]]
+      }
+    }
+    
+    if (class(model)[1] == "luz_module_fitted"){
       if (!is.null(training_data)){
-        v <- training_data[model$feature_names] %>% sapply(class)
+        v <- training_data[variables[1,2:ncol(variables)]%>%as.vector%>%unlist] %>% sapply(class)
       } else {
         stop("Training data needed.")
+      }
+    }
+    
+    if (class(model)[1] == "gamlss") {
+      if (variables[["model"]] == "gam"){
+        v <- attr(model$mu.terms, "dataClasses")[-1]
+        names(v) <- names(v) %>% stringr::str_remove("pb\\(") %>% stringr::str_remove("\\)")
+      } else if (variables[["model"]] == "glm"){
+        v <- attr(model$mu.terms, "dataClasses")[-1]
       }
     }
     
