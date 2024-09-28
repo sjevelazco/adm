@@ -10,11 +10,15 @@ fit_abund_gam(
   predictors,
   predictors_f = NULL,
   fit_formula = NULL,
+  sigma_formula = ~1,
+  nu_formula = ~1,
+  tau_formula = ~1,
   partition,
   predict_part = FALSE,
   distribution = NULL,
   inter = "automatic",
-  verbose = TRUE
+  verbose = TRUE,
+  control_gamlss = gamlss.control(trace = FALSE)
 )
 }
 \arguments{
@@ -28,6 +32,12 @@ fit_abund_gam(
 
 \item{fit_formula}{formula. A formula object with response and predictor variables (e.g. formula(abund ~ temp + precipt + sand + landform)). Note that the variables used here must be consistent with those used in response, predictors, and predictors_f arguments. Default NULL}
 
+\item{sigma_formula}{formula. formula for fitting a model to the nu parameter. Usage sigma_formula = ~ precipt + temp}
+
+\item{nu_formula}{formula. formula for fitting a model to the nu parameter. Usage nu_formula = ~ precipt + temp}
+
+\item{tau_formula}{formula. formula for fitting a model to the tau parameter. Usage tau_formula = ~ precipt + temp}
+
 \item{partition}{character. Column name with training and validation partition groups.}
 
 \item{predict_part}{logical. Save predicted abundance for testing data. Default = FALSE}
@@ -37,6 +47,9 @@ fit_abund_gam(
 \item{inter}{integer. Number of knots in x-axis. Default "automatic"}
 
 \item{verbose}{logical. If FALSE, disables all console messages. Default TRUE}
+
+\item{control_gamlss}{function. control parameters of the outer iterations algorithm in gamlss
+See \link[gamlss.contro]{gamlss} documentation for details. Default gamlss.control()}
 }
 \value{
 A list object with:

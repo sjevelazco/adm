@@ -10,10 +10,17 @@ test_that("Test for transformation type 01", {
   
 })
 
-test_that("Test for transformation type ln", {
+test_that("Test for transformation type lon", {
   
   result <- adm_transform(some_sp, variable = "ind_ha", method = "log") 
   expect_equal(result$ind_ha_log, log(result$ind_ha))
+  
+})
+
+test_that("Test for transformation type lon1", {
+  
+  result <- adm_transform(some_sp, variable = "ind_ha", method = "log1") 
+  expect_equal(result$ind_ha_log1, log(result$ind_ha+1))
   
 })
 

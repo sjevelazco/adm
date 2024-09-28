@@ -16,6 +16,7 @@ adm_transform(data, variable, method)
 \item For "01", it scales the variable between 0 and 1 using the formula (x - min(x)) (max(x) - min(x)).
 \item For "zscore", it standardizes the variable by subtracting the mean and dividing by the standard deviation.
 \item For "log", it applies natural logarithm transformation to the variable.
+\item For "log1", it sums 1 and then applies natural logarithm transformation to the variable.
 \item For "round", it rounds the variable's values to the nearest whole numbers.
 }}
 }

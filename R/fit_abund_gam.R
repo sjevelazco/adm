@@ -5,11 +5,16 @@
 #' @param predictors character. Vector with the column names of quantitative predictor variables (i.e. continuous variables). Usage predictors = c("temp", "precipt", "sand")
 #' @param predictors_f character. Vector with the column names of qualitative predictor variables (i.e. ordinal or nominal variables type). Usage predictors_f = c("landform")
 #' @param fit_formula formula. A formula object with response and predictor variables (e.g. formula(abund ~ temp + precipt + sand + landform)). Note that the variables used here must be consistent with those used in response, predictors, and predictors_f arguments. Default NULL
+#' @param sigma_formula formula. formula for fitting a model to the nu parameter. Usage sigma_formula = ~ precipt + temp
+#' @param nu_formula formula. formula for fitting a model to the nu parameter. Usage nu_formula = ~ precipt + temp
+#' @param tau_formula formula. formula for fitting a model to the tau parameter. Usage tau_formula = ~ precipt + temp
 #' @param partition character. Column name with training and validation partition groups.
 #' @param predict_part logical. Save predicted abundance for testing data. Default = FALSE
 #' @param inter integer. Number of knots in x-axis. Default "automatic"
 #' @param distribution character. A string specifying the distribution to be used. See \link[gamlss.dist]{gamlss.family} documentation for details. Use distribution = gamlss.dist::NO(). Default NULL
 #' @param verbose logical. If FALSE, disables all console messages. Default TRUE
+#' @param control_gamlss function. control parameters of the outer iterations algorithm in gamlss
+#' See \link[gamlss.contro]{gamlss} documentation for details. Default gamlss.control()
 #'
 #' @importFrom dplyr bind_rows pull tibble as_tibble group_by summarise across
 #' @importFrom gamlss gamlss pb predictAll
@@ -35,11 +40,16 @@ fit_abund_gam <-
            predictors,
            predictors_f = NULL,
            fit_formula = NULL,
+           sigma_formula = ~1, 
+           nu_formula = ~1, 
+           tau_formula = ~1,
            partition,
            predict_part = FALSE,
            distribution = NULL,
            inter = "automatic",
-           verbose = TRUE) {
+           verbose = TRUE,
+           control_gamlss = gamlss.control(trace = FALSE)
+           ) {
     . <- mae <- pdisp <-  NULL
     
     if (is.null(distribution)) {
@@ -124,6 +134,10 @@ fit_abund_gam <-
           formula = formula1,
           family = family,
           data = train_set,
+          sigma.formula = sigma_formula, 
+          nu.formula = nu_formula, 
+          tau.formula = tau_formula,
+          control = control_gamlss,
           trace = FALSE
         )
         
@@ -162,6 +176,10 @@ fit_abund_gam <-
       formula = formula1,
       family = family,
       data = data,
+      sigma.formula = sigma_formula, 
+      nu.formula = nu_formula, 
+      tau.formula = tau_formula,
+      control = control_gamlss,
       trace = FALSE
     )
 

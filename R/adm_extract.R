@@ -63,6 +63,8 @@
 #' ex_spp
 #' ex_spp2
 #' 
+#' 
+#' 
 #' }
 adm_extract <-
   function(data,

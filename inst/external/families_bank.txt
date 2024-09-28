@@ -28,7 +28,7 @@ Generalized t	GT	(-∞, ∞)	4	0	1	0	1	1
 Gumbel	GU	(-∞, ∞)	2	0	1	0	1	1
 Johnson's SU	JSU	(-∞, ∞)	4	0	1	0	1	1
 Logistic	LO	(-∞, ∞)	2	0	1	0	1	1
-Normal Exponential�t	NET	(-∞, ∞)	4	0	1	0	1	1
+Normal Exponential t	NET	(-∞, ∞)	4	0	1	0	1	1
 Normal	NO	(-∞, ∞)	2	0	1	0	1	1
 Normal Family	NOF	(-∞, ∞)	3	0	1	0	1	1
 Power Exponential	PE	(-∞, ∞)	3	0	1	0	1	1

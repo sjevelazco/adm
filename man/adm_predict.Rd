@@ -117,7 +117,7 @@ some_sp <- flexsdm::part_random(
 # m1 <- gamlss(ind_ha ~ pb(elevation) + pb(sand) + pb(bio3) + pb(bio12), family=NO, data=some_sp)
 # choosen_dist <- gamlss::chooseDist(m1, parallel="snow", ncpus=4, type="realAll")
 
-a_gam <- fit_abund_gam(
+mgam <- fit_abund_gam(
   data = some_sp,
   response = "ind_ha",
   predictors = c("elevation", "sand", "bio3", "bio12"),
