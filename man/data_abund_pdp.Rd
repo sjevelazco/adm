@@ -2,7 +2,7 @@
 % Please edit documentation in R/data_abund_pdp.R
 \name{data_abund_pdp}
 \alias{data_abund_pdp}
-\title{Calculate data to construct ADM partial dependence plots}
+\title{Calculate data to construct partial dependence plots}
 \usage{
 data_abund_pdp(
   model,
@@ -10,8 +10,7 @@ data_abund_pdp(
   resolution = 50,
   resid = FALSE,
   training_data = NULL,
-  projection_data = NULL,
-  clamping = FALSE
+  projection_data = NULL
 )
 }
 \arguments{
@@ -26,9 +25,7 @@ data_abund_pdp(
 \item{training_data}{}
 
 \item{projection_data}{}
-
-\item{clamping}{}
 }
 \description{
-Calculate data to construct ADM partial dependence plots
+Calculate data to construct partial dependence plots
 }
