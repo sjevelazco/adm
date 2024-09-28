@@ -114,12 +114,12 @@ fit_abund_xgb <-
         
         
         sp_train <- list(
-          data = as.matrix(train_set[, variables]),
+          data = as.matrix(train_set[, c(predictors, predictors_f)]),
           target = train_set[, response]
         )
         
         sp_test <- list(
-          data = as.matrix(test_set[, variables]),
+          data = as.matrix(test_set[, c(predictors, predictors_f)]),
           target = test_set[, response]
         )
         
