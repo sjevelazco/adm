@@ -12,7 +12,7 @@
 #' @importFrom gbm predict.gbm
 #' @importFrom grDevices chull
 #' @importFrom kernlab predict
-#' @importFrom stats na.omit predict
+#' @importFrom stats na.omit
 #' @importFrom terra minmax
 #' @importFrom torch dataset torch_tensor
 #' 
@@ -209,12 +209,16 @@ data_abund_bpdp <-
     if (class(model)[1] == "nnet.formula") {
       suit_c <-
         data.frame(suit_c[1:2],
-                   Abundance = stats::predict(model, newdata = suit_c, type = "raw"))
+                   Abundance = suppressMessages(
+                     stats::predict(model, newdata = suit_c, type = "raw"))
+        )
     }
     
     if (class(model)[1] == "randomForest.formula") {
       suit_c <-
-        data.frame(suit_c[1:2], Abundance = stats::predict(model, suit_c, type = "response"))
+        data.frame(suit_c[1:2], Abundance = suppressMessages(
+          stats::predict(model, suit_c, type = "response"))
+        )
     }
     
     if (class(model)[1] == "ksvm") {

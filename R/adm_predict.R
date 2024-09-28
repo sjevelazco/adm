@@ -47,7 +47,7 @@
 #' @importFrom dplyr mutate across left_join pull bind_rows filter select
 #' @importFrom gamlss predictAll
 #' @importFrom kernlab predict
-#' @importFrom stats predict median
+#' @importFrom stats median
 #' @importFrom stringr str_detect
 #' @importFrom terra vect crop mask as.data.frame is.factor rast app weighted.mean lapp crs
 #' @importFrom torch dataset torch_tensor
