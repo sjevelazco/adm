@@ -1,17 +1,16 @@
-
 test_that("adm_extract performs as expected", {
-  
   require(terra)
-  
+
   # Load datasets
   data("sppabund")
   envar <- system.file("external/envar.tif", package = "adm")
   envar <- terra::rast(envar)
-  
+
   # Extract data
   some_sp <- sppabund %>%
-    filter(species == "Species one") %>% dplyr::select(species, ind_ha, x,y)
-  
+    filter(species == "Species one") %>%
+    dplyr::select(species, ind_ha, x, y)
+
   # Run the function
   result <-
     adm_extract(
@@ -22,7 +21,7 @@ test_that("adm_extract performs as expected", {
       variables = NULL,
       filter_na = FALSE
     )
-  
+
 
   # Compare the result with the expected output
   expect_equal(dim(result), c(938, 12))
@@ -51,20 +50,20 @@ test_that("adm_extract performs as expected", {
 })
 
 test_that("adm_extract remove NA with lines", {
-  
   require(terra)
-  
+
   # Load datasets
   data("sppabund")
   envar <- system.file("external/envar.tif", package = "adm")
   envar <- terra::rast(envar)
-  
+
   # Extract data
   some_sp <- sppabund %>%
-    filter(species == "Species one") %>% dplyr::select(species, ind_ha, x,y)
-  
+    filter(species == "Species one") %>%
+    dplyr::select(species, ind_ha, x, y)
+
   some_sp[1, c("x", "y")] <- some_sp[1, c("x", "y")] * -1
-  
+
   # Run the function
   result <-
     adm_extract(
@@ -75,7 +74,7 @@ test_that("adm_extract remove NA with lines", {
       variables = NULL,
       filter_na = TRUE
     )
-  
+
   expect_message(adm_extract(
     data = some_sp,
     x = "x",
@@ -84,6 +83,6 @@ test_that("adm_extract remove NA with lines", {
     variables = NULL,
     filter_na = TRUE
   ))
-  
+
   expect_equal(dim(result), c(937, 12))
 })

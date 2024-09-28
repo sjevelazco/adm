@@ -50,15 +50,17 @@ tune_abund_net <-
            metrics = NULL,
            n_cores = 1,
            verbose = FALSE) {
+    i <- NULL
+
     if (is.null(metrics) |
-        !all(metrics %in% c("corr_spear", "corr_pear", "mae", "inter", "slope", "pdisp"))) {
+      !all(metrics %in% c("corr_spear", "corr_pear", "mae", "inter", "slope", "pdisp"))) {
       stop("Metrics is needed to be defined in 'metric' argument")
     }
-    
+
     # making grid
     if (is.null(grid)) {
       message("Grid not provided. Using the default one for Random Forest.")
-      size <- seq(from = length(c(predictors,predictors_f)), to = 50, by = 2)
+      size <- seq(from = length(c(predictors, predictors_f)), to = 50, by = 2)
       decay <- seq(from = 0, to = 0.9, by = 0.1)
       grid <- expand.grid(size = size, decay = decay)
     } else {
@@ -68,20 +70,20 @@ tune_abund_net <-
         stop("Grid names expected to be size and decay.")
       }
     }
-    
+
     comb_id <- paste("comb_", 1:nrow(grid), sep = "")
     grid <- cbind(comb_id, grid)
-    
+
     # looping the grid
     message("Searching for optimal hyperparameters...")
-    
+
     cl <- parallel::makeCluster(n_cores)
     doSNOW::registerDoSNOW(cl)
     pb <- utils::txtProgressBar(max = nrow(grid), style = 3)
     progress <- function(n) utils::setTxtProgressBar(pb, n)
     opts <- list(progress = progress)
-    
-    hyper_combinations <- foreach::foreach(i = 1:nrow(grid), .options.snow = opts, .export = c("fit_abund_net", "adm_eval","adapt_df"), .packages = c("dplyr")) %dopar% {
+
+    hyper_combinations <- foreach::foreach(i = 1:nrow(grid), .options.snow = opts, .export = c("fit_abund_net", "adm_eval", "adapt_df"), .packages = c("dplyr")) %dopar% {
       model <-
         fit_abund_net(
           data = data,
@@ -99,12 +101,12 @@ tune_abund_net <-
       l
     }
     parallel::stopCluster(cl)
-    
+
     hyper_combinations <- lapply(hyper_combinations, function(x) dplyr::bind_rows(x)) %>%
       dplyr::bind_rows()
-    
+
     ranked_combinations <- model_selection(hyper_combinations, metrics)
-    
+
     # fit final model
     message("Fitting the best model...")
     final_model <-
@@ -119,15 +121,15 @@ tune_abund_net <-
         size = ranked_combinations[[1]][[1, "size"]],
         decay = ranked_combinations[[1]][[1, "decay"]]
       )
-    
+
     message(
       "The best model was a Artificial Neural Network with size = ",
       ranked_combinations[[1]][[1, "size"]],
       " and decay = ",
       ranked_combinations[[1]][[1, "decay"]]
     )
-    
+
     final_list <- c(final_model, ranked_combinations)
-    
+
     return(final_list)
   }

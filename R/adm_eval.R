@@ -4,7 +4,7 @@
 #'  accuracy, discrimination, and precision between the two and returns their values as a tibble
 #' table. The accuracy is evaluated through mean absolute error. The discrimination is calculated
 #' using Spearman correlation, Pearson correlation, intercept and slope of a linear regression
-#' between observed and predicted values. The precision is obtained from the standard deviations 
+#' between observed and predicted values. The precision is obtained from the standard deviations
 #' of predicted and observed values.
 #'
 #' @param obs numeric. Observed abundance
@@ -35,26 +35,30 @@
 #'
 #' @examples
 #' \dontrun{
-#' pred_a <- c(3, 2, 0, 0, 2, 5, 1, 3, 1, 2, 1, 1, 2, 5, 4,
-#'             1, 2, 5, 3, 3, 4, 3, 2, 0, 2, 1, 2, 2, 1, 4, 
-#'             4, 2, 2, 1, 6, 1, 1, 3, 5, 0, 1, 1, 0, 1, 2)
-#' obs_a <- c(3, 1, 1, 3, 2, 3, 0, 3, 5, 3, 4, 2, 0, 5, 2, 
-#'            1, 2, 2, 3, 6, 3, 2, 4, 2, 1, 2, 3, 5, 0, 3, 
-#'            3, 2, 1, 2, 3, 2, 2, 1, 2, 3, 3, 1, 2, 1, 4)
-#' 
+#' pred_a <- c(
+#'   3, 2, 0, 0, 2, 5, 1, 3, 1, 2, 1, 1, 2, 5, 4,
+#'   1, 2, 5, 3, 3, 4, 3, 2, 0, 2, 1, 2, 2, 1, 4,
+#'   4, 2, 2, 1, 6, 1, 1, 3, 5, 0, 1, 1, 0, 1, 2
+#' )
+#' obs_a <- c(
+#'   3, 1, 1, 3, 2, 3, 0, 3, 5, 3, 4, 2, 0, 5, 2,
+#'   1, 2, 2, 3, 6, 3, 2, 4, 2, 1, 2, 3, 5, 0, 3,
+#'   3, 2, 1, 2, 3, 2, 2, 1, 2, 3, 3, 1, 2, 1, 4
+#' )
+#'
 #' adm_eval(obs = obs_a, pred = pred_a)
 #' }
 adm_eval <- function(obs, pred) {
   # Discrimination
   corr_spear <- stats::cor(obs, pred, method = "spearman")
   corr_pear <- stats::cor(obs, pred, method = "pearson")
-  
+
   # Accuracy
   mae <- mean(abs(obs - pred))
   lm_out <- stats::lm(obs ~ pred, data = data.frame(obs, pred))
   inter <- lm_out$coefficients[1]
   slope <- lm_out$coefficients[2]
- 
+
   # Precision
   pdisp <- stats::sd(pred) / stats::sd(obs)
 

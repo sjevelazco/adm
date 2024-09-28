@@ -31,9 +31,8 @@ generate_arch_list <-
            pooling = FALSE,
            batch_norm = TRUE,
            dropout = FALSE) {
-    
     Var1 <- Var2 <- NULL
-    
+
     if (type == "dnn") {
       arch_dict <- list()
       for (i in n_layers) {

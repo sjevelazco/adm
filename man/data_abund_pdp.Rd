@@ -14,16 +14,6 @@ data_abund_pdp(
 )
 }
 \arguments{
-\item{model}{}
-
-\item{predictors}{}
-
-\item{resolution}{}
-
-\item{resid}{}
-
-\item{training_data}{}
-
 \item{projection_data}{}
 }
 \description{

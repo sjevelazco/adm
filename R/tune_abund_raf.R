@@ -50,6 +50,8 @@ tune_abund_raf <-
            metrics = NULL,
            n_cores = 1,
            verbose = FALSE) {
+    i <- NULL
+
     if (is.null(metrics) |
       !all(metrics %in% c("corr_spear", "corr_pear", "mae", "inter", "slope", "pdisp"))) {
       stop("Metrics is needed to be defined in 'metric' argument")

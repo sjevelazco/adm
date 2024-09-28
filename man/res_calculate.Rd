@@ -17,27 +17,27 @@ res_calculate(
 
 \item{in_res}{integer. It represents the resolution of the input layer.}
 
-\item{kernel_size}{integer. It refers to the size of the kernel used in the convolution 
+\item{kernel_size}{integer. It refers to the size of the kernel used in the convolution
 or pooling operation.}
 
-\item{stride}{integer. It is the stride length for the convolution or pooling operation. 
+\item{stride}{integer. It is the stride length for the convolution or pooling operation.
 Only used when type is "layer".}
 
-\item{padding}{integer. It is the amount padding added to the input layer. 
+\item{padding}{integer. It is the amount padding added to the input layer.
 Only used when type is "layer"}
 }
 \value{
 The function returns integer which is the output resolution.
 }
 \description{
-Calculate the output resolution of a layer or pooling operation in a 
+Calculate the output resolution of a layer or pooling operation in a
 Convolutional Neural Network.
 }
 \details{
 \itemize{
-\item When type is "layer" the output resolution is calculated as 
+\item When type is "layer" the output resolution is calculated as
 ((in_res - kernel_size + (2 * padding)) / stride) + 1.
-\item When type is "pooling", the output resolution is calculated as the floor division 
+\item When type is "pooling", the output resolution is calculated as the floor division
 of in_res by kernel_size.
 }
 }
@@ -49,6 +49,5 @@ res_calculate(type = "layer", in_res = 12, kernel_size = 2, stride = 2, padding 
 
 # Calculating output resolution for a pooling layer
 res_calculate(type = "pooling", in_res = 12, kernel_size = 2)
-
 }
 }

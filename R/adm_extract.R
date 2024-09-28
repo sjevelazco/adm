@@ -1,7 +1,7 @@
 #' Extract values from a spatial raster based on x and y coordinates
 #'
 #' @description The function extracts environmental data at the given x and y coordinates
-#' 
+#'
 #' @param data data.frame or tibble. Database with species abundance with x and y coordinates
 #' @param x character. Column name with spatial x coordinates
 #' @param y character. Column name with spatial y coordinates
@@ -26,18 +26,19 @@
 #' @examples
 #' \dontrun{
 #' require(terra)
-#' 
+#'
 #' # Datasbase with species abundance and x and y coordinates
 #' data("sppabund")
-#' 
+#'
 #' # Raster data with environmental variables
 #' envar <- system.file("external/envar.tif", package = "adm")
 #' envar <- terra::rast(envar)
-#' 
+#'
 #' # Extract data for a single species
 #' some_sp <- sppabund %>%
-#'   filter(species == "Species one") %>% dplyr::select(species, ind_ha, x,y)
-#' 
+#'   filter(species == "Species one") %>%
+#'   dplyr::select(species, ind_ha, x, y)
+#'
 #' # Extract environmental data from envar raster for all locations in spp
 #' ex_spp <-
 #'   adm_extract(
@@ -48,7 +49,7 @@
 #'     variables = NULL,
 #'     filter_na = FALSE
 #'   )
-#' 
+#'
 #' # Extract environmental for two variables and remove rows with NAs
 #' ex_spp2 <-
 #'   adm_extract(
@@ -59,12 +60,9 @@
 #'     variables = c("bio1", "elevation"),
 #'     filter_na = TRUE
 #'   )
-#' 
+#'
 #' ex_spp
 #' ex_spp2
-#' 
-#' 
-#' 
 #' }
 adm_extract <-
   function(data,
@@ -73,7 +71,6 @@ adm_extract <-
            env_layer,
            variables = NULL,
            filter_na = TRUE) {
-
     # Predictor vector when variables.=NULL
     if (is.null(variables)) {
       variables <- names(env_layer)
@@ -82,18 +79,18 @@ adm_extract <-
     # spatial data frame
     sp_data <-
       terra::vect(data,
-                  geom = c(x, y),
-                  crs = terra::crs(env_layer)
+        geom = c(x, y),
+        crs = terra::crs(env_layer)
       )
 
     # extract environmental data at xy locations, if filter_na = FALSE, does not remove rows with NAs
     extract_data <- dplyr::tibble(
       data,
       terra::extract(env_layer[[variables]],
-                     sp_data,
-                     cells = FALSE
+        sp_data,
+        cells = FALSE
       ) %>%
-        dplyr::select({{variables}})
+        dplyr::select({{ variables }})
     )
 
 

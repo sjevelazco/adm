@@ -38,11 +38,10 @@ some_sp <- sppabund \%>\%
 envar <- system.file("external/envar.tif", package = "adm")
 envar <- terra::rast(envar)
 
-# 
-sampl_r <- croppin_hood(occ = some_sp[1,], x = "x", y = "y", raster = envar, size = 5)
+#
+sampl_r <- croppin_hood(occ = some_sp[1, ], x = "x", y = "y", raster = envar, size = 5)
 plot(sampl_r)
 plot(sampl_r[[1]])
-points(some_sp[1,c("x", "y")], pch=19)
-
+points(some_sp[1, c("x", "y")], pch = 19)
 }
 }

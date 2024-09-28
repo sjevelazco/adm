@@ -15,16 +15,14 @@
 #'
 #' @examples
 select_arch_list <-
-  function(
-      arch_list,
-      type = c("dnn", "cnn"),
-      method = "percentile", # TODO
-      n_samples = 1, # TODO
-      min_max = TRUE # TODO
-      ) {
-    
+  function(arch_list,
+           type = c("dnn", "cnn"),
+           method = "percentile", # TODO
+           n_samples = 1, # TODO
+           min_max = TRUE # TODO
+  ) {
     parameters <- name <- combination <- old_name <- NULL
-    
+
     architectures <- arch_list
 
     net_size_df <- list()

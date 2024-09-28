@@ -16,8 +16,8 @@
 #' @param control_gamlss function. control parameters of the outer iterations algorithm in gamlss
 #' See \link[gamlss.contro]{gamlss} documentation for details. Default gamlss.control()
 #'
-#' @importFrom dplyr bind_rows pull tibble as_tibble group_by summarise across
-#' @importFrom gamlss gamlss pb predictAll
+#' @importFrom dplyr bind_rows bind_cols pull tibble as_tibble group_by summarise across
+#' @importFrom gamlss gamlss pb predictAll gamlss.control
 #' @importFrom stats formula sd
 #'
 #' @return
@@ -34,42 +34,96 @@
 #' @export
 #'
 #' @examples
+#' \dontrun{
+#' require(terra)
+#' require(gamlss)
+#'
+#' # Datasbase with species abundance and x and y coordinates
+#' data("sppabund")
+#'
+#' # Raster data with environmental variables
+#' envar <- system.file("external/envar.tif", package = "adm")
+#' envar <- terra::rast(envar)
+#'
+#' # Extract data for a single species
+#' some_sp <- sppabund %>%
+#'   filter(species == "Species one") %>%
+#'   dplyr::select(species, ind_ha, x, y, .part)
+#'
+#' # Extract environmental data from envar raster for all locations in spp
+#' some_sp <-
+#'   adm_extract(
+#'     data = some_sp,
+#'     x = "x",
+#'     y = "y",
+#'     env_layer = envar,
+#'     variables = NULL,
+#'     filter_na = FALSE
+#'   )
+#'
+#' some_sp
+#'
+#' # Explor reponse variables
+#' some_sp$ind_ha %>% range()
+#' some_sp$ind_ha %>% hist()
+#'
+#' # Here we will roudn data to the nearest integer
+#' some_sp <- some_sp %>% adm_transform("ind_ha", "log1")
+#' some_sp %>% dplyr::select(ind_ha, ind_ha_log)
+#'
+#' # Explore different family distributions
+#' family_selector(data = some_sp, response = "ind_ha_log1")
+#'
+#' # Fit a GAM model
+#' mgam <- fit_abund_gam(
+#'   data = some_sp,
+#'   response = "ind_ha_log1",
+#'   predictors = c("elevation", "sand", "bio3", "bio12"),
+#'   sigma_formula = ~ elevation + bio3 + bio12,
+#'   predictors_f = NULL,
+#'   partition = ".part",
+#'   distribution = gamlss.dist::NO()
+#' )
+#'
+#' mgam
+#' }
 fit_abund_gam <-
   function(data,
            response,
            predictors,
            predictors_f = NULL,
            fit_formula = NULL,
-           sigma_formula = ~1, 
-           nu_formula = ~1, 
+           sigma_formula = ~1,
+           nu_formula = ~1,
            tau_formula = ~1,
            partition,
            predict_part = FALSE,
            distribution = NULL,
            inter = "automatic",
            verbose = TRUE,
-           control_gamlss = gamlss.control(trace = FALSE)
-           ) {
-    . <- mae <- pdisp <-  NULL
-    
+           control_gamlss = gamlss.control(trace = FALSE)) {
+    . <- mae <- pdisp <- NULL
+
     if (is.null(distribution)) {
       stop("'distribution' argument was not used, a distribution must be specifyied")
     }
-    
+
     # Adequate database
-    data <- adapt_df(data = data,
-                     response = response,
-                     predictors = predictors,
-                     predictors_f = predictors_f, 
-                     partition = partition)
-    
+    data <- adapt_df(
+      data = data,
+      response = response,
+      predictors = predictors,
+      predictors_f = predictors_f,
+      partition = partition
+    )
+
     # Variables
     if (!is.null(predictors_f)) {
       variables <- dplyr::bind_rows(c(c = predictors, f = predictors_f))
     } else {
       variables <- dplyr::bind_rows(c(c = predictors))
     }
-    
+
     # Formula
     if (is.null(fit_formula)) {
       if (inter == "automatic") {
@@ -104,62 +158,65 @@ fit_abund_gam <-
     # Fit models
     np <- ncol(data %>% dplyr::select(dplyr::starts_with(partition)))
     p_names <- names(data %>% dplyr::select(dplyr::starts_with(partition)))
-    
+
     part_pred_list <- list()
     eval_partial_list <- list()
-    
+
     for (h in 1:np) {
       if (verbose) {
         message("Replica number: ", h, "/", np)
       }
       # out <- pre_tr_te(data, p_names, h)
-      
-      folds <- data %>% dplyr::pull(p_names[h]) %>% unique() %>% sort()
-      
+
+      folds <- data %>%
+        dplyr::pull(p_names[h]) %>%
+        unique() %>%
+        sort()
+
       eval_partial <- list()
       pred_test <- list()
       part_pred <- list()
       family <- distribution
-      
+
       for (j in 1:length(folds)) {
         if (verbose) {
           message("-- Partition number ", j, "/", length(folds))
         }
-        
+
         train_set <- data[data[, p_names[h]] != folds[j], ]
         test_set <- data[data[, p_names[h]] == folds[j], ]
-        
+
         set.seed(13)
         model <- gamlss::gamlss(
           formula = formula1,
           family = family,
           data = train_set,
-          sigma.formula = sigma_formula, 
-          nu.formula = nu_formula, 
+          sigma.formula = sigma_formula,
+          nu.formula = nu_formula,
           tau.formula = tau_formula,
           control = control_gamlss,
           trace = FALSE
         )
-        
+
         pred <- gamlss::predictAll(model, newdata = test_set, data = train_set, type = "response")[[1]]
         observed <- dplyr::pull(test_set, response)
         eval_partial[[j]] <- dplyr::tibble(
           model = "gam",
           adm_eval(obs = observed, pred = pred)
         )
-        
+
         if (predict_part) {
           part_pred[[j]] <- data.frame(partition = folds[j], observed, predicted = pred)
         }
       }
-      
+
       # Create final database with parameter performance
       names(eval_partial) <- 1:length(folds)
       eval_partial <-
         eval_partial[sapply(eval_partial, function(x) !is.null(dim(x)))] %>%
         dplyr::bind_rows(., .id = "partition")
       eval_partial_list[[h]] <- eval_partial
-      
+
       if (predict_part) {
         names(part_pred) <- 1:length(folds)
         part_pred <-
@@ -168,7 +225,7 @@ fit_abund_gam <-
         part_pred_list[[h]] <- part_pred
       }
     }
-    
+
 
     # fit final model with all data
     set.seed(13)
@@ -176,8 +233,8 @@ fit_abund_gam <-
       formula = formula1,
       family = family,
       data = data,
-      sigma.formula = sigma_formula, 
-      nu.formula = nu_formula, 
+      sigma.formula = sigma_formula,
+      nu.formula = nu_formula,
       tau.formula = tau_formula,
       control = control_gamlss,
       trace = FALSE
@@ -205,14 +262,14 @@ fit_abund_gam <-
         sd = stats::sd
       )), .groups = "drop")
 
-    variables <- bind_cols(
+    variables <- dplyr::bind_cols(
       data.frame(
         model = "gam",
         response = response
       ),
       variables
     ) %>% as_tibble()
-    
+
     # Final object
     data_list <- list(
       model = full_model,

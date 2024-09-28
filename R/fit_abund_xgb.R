@@ -51,23 +51,24 @@ fit_abund_xgb <-
            subsample = 0.5,
            objective = "reg:squarederror",
            verbose = TRUE) {
-  
-    . <- mae <- pdisp <-  NULL
-    
+    . <- mae <- pdisp <- NULL
+
     # Adequate database
-    data <- adapt_df(data = data,
-                     predictors = predictors,
-                     predictors_f = predictors_f,
-                     response = response,
-                     partition = partition)
-    
+    data <- adapt_df(
+      data = data,
+      predictors = predictors,
+      predictors_f = predictors_f,
+      response = response,
+      partition = partition
+    )
+
     # Variables
     if (!is.null(predictors_f)) {
       variables <- dplyr::bind_rows(c(c = predictors, f = predictors_f))
     } else {
       variables <- dplyr::bind_rows(c(c = predictors))
     }
-    
+
     # # ---- Formula ----
     # if (is.null(fit_formula)) {
     #   formula1 <- stats::formula(paste(response, "~", paste(c(
@@ -77,7 +78,7 @@ fit_abund_xgb <-
     # } else {
     #   formula1 <- fit_formula
     # }
-    
+
     # if (verbose) {
     #   message(
     #     "Formula used for model fitting:\n",
@@ -89,40 +90,43 @@ fit_abund_xgb <-
     # Fit models
     np <- ncol(data %>% dplyr::select(dplyr::starts_with(partition)))
     p_names <- names(data %>% dplyr::select(dplyr::starts_with(partition)))
-    
+
     part_pred_list <- list()
     eval_partial_list <- list()
-    
+
     for (h in 1:np) {
       if (verbose) {
         message("Replica number: ", h, "/", np)
       }
       # out <- pre_tr_te(data, p_names, h)
-      
-      folds <- data %>% dplyr::pull(p_names[h]) %>% unique() %>% sort()
-      
+
+      folds <- data %>%
+        dplyr::pull(p_names[h]) %>%
+        unique() %>%
+        sort()
+
       eval_partial <- list()
       pred_test <- list()
       part_pred <- list()
-      
+
       for (j in 1:length(folds)) {
         if (verbose) {
           message("-- Partition number ", j, "/", length(folds))
         }
         train_set <- data[data[, p_names[h]] != folds[j], ]
         test_set <- data[data[, p_names[h]] == folds[j], ]
-        
-        
+
+
         sp_train <- list(
           data = as.matrix(train_set[, c(predictors, predictors_f)]),
           target = train_set[, response]
         )
-        
+
         sp_test <- list(
           data = as.matrix(test_set[, c(predictors, predictors_f)]),
           target = test_set[, response]
         )
-        
+
         set.seed(13)
         model <- xgboost::xgboost(
           data = sp_train$data,
@@ -139,7 +143,7 @@ fit_abund_xgb <-
           nrounds = nrounds,
           verbose = 0
         )
-        
+
         pred <-
           suppressMessages(stats::predict(model, sp_test$data, type = "response"))
         observed <- sp_test$target
@@ -147,19 +151,19 @@ fit_abund_xgb <-
           model = "xgb",
           adm_eval(obs = observed, pred = pred)
         )
-        
+
         if (predict_part) {
           part_pred[[j]] <- data.frame(partition = folds[j], observed, predicted = pred)
         }
       }
-      
+
       # Create final database with parameter performance
       names(eval_partial) <- 1:length(folds)
       eval_partial <-
         eval_partial[sapply(eval_partial, function(x) !is.null(dim(x)))] %>%
         dplyr::bind_rows(., .id = "partition")
       eval_partial_list[[h]] <- eval_partial
-      
+
       if (predict_part) {
         names(part_pred) <- 1:length(folds)
         part_pred <-
@@ -168,12 +172,12 @@ fit_abund_xgb <-
         part_pred_list[[h]] <- part_pred
       }
     }
-    
-    
+
+
     # fit final model with all data
     set.seed(13)
     full_model <- xgboost::xgboost(
-      data = as.matrix(data[, variables]),
+      data = as.matrix(data[, c(predictors, predictors_f)]),
       label = data[, response],
       params = list(
         max_depth = max_depth,
@@ -192,7 +196,7 @@ fit_abund_xgb <-
     eval_partial <- eval_partial_list %>%
       dplyr::bind_rows(.id = "replica") %>%
       dplyr::as_tibble()
-    
+
     # bind predicted partition
     if (predict_part) {
       part_pred <- part_pred_list %>%
@@ -209,14 +213,14 @@ fit_abund_xgb <-
         sd = stats::sd
       )), .groups = "drop")
 
-    variables <- bind_cols(
+    variables <- dplyr::bind_cols(
       data.frame(
         model = "xgb",
         response = response
       ),
       variables
     ) %>% as_tibble()
-    
+
     # Final object
     data_list <- list(
       model = full_model,

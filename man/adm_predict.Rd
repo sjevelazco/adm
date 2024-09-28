@@ -23,8 +23,6 @@ adm_predict(
 \item{pred}{SpatRaster. Raster layer with predictor variables. Names of layers must exactly
 match those used in model fitting.}
 
-\item{training_data}{}
-
 \item{nchunk}{integer. Number of chunks to split data used to predict models (i.e., SpatRaster
 used in pred argument). Predicting models in chunks helps reduce memory requirements in cases
 where models are predicted for large scales and high resolution. Default = 1}
@@ -83,7 +81,7 @@ envar <- terra::rast(envar)
 # Extract data
 some_sp <- sppabund \%>\%
   dplyr::filter(species == "Species one") \%>\%
-  dplyr::select(species, ind_ha, x,y)
+  dplyr::select(species, ind_ha, x, y)
 
 some_sp
 
@@ -113,7 +111,7 @@ some_sp <- flexsdm::part_random(
 # m1 <- gamlss::fitDist(some_sp$ind_ha, type="realline")
 # m1$fits
 # m1$failed
-# 
+#
 # m1 <- gamlss(ind_ha ~ pb(elevation) + pb(sand) + pb(bio3) + pb(bio12), family=NO, data=some_sp)
 # choosen_dist <- gamlss::chooseDist(m1, parallel="snow", ncpus=4, type="realAll")
 
@@ -123,7 +121,8 @@ mgam <- fit_abund_gam(
   predictors = c("elevation", "sand", "bio3", "bio12"),
   predictors_f = "eco",
   partition = ".part",
-  distribution = gamlss.dist::NO())
+  distribution = gamlss.dist::NO()
+)
 
 mraf <- fit_abund_raf(
   data = some_sp,
@@ -137,15 +136,15 @@ mgbm <- fit_abund_gbm(
   response = "ind_ha",
   predictors = c("elevation", "sand", "bio3", "bio12"),
   partition = ".part",
-  distribution = 
-)
+  distribution =
+  )
 
 
-##\%######################################################\%##
+## \%######################################################\%##
 #                                                          #
 ####            ' ####      Predict models              ####
 #                                                          #
-##\%######################################################\%##
+## \%######################################################\%##
 
 # adm_predict can be used for predict one or more models fitted with fit_ or tune_ functions
 
@@ -187,11 +186,11 @@ small_p <- sdm_predict(
   predict_area = NULL
 )
 
-##\%######################################################\%##
+## \%######################################################\%##
 #                                                          #
 ####              Predict model using chunks            ####
 #                                                          #
-##\%######################################################\%##
+## \%######################################################\%##
 # Predicting models in chunks helps reduce memory requirements in
 # cases where models are predicted for large scales and high resolution
 
@@ -203,7 +202,6 @@ ind_p <- sdm_predict(
   predict_area = NULL,
   nchunk = 4
 )
-
 }
 
 }

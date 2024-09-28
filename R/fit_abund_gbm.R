@@ -46,24 +46,26 @@ fit_abund_gbm <-
            n.minobsinnode = 5,
            shrinkage = 0.1,
            verbose = TRUE) {
-    . <- mae <- pdisp <-  NULL
-    
+    . <- mae <- pdisp <- NULL
+
     # Variables
     if (!is.null(predictors_f)) {
       variables <- dplyr::bind_rows(c(c = predictors, f = predictors_f))
     } else {
       variables <- dplyr::bind_rows(c(c = predictors))
     }
-    
-    
-    # Adequate database
-    data <- adapt_df(data = data,
-                     response = response,
-                     predictors = predictors,
-                     predictors_f = predictors_f, 
-                     partition = partition)
 
-    
+
+    # Adequate database
+    data <- adapt_df(
+      data = data,
+      response = response,
+      predictors = predictors,
+      predictors_f = predictors_f,
+      partition = partition
+    )
+
+
     # ---- Formula ----
     if (is.null(fit_formula)) {
       formula1 <- stats::formula(paste(response, "~", paste(c(
@@ -73,7 +75,7 @@ fit_abund_gbm <-
     } else {
       formula1 <- fit_formula
     }
-    
+
     if (verbose) {
       message(
         "Formula used for model fitting:\n",
@@ -81,38 +83,41 @@ fit_abund_gbm <-
         "\n"
       )
     }
-    
+
     # ---- Distribution ----
     # if (distribution == "poisson") {
     #   data[, response] <- round(data[, response])
     # }
-    
+
     # Fit models
     np <- ncol(data %>% dplyr::select(dplyr::starts_with(partition)))
     p_names <- names(data %>% dplyr::select(dplyr::starts_with(partition)))
-    
+
     part_pred_list <- list()
     eval_partial_list <- list()
-    
+
     for (h in 1:np) {
       if (verbose) {
         message("Replica number: ", h, "/", np)
       }
       # out <- pre_tr_te(data, p_names, h)
-      
-      folds <- data %>% dplyr::pull(p_names[h]) %>% unique() %>% sort()
-      
+
+      folds <- data %>%
+        dplyr::pull(p_names[h]) %>%
+        unique() %>%
+        sort()
+
       eval_partial <- list()
       pred_test <- list()
       part_pred <- list()
-      
+
       for (j in 1:length(folds)) {
         if (verbose) {
           message("-- Partition number ", j, "/", length(folds))
         }
         train_set <- data[data[, p_names[h]] != folds[j], ]
         test_set <- data[data[, p_names[h]] == folds[j], ]
-        
+
         set.seed(13)
         model <- gbm::gbm(
           formula = formula1,
@@ -124,26 +129,26 @@ fit_abund_gbm <-
           shrinkage = shrinkage,
           bag.fraction = 0.9
         )
-        
+
         pred <- gbm::predict.gbm(model, test_set, type = "response")
         observed <- dplyr::pull(test_set, response)
         eval_partial[[j]] <- dplyr::tibble(
           model = "gbm",
           adm_eval(obs = observed, pred = pred)
         )
-        
+
         if (predict_part) {
           part_pred[[j]] <- data.frame(partition = folds[j], observed, predicted = pred)
         }
       }
-      
+
       # Create final database with parameter performance
       names(eval_partial) <- 1:length(folds)
       eval_partial <-
         eval_partial[sapply(eval_partial, function(x) !is.null(dim(x)))] %>%
         dplyr::bind_rows(., .id = "partition")
       eval_partial_list[[h]] <- eval_partial
-      
+
       if (predict_part) {
         names(part_pred) <- 1:length(folds)
         part_pred <-
@@ -152,8 +157,8 @@ fit_abund_gbm <-
         part_pred_list[[h]] <- part_pred
       }
     }
-    
-    
+
+
     # fit final model with all data
     set.seed(13)
     full_model <- gbm::gbm(
@@ -172,7 +177,7 @@ fit_abund_gbm <-
     eval_partial <- eval_partial_list %>%
       dplyr::bind_rows(.id = "replica") %>%
       dplyr::as_tibble()
-    
+
     # bind predicted partition
     if (predict_part) {
       part_pred <- part_pred_list %>%
@@ -189,14 +194,14 @@ fit_abund_gbm <-
         sd = stats::sd
       )), .groups = "drop")
 
-    variables <- bind_cols(
+    variables <- dplyr::bind_cols(
       data.frame(
         model = "gbm",
         response = response
       ),
       variables
     ) %>% as_tibble()
-    
+
     # Final object
     data_list <- list(
       model = full_model,

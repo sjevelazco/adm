@@ -1,22 +1,22 @@
 #' ADM Partial Dependent Plot
 #'
-#' @param model 
-#' @param predictors 
-#' @param resolution 
-#' @param resid 
-#' @param training_data 
-#' @param projection_data 
-#' @param clamping 
-#' @param rug 
-#' @param colorl 
-#' @param colorp 
-#' @param alpha 
-#' @param theme 
+#' @param model
+#' @param predictors
+#' @param resolution
+#' @param resid
+#' @param training_data
+#' @param projection_data
+#' @param clamping
+#' @param rug
+#' @param colorl
+#' @param colorp
+#' @param alpha
+#' @param theme
 #'
 #' @importFrom dplyr pull
 #' @importFrom ggplot2 ggplot aes scale_y_continuous labs geom_point geom_line geom_rug geom_col scale_color_manual geom_vline theme element_blank
 #' @importFrom patchwork wrap_plots plot_layout
-#' 
+#'
 #' @return
 #' @export
 #'
@@ -35,17 +35,17 @@ p_abund_pdp <-
            alpha = 0.2,
            theme = ggplot2::theme_classic()) {
     Type <- Value <- val <- Abundance <- NULL
-    
-    # TODO 
+
+    # TODO
     # if (class(model)[1] == "gam") {
     #   v <- attr(model$terms, "dataClasses")[-1]
     # }
-    
+
     # TODO
     # if (class(model)[1] == "graf") {
     #   v <- sapply(model$obsx, class)
     # }
-    
+
     # TODO
     # if (class(model)[1] == "glm") {
     #   flt <- grepl("[I(]", attr(model$terms, "term.labels")) |
@@ -53,7 +53,7 @@ p_abund_pdp <-
     #   flt <- attr(model$terms, "term.labels")[!flt]
     #   v <- attr(model$terms, "dataClasses")[flt]
     # }
-    
+
     # TODO
     # if (class(model)[1] == "xgb.Booster"){
     #   if (!is.null(training_data)){
@@ -62,51 +62,55 @@ p_abund_pdp <-
     #     stop("Training data needed.")
     #   }
     # }
-    
-    if (class(model)[1]=="list"){
-      if(all(names(model) %in% c("model","predictors","performance","performance_part","predicted_part"))
-      ){      
-        variables <- model$predictors 
+
+    if (class(model)[1] == "list") {
+      if (all(names(model) %in% c("model", "predictors", "performance", "performance_part", "predicted_part"))
+      ) {
+        variables <- model$predictors
         model <- model[[1]]
       }
     }
-    
-    if (class(model)[1] == "luz_module_fitted"){
-      if (!is.null(training_data)){
-        v <- training_data[variables[1,2:ncol(variables)]%>%as.vector%>%unlist] %>% sapply(class)
+
+    if (class(model)[1] == "luz_module_fitted") {
+      if (!is.null(training_data)) {
+        v <- training_data[variables[1, 2:ncol(variables)] %>%
+          as.vector() %>%
+          unlist()] %>% sapply(class)
       } else {
         stop("Training data needed.")
       }
     }
-    
+
     if (class(model)[1] == "gamlss") {
-      if (variables[["model"]] == "gam"){
+      if (variables[["model"]] == "gam") {
         v <- attr(model$mu.terms, "dataClasses")[-1]
-        names(v) <- names(v) %>% stringr::str_remove("pb\\(") %>% stringr::str_remove("\\)")
-      } else if (variables[["model"]] == "glm"){
+        names(v) <- names(v) %>%
+          stringr::str_remove("pb\\(") %>%
+          stringr::str_remove("\\)")
+      } else if (variables[["model"]] == "glm") {
         v <- attr(model$mu.terms, "dataClasses")[-1]
       }
     }
-    
+
     if (class(model)[1] == "gbm") {
       v <- attr(model$Terms, "dataClasses")[-1]
     }
-    
+
     if (any(class(model)[1] == c("nnet.formula", "randomForest.formula"))) {
       v <- attr(model$terms, "dataClasses")[-1]
     }
-    
+
     if (class(model)[1] == "ksvm") {
       v <- attr(model@terms, "dataClasses")[-1]
     }
-    
+
     v <- v[order(names(v))]
     if (!is.null(predictors)) {
       v <- v[names(v) %in% predictors]
     }
-    
+
     p <- list()
-    
+
     if (is.null(projection_data)) {
       for (i in 1:length(v)) {
         crv <-
@@ -116,15 +120,14 @@ p_abund_pdp <-
             resolution = resolution,
             resid = any(c(resid, rug)),
             projection_data = NULL,
-            training_data = training_data,
-            clamping = clamping
+            training_data = training_data
           )
-        
+
         if (v[i] == "numeric") {
           xn <- data.frame(crv[[1]])[, 1]
           p[[i]] <-
             ggplot2::ggplot(crv[[1]], ggplot2::aes(x = !!xn, y = Abundance)) +
-            #ggplot2::scale_y_continuous(limits = c(0, 1)) +
+            # ggplot2::scale_y_continuous(limits = c(0, 1)) +
             ggplot2::labs(x = names(crv[[1]])[1]) +
             {
               if (resid) {
@@ -136,7 +139,7 @@ p_abund_pdp <-
               }
             } +
             ggplot2::geom_line(col = rev(colorl)[1], linewidth = 0.8)
-          
+
           if (rug) {
             xn2 <- data.frame(crv[[2]])[, 1]
             p[[i]] <- p[[i]] +
@@ -151,7 +154,7 @@ p_abund_pdp <-
           xn <- data.frame(crv[[1]])[, 1]
           p[[i]] <-
             ggplot2::ggplot(crv[[1]], ggplot2::aes(!!xn, Abundance)) +
-            #ggplot2::scale_y_continuous(limits = c(0, 1)) +
+            # ggplot2::scale_y_continuous(limits = c(0, 1)) +
             ggplot2::geom_col(fill = rev(colorl)[1]) +
             ggplot2::labs(x = names(crv[[1]])[1])
         }
@@ -165,14 +168,13 @@ p_abund_pdp <-
             resolution = resolution,
             resid = any(c(resid, rug)),
             projection_data = projection_data[[c(names(v[i]))]],
-            training_data = training_data,
-            clamping = clamping
+            training_data = training_data
           )
-        
+
         if (v[i] == "numeric") {
           rvar <- range(crv[[1]][crv[[1]]$Type == "Training", names(v[i])])
           xn <- data.frame(crv[[1]])[, 1]
-          
+
           p[[i]] <-
             ggplot2::ggplot(crv[[1]], ggplot2::aes(!!xn, Abundance)) +
             ggplot2::labs(x = names(crv[[1]])[1]) +
@@ -197,7 +199,7 @@ p_abund_pdp <-
               col = "gray70",
               linetype = 2
             )
-          
+
           if (rug) {
             xn2 <- data.frame(crv[[2]])[, 1]
             p[[i]] <- p[[i]] +
@@ -212,18 +214,18 @@ p_abund_pdp <-
           xn <- crv[[1]] %>% dplyr::pull(names(crv[[1]])[1])
           p[[i]] <-
             ggplot2::ggplot(crv[[1]], ggplot2::aes(!!xn, Abundance)) +
-            #ggplot2::scale_y_continuous(limits = c(0, 1)) +
+            # ggplot2::scale_y_continuous(limits = c(0, 1)) +
             ggplot2::geom_col(fill = rev(colorl)[1]) +
             ggplot2::labs(x = names(crv[[1]])[1])
         }
       }
     }
-    
+
     # Theme
     for (i in 1:length(p)) {
       p[[i]] <- p[[i]] + theme
     }
-    
+
     # Remove y axis titles
     if (length(p) >= 4) {
       sq <- length(p) / round(sqrt(length(p)))
@@ -238,7 +240,7 @@ p_abund_pdp <-
         p[[i]] <- p[[i]] + ggplot2::theme(axis.title.y = ggplot2::element_blank())
       }
     }
-    
+
     # ncol = round(sqrt(length(p)))
     patchwork::wrap_plots(p) +
       patchwork::plot_layout(guides = "collect") &
