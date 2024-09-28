@@ -10,11 +10,16 @@ fit_abund_glm(
   predictors,
   predictors_f = NULL,
   fit_formula = NULL,
+  sigma_formula = ~1,
+  nu_formula = ~1,
+  tau_formula = ~1,
   partition,
   predict_part = FALSE,
   distribution = NULL,
+  inter = "automatic",
   poly = 0,
   inter_order = 0,
+  control_gamlss = gamlss.control(trace = FALSE),
   verbose = TRUE
 )
 }
@@ -29,6 +34,12 @@ fit_abund_glm(
 
 \item{fit_formula}{formula. A formula object with response and predictor variables (e.g. formula(abund ~ temp + precipt + sand + landform)). Note that the variables used here must be consistent with those used in response, predictors, and predictors_f arguments. Default NULL}
 
+\item{sigma_formula}{formula. formula for fitting a model to the nu parameter. Usage sigma_formula = ~ precipt + temp}
+
+\item{nu_formula}{formula. formula for fitting a model to the nu parameter. Usage nu_formula = ~ precipt + temp}
+
+\item{tau_formula}{formula. formula for fitting a model to the tau parameter. Usage tau_formula = ~ precipt + temp}
+
 \item{partition}{character. Column name with training and validation partition groups.}
 
 \item{predict_part}{logical. Save predicted abundance for testing data. Default is FALSE.}
@@ -38,6 +49,9 @@ fit_abund_glm(
 \item{poly}{integer >= 2. If used with values >= 2 model will use polynomials for those continuous variables (i.e. used in predictors argument). Default is 0.}
 
 \item{inter_order}{integer >= 0. The interaction order between explanatory variables. Default is 0.}
+
+\item{control_gamlss}{function. control parameters of the outer iterations algorithm in gamlss
+See \link[gamlss.contro]{gamlss} documentation for details. Default gamlss.control()}
 
 \item{verbose}{logical. If FALSE, disables all console messages. Default TRUE}
 }

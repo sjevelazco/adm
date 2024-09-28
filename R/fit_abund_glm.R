@@ -5,11 +5,16 @@
 #' @param predictors character. Vector with the column names of quantitative predictor variables (i.e. continuous variables). Usage predictors = c("temp", "precipt", "sand")
 #' @param predictors_f character. Vector with the column names of qualitative predictor variables (i.e. ordinal or nominal variables type). Usage predictors_f = c("landform")
 #' @param fit_formula formula. A formula object with response and predictor variables (e.g. formula(abund ~ temp + precipt + sand + landform)). Note that the variables used here must be consistent with those used in response, predictors, and predictors_f arguments. Default NULL
+#' @param sigma_formula formula. formula for fitting a model to the nu parameter. Usage sigma_formula = ~ precipt + temp
+#' @param nu_formula formula. formula for fitting a model to the nu parameter. Usage nu_formula = ~ precipt + temp
+#' @param tau_formula formula. formula for fitting a model to the tau parameter. Usage tau_formula = ~ precipt + temp
 #' @param partition character. Column name with training and validation partition groups.
 #' @param predict_part logical. Save predicted abundance for testing data. Default is FALSE.
 #' @param distribution character. A string specifying the distribution to be used. See \link[gamlss.dist]{gamlss.family} documentation for details. Use distribution = gamlss.dist::NO(). Default NULL
 #' @param poly integer >= 2. If used with values >= 2 model will use polynomials for those continuous variables (i.e. used in predictors argument). Default is 0.
 #' @param inter_order integer >= 0. The interaction order between explanatory variables. Default is 0.
+#' @param control_gamlss function. control parameters of the outer iterations algorithm in gamlss
+#' See \link[gamlss.contro]{gamlss} documentation for details. Default gamlss.control()
 #' @param verbose logical. If FALSE, disables all console messages. Default TRUE
 #'
 #' @importFrom dplyr bind_rows pull tibble as_tibble group_by summarise across
@@ -37,25 +42,32 @@ fit_abund_glm <-
            predictors,
            predictors_f = NULL,
            fit_formula = NULL,
+           sigma_formula = ~1,
+           nu_formula = ~1,
+           tau_formula = ~1,
            partition,
            predict_part = FALSE,
            distribution = NULL,
+           inter = "automatic",
            poly = 0,
            inter_order = 0,
+           control_gamlss = gamlss.control(trace = FALSE),
            verbose = TRUE) {
     . <- mae <- pdisp <- NULL
     if (is.null(distribution)) {
       stop("'distribution' argument was not used, a distribution must be specifyied")
     }
-    
+
     # Adequate database
-    data <- adapt_df(data = data,
-                     response = response,
-                     predictors = predictors,
-                     predictors_f = predictors_f, 
-                     partition = partition)
-    
-    
+    data <- adapt_df(
+      data = data,
+      response = response,
+      predictors = predictors,
+      predictors_f = predictors_f,
+      partition = partition
+    )
+
+
     # Variables
     if (!is.null(predictors_f)) {
       variables <- dplyr::bind_rows(c(c = predictors, f = predictors_f))
@@ -63,7 +75,7 @@ fit_abund_glm <-
       variables <- dplyr::bind_rows(c(c = predictors))
     }
 
-   
+
     # Formula
     if (is.null(fit_formula)) {
       if (poly >= 2) {
@@ -78,7 +90,7 @@ fit_abund_glm <-
         formula1 <-
           paste(c(predictors, predictors_f), collapse = " + ")
       }
-      
+
 
       if (inter_order > 0) {
         forinter <- c(predictors, predictors_f)
@@ -128,62 +140,69 @@ fit_abund_glm <-
         "\n"
       )
     }
-    
+
     # Fit models
     np <- ncol(data %>% dplyr::select(dplyr::starts_with(partition)))
     p_names <- names(data %>% dplyr::select(dplyr::starts_with(partition)))
-    
+
     part_pred_list <- list()
     eval_partial_list <- list()
     family <- distribution
-    
+
     for (h in 1:np) {
       if (verbose) {
         message("Replica number: ", h, "/", np)
       }
       # out <- pre_tr_te(data, p_names, h)
-      
-      folds <- data %>% dplyr::pull(p_names[h]) %>% unique() %>% sort()
-      
+
+      folds <- data %>%
+        dplyr::pull(p_names[h]) %>%
+        unique() %>%
+        sort()
+
       eval_partial <- list()
       pred_test <- list()
       part_pred <- list()
-      
+
       for (j in 1:length(folds)) {
         if (verbose) {
           message("-- Partition number ", j, "/", length(folds))
         }
-        
+
         train_set <- data[data[, p_names[h]] != folds[j], ]
         test_set <- data[data[, p_names[h]] == folds[j], ]
-        
+
         set.seed(13)
         model <- gamlss::gamlss(
           formula = formula1,
           family = family,
           data = train_set,
+          sigma.formula = sigma_formula,
+          nu.formula = nu_formula,
+          tau.formula = tau_formula,
+          control = control_gamlss,
           trace = FALSE
         )
-        
+
         pred <- predict(model, newdata = test_set, data = train_set, type = "response")
         observed <- dplyr::pull(test_set, response)
         eval_partial[[j]] <- dplyr::tibble(
           model = "glm",
           adm_eval(obs = observed, pred = pred)
         )
-        
+
         if (predict_part) {
           part_pred[[j]] <- dplyr::tibble(partition = folds[j], observed, predicted = pred)
         }
       }
-      
+
       # Create final database with parameter performance
       names(eval_partial) <- 1:length(folds)
       eval_partial <-
         eval_partial[sapply(eval_partial, function(x) !is.null(dim(x)))] %>%
         dplyr::bind_rows(., .id = "partition")
       eval_partial_list[[h]] <- eval_partial
-      
+
       if (predict_part) {
         names(part_pred) <- 1:length(folds)
         part_pred <-
@@ -192,7 +211,7 @@ fit_abund_glm <-
         part_pred_list[[h]] <- part_pred
       }
     }
-    
+
 
     # fit final model with all data
     set.seed(13)
@@ -200,6 +219,10 @@ fit_abund_glm <-
       formula = formula1,
       family = family,
       data = data,
+      sigma.formula = sigma_formula,
+      nu.formula = nu_formula,
+      tau.formula = tau_formula,
+      control = control_gamlss,
       trace = FALSE
     )
 
@@ -224,14 +247,14 @@ fit_abund_glm <-
         sd = stats::sd
       )), .groups = "drop")
 
-    variables <- bind_cols(
+    variables <- dplyr::bind_cols(
       data.frame(
         model = "glm",
         response = response
       ),
       variables
     ) %>% as_tibble()
-    
+
     # Final object
     data_list <- list(
       model = full_model,

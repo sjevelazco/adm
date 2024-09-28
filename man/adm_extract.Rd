@@ -43,7 +43,8 @@ envar <- terra::rast(envar)
 
 # Extract data for a single species
 some_sp <- sppabund \%>\%
-  filter(species == "Species one") \%>\% dplyr::select(species, ind_ha, x,y)
+  filter(species == "Species one") \%>\%
+  dplyr::select(species, ind_ha, x, y)
 
 # Extract environmental data from envar raster for all locations in spp
 ex_spp <-
@@ -69,8 +70,5 @@ ex_spp2 <-
 
 ex_spp
 ex_spp2
-
-
-
 }
 }

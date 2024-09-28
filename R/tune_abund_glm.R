@@ -47,6 +47,8 @@ tune_abund_glm <-
            metrics = NULL,
            n_cores = 1,
            verbose = FALSE) {
+    . <- poly <- inter_order <- family_call <- discrete <- i <- NULL
+
     if (is.null(metrics) |
       !all(metrics %in% c("corr_spear", "corr_pear", "mae", "inter", "slope", "pdisp"))) {
       stop("Metrics is needed to be defined in 'metric' argument")

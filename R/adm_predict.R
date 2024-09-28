@@ -37,8 +37,8 @@
 #' @param pred_type character. Type of response required available "link", "exponential",
 #' "cloglog" and "logistic". Only valid for Maxent model (see tune_mx and fit_mx).
 #' Default "cloglog".
-#' @param training_data 
-#' @param transform_negative 
+#' @param training_data
+#' @param transform_negative
 #'
 #' @return A list of SpatRaster with continuous and/or binary predictions
 #'
@@ -51,23 +51,23 @@
 #' @importFrom stringr str_detect
 #' @importFrom terra vect crop mask as.data.frame is.factor rast app weighted.mean lapp crs
 #' @importFrom torch dataset torch_tensor
-#' 
+#'
 #' @examples
 #' \dontrun{
 #' require(dplyr)
 #' require(terra)
-#' 
+#'
 #' data("sppabund")
 #' envar <- system.file("external/envar.tif", package = "adm")
 #' envar <- terra::rast(envar)
-#' 
+#'
 #' # Extract data
 #' some_sp <- sppabund %>%
 #'   dplyr::filter(species == "Species one") %>%
-#'   dplyr::select(species, ind_ha, x,y)
-#' 
+#'   dplyr::select(species, ind_ha, x, y)
+#'
 #' some_sp
-#' 
+#'
 #' some_sp <-
 #'   adm_extract(
 #'     data = some_sp,
@@ -75,15 +75,15 @@
 #'     y = "y",
 #'     env_layer = envar
 #'   )
-#' 
+#'
 #' # Partition
 #' some_sp <- flexsdm::part_random(
 #'   data = some_sp,
 #'   pr_ab = "ind_ha",
 #'   method = c(method = "rep_kfold", folds = 3, replicates = 3)
 #' )
-#' 
-#' 
+#'
+#'
 #' ## %######################################################%##
 #' #                                                          #
 #' ####          Create different type of models           ####
@@ -94,40 +94,41 @@
 #' # m1 <- gamlss::fitDist(some_sp$ind_ha, type="realline")
 #' # m1$fits
 #' # m1$failed
-#' # 
+#' #
 #' # m1 <- gamlss(ind_ha ~ pb(elevation) + pb(sand) + pb(bio3) + pb(bio12), family=NO, data=some_sp)
 #' # choosen_dist <- gamlss::chooseDist(m1, parallel="snow", ncpus=4, type="realAll")
-#' 
+#'
 #' mgam <- fit_abund_gam(
 #'   data = some_sp,
 #'   response = "ind_ha",
 #'   predictors = c("elevation", "sand", "bio3", "bio12"),
 #'   predictors_f = "eco",
 #'   partition = ".part",
-#'   distribution = gamlss.dist::NO())
-#' 
+#'   distribution = gamlss.dist::NO()
+#' )
+#'
 #' mraf <- fit_abund_raf(
 #'   data = some_sp,
 #'   response = "ind_ha",
 #'   predictors = c("elevation", "sand", "bio3", "bio12"),
 #'   partition = ".part",
 #' )
-#' 
+#'
 #' mgbm <- fit_abund_gbm(
 #'   data = some_sp,
 #'   response = "ind_ha",
 #'   predictors = c("elevation", "sand", "bio3", "bio12"),
 #'   partition = ".part",
-#'   distribution = 
-#' )
+#'   distribution =
+#'   )
 #'
-#' 
-#' ##%######################################################%##
+#'
+#' ## %######################################################%##
 #' #                                                          #
 #' ####            ' ####      Predict models              ####
 #' #                                                          #
-#' ##%######################################################%##
-#' 
+#' ## %######################################################%##
+#'
 #' # adm_predict can be used for predict one or more models fitted with fit_ or tune_ functions
 #'
 #' # a single model
@@ -168,11 +169,11 @@
 #'   predict_area = NULL
 #' )
 #'
-#' ##%######################################################%##
+#' ## %######################################################%##
 #' #                                                          #
 #' ####              Predict model using chunks            ####
 #' #                                                          #
-#' ##%######################################################%##
+#' ## %######################################################%##
 #' # Predicting models in chunks helps reduce memory requirements in
 #' # cases where models are predicted for large scales and high resolution
 #'
@@ -184,7 +185,6 @@
 #'   predict_area = NULL,
 #'   nchunk = 4
 #' )
-#'
 #' }
 #'
 adm_predict <-
@@ -199,9 +199,9 @@ adm_predict <-
            pred_type = "cloglog",
            transform_negative = TRUE) {
     . <- model <- threshold <- thr_value <- self <- NULL
-    
+
     # TODO write codes to predict CNN ANN adapt GLM and GAM to use gamlss
-    
+
     if (is.null(names(models))) {
       message("Predicting list of individual models")
       ensembles <- NULL
@@ -222,7 +222,7 @@ adm_predict <-
       ensembles <- NULL
       esm <- NULL
     }
-    
+
     #### Prepare datasets ####
     # Crop and mask projection area
     if (!is.null(predict_area)) {
@@ -234,39 +234,44 @@ adm_predict <-
         terra::crop(., predict_area) %>%
         terra::mask(., predict_area)
     }
-    
+
     #### Model predictions
     if (!is.null(models)) {
       # Prepare model list
       m <- lapply(models, function(x) {
         x[[1]]
       })
-      
+
       names(m) <- paste0("m_", 1:length(m))
-      
+
       # Extract model names object
       clss <- sapply(m, function(x) {
         class(x)[1]
       }) %>%
         tolower() %>%
         gsub(".formula", "", .)
-      
-      if (any(lapply(models, function(x){class(x[[1]])[1]}) %>% unlist == "gamlss")){
-        indx <- which(lapply(models, function(x){class(x[[1]])[1]}) %>% unlist == "gamlss")
-        gamlss_classes <- lapply(models[indx], function(x){
+
+      if (any(lapply(models, function(x) {
+        class(x[[1]])[1]
+      }) %>% unlist() == "gamlss")) {
+        indx <- which(lapply(models, function(x) {
+          class(x[[1]])[1]
+        }) %>% unlist() == "gamlss")
+        gamlss_classes <- lapply(models[indx], function(x) {
           x$predictors$model
         }) %>% unlist()
-        
-        clss[indx] <- paste0(clss[indx],"_",gamlss_classes)
+
+        clss[indx] <- paste0(clss[indx], "_", gamlss_classes)
       }
     }
-    
+
     # Transform raster to data.frame
-    
+
     # if(chunk){
-    cell <- terra::as.data.frame(pred, cells = TRUE, na.rm = TRUE)[,"cell"]
+    cell <- terra::as.data.frame(pred, cells = TRUE, na.rm = TRUE)[, "cell"]
     set <-
-      c(seq(1, length(cell), length.out = nchunk) # length.out = nchunk
+      c(
+        seq(1, length(cell), length.out = nchunk) # length.out = nchunk
         %>% round(),
         length(cell) + 1
       )
@@ -274,33 +279,33 @@ adm_predict <-
     #   pred_df <-
     #   terra::as.data.frame(pred, cells = FALSE, na.rm = TRUE)
     # }
-    
+
     r <- pred[[!terra::is.factor(pred)]][[1]]
     r[!is.na(r)] <- NA
-    
+
     # Create list for storing raster for current condition
     model_c <- as.list(names(m))
     names(model_c) <- names(m)
-    for(i in seq_along(model_c)){
+    for (i in seq_along(model_c)) {
       model_c[[i]] <- r
     }
-    
-    
-    
+
+
+
     # Write here the loop
-    for(CH in seq_len((length(set) - 1))){
+    for (CH in seq_len((length(set) - 1))) {
       rowset <- set[CH]:(set[CH + 1] - 1)
       rowset <- cell[rowset]
       pred_df <- pred[rowset]
       rownames(pred_df) <- rowset
-      
-      
+
+
       ## %######################################################%##
       #                                                          #
       ####          Prediction for different models           ####
       #                                                          #
       ## %######################################################%##
-      
+
       #### xgboost models ####
       # wm <- which(clss == "xgb.booster")
       # if (length(clss) > 0){
@@ -309,20 +314,20 @@ adm_predict <-
       #     r <- pred[[!terra::is.factor(pred)]][[1]]
       #     r[!is.na(r)] <- NA
       #     r[as.numeric(rownames(pred_df))] <-
-      #     
+      #
       #     model_c[[i]][rowset] <- r[rowset]
       #   }
       # }
-      
+
       #### dnn models ####
       wm <- which(clss == "luz_module_fitted")
-      if (length(wm) > 0){
+      if (length(wm) > 0) {
         wm <- names(wm)
-        
+
         # create_dataset definition
         create_dataset <- torch::dataset(
           "dataset",
-          initialize = function(df, response_variable=0) {
+          initialize = function(df, response_variable = 0) {
             self$df <- df
           },
           .getitem = function(index) {
@@ -333,32 +338,32 @@ adm_predict <-
             nrow(self$df)
           }
         )
-        
+
         pred_dataset <- create_dataset(pred_df)
         for (i in wm) {
           r <- pred[[!terra::is.factor(pred)]][[1]]
           r[!is.na(r)] <- NA
           r[as.numeric(rownames(pred_df))] <-
             suppressMessages(stats::predict(m[[i]], pred_dataset) %>% as.numeric())
-          
+
           model_c[[i]][rowset] <- r[rowset]
         }
       }
-      
+
       #### gam and glm ####
-      wm <- clss[stringr::str_detect(clss,"gamlss")]
-      if (length(wm) > 0){
+      wm <- clss[stringr::str_detect(clss, "gamlss")]
+      if (length(wm) > 0) {
         wm <- names(wm)
         for (i in wm) {
           r <- pred[[!terra::is.factor(pred)]][[1]]
           r[!is.na(r)] <- NA
           r[as.numeric(rownames(pred_df))] <-
             suppressMessages(predict(m[[i]], newdata = pred_df, data = training_data, type = "response"))
-          
+
           model_c[[i]][rowset] <- r[rowset]
         }
       }
-      
+
       #### gbm models ####
       wm <- which(clss == "gbm")
       if (length(wm) > 0) {
@@ -368,12 +373,12 @@ adm_predict <-
           r[!is.na(r)] <- NA
           r[as.numeric(rownames(pred_df))] <-
             suppressMessages(gamlss::predictAll(m[[i]], pred_df, type = "response"))
-          
+
           model_c[[i]][rowset] <- r[rowset]
         }
       }
-      
-      
+
+
       #### randomforest class ####
       wm <- which(clss == "randomforest")
       if (length(wm) > 0) {
@@ -381,7 +386,7 @@ adm_predict <-
         for (i in wm) {
           r <- pred[[!terra::is.factor(pred)]][[1]]
           r[!is.na(r)] <- NA
-          
+
           # Test factor levels
           f <-
             m[[i]]$forest$xlevels[sapply(m[[i]]$forest$xlevels, function(x) {
@@ -409,29 +414,29 @@ adm_predict <-
           } else {
             vfilter <- 0
           }
-          
-          
+
+
           if (sum(vfilter) > 0) {
             v <- rep(0, nrow(pred_df))
             v[!vfilter] <-
               suppressMessages(stats::predict(m[[i]], pred_df[!vfilter, ] %>%
-                               dplyr::mutate(dplyr::across(
-                                 .cols = names(f),
-                                 .fns = ~ droplevels(.)
-                               )),
-                             type = "response")
-              )
+                dplyr::mutate(dplyr::across(
+                  .cols = names(f),
+                  .fns = ~ droplevels(.)
+                )),
+              type = "response"
+              ))
             r[as.numeric(rownames(pred_df))] <- v
             rm(v)
           } else {
             r[as.numeric(rownames(pred_df))] <-
               suppressMessages(stats::predict(m[[i]], pred_df, type = "response"))
           }
-          
+
           model_c[[i]][rowset] <- r[rowset]
         }
       }
-      
+
       #### ksvmj class ####
       wm <- which(clss == "ksvm")
       if (length(wm) > 0) {
@@ -439,7 +444,7 @@ adm_predict <-
         for (i in wm) {
           r <- pred[[!terra::is.factor(pred)]][[1]]
           r[!is.na(r)] <- NA
-          
+
           # Test factor levels
           f_n <- which(sapply(pred_df, class) == "factor") %>% names()
           f_n2 <- m[[i]]@xmatrix[[1]] %>% colnames()
@@ -447,7 +452,7 @@ adm_predict <-
             gsub(x, "", grep(x, f_n2, value = TRUE))
           })
           names(f) <- f_n
-          
+
           if (length(f) > 0) {
             for (ii in 1:length(f)) {
               vf <- f[[ii]] %>%
@@ -470,15 +475,15 @@ adm_predict <-
           } else {
             vfilter <- 0
           }
-          
+
           if (sum(vfilter) > 0) {
             v <- rep(0, nrow(pred_df))
             v[!vfilter] <-
               kernlab::predict(m[[i]], pred_df[!vfilter, ] %>%
-                                 dplyr::mutate(dplyr::across(
-                                   .cols = names(f),
-                                   .fns = ~ droplevels(.)
-                                 )), type = "response")[, 2]
+                dplyr::mutate(dplyr::across(
+                  .cols = names(f),
+                  .fns = ~ droplevels(.)
+                )), type = "response")[, 2]
             r[as.numeric(rownames(pred_df))] <- v
             rm(v)
           } else {
@@ -489,9 +494,9 @@ adm_predict <-
         }
       }
     }
-    
+
     rm(pred_df)
-    
+
     df <- data.frame(
       alg = c(
         "luz_module_fitted",
@@ -504,15 +509,15 @@ adm_predict <-
       ),
       names = c("dnn", "gam", "glm", "gbm", "net", "raf", "svm")
     )
-    
+
     names(model_c) <-
       dplyr::left_join(data.frame(alg = clss), df, by = "alg")[, 2]
     model_c <- mapply(function(x, n) {
       names(x) <- n
       x
     }, model_c, names(model_c))
-    
-    
+
+
     ## %######################################################%##
     #                                                          #
     ####                  Predict ensemble                  ####
@@ -527,32 +532,32 @@ adm_predict <-
       single_model_perf <- lapply(ensembles[[1]], function(x) { # Get performance of individual model used for performing ensemble
         x[["performance"]]
       }) %>% dplyr::bind_rows()
-      
+
       # Threshold and metric values for performing some ensembles
       if (any(ens_method %in% c("meanw", "meansup", "meanthr"))) {
         weight_data <- single_model_perf %>%
           dplyr::filter(threshold == ensembles$thr_metric[1]) %>%
           dplyr::select(model, thr_value, ensembles$thr_metric[2])
       }
-      
+
       ensemble_c <- as.list(ens_method)
       names(ensemble_c) <- ensemble_c
-      
+
       if (any("mean" == ens_method)) {
         ensemble_c[["mean"]] <- terra::app(model_c, fun = mean, cores = 1)
       }
-      
+
       if (any("meanw" == ens_method)) {
         ensemble_c[["meanw"]] <- terra::weighted.mean(model_c, weight_data[[3]])
       }
-      
+
       if (any("meansup" == ens_method)) {
         ensemble_c[["meansup"]] <-
           terra::app(model_c[[which(weight_data[[3]] >= mean(weight_data[[3]]))]],
-                     fun = mean, cores = 1
+            fun = mean, cores = 1
           )
       }
-      
+
       if (any("meanthr" == ens_method)) {
         mf1 <- function(x, y) {
           terra::lapp(x, function(x) ifelse(x >= y, x, 0))
@@ -561,16 +566,16 @@ adm_predict <-
         ensemble_c[["meanthr"]] <- terra::app(model_c2, fun = mean, cores = 1)
         rm(model_c2)
       }
-      
+
       if (any("median" == ens_method)) {
         ensemble_c[["median"]] <- terra::app(model_c, fun = stats::median, cores = 1)
       }
-      
+
       ensemble_c <- mapply(function(x, y) {
         names(x) <- y
         x
       }, ensemble_c, ens_method, SIMPLIFY = FALSE)
-      
+
       model_c <- ensemble_c
       models <- split(ensembles[["performance"]], ensembles[["performance"]]$model)
       models <- lapply(models, function(x) {
@@ -581,32 +586,32 @@ adm_predict <-
       rm(ensembles)
       rm(ensemble_c)
     }
-    
+
     ## %######################################################%##
     #                                                          #
     ####       Predict ensemble of small models (esm)       ####
     #                                                          #
     ## %######################################################%##
-    
+
     if (!is.null(esm)) {
       model_c <- terra::rast(model_c) # stack individual models
       weight_data <- esm$esm_model %>%
         names() %>%
         as.numeric() # get performance of esm
-      
+
       ensemble_c <-
         terra::app(model_c * weight_data, fun = sum, cores = 1)
-      ensemble_c <- ensemble_c/sum(weight_data)
+      ensemble_c <- ensemble_c / sum(weight_data)
       names(ensemble_c) <- paste0("esm_", unique(names(model_c)))
-      
+
       model_c <- list(ensemble_c)
       models <- list("performance" = esm["performance"])
-      
+
       rm(esm)
       rm(ensemble_c)
     }
-    
-    
+
+
     ## %######################################################%##
     #                                                          #
     ####              Get binary predictions                ####
@@ -614,16 +619,15 @@ adm_predict <-
     ## %######################################################%##
     # TODO
     if (is.null(thr)) {
-      
       if (transform_negative) {
         for (i in 1:length(model_c)) {
           x <- model_c[[i]]
-          x[x<0] <- 0
+          x[x < 0] <- 0
           model_c[[i]] <- x
         }
         rm(x)
       }
-      
+
       return(model_c)
     } else {
       if (any("all" == thr)) {
@@ -636,9 +640,9 @@ adm_predict <-
             dplyr::filter(threshold %in% thr)
         })
       }
-      
+
       model_b <- list()
-      
+
       for (i in 1:length(model_c)) {
         model_b[[i]] <-
           lapply(thr_df[[i]]$thr_value, function(x) {
@@ -646,9 +650,9 @@ adm_predict <-
           }) %>% terra::rast()
         names(model_b[[i]]) <- names(thr_df[[i]]$thr_value)
       }
-      
+
       names(model_b) <- names(model_c)
-      
+
       # Return suitability values above thresholds
       if (con_thr) {
         for (i in 1:length(model_b)) {
@@ -657,19 +661,19 @@ adm_predict <-
           names(model_b[[i]]) <- nms
         }
       }
-      
+
       mf2 <- function(x, x2) {
         terra::rast(list(x, x2))
       }
-      
+
       result <- mapply(mf2, model_c, model_b, SIMPLIFY = FALSE)
-      if(grepl("esm_", names(model_c[[1]]))) {
+      if (grepl("esm_", names(model_c[[1]]))) {
         names(result) <- names(model_c[[1]])
       }
-      for(f in 1:length(result)){
+      for (f in 1:length(result)) {
         terra::crs(result[[f]]) <- terra::crs(pred)
       }
-      
+
       return(result)
     }
   }

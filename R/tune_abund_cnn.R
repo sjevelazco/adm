@@ -8,7 +8,6 @@
 #' @param y character. Column name with latitude data.
 #' @param rasters character. Path to the raster file of environmental variables.
 #' @param sample_size numeric. The dimension, in pixels, of raster samples. See cnn_make_samples beforehand. Default c(11,11)
-#' @param fit_formula formula. A formula object with response and predictor variables (e.g. formula(abund ~ temp + precipt + sand + landform)). Note that the variables used here must be consistent with those used in response, predictors, and predictors_f arguments. Default NULL
 #' @param partition character. Column name with training and validation partition groups.
 #' @param predict_part logical. Save predicted abundance for testing data. Default = FALSE
 #' @param grid tibble or data.frame. A dataframe with "batch_size", "n_epochs", "learning_rate" as columns and its values combinations as rows.
@@ -113,7 +112,7 @@ tune_abund_cnn <-
         fitting_patience = fitting_patience
       )
     } else {
-      if (all(names(grid) %in% c("batch_size", "n_epochs", "learning_rate","validation_patience","fitting_patience")) & length(names(grid)) == 5) {
+      if (all(names(grid) %in% c("batch_size", "n_epochs", "learning_rate", "validation_patience", "fitting_patience")) & length(names(grid)) == 5) {
         batch_size <- unique(grid[, "batch_size"])
         n_epochs <- unique(grid[, "n_epochs"])
         learning_rate <- unique(grid[, "learning_rate"])

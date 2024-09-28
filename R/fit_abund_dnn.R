@@ -12,7 +12,7 @@
 #' @param batch_size numeric. A batch is a subset of the training set used in a single iteration of the training process. The size of each batch is referred to as the batch size. Default = 32
 #' @param custom_architecture a Torch nn_module_generator object. A neural network architecture to be used instead of the internal default one. Default NULL
 #'
-#' @importFrom dplyr bind_rows pull tibble as_tibble group_by summarise across
+#' @importFrom dplyr bind_rows bind_cols pull tibble as_tibble group_by summarise across
 #' @importFrom luz setup set_opt_hparams fit
 #' @importFrom stats sd runif
 #' @importFrom torch dataset torch_tensor torch_manual_seed nn_module nn_linear nnf_relu dataloader nn_l1_loss optim_adam
@@ -45,21 +45,23 @@ fit_abund_dnn <-
            fitting_patience = 5,
            custom_architecture = NULL,
            verbose = TRUE) {
-    . <- self <- model <- mae <- pdisp <-  NULL
+    . <- self <- model <- mae <- pdisp <- NULL
     # Variables
     if (!is.null(predictors_f)) {
       variables <- dplyr::bind_rows(c(c = predictors, f = predictors_f))
     } else {
       variables <- dplyr::bind_rows(c(c = predictors))
     }
-    
+
     # Adequate database
-    data <- adapt_df(data = data,
-                     predictors = predictors,
-                     predictors_f = predictors_f,
-                     response = response,
-                     partition = partition)
-    
+    data <- adapt_df(
+      data = data,
+      predictors = predictors,
+      predictors_f = predictors_f,
+      response = response,
+      partition = partition
+    )
+
     # # ---- Formula ----
     # if (is.null(fit_formula)) {
     #   formula1 <- stats::formula(paste(response, "~", paste(c(
@@ -69,7 +71,7 @@ fit_abund_dnn <-
     # } else {
     #   formula1 <- fit_formula
     # }
-    
+
     # if (verbose) {
     #   message(
     #     "Formula used for model fitting:\n",
@@ -77,7 +79,7 @@ fit_abund_dnn <-
     #     "\n"
     #   )
     # }
-    
+
     # create_dataset definition
     create_dataset <- torch::dataset(
       "dataset",
@@ -94,12 +96,12 @@ fit_abund_dnn <-
         length(self$response_variable)
       }
     )
-    
+
     # architecture setup
     torch::torch_manual_seed(13)
-    
+
     if (!is.null(custom_architecture)) {
-      if ("arch" %in% names(custom_architecture)){
+      if ("arch" %in% names(custom_architecture)) {
         custom_architecture <- custom_architecture$net
       }
       net <- custom_architecture
@@ -121,39 +123,42 @@ fit_abund_dnn <-
         }
       )
     }
-    
+
     # Fit models
     np <- ncol(data %>% dplyr::select(dplyr::starts_with(partition)))
     p_names <- names(data %>% dplyr::select(dplyr::starts_with(partition)))
-    
+
     part_pred_list <- list()
     eval_partial_list <- list()
-    
+
     for (h in 1:np) {
       if (verbose) {
         message("Replica number: ", h, "/", np)
       }
       # out <- pre_tr_te(data, p_names, h)
-      
-      folds <- data %>% dplyr::pull(p_names[h]) %>% unique() %>% sort()
-      
+
+      folds <- data %>%
+        dplyr::pull(p_names[h]) %>%
+        unique() %>%
+        sort()
+
       eval_partial <- list()
       pred_test <- list()
       part_pred <- list()
-      
+
       for (j in 1:length(folds)) {
         if (verbose) {
           message("-- Partition number ", j, "/", length(folds))
         }
-        
+
         train_set <- data[data[, p_names[h]] != folds[j], c(predictors, response)] %>%
           create_dataset(response_variable = response)
         test_set <- data[data[, p_names[h]] == folds[j], c(predictors, response)] %>%
           create_dataset(response_variable = response)
-        
+
         train_dataloader <- torch::dataloader(train_set, batch_size = batch_size, shuffle = TRUE)
         test_dataloader <- torch::dataloader(test_set, batch_size = batch_size, shuffle = TRUE)
-        
+
         set.seed(13)
         fitted <- net %>%
           luz::setup(
@@ -161,13 +166,14 @@ fit_abund_dnn <-
             optimizer = torch::optim_adam
           ) %>%
           luz::set_opt_hparams(lr = learning_rate) %>%
-          luz::fit(train_dataloader, 
-                   valid_data = test_dataloader, 
-                   epochs = n_epochs, 
-                   callbacks = luz::luz_callback_early_stopping(patience = validation_patience))
-        
+          luz::fit(train_dataloader,
+            valid_data = test_dataloader,
+            epochs = n_epochs,
+            callbacks = luz::luz_callback_early_stopping(patience = validation_patience)
+          )
+
         pred <- predict(fitted, test_set) %>% as.numeric()
-        
+
         if (!(sum(is.na(pred)) == length(pred))) {
           pred[is.na(pred)] <- stats::runif(sum(is.na(pred)), min(data[[response]]), max(data[[response]]))
           observed <- test_set$response_variable %>% as.numeric()
@@ -176,19 +182,19 @@ fit_abund_dnn <-
             adm_eval(obs = observed, pred = pred)
           )
         }
-        
+
         if (predict_part) {
           part_pred[[j]] <- data.frame(partition = folds[j], observed, predicted = pred)
         }
       }
-      
+
       # Create final database with parameter performance
       names(eval_partial) <- 1:length(folds)
       eval_partial <-
         eval_partial[sapply(eval_partial, function(x) !is.null(dim(x)))] %>%
         dplyr::bind_rows(., .id = "partition")
       eval_partial_list[[h]] <- eval_partial
-      
+
       if (predict_part) {
         names(part_pred) <- 1:length(folds)
         part_pred <-
@@ -197,7 +203,7 @@ fit_abund_dnn <-
         part_pred_list[[h]] <- part_pred
       }
     }
-    
+
     # fit final model with all data
     df <- create_dataset(data[, c(predictors, response)], response)
     df_dl <- torch::dataloader(df, batch_size = batch_size, shuffle = TRUE)
@@ -209,18 +215,19 @@ fit_abund_dnn <-
         optimizer = torch::optim_adam
       ) %>%
       luz::set_opt_hparams(lr = learning_rate) %>%
-      luz::fit(df_dl, 
-               epochs = n_epochs, 
-               callbacks = luz::luz_callback_early_stopping(
-                 monitor = "train_loss", 
-                 patience = fitting_patience)
-               )
+      luz::fit(df_dl,
+        epochs = n_epochs,
+        callbacks = luz::luz_callback_early_stopping(
+          monitor = "train_loss",
+          patience = fitting_patience
+        )
+      )
 
     # bind predicted evaluation
     eval_partial <- eval_partial_list %>%
       dplyr::bind_rows(.id = "replica") %>%
       dplyr::as_tibble()
-    
+
     # bind predicted partition
     if (predict_part) {
       part_pred <- part_pred_list %>%
@@ -228,26 +235,29 @@ fit_abund_dnn <-
     } else {
       part_pred <- NULL
     }
-    
+
     # Sumarize performance
     eval_final <- eval_partial %>%
       dplyr::group_by(model) %>%
       dplyr::summarise(
-        dplyr::across(c(mae:pdisp), 
-                      list(mean = ~mean(.x, na.rm = TRUE), 
-                           sd = ~sd(.x, na.rm = TRUE)
-                      )), 
+        dplyr::across(
+          c(mae:pdisp),
+          list(
+            mean = ~ mean(.x, na.rm = TRUE),
+            sd = ~ sd(.x, na.rm = TRUE)
+          )
+        ),
         .groups = "drop"
       )
 
-    variables <- bind_cols(
+    variables <- dplyr::bind_cols(
       data.frame(
         model = "dnn",
         response = response
       ),
       variables
     ) %>% as_tibble()
-    
+
     # Final object
     data_list <- list(
       model = full_fitted,

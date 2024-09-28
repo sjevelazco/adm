@@ -72,7 +72,7 @@ pre_tr_te <- function(data, p_names, h) {
 #' Crop rasters around a point (Convolutional Neural Networks)
 #'
 #' @description Crop rasters for a single spatial point. Function used internally to construct Convolutional Neural Networks
-#' 
+#'
 #' @param occ tibble or data.frame. Database with response, predictors, and partition values
 #' @param x character. Column name with spatial x coordinates
 #' @param y character. Column name with spatial y coordinates
@@ -87,24 +87,23 @@ pre_tr_te <- function(data, p_names, h) {
 #' @examples
 #' \dontrun{
 #' require(terra)
-#' 
+#'
 #' # Datasbase with species abundance and x and y coordinates
 #' data("sppabund")
-#' 
+#'
 #' # Extract data for a single species
 #' some_sp <- sppabund %>%
 #'   filter(species == "Species three")
-#' 
+#'
 #' # Raster data with environmental variables
 #' envar <- system.file("external/envar.tif", package = "adm")
 #' envar <- terra::rast(envar)
-#' 
-#' # 
-#' sampl_r <- croppin_hood(occ = some_sp[1,], x = "x", y = "y", raster = envar, size = 5)
+#'
+#' #
+#' sampl_r <- croppin_hood(occ = some_sp[1, ], x = "x", y = "y", raster = envar, size = 5)
 #' plot(sampl_r)
 #' plot(sampl_r[[1]])
-#' points(some_sp[1,c("x", "y")], pch=19)
-#' 
+#' points(some_sp[1, c("x", "y")], pch = 19)
 #' }
 croppin_hood <- function(occ, x, y, raster, size) {
   long <- as.numeric(occ[, x])
@@ -137,18 +136,17 @@ croppin_hood <- function(occ, x, y, raster, size) {
 #' @importFrom dplyr filter select as_tibble arrange
 #' @importFrom utils read.delim
 #'
-#' @return tibble with family_name, family_call, range, and discrete columns (if family distribution 
+#' @return tibble with family_name, family_call, range, and discrete columns (if family distribution
 #' or not discrete)
 #' @export
 #'
 #' @examples
 #' \dontrun{
 #' data(sppabund)
-#' 
+#'
 #' family_selector(data = sppabund, response = "ind_ha")
-#' 
 #' }
-#' 
+#'
 family_selector <- function(data, response) {
   . <- discrete <- accepts_negatives <- accepts_zero <-
     accepts_one <- one_restricted <- family_name <- family_call <- NULL
@@ -195,44 +193,43 @@ family_selector <- function(data, response) {
 
   message("Selected ", nrow(testing_families), " suitable families for the data.")
 
-  return(dplyr::as_tibble(testing_families) %>% 
-           dplyr::arrange(family_name))
+  return(dplyr::as_tibble(testing_families) %>%
+    dplyr::arrange(family_name))
 }
 
-#' Calculate the output resolution of a layer 
+#' Calculate the output resolution of a layer
 #'
-#' @description Calculate the output resolution of a layer or pooling operation in a 
+#' @description Calculate the output resolution of a layer or pooling operation in a
 #' Convolutional Neural Network.
 #'
 #' @param type string. Accepted values are "layer" and "pooling".
 #' @param in_res integer. It represents the resolution of the input layer.
-#' @param kernel_size integer. It refers to the size of the kernel used in the convolution 
+#' @param kernel_size integer. It refers to the size of the kernel used in the convolution
 #' or pooling operation.
-#' @param stride integer. It is the stride length for the convolution or pooling operation. 
+#' @param stride integer. It is the stride length for the convolution or pooling operation.
 #' Only used when type is "layer".
-#' @param padding integer. It is the amount padding added to the input layer. 
+#' @param padding integer. It is the amount padding added to the input layer.
 #' Only used when type is "layer"
 #'
 #' @return The function returns integer which is the output resolution.
-#' 
-#' @details  
+#'
+#' @details
 #' \itemize{
-#' \item When type is "layer" the output resolution is calculated as 
+#' \item When type is "layer" the output resolution is calculated as
 #' ((in_res - kernel_size + (2 * padding)) / stride) + 1.
-#' \item When type is "pooling", the output resolution is calculated as the floor division 
+#' \item When type is "pooling", the output resolution is calculated as the floor division
 #' of in_res by kernel_size.
 #' }
 #' @export
 #'
 #' @examples
 #' \dontrun{
-#' 
+#'
 #' # Calculating output resolution for a convolution layer
 #' res_calculate(type = "layer", in_res = 12, kernel_size = 2, stride = 2, padding = 0)
-#' 
+#'
 #' # Calculating output resolution for a pooling layer
 #' res_calculate(type = "pooling", in_res = 12, kernel_size = 2)
-#' 
 #' }
 res_calculate <-
   function(type = c("layer", "pooling"),
@@ -246,6 +243,6 @@ res_calculate <-
     } else if (type == "pooling") {
       out_res <- floor(in_res / kernel_size)
     }
-    
+
     return(out_res)
   }

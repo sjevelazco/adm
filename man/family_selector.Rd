@@ -12,7 +12,7 @@ family_selector(data, response)
 \item{response}{character. Column name with species abundance}
 }
 \value{
-tibble with family_name, family_call, range, and discrete columns (if family distribution 
+tibble with family_name, family_call, range, and discrete columns (if family distribution
 or not discrete)
 }
 \description{
@@ -23,7 +23,6 @@ Select probability distribution available in gamlss.dist suited for a given resp
 data(sppabund)
 
 family_selector(data = sppabund, response = "ind_ha")
-
 }
 
 }

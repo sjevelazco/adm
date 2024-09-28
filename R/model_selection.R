@@ -45,7 +45,7 @@ model_selection <- function(hyper_combinations, metrics) {
       }
     }
   }
-  
+
 
   selected_comb <- hyper_combinations$comb_id[1]
 
