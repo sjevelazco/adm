@@ -48,6 +48,7 @@ p_abund_bpdp <-
       if (all(c("model", "predictors", "performance", "performance_part", "predicted_part") %in% names(model))
       ) {
         variables <- model$predictors
+        model_l <- model
         model <- model[[1]]
       }
     }
@@ -126,7 +127,7 @@ p_abund_bpdp <-
 
       crv <-
         data_abund_bpdp(
-          model = model,
+          model = model_l,
           predictors = c(xenv, yenv),
           resolution = resolution,
           training_boundaries = training_boundaries,
