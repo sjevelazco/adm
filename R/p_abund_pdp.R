@@ -64,13 +64,19 @@ p_abund_pdp <-
     # }
 
     if (class(model)[1] == "list") {
-      if (all(names(model) %in% c("model", "predictors", "performance", "performance_part", "predicted_part"))
+      if (all(c("model", "predictors", "performance", "performance_part", "predicted_part") %in% names(model))
       ) {
         variables <- model$predictors
         model <- model[[1]]
       }
     }
 
+    if(!all(variables[1, 2:ncol(variables)] %>%
+            as.vector() %>%
+            unlist() %in% names(training_data))){
+      stop("Variables not present in training data. Did you use the wrong dataset?")
+    }
+    
     if (class(model)[1] == "luz_module_fitted") {
       if (!is.null(training_data)) {
         v <- training_data[variables[1, 2:ncol(variables)] %>%
@@ -89,6 +95,9 @@ p_abund_pdp <-
           stringr::str_remove("\\)")
       } else if (variables[["model"]] == "glm") {
         v <- attr(model$mu.terms, "dataClasses")[-1]
+        v <- v[names(v)%in%variables[1, 2:ncol(variables)] %>%
+            as.vector() %>%
+            unlist()]
       }
     }
 
