@@ -67,6 +67,7 @@ p_abund_pdp <-
       if (all(c("model", "predictors", "performance", "performance_part", "predicted_part") %in% names(model))
       ) {
         variables <- model$predictors
+        model_l <- model
         model <- model[[1]]
       }
     }
@@ -124,7 +125,7 @@ p_abund_pdp <-
       for (i in 1:length(v)) {
         crv <-
           data_abund_pdp(
-            model = model,
+            model = model_l,
             predictors = names(v[i]),
             resolution = resolution,
             resid = any(c(resid, rug)),
@@ -172,7 +173,7 @@ p_abund_pdp <-
       for (i in 1:length(v)) {
         crv <-
           data_abund_pdp(
-            model = model,
+            model = model_l,
             predictors = names(v[i]),
             resolution = resolution,
             resid = any(c(resid, rug)),
