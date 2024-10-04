@@ -11,34 +11,12 @@
 #' @param nchunk integer. Number of chunks to split data used to predict models (i.e., SpatRaster
 #' used in pred argument). Predicting models in chunks helps reduce memory requirements in cases
 #' where models are predicted for large scales and high resolution. Default = 1
-#' @param thr character. Threshold used to get binary suitability values (i.e., 0,1). It is possible
-#' to use more than one threshold type. It is mandatory to use the same threshold/s used to fit the
-#' models. The following threshold types are available:
-#' \itemize{
-#'   \item lpt: The highest threshold at which there is no omission.
-#'   \item equal_sens_spec: Threshold at which the sensitivity and specificity are equal.
-#'   \item max_sens_spec: Threshold at which the sum of the sensitivity and specificity is the
-#'   highest (aka threshold that maximizes the TSS).
-#'   \item max_jaccard: The threshold at which the Jaccard index is the highest.
-#'   \item max_sorensen: The threshold at which the Sorensen index is highest.
-#'   \item max_fpb: The threshold at which FPB is highest.
-#'   \item sensitivity: Threshold based on a specified sensitivity value used to fit the models.
-#'   \item all: All the threshold used in the model outputs used in 'models' argument will be used.
-#'   }
-#' Usage thr = c('lpt', 'max_sens_spec', 'max_jaccard'), thr=c('lpt', 'max_sens_spec',
-#' 'sensitivity'), or thr='all'. If no threshold is specified (i.e., thr = NULL) function
-#' will return continuous prediction only. Default NULL
-#' @param con_thr logical. If true predictions with suitability values above threshold/s will be
-#' returned. Default = FALSE
 #' @param predict_area SpatVector, SpatialPolygon, or SpatialPolygonDataFrame. Spatial polygon
 #' used for restring prediction into only a given region. Default = NULL
-#' @param clamp logical. It is set with TRUE, predictors and features are restricted to the range
-#' seen during model training. Only valid for Maxent model (see tune_mx and fit_mx). Default TRUE.
-#' @param pred_type character. Type of response required available "link", "exponential",
-#' "cloglog" and "logistic". Only valid for Maxent model (see tune_mx and fit_mx).
-#' Default "cloglog".
-#' @param training_data
-#' @param transform_negative
+#' @param training_data data.frame or tibble. Data used to fit the models. It is necessary
+#' to predict GAM and GLM models. Default NULL
+#' @param transform_negative logical. If TRUE, all negative values in the prediction will be set to zero.
+#' default FALSE.
 #'
 #' @return A list of SpatRaster with continuous and/or binary predictions
 #'
@@ -192,12 +170,8 @@ adm_predict <-
            pred,
            training_data = NULL,
            nchunk = 1,
-           thr = NULL,
-           con_thr = FALSE,
            predict_area = NULL,
-           clamp = TRUE,
-           pred_type = "cloglog",
-           transform_negative = TRUE) {
+           transform_negative = FALSE) {
     . <- model <- threshold <- thr_value <- self <- NULL
 
     # TODO write codes to predict CNN ANN adapt GLM and GAM to use gamlss
@@ -518,162 +492,15 @@ adm_predict <-
     }, model_c, names(model_c))
 
 
-    ## %######################################################%##
-    #                                                          #
-    ####                  Predict ensemble                  ####
-    #                                                          #
-    ## %######################################################%##
-    if (!is.null(ensembles)) {
-      model_c <- terra::rast(model_c) # stack individual models
-      ens_perf <- ensembles[["performance"]] # get performance of ensembles
-      ens_method <- ens_perf %>%
-        dplyr::pull(model) %>%
-        unique() # get ensemble methods
-      single_model_perf <- lapply(ensembles[[1]], function(x) { # Get performance of individual model used for performing ensemble
-        x[["performance"]]
-      }) %>% dplyr::bind_rows()
 
-      # Threshold and metric values for performing some ensembles
-      if (any(ens_method %in% c("meanw", "meansup", "meanthr"))) {
-        weight_data <- single_model_perf %>%
-          dplyr::filter(threshold == ensembles$thr_metric[1]) %>%
-          dplyr::select(model, thr_value, ensembles$thr_metric[2])
-      }
-
-      ensemble_c <- as.list(ens_method)
-      names(ensemble_c) <- ensemble_c
-
-      if (any("mean" == ens_method)) {
-        ensemble_c[["mean"]] <- terra::app(model_c, fun = mean, cores = 1)
-      }
-
-      if (any("meanw" == ens_method)) {
-        ensemble_c[["meanw"]] <- terra::weighted.mean(model_c, weight_data[[3]])
-      }
-
-      if (any("meansup" == ens_method)) {
-        ensemble_c[["meansup"]] <-
-          terra::app(model_c[[which(weight_data[[3]] >= mean(weight_data[[3]]))]],
-            fun = mean, cores = 1
-          )
-      }
-
-      if (any("meanthr" == ens_method)) {
-        mf1 <- function(x, y) {
-          terra::lapp(x, function(x) ifelse(x >= y, x, 0))
-        }
-        model_c2 <- mapply(mf1, model_c, weight_data[[2]], SIMPLIFY = FALSE) %>% terra::rast()
-        ensemble_c[["meanthr"]] <- terra::app(model_c2, fun = mean, cores = 1)
-        rm(model_c2)
-      }
-
-      if (any("median" == ens_method)) {
-        ensemble_c[["median"]] <- terra::app(model_c, fun = stats::median, cores = 1)
-      }
-
-      ensemble_c <- mapply(function(x, y) {
-        names(x) <- y
-        x
-      }, ensemble_c, ens_method, SIMPLIFY = FALSE)
-
-      model_c <- ensemble_c
-      models <- split(ensembles[["performance"]], ensembles[["performance"]]$model)
-      models <- lapply(models, function(x) {
-        x <- list(x)
-        names(x) <- "performance"
-        x
-      })
-      rm(ensembles)
-      rm(ensemble_c)
-    }
-
-    ## %######################################################%##
-    #                                                          #
-    ####       Predict ensemble of small models (esm)       ####
-    #                                                          #
-    ## %######################################################%##
-
-    if (!is.null(esm)) {
-      model_c <- terra::rast(model_c) # stack individual models
-      weight_data <- esm$esm_model %>%
-        names() %>%
-        as.numeric() # get performance of esm
-
-      ensemble_c <-
-        terra::app(model_c * weight_data, fun = sum, cores = 1)
-      ensemble_c <- ensemble_c / sum(weight_data)
-      names(ensemble_c) <- paste0("esm_", unique(names(model_c)))
-
-      model_c <- list(ensemble_c)
-      models <- list("performance" = esm["performance"])
-
-      rm(esm)
-      rm(ensemble_c)
-    }
-
-
-    ## %######################################################%##
-    #                                                          #
-    ####              Get binary predictions                ####
-    #                                                          #
-    ## %######################################################%##
-    # TODO
-    if (is.null(thr)) {
-      if (transform_negative) {
-        for (i in 1:length(model_c)) {
-          x <- model_c[[i]]
-          x[x < 0] <- 0
-          model_c[[i]] <- x
-        }
-        rm(x)
-      }
-
-      return(model_c)
-    } else {
-      if (any("all" == thr)) {
-        thr_df <- lapply(models, function(x) {
-          x[["performance"]]
-        })
-      } else {
-        thr_df <- lapply(models, function(x) {
-          x[["performance"]] %>%
-            dplyr::filter(threshold %in% thr)
-        })
-      }
-
-      model_b <- list()
-
+    # Transform negative values
+    if (transform_negative) {
       for (i in 1:length(model_c)) {
-        model_b[[i]] <-
-          lapply(thr_df[[i]]$thr_value, function(x) {
-            model_c[[i]] >= x
-          }) %>% terra::rast()
-        names(model_b[[i]]) <- names(thr_df[[i]]$thr_value)
+        x <- model_c[[i]]
+        x[x < 0] <- 0
+        model_c[[i]] <- x
       }
-
-      names(model_b) <- names(model_c)
-
-      # Return suitability values above thresholds
-      if (con_thr) {
-        for (i in 1:length(model_b)) {
-          nms <- names(model_b[[i]])
-          model_b[[i]] <- model_b[[i]] * model_c[[i]]
-          names(model_b[[i]]) <- nms
-        }
-      }
-
-      mf2 <- function(x, x2) {
-        terra::rast(list(x, x2))
-      }
-
-      result <- mapply(mf2, model_c, model_b, SIMPLIFY = FALSE)
-      if (grepl("esm_", names(model_c[[1]]))) {
-        names(result) <- names(model_c[[1]])
-      }
-      for (f in 1:length(result)) {
-        terra::crs(result[[f]]) <- terra::crs(pred)
-      }
-
-      return(result)
+      rm(x)
     }
+    return(model_c)
   }
