@@ -1,12 +1,13 @@
-#' ADM Bivariate partial dependence plot
+#' Bivariate partial dependence plot(s)
 #'
+#' @description This function creates bivariate partial dependence plots to explore the bivariate marginal effect of predictors.
+#' 
 #' @param model
 #' @param predictors
 #' @param resolution
 #' @param training_data
 #' @param training_boundaries
 #' @param projection_data
-#' @param clamping
 #' @param color_gradient
 #' @param color_training_boundaries
 #' @param theme
@@ -27,7 +28,6 @@ p_abund_bpdp <-
            training_data = NULL,
            training_boundaries = NULL,
            projection_data = NULL,
-           clamping = FALSE,
            color_gradient = c(
              "#000004",
              "#1B0A40",

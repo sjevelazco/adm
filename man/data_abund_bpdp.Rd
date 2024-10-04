@@ -2,7 +2,7 @@
 % Please edit documentation in R/data_abund_bpdp.R
 \name{data_abund_bpdp}
 \alias{data_abund_bpdp}
-\title{Calculate data to construct partial dependence surface plots}
+\title{Calculate data to construct bivariate partial dependence plots}
 \usage{
 data_abund_bpdp(
   model,
@@ -10,13 +10,22 @@ data_abund_bpdp(
   resolution = 50,
   training_data = NULL,
   training_boundaries = NULL,
-  projection_data = NULL,
-  clamping = FALSE
+  projection_data = NULL
 )
 }
 \arguments{
-\item{clamping}{}
+\item{model}{object returned by any fit_abund or tune_abund family functions}
+
+\item{predictors}{character. Vector with two predictor name(s) to plot. If NULL all predictors will be plotted. Default NULL}
+
+\item{resolution}{numeric. Number of equally spaced points at which to predict continuous predictors. Default 50}
+
+\item{training_data}{data.frame or tibble. Database with response (0,1) and predictor values used to fit a model. Default NULL}
+
+\item{training_boundaries}{character. Plot training conditions boundaries based on training data (i.e., presences, presences and absences, etc). If training_boundaries = "convexh", function will delimit training environmental region based on a convex-hull. If training_boundaries = "rectangle", function will delimit training environmental region based on four straight lines. If used any methods it is necessary provide data in training_data argument. If NULL all predictors will be used. Default NULL.}
+
+\item{projection_data}{SpatRaster. Raster layer with environmental variables used for model projection. Default NULL}
 }
 \description{
-Calculate data to construct partial dependence surface plots
+Calculate data to construct bivariate partial dependence for two predictor set
 }

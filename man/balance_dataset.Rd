@@ -24,7 +24,7 @@ Returns a balanced data.frame or tibble with absence-presence ratio in the respo
 \description{
 The function balances a given database based on the specified ratio of absence to presence. 
 It randomly removes excess of absence in the database to achieve the specified ratio.
-This function interpret absence all those data with abundance equal to zero.
+This function interprets as absence all those data with abundance equal to zero.
 }
 \examples{
 \dontrun{
