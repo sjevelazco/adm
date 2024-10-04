@@ -1,12 +1,17 @@
-#' Balance Dataset at a given presence-absence ratio
-#'@description The function balances a given dataset based on the specified ratio of presence to absence in the column. 
-#' It randomly removes excess of absence in the dataset to achieve the specified ratio.
-#' Note that abasence are interpreted all those data with abundance equal to zero.
-#' @param data data.frame or tibble. Database that contains a columns with abundance. The dataset to balance.
-#' @param response string. The name of the column in data representing the response variable.
-#' @param absence_ratio numeric. The desired ratio of presence to absence in the response column.
+#' Balance database at a given absence-presence ratio
 #' 
-#' @return Returns a balanced dataframe with presence:absence ratio in the response column equal to absence_ratio#' 
+#'@description The function balances a given database based on the specified ratio of absence to presence. 
+#' It randomly removes excess of absence in the database to achieve the specified ratio.
+#' Note that absence are interpreted all those data with abundance equal to zero.
+#' 
+#' @param data data.frame or tibble. Database that contains a columns with abundance.
+#' @param response string. The name of the column in `data` representing the response variable. Usage response = "ind_ha"
+#' @param absence_ratio numeric. The desired ratio of presence to absence in the 
+#' response column. E.g., if set to 1 the function will remove absence until have 
+#' the same number of presence. If set 1.5, the function will remove absence until have
+#' 1.5 times the number of presence. Usage absence_ratio = 0.5 
+#' 
+#' @return Returns a balanced data.frame or tibble with absence-presence ratio in the response column equal to absence_ratio 
 #' @export
 #' 
 #' @examples
@@ -29,10 +34,6 @@
 #' 
 #' table(some_sp$ind_ha > 0)
 #' table(some_sp_2$ind_ha > 0)
-#' 
-#' 
-#' 
-#' 
 #' }
 balance_dataset <-
   function(data, response, absence_ratio) {
