@@ -2,17 +2,28 @@
 % Please edit documentation in R/cnn_make_samples.R
 \name{cnn_make_samples}
 \alias{cnn_make_samples}
-\title{TODO cnn_make_samples}
+\title{Creates sample data for Convolutional Neural Network}
 \usage{
-cnn_make_samples(df, x, y, response, raster, size = 5)
+cnn_make_samples(data, x, y, response, raster, size = 5)
 }
 \arguments{
-\item{x}{character. Column name with longitude data}
+\item{data}{data.frame or tibble. Database that includes longitude, latitude, and response columns.}
 
-\item{y}{character. Column name with latitude data}
+\item{x}{string. Specifying the name of the column with longitude data.}
 
-\item{size}{}
+\item{y}{string. Specifying the name of the column with latitude data.}
+
+\item{response}{string. Specifying the name of the column with response.}
+
+\item{raster}{SpatRaster. Raster from which predictor data will be cropped.}
+
+\item{size}{numeric. Size of the cropped raster, number o cell in each direction of a focal cell}
+}
+\value{
+A list with two elements - 'predict' (a list of input images) and 'response' (an of response values). 
+Each element in the 'predictors' list is an array representing a cropped image from the input raster.
 }
 \description{
-TODO cnn_make_samples
+This function creates an array of input images and associated responses
+which can be utilized to train a Convolutional Neural Network.
 }

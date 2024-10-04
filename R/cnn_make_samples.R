@@ -1,25 +1,30 @@
-#' TODO cnn_make_samples
+#' Creates sample data for Convolutional Neural Network
 #'
-#' @param df
-#' @param x character. Column name with longitude data
-#' @param y character. Column name with latitude data
-#' @param response
-#' @param raster
-#' @param size
+#' @description This function creates an array of input images and associated responses
+#' which can be utilized to train a Convolutional Neural Network.
+#'
+#' @param data data.frame or tibble. Database that includes longitude, latitude, and response columns.
+#' @param x string. Specifying the name of the column with longitude data.
+#' @param y string. Specifying the name of the column with latitude data.
+#' @param response string. Specifying the name of the column with response.
+#' @param raster SpatRaster. Raster from which predictor data will be cropped.
+#' @param size numeric. Size of the cropped raster, number o cell in each direction of a focal cell
 #'
 #' @importFrom terra as.array
 #'
-#' @return
+#' @return A list with two elements - 'predict' (a list of input images) and 'response' (an of response values). 
+#' Each element in the 'predictors' list is an array representing a cropped image from the input raster.
+#'
 #' @export
 #'
 #' @examples
-cnn_make_samples <- function(df,
+cnn_make_samples <- function(data,
                              x,
                              y,
                              response,
                              raster,
                              size = 5) {
-  data <- df
+  data <- data
 
   predictors <- list()
   responses <- list()
