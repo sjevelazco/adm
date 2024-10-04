@@ -9,12 +9,8 @@ adm_predict(
   pred,
   training_data = NULL,
   nchunk = 1,
-  thr = NULL,
-  con_thr = FALSE,
   predict_area = NULL,
-  clamp = TRUE,
-  pred_type = "cloglog",
-  transform_negative = TRUE
+  transform_negative = FALSE
 )
 }
 \arguments{
@@ -23,42 +19,18 @@ adm_predict(
 \item{pred}{SpatRaster. Raster layer with predictor variables. Names of layers must exactly
 match those used in model fitting.}
 
+\item{training_data}{data.frame or tibble. Data used to fit the models. It is necessary
+to predict GAM and GLM models. Default NULL}
+
 \item{nchunk}{integer. Number of chunks to split data used to predict models (i.e., SpatRaster
 used in pred argument). Predicting models in chunks helps reduce memory requirements in cases
 where models are predicted for large scales and high resolution. Default = 1}
 
-\item{thr}{character. Threshold used to get binary suitability values (i.e., 0,1). It is possible
-to use more than one threshold type. It is mandatory to use the same threshold/s used to fit the
-models. The following threshold types are available:
-\itemize{
-  \item lpt: The highest threshold at which there is no omission.
-  \item equal_sens_spec: Threshold at which the sensitivity and specificity are equal.
-  \item max_sens_spec: Threshold at which the sum of the sensitivity and specificity is the
-  highest (aka threshold that maximizes the TSS).
-  \item max_jaccard: The threshold at which the Jaccard index is the highest.
-  \item max_sorensen: The threshold at which the Sorensen index is highest.
-  \item max_fpb: The threshold at which FPB is highest.
-  \item sensitivity: Threshold based on a specified sensitivity value used to fit the models.
-  \item all: All the threshold used in the model outputs used in 'models' argument will be used.
-  }
-Usage thr = c('lpt', 'max_sens_spec', 'max_jaccard'), thr=c('lpt', 'max_sens_spec',
-'sensitivity'), or thr='all'. If no threshold is specified (i.e., thr = NULL) function
-will return continuous prediction only. Default NULL}
-
-\item{con_thr}{logical. If true predictions with suitability values above threshold/s will be
-returned. Default = FALSE}
-
 \item{predict_area}{SpatVector, SpatialPolygon, or SpatialPolygonDataFrame. Spatial polygon
 used for restring prediction into only a given region. Default = NULL}
 
-\item{clamp}{logical. It is set with TRUE, predictors and features are restricted to the range
-seen during model training. Only valid for Maxent model (see tune_mx and fit_mx). Default TRUE.}
-
-\item{pred_type}{character. Type of response required available "link", "exponential",
-"cloglog" and "logistic". Only valid for Maxent model (see tune_mx and fit_mx).
-Default "cloglog".}
-
-\item{transform_negative}{}
+\item{transform_negative}{logical. If TRUE, all negative values in the prediction will be set to zero.
+default FALSE.}
 }
 \value{
 A list of SpatRaster with continuous and/or binary predictions
