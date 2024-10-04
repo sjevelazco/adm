@@ -6,7 +6,6 @@
 #' @param training_data
 #' @param training_boundaries
 #' @param projection_data
-#' @param clamping
 #'
 #' @importFrom dplyr as_tibble select
 #' @importFrom gbm predict.gbm
@@ -25,9 +24,10 @@ data_abund_bpdp <-
            predictors,
            resolution = 50,
            training_data = NULL,
+           invert_transform = NULL,
+           response_name = NULL,
            training_boundaries = NULL,
-           projection_data = NULL,
-           clamping = FALSE) {
+           projection_data = NULL) {
     self <- NULL
 
     # Extract training data
@@ -238,5 +238,23 @@ data_abund_bpdp <-
     }
 
     result <- list("pspdata" = dplyr::as_tibble(suit_c), "training_boundaries" = chulld)
+    
+    if(!is.null(invert_transform)){
+      result[["pspdata"]] <- result[["pspdata"]] %>% dplyr::mutate(
+        Abundance = adm_transform(result[["pspdata"]],
+                                  "Abundance",
+                                  invert_transform[["method"]],
+                                  inverse = TRUE,
+                                  t_terms = c(invert_transform[["a"]] %>% as.numeric,
+                                              invert_transform[["b"]] %>% as.numeric)
+        ) %>% dplyr::pull(Abundance_inverted)
+      )
+    }
+    
+    if(!is.null(response_name)){
+          idx <- which(names(result[["pspdata"]])=="Abundance") 
+          names(result[["pspdata"]])[[idx]] <- response_name
+    }
+    
     return(result)
   }
