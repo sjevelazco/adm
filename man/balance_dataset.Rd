@@ -2,17 +2,47 @@
 % Please edit documentation in R/balance_dataset.R
 \name{balance_dataset}
 \alias{balance_dataset}
-\title{Balance dataset at a given presence:absence ratio}
+\title{Balance database at a given absence-presence ratio}
 \usage{
 balance_dataset(data, response, absence_ratio)
 }
 \arguments{
-\item{data}{}
+\item{data}{data.frame or tibble. Database that contains a columns with abundance.}
 
-\item{response}{}
+\item{response}{string. The name of the column in `data` representing the response variable. Usage response = "ind_ha"}
 
-\item{absence_ratio}{}
+\item{absence_ratio}{numeric. The desired ratio of presence to absence in the 
+response column. E.g., if set to 1 the function will remove absence until have 
+the same number of presence. If set 1.5, the function will remove absence until have
+1.5 times the number of presence. Usage absence_ratio = 0.5}
+}
+\value{
+Returns a balanced data.frame or tibble with absence-presence ratio in the response column equal to absence_ratio
 }
 \description{
-Balance dataset at a given presence:absence ratio
+The function balances a given database based on the specified ratio of absence to presence. 
+It randomly removes excess of absence in the database to achieve the specified ratio.
+Note that absence are interpreted all those data with abundance equal to zero.
+}
+\examples{
+\notrun{
+require(dplyr)
+
+data("sppabund")
+some_sp <- sppabund \%>\%
+  dplyr::filter(species == "Species three") \%>\%
+  dplyr::select(species, ind_ha, x, y)
+
+table(some_sp$ind_ha > 0) 
+# Note that the dataset is almost balanced
+# However, as an example, let's assume that we want to reduce 
+# the number of absences half of the number of presences
+
+some_sp_2 <- balance_dataset(data = some_sp, 
+                             response = "ind_ha", 
+                             absence_ratio = 0.5)
+
+table(some_sp$ind_ha > 0)
+table(some_sp_2$ind_ha > 0)
+}
 }
