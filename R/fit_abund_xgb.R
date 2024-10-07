@@ -87,6 +87,17 @@ fit_abund_xgb <-
     #   )
     # }
 
+    # Define parameters
+    params <- list(
+      max_depth = max_depth,
+      eta = eta,
+      gamma = gamma,
+      colsample_bytree = colsample_bytree,
+      min_child_weight = min_child_weight,
+      subsample = subsample,
+      objective = objective
+    )
+    
     # Fit models
     np <- ncol(data %>% dplyr::select(dplyr::starts_with(partition)))
     p_names <- names(data %>% dplyr::select(dplyr::starts_with(partition)))
@@ -113,40 +124,35 @@ fit_abund_xgb <-
         if (verbose) {
           message("-- Partition number ", j, "/", length(folds))
         }
+        
         train_set <- data[data[, p_names[h]] != folds[j], ]
         test_set <- data[data[, p_names[h]] == folds[j], ]
 
 
         sp_train <- list(
-          data = as.matrix(train_set[, c(predictors, predictors_f)]),
+          data = Matrix::Matrix(as.matrix(train_set[, c(predictors, predictors_f)]), sparse = T),
           target = train_set[, response]
         )
 
+        sp_train <- with(sp_train, xgboost::xgb.DMatrix(data, label = target, nthread = 1))
+        
         sp_test <- list(
-          data = as.matrix(test_set[, c(predictors, predictors_f)]),
-          target = test_set[, response]
+          data = Matrix::Matrix(as.matrix(test_set[, c(predictors, predictors_f)]), sparse = T)
         )
-
+        
+        sp_test <- with(sp_test, xgboost::xgb.DMatrix(data, nthread = 1))
+    
         set.seed(13)
-        model <- xgboost::xgboost(
-          data = sp_train$data,
-          label = sp_train$target,
-          params = list(
-            max_depth = max_depth,
-            eta = eta,
-            gamma = gamma,
-            colsample_bytree = colsample_bytree,
-            min_child_weight = min_child_weight,
-            subsample = subsample,
-            objective = objective
-          ),
+        model <- xgboost::xgb.train(
+          params,
+          sp_train,
           nrounds = nrounds,
           verbose = 0
         )
 
         pred <-
-          suppressMessages(stats::predict(model, sp_test$data, type = "response"))
-        observed <- sp_test$target
+          suppressMessages(stats::predict(model, sp_test, type = "response"))
+        observed <- test_set[, response]
         eval_partial[[j]] <- dplyr::tibble(
           model = "xgb",
           adm_eval(obs = observed, pred = pred)
@@ -175,19 +181,19 @@ fit_abund_xgb <-
 
 
     # fit final model with all data
+    full_train <- list(
+      data = Matrix::Matrix(as.matrix(data[, c(predictors, predictors_f)]), sparse = T),
+      target = data[, response]
+    )
+    full_train <- with(
+      full_train,
+      xgboost::xgb.DMatrix(data, label = target, nthread = 1)
+    )
+    
     set.seed(13)
-    full_model <- xgboost::xgboost(
-      data = as.matrix(data[, c(predictors, predictors_f)]),
-      label = data[, response],
-      params = list(
-        max_depth = max_depth,
-        eta = eta,
-        gamma = gamma,
-        colsample_bytree = colsample_bytree,
-        min_child_weight = min_child_weight,
-        subsample = subsample,
-        objective = objective
-      ),
+    full_model <- xgboost::xgb.train(
+      params = params,
+      data = full_train,
       nrounds = nrounds,
       verbose = 0
     )
