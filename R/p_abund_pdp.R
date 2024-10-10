@@ -6,7 +6,6 @@
 #' @param resid
 #' @param training_data
 #' @param projection_data
-#' @param clamping
 #' @param rug
 #' @param colorl
 #' @param colorp
@@ -27,8 +26,9 @@ p_abund_pdp <-
            resolution = 100,
            resid = FALSE,
            training_data = NULL,
+           invert_transform = NULL,
+           response_name = NULL,
            projection_data = NULL,
-           clamping = FALSE,
            rug = FALSE,
            colorl = c("#462777", "#6DCC57"),
            colorp = "black",
@@ -36,33 +36,7 @@ p_abund_pdp <-
            theme = ggplot2::theme_classic()) {
     Type <- Value <- val <- Abundance <- NULL
 
-    # TODO
-    # if (class(model)[1] == "gam") {
-    #   v <- attr(model$terms, "dataClasses")[-1]
-    # }
-
-    # TODO
-    # if (class(model)[1] == "graf") {
-    #   v <- sapply(model$obsx, class)
-    # }
-
-    # TODO
-    # if (class(model)[1] == "glm") {
-    #   flt <- grepl("[I(]", attr(model$terms, "term.labels")) |
-    #     grepl(":", attr(model$terms, "term.labels"))
-    #   flt <- attr(model$terms, "term.labels")[!flt]
-    #   v <- attr(model$terms, "dataClasses")[flt]
-    # }
-
-    # TODO
-    # if (class(model)[1] == "xgb.Booster"){
-    #   if (!is.null(training_data)){
-    #     v <- training_data[model$feature_names] %>% sapply(class)
-    #   } else {
-    #     stop("Training data needed.")
-    #   }
-    # }
-
+    
     if (class(model)[1] == "list") {
       if (all(c("model", "predictors", "performance", "performance_part", "predicted_part") %in% names(model))
       ) {
@@ -119,6 +93,11 @@ p_abund_pdp <-
       v <- v[names(v) %in% predictors]
     }
 
+    
+    if(is.null(response_name)){
+      response_name <- "Abundance"
+    }
+    
     p <- list()
 
     if (is.null(projection_data)) {
@@ -130,13 +109,15 @@ p_abund_pdp <-
             resolution = resolution,
             resid = any(c(resid, rug)),
             projection_data = NULL,
-            training_data = training_data
+            training_data = training_data,
+            invert_transform = invert_transform,
+            response_name = response_name
           )
 
         if (v[i] == "numeric") {
           xn <- data.frame(crv[[1]])[, 1]
           p[[i]] <-
-            ggplot2::ggplot(crv[[1]], ggplot2::aes(x = !!xn, y = Abundance)) +
+            ggplot2::ggplot(crv[[1]], ggplot2::aes(x = !!xn, y = !!sym(response_name))) +
             # ggplot2::scale_y_continuous(limits = c(0, 1)) +
             ggplot2::labs(x = names(crv[[1]])[1]) +
             {
@@ -144,7 +125,7 @@ p_abund_pdp <-
                 xn2 <- data.frame(crv[[2]])[, 1]
                 ggplot2::geom_point(
                   data = crv[[2]], color = colorp,
-                  ggplot2::aes(!!xn2, Abundance), alpha = alpha
+                  ggplot2::aes(!!xn2, !!sym(response_name)), alpha = alpha
                 )
               }
             } +
@@ -155,7 +136,7 @@ p_abund_pdp <-
             p[[i]] <- p[[i]] +
               ggplot2::geom_rug(
                 data = crv[[2]],
-                ggplot2::aes(!!xn2, Abundance),
+                ggplot2::aes(!!xn2, !!sym(response_name)),
                 sides = "b",
                 alpha = 0.3
               )
@@ -163,7 +144,7 @@ p_abund_pdp <-
         } else {
           xn <- data.frame(crv[[1]])[, 1]
           p[[i]] <-
-            ggplot2::ggplot(crv[[1]], ggplot2::aes(!!xn, Abundance)) +
+            ggplot2::ggplot(crv[[1]], ggplot2::aes(!!xn, !!sym(response_name))) +
             # ggplot2::scale_y_continuous(limits = c(0, 1)) +
             ggplot2::geom_col(fill = rev(colorl)[1]) +
             ggplot2::labs(x = names(crv[[1]])[1])
@@ -178,7 +159,9 @@ p_abund_pdp <-
             resolution = resolution,
             resid = any(c(resid, rug)),
             projection_data = projection_data[[c(names(v[i]))]],
-            training_data = training_data
+            training_data = training_data,
+            invert_transform = invert_transform,
+            response_name = response_name
           )
 
         if (v[i] == "numeric") {
@@ -186,13 +169,13 @@ p_abund_pdp <-
           xn <- data.frame(crv[[1]])[, 1]
 
           p[[i]] <-
-            ggplot2::ggplot(crv[[1]], ggplot2::aes(!!xn, Abundance)) +
+            ggplot2::ggplot(crv[[1]], ggplot2::aes(!!xn, !!sym(response_name))) +
             ggplot2::labs(x = names(crv[[1]])[1]) +
             {
               if (resid) {
                 xn2 <- data.frame(crv[[2]])[, 1]
                 ggplot2::geom_point(
-                  data = crv[[2]], ggplot2::aes(!!xn2, Abundance),
+                  data = crv[[2]], ggplot2::aes(!!xn2, !!sym(response_name)),
                   alpha = alpha, color = colorp
                 )
               }
@@ -215,7 +198,7 @@ p_abund_pdp <-
             p[[i]] <- p[[i]] +
               ggplot2::geom_rug(
                 data = crv[[2]],
-                ggplot2::aes(!!xn2, Abundance),
+                ggplot2::aes(!!xn2, !!sym(response_name)),
                 sides = "b",
                 alpha = 0.5
               )
@@ -223,7 +206,7 @@ p_abund_pdp <-
         } else {
           xn <- crv[[1]] %>% dplyr::pull(names(crv[[1]])[1])
           p[[i]] <-
-            ggplot2::ggplot(crv[[1]], ggplot2::aes(!!xn, Abundance)) +
+            ggplot2::ggplot(crv[[1]], ggplot2::aes(!!xn, !!sym(response_name))) +
             # ggplot2::scale_y_continuous(limits = c(0, 1)) +
             ggplot2::geom_col(fill = rev(colorl)[1]) +
             ggplot2::labs(x = names(crv[[1]])[1])

@@ -4,7 +4,7 @@
 \alias{adm_transform}
 \title{Performs data transformation on a variable based on the specified method.}
 \usage{
-adm_transform(data, variable, method)
+adm_transform(data, variable, method, inverse = FALSE, t_terms = NULL)
 }
 \arguments{
 \item{data}{A data.frame or tibble containing the data.}
@@ -18,6 +18,16 @@ adm_transform(data, variable, method)
 \item For "log", it applies natural logarithm transformation to the variable.
 \item For "log1", it sums 1 and then applies natural logarithm transformation to the variable.
 \item For "round", it rounds the variable's values to the nearest whole numbers.
+}}
+
+\item{inverse}{logical. Invert the transformation?}
+
+\item{t_terms}{vector. c(a,b):
+\itemize{
+\item For "01", a = min(x), b = max(x).
+\item For "zscore", a = mean(x), b = sd(x).
+\item For "log" and "log1, not needed.
+\item Can't invert "round" transformations.
 }}
 }
 \value{

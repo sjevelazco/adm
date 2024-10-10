@@ -23,6 +23,8 @@ data_abund_pdp <-
            resolution = 50,
            resid = FALSE,
            training_data = NULL,
+           invert_transform = NULL,
+           response_name = NULL,
            projection_data = NULL) {
     self <- NULL
 
@@ -199,30 +201,6 @@ data_abund_pdp <-
       }
     }
 
-    # TODO
-    # if (class(model)[1] == "maxnet") {
-    #   suit_c <-
-    #     data.frame(suit_c[1],
-    #                Suitability = predict_maxnet(
-    #                  model,
-    #                  newdata = suit_c,
-    #                  type = "cloglog",
-    #                  clamp = clamping
-    #                )
-    #     )
-    #   if (resid) {
-    #     suit_r <-
-    #       data.frame(x[predictors], Suitability = predict_maxnet(
-    #         object = model,
-    #         newdata = data.frame(x),
-    #         type = "cloglog",
-    #         clamp = clamping
-    #       ))
-    #     result <- list("pdpdata" = suit_c, "resid" = suit_r)
-    #   } else {
-    #     result <- list("pdpdata" = suit_c, "resid" = NA)
-    #   }
-    # }
 
     if (class(model)[1] == "nnet.formula") {
       suit_c <-
@@ -266,16 +244,15 @@ data_abund_pdp <-
       }
     }
 
-    # TODO mudar tipo das responses
     if (class(model)[1] == "ksvm") {
       suit_c <-
         data.frame(suit_c[1],
-          Abundance = kernlab::predict(model, suit_c, type = "probabilities")[, 2]
+          Abundance = kernlab::predict(model, suit_c, type = "response")[, 2]
         )
       if (resid) {
         suit_r <-
           data.frame(x[predictors],
-            Abundance = kernlab::predict(model, x, type = "probabilities")[, 2]
+            Abundance = kernlab::predict(model, x, type = "response")[, 2]
           )
         result <- list("pdpdata" = suit_c, "resid" = suit_r)
       } else {
@@ -296,6 +273,35 @@ data_abund_pdp <-
     }
 
     result <- lapply(result, function(x) if (is.data.frame(x)) dplyr::tibble(x))
-
+    
+    if(!is.null(invert_transform)){
+      for (i in 1:length(result)) {
+        if(is.null(result[[i]])){
+          next
+        } else {
+          result[[i]] <- result[[i]] %>% dplyr::mutate(
+            Abundance = adm_transform(result[[i]],
+                                      "Abundance",
+                                      invert_transform[["method"]],
+                                      inverse = TRUE,
+                                      t_terms = c(invert_transform[["a"]] %>% as.numeric,
+                                                  invert_transform[["b"]] %>% as.numeric)
+            ) %>% dplyr::pull(Abundance_inverted)
+          )
+        }
+      }
+    }
+    
+    if(!is.null(response_name)){
+      for (i in 1:length(result)) {
+        if(is.null(result[[i]])){
+          next
+        } else {
+          idx <- which(names(result[[i]])=="Abundance") 
+          names(result[[i]])[[idx]] <- response_name
+        }
+      }
+    }
+    
     return(result)
   }

@@ -85,3 +85,4 @@ Zero adjusted Zipf	ZAZIPF	{0,1,2,...}	2	1	1	0	1	0
 Zero inflated beta neg. bin.	ZIBNB	{0,1,2,...}	4	1	1	0	1	0
 Zero inflated neg. bin.	ZINBI	{0,1,2,...}	3	1	1	0	1	0
 Zero inflated Sichel	ZISICHEL	{0,1,2,...}	4	1	1	0	1	0
+Zero Adjusted Gamma	ZAGA	[0,∞)	3	0	1	0	1	0

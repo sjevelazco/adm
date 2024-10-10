@@ -26,6 +26,8 @@ p_abund_bpdp <-
            predictors = NULL,
            resolution = 50,
            training_data = NULL,
+           invert_transform = NULL,
+           response_name = NULL,
            training_boundaries = NULL,
            projection_data = NULL,
            color_gradient = c(
@@ -118,6 +120,11 @@ p_abund_bpdp <-
       }
     }
 
+    
+    if(is.null(response_name)){
+      response_name <- "Abundance"
+    }
+    
     p_list <- list()
     abundance_values <- c()
 
@@ -133,11 +140,12 @@ p_abund_bpdp <-
           training_boundaries = training_boundaries,
           projection_data = projection_data,
           training_data = training_data,
-          clamping = clamping
+          response_name = response_name,
+          invert_transform = invert_transform
         )
 
       # Coleta os valores de abundância para calcular min e max
-      abundance_values <- c(abundance_values, crv[[1]]$Abundance)
+      abundance_values <- c(abundance_values, crv[[1]][[response_name]])
 
       v1 <- names(crv[[1]])[1]
       v2 <- names(crv[[1]])[2]
@@ -145,7 +153,7 @@ p_abund_bpdp <-
 
       p_list[[i]] <-
         ggplot2::ggplot(crv[[1]], ggplot2::aes(v1, v2)) +
-        ggplot2::geom_raster(aes(fill = Abundance)) +
+        ggplot2::geom_raster(ggplot2::aes(fill = !!sym(response_name))) +
         ggplot2::coord_cartesian(expand = FALSE) +
         {
           if (!is.null(training_boundaries) & !is.null(crv$training_boundaries)) {

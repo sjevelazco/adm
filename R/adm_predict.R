@@ -169,6 +169,7 @@ adm_predict <-
   function(models,
            pred,
            training_data = NULL,
+           invert_transform = NULL,
            nchunk = 1,
            predict_area = NULL,
            transform_negative = FALSE) {
@@ -293,6 +294,59 @@ adm_predict <-
       #   }
       # }
 
+      #### ann models ####
+      wm <- which(clss == "nnet")
+      if (length(wm) > 0) {
+        wm <- names(wm)
+        for (i in wm) {
+          r <- pred[[!terra::is.factor(pred)]][[1]]
+          r[!is.na(r)] <- NA
+          
+          # Test factor levels
+          f <- (m[[i]]$xlevels)
+          
+          if (length(f) > 0) {
+            for (ii in 1:length(f)) {
+              vf <- f[[ii]] %>%
+                unique()
+              vf2 <- pred_df[, names(f[ii])] %>% unique()
+              vfilter <- list()
+              if (sum(!vf2 %in% vf) > 0) {
+                vfilter[[ii]] <- !pred_df[, names(f[ii])] %in% vf
+              }
+            }
+            if (length(vfilter) > 0) {
+              if (length(vfilter) > 1) {
+                vfilter <- vapply(do.call("rbind", vfilter), any, logical(1))
+              } else {
+                vfilter <- vfilter[[1]]
+              }
+            } else {
+              vfilter <- 0
+            }
+          } else {
+            vfilter <- 0
+          }
+          
+          if (sum(vfilter) > 0) {
+            v <- rep(0, nrow(pred_df))
+            v[!vfilter] <-
+              stats::predict(m[[i]], pred_df[!vfilter, ], type = "raw")
+            r[as.numeric(rownames(pred_df))] <- v
+            rm(v)
+          } else {
+            r[as.numeric(rownames(pred_df))] <-
+              stats::predict(m[[i]], pred_df, type = "raw")
+          }
+          
+          if (length(f) > 0) {
+            na_mask <- (sum(is.na(pred)) > 1)
+            r[(na_mask + is.na(r)) == 1] <- 0
+          }
+          model_c[[i]][rowset] <- r[rowset]
+        }
+      }
+      
       #### dnn models ####
       wm <- which(clss == "luz_module_fitted")
       if (length(wm) > 0) {
@@ -492,7 +546,23 @@ adm_predict <-
     }, model_c, names(model_c))
 
 
-
+     # Invert transformations
+      if(!is.null(invert_transform)){
+        for (i in 1:length(model_c)) {
+          x <- model_c[[i]]
+          mname <- names(x)
+          x <- adm_transform(x,variable = names(x),
+                             method = invert_transform[["method"]],
+                             inverse = TRUE,
+                             t_terms = c(invert_transform[["a"]] %>% as.numeric,
+                                         invert_transform[["b"]] %>% as.numeric))
+          x <- x[[paste0(mname,"_inverted")]]
+          names(x) <- mname
+          model_c[[i]] <- x
+          rm(x)
+        }
+      }
+      
     # Transform negative values
     if (transform_negative) {
       for (i in 1:length(model_c)) {
