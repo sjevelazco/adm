@@ -1,11 +1,13 @@
-#' Calculate data to construct partial dependence surface plots
+#' Calculate data to construct bivariate partial dependence plots
 #'
-#' @param model
-#' @param predictors
-#' @param resolution
-#' @param training_data
-#' @param training_boundaries
-#' @param projection_data
+#' @description Calculate data to construct bivariate partial dependence for two predictor set
+#' 
+#' @param model object returned by any fit_abund or tune_abund family functions
+#' @param predictors character. Vector with two predictor name(s) to plot. If NULL all predictors will be plotted. Default NULL
+#' @param resolution numeric. Number of equally spaced points at which to predict continuous predictors. Default 50
+#' @param training_data data.frame or tibble. Database with response (0,1) and predictor values used to fit a model. Default NULL
+#' @param training_boundaries character. Plot training conditions boundaries based on training data (i.e., presences, presences and absences, etc). If training_boundaries = "convexh", function will delimit training environmental region based on a convex-hull. If training_boundaries = "rectangle", function will delimit training environmental region based on four straight lines. If used any methods it is necessary provide data in training_data argument. If NULL all predictors will be used. Default NULL.
+#' @param projection_data SpatRaster. Raster layer with environmental variables used for model projection. Default NULL
 #'
 #' @importFrom dplyr as_tibble select
 #' @importFrom gbm predict.gbm

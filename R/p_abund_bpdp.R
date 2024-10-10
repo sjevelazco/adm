@@ -1,5 +1,7 @@
-#' ADM Bivariate partial dependence plot
+#' Bivariate partial dependence plot(s)
 #'
+#' @description This function creates bivariate partial dependence plots to explore the bivariate marginal effect of predictors.
+#' 
 #' @param model
 #' @param predictors
 #' @param resolution

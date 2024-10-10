@@ -2,7 +2,7 @@
 % Please edit documentation in R/p_abund_bpdp.R
 \name{p_abund_bpdp}
 \alias{p_abund_bpdp}
-\title{ADM Bivariate partial dependence plot}
+\title{Bivariate partial dependence plot(s)}
 \usage{
 p_abund_bpdp(
   model,
@@ -11,7 +11,6 @@ p_abund_bpdp(
   training_data = NULL,
   training_boundaries = NULL,
   projection_data = NULL,
-  clamping = FALSE,
   color_gradient = c("#000004", "#1B0A40", "#4A0C69", "#781B6C", "#A42C5F", "#CD4345",
     "#EC6824", "#FA990B", "#F7CF3D", "#FCFFA4"),
   color_training_boundaries = "white",
@@ -22,5 +21,5 @@ p_abund_bpdp(
 \item{theme}{}
 }
 \description{
-ADM Bivariate partial dependence plot
+This function creates bivariate partial dependence plots to explore the bivariate marginal effect of predictors.
 }
