@@ -9,6 +9,8 @@ data_abund_bpdp(
   predictors,
   resolution = 50,
   training_data = NULL,
+  invert_transform = NULL,
+  response_name = NULL,
   training_boundaries = NULL,
   projection_data = NULL
 )
