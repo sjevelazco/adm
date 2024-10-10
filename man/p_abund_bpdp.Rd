@@ -9,16 +9,26 @@ p_abund_bpdp(
   predictors = NULL,
   resolution = 50,
   training_data = NULL,
+  invert_transform = NULL,
+  response_name = NULL,
   training_boundaries = NULL,
   projection_data = NULL,
   color_gradient = c("#000004", "#1B0A40", "#4A0C69", "#781B6C", "#A42C5F", "#CD4345",
     "#EC6824", "#FA990B", "#F7CF3D", "#FCFFA4"),
   color_training_boundaries = "white",
+  set_max = NULL,
+  set_min = NULL,
   theme = ggplot2::theme_classic()
 )
 }
 \arguments{
-\item{theme}{}
+\item{invert_transform}{}
+
+\item{response_name}{}
+
+\item{set_max}{TODO max abundance on scale}
+
+\item{set_min}{TODO min abundance on scale}
 }
 \description{
 This function creates bivariate partial dependence plots to explore the bivariate marginal effect of predictors.

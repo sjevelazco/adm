@@ -11,6 +11,10 @@
 #' @param color_gradient
 #' @param color_training_boundaries
 #' @param theme
+#' @param invert_transform 
+#' @param response_name 
+#' @param set_max TODO max abundance on scale
+#' @param set_min TODO min abundance on scale
 #'
 #' @importFrom ggplot2 ggplot aes geom_raster coord_cartesian geom_polygon geom_rect labs scale_fill_gradientn theme
 #' @importFrom patchwork wrap_plots plot_layout
@@ -43,6 +47,8 @@ p_abund_bpdp <-
              "#FCFFA4"
            ),
            color_training_boundaries = "white",
+           set_max = NULL,
+           set_min = NULL,
            theme = ggplot2::theme_classic()) {
     Abundance <- Type <- Value <- val <- NULL
 
@@ -145,6 +151,22 @@ p_abund_bpdp <-
         )
 
       # Coleta os valores de abundância para calcular min e max
+      if(!is.null(set_max)){
+        if(is.numeric(set_max)){
+          crv[[1]][which(crv[[1]]%>%dplyr::pull(response_name) > set_max),response_name] <- set_max
+        } else {
+          stop("set_max and set_min should be numerical.")
+        }
+      } 
+      
+      if(!is.null(set_min)){
+        if(is.numeric(set_min)){
+          crv[[1]][which(crv[[1]]%>%dplyr::pull(response_name) < set_min),response_name] <- set_min
+        } else {
+          stop("set_max and set_min should be numerical.")
+        }
+      } 
+      
       abundance_values <- c(abundance_values, crv[[1]][[response_name]])
 
       v1 <- names(crv[[1]])[1]
@@ -188,9 +210,10 @@ p_abund_bpdp <-
     }
 
 
-    min_abund <- min(abundance_values, na.rm = TRUE)
     max_abund <- max(abundance_values, na.rm = TRUE)
-
+    min_abund <- min(abundance_values, na.rm = TRUE)
+    
+    
     for (i in 1:length(p_list)) {
       p_list[[i]] <- p_list[[i]] +
         ggplot2::scale_fill_gradientn(colours = color_gradient, limits = c(min_abund, max_abund)) +

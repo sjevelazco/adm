@@ -10,6 +10,8 @@ data_abund_pdp(
   resolution = 50,
   resid = FALSE,
   training_data = NULL,
+  invert_transform = NULL,
+  response_name = NULL,
   projection_data = NULL
 )
 }

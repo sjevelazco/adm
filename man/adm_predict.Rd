@@ -8,6 +8,7 @@ adm_predict(
   models,
   pred,
   training_data = NULL,
+  invert_transform = NULL,
   nchunk = 1,
   predict_area = NULL,
   transform_negative = FALSE
