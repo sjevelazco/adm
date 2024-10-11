@@ -12,7 +12,7 @@
 #'
 #' @importFrom terra as.array
 #'
-#' @return A list with two elements - 'predict' (a list of input images) and 'response' (an of response values). 
+#' @return A list with two elements - 'predict' (a list of input images) and 'response' (an of response values).
 #' Each element in the 'predictors' list is an array representing a cropped image from the input raster.
 #'
 #' @export

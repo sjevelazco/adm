@@ -97,7 +97,7 @@ fit_abund_xgb <-
       subsample = subsample,
       objective = objective
     )
-    
+
     # Fit models
     np <- ncol(data %>% dplyr::select(dplyr::starts_with(partition)))
     p_names <- names(data %>% dplyr::select(dplyr::starts_with(partition)))
@@ -124,7 +124,7 @@ fit_abund_xgb <-
         if (verbose) {
           message("-- Partition number ", j, "/", length(folds))
         }
-        
+
         train_set <- data[data[, p_names[h]] != folds[j], ]
         test_set <- data[data[, p_names[h]] == folds[j], ]
 
@@ -135,13 +135,13 @@ fit_abund_xgb <-
         )
 
         sp_train <- with(sp_train, xgboost::xgb.DMatrix(data, label = target, nthread = 1))
-        
+
         sp_test <- list(
           data = Matrix::Matrix(as.matrix(test_set[, c(predictors, predictors_f)]), sparse = T)
         )
-        
+
         sp_test <- with(sp_test, xgboost::xgb.DMatrix(data, nthread = 1))
-    
+
         set.seed(13)
         model <- xgboost::xgb.train(
           params,
@@ -189,7 +189,7 @@ fit_abund_xgb <-
       full_train,
       xgboost::xgb.DMatrix(data, label = target, nthread = 1)
     )
-    
+
     set.seed(13)
     full_model <- xgboost::xgb.train(
       params = params,

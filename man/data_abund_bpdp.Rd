@@ -28,6 +28,17 @@ data_abund_bpdp(
 
 \item{projection_data}{SpatRaster. Raster layer with environmental variables used for model projection. Default NULL}
 }
+\value{
+A list with two tibbles "pdpdata" and "resid".
+\itemize{
+\item pspdata: has data to construct partial dependence surface plot, the first two column includes
+values of the selected environmental variables, the third column with predicted suitability.
+\item training_boundaries: has data to plot boundaries of training data.
+}
+}
 \description{
 Calculate data to construct bivariate partial dependence for two predictor set
+}
+\seealso{
+\code{\link{data_abund_pdp},  \link{p_abund_bpdp}, \link{p_abund_pdp}}
 }

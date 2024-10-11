@@ -2,7 +2,7 @@
 % Please edit documentation in R/generate_arch_list.R
 \name{generate_arch_list}
 \alias{generate_arch_list}
-\title{Title}
+\title{Generate architecture list}
 \usage{
 generate_arch_list(
   type,
@@ -22,8 +22,45 @@ generate_arch_list(
 )
 }
 \arguments{
-\item{fc_layers_size}{}
+\item{type}{string. Specifies the type the network. The valid inputs "dnn" and "cnn".}
+
+\item{number_of_features}{numeric. Value that specifies the number of features in the dataset.}
+
+\item{number_of_outputs}{numeric. Value that specifies the number of outputs.}
+
+\item{n_layers}{numeric. Vector that specifies the number of layers in the networks. Default value are 1 and 2.}
+
+\item{n_neurons}{vector. Specifies the number of neurons each layer. Default  7.}
+
+\item{sample_size}{vector. Specifies the size. Default c(11, 11)}
+
+\item{number_of_fc_layers}{numeric. Specifies the number of fully connected layers. Default 1.}
+
+\item{fc_layers_size}{vector. Specifies the size of the fully connected layers. Default 14.}
+
+\item{conv_layers_kernel}{numeric. Specifies the kernel size for layers. Default 3.}
+
+\item{conv_layers_stride}{numeric. Specifies the stride for the convolutional layers. Default 1.}
+
+\item{conv_layers_padding}{numeric. Specifies the padding for the convolutional layers. Default 0.}
+
+\item{pooling}{logical. Specifies whether pooling is included in the architecture. Default FALSE.}
+
+\item{batch_norm}{logical. Specifies whether batch normalization is included in the architecture. Default TRUE.}
+
+\item{dropout}{logical. Specifies whether dropout is included in the architecture. Default FALSE.}
+}
+\value{
+A list containing:
+\itemize{
+\item arch_list: a list of generated architectures.
+\item arch_dict: a list of architecture dictionaries.
+}
 }
 \description{
-Title
+This function generates a list of architectures for either a Deep Neural (DNN) or 
+a Convolutional Neural Network (CNN).
+}
+\seealso{
+\code{\link{generate_dnn_architecture}}, \code{\link{generate_cnn_architecture}}
 }

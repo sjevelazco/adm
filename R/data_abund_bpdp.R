@@ -1,7 +1,7 @@
 #' Calculate data to construct bivariate partial dependence plots
 #'
 #' @description Calculate data to construct bivariate partial dependence for two predictor set
-#' 
+#'
 #' @param model object returned by any fit_abund or tune_abund family functions
 #' @param predictors character. Vector with two predictor name(s) to plot. If NULL all predictors will be plotted. Default NULL
 #' @param resolution numeric. Number of equally spaced points at which to predict continuous predictors. Default 50
@@ -17,7 +17,15 @@
 #' @importFrom terra minmax
 #' @importFrom torch dataset torch_tensor
 #'
-#' @return
+#' @return A list with two tibbles "pdpdata" and "resid".
+#' \itemize{
+#' \item pspdata: has data to construct partial dependence surface plot, the first two column includes
+#' values of the selected environmental variables, the third column with predicted suitability.
+#' \item training_boundaries: has data to plot boundaries of training data.
+#' }
+#'
+#'
+#' @seealso \code{\link{data_abund_pdp},  \link{p_abund_bpdp}, \link{p_abund_pdp}}
 #' @export
 #'
 #' @examples
@@ -240,23 +248,25 @@ data_abund_bpdp <-
     }
 
     result <- list("pspdata" = dplyr::as_tibble(suit_c), "training_boundaries" = chulld)
-    
-    if(!is.null(invert_transform)){
+
+    if (!is.null(invert_transform)) {
       result[["pspdata"]] <- result[["pspdata"]] %>% dplyr::mutate(
         Abundance = adm_transform(result[["pspdata"]],
-                                  "Abundance",
-                                  invert_transform[["method"]],
-                                  inverse = TRUE,
-                                  t_terms = c(invert_transform[["a"]] %>% as.numeric,
-                                              invert_transform[["b"]] %>% as.numeric)
+          "Abundance",
+          invert_transform[["method"]],
+          inverse = TRUE,
+          t_terms = c(
+            invert_transform[["a"]] %>% as.numeric(),
+            invert_transform[["b"]] %>% as.numeric()
+          )
         ) %>% dplyr::pull(Abundance_inverted)
       )
     }
-    
-    if(!is.null(response_name)){
-          idx <- which(names(result[["pspdata"]])=="Abundance") 
-          names(result[["pspdata"]])[[idx]] <- response_name
+
+    if (!is.null(response_name)) {
+      idx <- which(names(result[["pspdata"]]) == "Abundance")
+      names(result[["pspdata"]])[[idx]] <- response_name
     }
-    
+
     return(result)
   }

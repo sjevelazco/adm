@@ -7,7 +7,7 @@
 adm_transform(data, variable, method, inverse = FALSE, t_terms = NULL)
 }
 \arguments{
-\item{data}{A data.frame or tibble containing the data.}
+\item{data}{A data.frame, tibble, or SpatRaster containing the data.}
 
 \item{variable}{A character string specifying the variable (column) to be transformed.}
 
@@ -35,10 +35,11 @@ A data.frame or tibble with the transformed variable added as a new column.
 The new column's name is the original variable name followed by an underscore and method name.
 }
 \description{
-This function transforms the data in a dataframe or tibble based on the method specified
+This function transforms the data in a tibble or SpatRaster object on the method specified
 The available methods are "01", "zscore", "log", and "round".
 }
 \examples{
+\dontrun{
 require(dplyr)
 
 data("sppabund")
@@ -79,4 +80,9 @@ some_sp_2 <- adm_transform(
 )
 some_sp_2
 
+# TODO Invert transformation
+
+# TODO Transform raster data
+
+}
 }

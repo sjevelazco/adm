@@ -1,20 +1,36 @@
-#' Title
+#' Generate architecture list
 #'
-#' @param type
-#' @param number_of_features
-#' @param number_of_outputs
-#' @param n_layers
-#' @param n_neurons
-#' @param sample_size
-#' @param number_of_fc_layers
-#' @param fc_layers_size
-#'
+#' @description This function generates a list of architectures for either a Deep Neural (DNN) or 
+#' a Convolutional Neural Network (CNN).
+#' 
+#' @param type string. Specifies the type the network. The valid inputs "dnn" and "cnn".
+#' @param number_of_features numeric. Value that specifies the number of features in the dataset.
+#' @param number_of_outputs numeric. Value that specifies the number of outputs.
+#' @param n_layers numeric. Vector that specifies the number of layers in the networks. Default value are 1 and 2.
+#' @param n_neurons  vector. Specifies the number of neurons each layer. Default  7.
+#' @param sample_size vector. Specifies the size. Default c(11, 11)
+#' @param number_of_fc_layers numeric. Specifies the number of fully connected layers. Default 1.
+#' @param fc_layers_size vector. Specifies the size of the fully connected layers. Default 14.
+#' @param conv_layers_kernel numeric. Specifies the kernel size for layers. Default 3.
+#' @param conv_layers_stride numeric. Specifies the stride for the convolutional layers. Default 1.
+#' @param conv_layers_padding  numeric. Specifies the padding for the convolutional layers. Default 0.
+#' @param pooling logical. Specifies whether pooling is included in the architecture. Default FALSE. 
+#' @param batch_norm logical. Specifies whether batch normalization is included in the architecture. Default TRUE.
+#' @param dropout logical. Specifies whether dropout is included in the architecture. Default FALSE.
+#' 
 #' @importFrom dplyr rename
 #' @importFrom tidyr unnest_wider
 #'
-#' @return
+#' @return A list containing:
+#' \itemize{
+#' \item arch_list: a list of generated architectures.
+#' \item arch_dict: a list of architecture dictionaries.
+#' }
+#' 
+#' @seealso \code{\link{generate_dnn_architecture}}, \code{\link{generate_cnn_architecture}}
+#' 
 #' @export
-#'
+#' 
 #' @examples
 generate_arch_list <-
   function(type,

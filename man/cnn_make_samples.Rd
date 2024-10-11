@@ -20,7 +20,7 @@ cnn_make_samples(data, x, y, response, raster, size = 5)
 \item{size}{numeric. Size of the cropped raster, number o cell in each direction of a focal cell}
 }
 \value{
-A list with two elements - 'predict' (a list of input images) and 'response' (an of response values). 
+A list with two elements - 'predict' (a list of input images) and 'response' (an of response values).
 Each element in the 'predictors' list is an array representing a cropped image from the input raster.
 }
 \description{

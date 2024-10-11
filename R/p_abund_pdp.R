@@ -36,7 +36,7 @@ p_abund_pdp <-
            theme = ggplot2::theme_classic()) {
     Type <- Value <- val <- Abundance <- NULL
 
-    
+
     if (class(model)[1] == "list") {
       if (all(c("model", "predictors", "performance", "performance_part", "predicted_part") %in% names(model))
       ) {
@@ -46,12 +46,12 @@ p_abund_pdp <-
       }
     }
 
-    if(!all(variables[1, 2:ncol(variables)] %>%
-            as.vector() %>%
-            unlist() %in% names(training_data))){
+    if (!all(variables[1, 2:ncol(variables)] %>%
+      as.vector() %>%
+      unlist() %in% names(training_data))) {
       stop("Variables not present in training data. Did you use the wrong dataset?")
     }
-    
+
     if (class(model)[1] == "luz_module_fitted") {
       if (!is.null(training_data)) {
         v <- training_data[variables[1, 2:ncol(variables)] %>%
@@ -70,9 +70,9 @@ p_abund_pdp <-
           stringr::str_remove("\\)")
       } else if (variables[["model"]] == "glm") {
         v <- attr(model$mu.terms, "dataClasses")[-1]
-        v <- v[names(v)%in%variables[1, 2:ncol(variables)] %>%
-            as.vector() %>%
-            unlist()]
+        v <- v[names(v) %in% variables[1, 2:ncol(variables)] %>%
+          as.vector() %>%
+          unlist()]
       }
     }
 
@@ -93,11 +93,11 @@ p_abund_pdp <-
       v <- v[names(v) %in% predictors]
     }
 
-    
-    if(is.null(response_name)){
+
+    if (is.null(response_name)) {
       response_name <- "Abundance"
     }
-    
+
     p <- list()
 
     if (is.null(projection_data)) {
