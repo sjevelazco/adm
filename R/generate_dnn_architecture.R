@@ -9,6 +9,8 @@
 #' @importFrom torch nn_module nn_linear nnf_relu torch_manual_seed
 #'
 #' @return
+#' 
+#' @seealso \code{\link{generate_arch_list}}, \code{\link{generate_cnn_architecture}}
 #' @export
 #'
 #' @examples

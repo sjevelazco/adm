@@ -1,11 +1,15 @@
 #' Calculate data to construct partial dependence plots
 #'
-#' @param model
-#' @param predictors
-#' @param resolution
-#' @param resid
-#' @param training_data
-#' @param projection_data
+#' @param model object returned by any fit_abund or tune_abund family functions
+#' @param predictors character. Vector with two predictor name(s) to plot. If NULL all predictors will be plotted. Default NULL
+#' @param resolution numeric. Number of equally spaced points at which to predict continuous predictors. Default 50
+#' @param resid logical. Calculate residuals based on training data. Default FALSE
+#' @param training_data data.frame. Database with response and predictor values used
+#' to fit a model. Default NULL. Required for GLM, GAM, DNN, NET, RAF, SVM models
+#' @param projection_data SpatRaster. Raster layer with environmental variables used for model
+#' projection. When this argument is used, function will calculate partial dependence curves
+#' distinguishing conditions used in training and projection conditions
+#' (i.e., projection data present in projection area but not training). Default NULL
 #'
 #' @importFrom dplyr select tibble
 #' @importFrom gbm predict.gbm
@@ -13,7 +17,17 @@
 #' @importFrom stats na.omit
 #' @importFrom terra minmax
 #'
-#' @return
+#' @return A list with two tibbles "pdpdata" and "resid".
+#' \itemize{
+#' \item pdpdata: has data to construct partial dependence plots, the first column includes values of the selected environmental
+#' variable, the second column with predicted suitability, and the third
+#'  column with range type, with two values Training and Projecting, referring to suitability
+#'  calculated within and outside the range of training conditions. Third column is only returned
+#'  if "projection_data" argument is used
+#' \item resid: has data to plot residuals. The first column includes values of the selected environmental
+#'  variable and the second column with predicted suitability.
+#' }
+#'
 #' @export
 #'
 #' @examples
@@ -59,7 +73,7 @@ data_abund_pdp <-
     if (any(class(model)[1] == c("gamlss", "luz_module_fitted"))) {
       if (is.null(training_data)) {
         stop(
-          "For estimating partial plot data for GLM, GAM and DNN it is necessary to provide calibration data in 'training_data' argument"
+          "For estimating partial plot data for Generalized Linear Models (GLM), Generalized Additive Models (GAM) and Deep Neural Network (DNN) it is necessary to provide calibration data in 'training_data' argument"
         )
       }
       x <- training_data[, as.vector(variables[1, ])[2:ncol(variables)] %>% unlist()]
@@ -68,7 +82,7 @@ data_abund_pdp <-
     if (any(class(model)[1] == c("nnet.formula", "randomForest.formula", "ksvm", "gbm"))) {
       if (is.null(training_data)) {
         stop(
-          "For estimating partial plot data for Neural Networks, Random Forest, Support Vector Machine it is necessary to provide calibration data in 'training_data' argument"
+          "For estimating partial plot data for Neural Networks (NET), Random Forest (RAF), Support Vector Machine (SVM) it is necessary to provide calibration data in 'training_data' argument"
         )
       }
 
@@ -273,35 +287,37 @@ data_abund_pdp <-
     }
 
     result <- lapply(result, function(x) if (is.data.frame(x)) dplyr::tibble(x))
-    
-    if(!is.null(invert_transform)){
+
+    if (!is.null(invert_transform)) {
       for (i in 1:length(result)) {
-        if(is.null(result[[i]])){
+        if (is.null(result[[i]])) {
           next
         } else {
           result[[i]] <- result[[i]] %>% dplyr::mutate(
             Abundance = adm_transform(result[[i]],
-                                      "Abundance",
-                                      invert_transform[["method"]],
-                                      inverse = TRUE,
-                                      t_terms = c(invert_transform[["a"]] %>% as.numeric,
-                                                  invert_transform[["b"]] %>% as.numeric)
+              "Abundance",
+              invert_transform[["method"]],
+              inverse = TRUE,
+              t_terms = c(
+                invert_transform[["a"]] %>% as.numeric(),
+                invert_transform[["b"]] %>% as.numeric()
+              )
             ) %>% dplyr::pull(Abundance_inverted)
           )
         }
       }
     }
-    
-    if(!is.null(response_name)){
+
+    if (!is.null(response_name)) {
       for (i in 1:length(result)) {
-        if(is.null(result[[i]])){
+        if (is.null(result[[i]])) {
           next
         } else {
-          idx <- which(names(result[[i]])=="Abundance") 
+          idx <- which(names(result[[i]]) == "Abundance")
           names(result[[i]])[[idx]] <- response_name
         }
       }
     }
-    
+
     return(result)
   }

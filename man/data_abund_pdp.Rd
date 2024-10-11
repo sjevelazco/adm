@@ -16,7 +16,33 @@ data_abund_pdp(
 )
 }
 \arguments{
-\item{projection_data}{}
+\item{model}{object returned by any fit_abund or tune_abund family functions}
+
+\item{predictors}{character. Vector with two predictor name(s) to plot. If NULL all predictors will be plotted. Default NULL}
+
+\item{resolution}{numeric. Number of equally spaced points at which to predict continuous predictors. Default 50}
+
+\item{resid}{logical. Calculate residuals based on training data. Default FALSE}
+
+\item{training_data}{data.frame. Database with response and predictor values used
+to fit a model. Default NULL. Required for GLM, GAM, DNN, NET, RAF, SVM models}
+
+\item{projection_data}{SpatRaster. Raster layer with environmental variables used for model
+projection. When this argument is used, function will calculate partial dependence curves
+distinguishing conditions used in training and projection conditions
+(i.e., projection data present in projection area but not training). Default NULL}
+}
+\value{
+A list with two tibbles "pdpdata" and "resid".
+\itemize{
+\item pdpdata: has data to construct partial dependence plots, the first column includes values of the selected environmental
+variable, the second column with predicted suitability, and the third
+ column with range type, with two values Training and Projecting, referring to suitability
+ calculated within and outside the range of training conditions. Third column is only returned
+ if "projection_data" argument is used
+\item resid: has data to plot residuals. The first column includes values of the selected environmental
+ variable and the second column with predicted suitability.
+}
 }
 \description{
 Calculate data to construct partial dependence plots

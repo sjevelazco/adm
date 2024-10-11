@@ -301,10 +301,10 @@ adm_predict <-
         for (i in wm) {
           r <- pred[[!terra::is.factor(pred)]][[1]]
           r[!is.na(r)] <- NA
-          
+
           # Test factor levels
           f <- (m[[i]]$xlevels)
-          
+
           if (length(f) > 0) {
             for (ii in 1:length(f)) {
               vf <- f[[ii]] %>%
@@ -327,7 +327,7 @@ adm_predict <-
           } else {
             vfilter <- 0
           }
-          
+
           if (sum(vfilter) > 0) {
             v <- rep(0, nrow(pred_df))
             v[!vfilter] <-
@@ -338,7 +338,7 @@ adm_predict <-
             r[as.numeric(rownames(pred_df))] <-
               stats::predict(m[[i]], pred_df, type = "raw")
           }
-          
+
           if (length(f) > 0) {
             na_mask <- (sum(is.na(pred)) > 1)
             r[(na_mask + is.na(r)) == 1] <- 0
@@ -346,7 +346,7 @@ adm_predict <-
           model_c[[i]][rowset] <- r[rowset]
         }
       }
-      
+
       #### dnn models ####
       wm <- which(clss == "luz_module_fitted")
       if (length(wm) > 0) {
@@ -546,23 +546,27 @@ adm_predict <-
     }, model_c, names(model_c))
 
 
-     # Invert transformations
-      if(!is.null(invert_transform)){
-        for (i in 1:length(model_c)) {
-          x <- model_c[[i]]
-          mname <- names(x)
-          x <- adm_transform(x,variable = names(x),
-                             method = invert_transform[["method"]],
-                             inverse = TRUE,
-                             t_terms = c(invert_transform[["a"]] %>% as.numeric,
-                                         invert_transform[["b"]] %>% as.numeric))
-          x <- x[[paste0(mname,"_inverted")]]
-          names(x) <- mname
-          model_c[[i]] <- x
-          rm(x)
-        }
+    # Invert transformations
+    if (!is.null(invert_transform)) {
+      for (i in 1:length(model_c)) {
+        x <- model_c[[i]]
+        mname <- names(x)
+        x <- adm_transform(x,
+          variable = names(x),
+          method = invert_transform[["method"]],
+          inverse = TRUE,
+          t_terms = c(
+            invert_transform[["a"]] %>% as.numeric(),
+            invert_transform[["b"]] %>% as.numeric()
+          )
+        )
+        x <- x[[paste0(mname, "_inverted")]]
+        names(x) <- mname
+        model_c[[i]] <- x
+        rm(x)
       }
-      
+    }
+
     # Transform negative values
     if (transform_negative) {
       for (i in 1:length(model_c)) {

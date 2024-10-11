@@ -20,3 +20,6 @@ generate_dnn_architecture(
 \description{
 Generate Deep Neural Network architecture
 }
+\seealso{
+\code{\link{generate_arch_list}}, \code{\link{generate_cnn_architecture}}
+}

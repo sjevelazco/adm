@@ -27,3 +27,6 @@ generate_cnn_architecture(
 \description{
 Generate Convolutional Neural Network architecture
 }
+\seealso{
+\code{\link{generate_arch_list}}, \code{\link{generate_dnn_architecture}}
+}

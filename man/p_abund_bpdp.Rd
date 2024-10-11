@@ -22,10 +22,6 @@ p_abund_bpdp(
 )
 }
 \arguments{
-\item{invert_transform}{}
-
-\item{response_name}{}
-
 \item{set_max}{TODO max abundance on scale}
 
 \item{set_min}{TODO min abundance on scale}

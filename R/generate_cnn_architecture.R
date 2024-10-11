@@ -15,6 +15,7 @@
 #' @importFrom torch nn_module nn_conv2d nn_linear nnf_relu torch_flatten torch_manual_seed
 #'
 #' @return
+#' @seealso \code{\link{generate_arch_list}}, \code{\link{generate_dnn_architecture}}
 #' @export
 #'
 #' @examples
