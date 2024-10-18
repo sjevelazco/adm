@@ -23,7 +23,8 @@
 #' \item arch: a list of architecture dictionaries.
 #' }
 #' 
-#' @seealso \code{\link{generate_arch_list}}, \code{\link{generate_dnn_architecture}}
+#' @seealso \code{\link{generate_arch_list}},
+#'  \code{\link{generate_dnn_architecture}}
 #' @export
 #'
 #' @examples

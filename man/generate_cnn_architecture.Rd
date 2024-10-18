@@ -61,5 +61,6 @@ A list containing:
 Generate architectures for Convolutional Neural Network
 }
 \seealso{
-\code{\link{generate_arch_list}}, \code{\link{generate_dnn_architecture}}
+\code{\link{generate_arch_list}},
+ \code{\link{generate_dnn_architecture}}
 }
