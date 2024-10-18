@@ -2,7 +2,7 @@
 % Please edit documentation in R/generate_arch_list.R
 \name{generate_arch_list}
 \alias{generate_arch_list}
-\title{Generate architecture list}
+\title{Generate architecture list for Deep Neural Network and Convolutional Neural Network}
 \usage{
 generate_arch_list(
   type,
@@ -58,7 +58,7 @@ A list containing:
 }
 }
 \description{
-This function generates a list of architectures for either a Deep Neural (DNN) or
+This function generates a list of architectures for either a Deep Neural Netwokd (DNN) or
 a Convolutional Neural Network (CNN).
 }
 \seealso{

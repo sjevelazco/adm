@@ -2,7 +2,7 @@
 % Please edit documentation in R/generate_cnn_architecture.R
 \name{generate_cnn_architecture}
 \alias{generate_cnn_architecture}
-\title{Generate Convolutional Neural Network architecture}
+\title{Generate architectures for Convolutional Neural Network}
 \usage{
 generate_cnn_architecture(
   number_of_features = 7,
@@ -22,11 +22,45 @@ generate_cnn_architecture(
 )
 }
 \arguments{
-\item{verbose}{}
+\item{number_of_features}{numeric. Value that specifies the number of features in the dataset.}
+
+\item{number_of_outputs}{numeric. Value that specifies the number of outputs.}
+
+\item{sample_size}{vector. Specifies the size. Default c(11, 11)}
+
+\item{number_of_conv_layers}{numeric. Specifies the number of convolutional layers. Default 2.}
+
+\item{conv_layers_size}{numeric. the size the convolutional layers. Default c(14, 28).}
+
+\item{conv_layers_kernel}{numeric. Specifies the kernel size for layers. Default 3.}
+
+\item{conv_layers_stride}{numeric. Specifies the stride for the convolutional layers. Default 1.}
+
+\item{conv_layers_padding}{numeric. Specifies the padding for the convolutional layers. Default 0.}
+
+\item{number_of_fc_layers}{numeric. Specifies the number of fully connected layers. Default 1.}
+
+\item{fc_layers_size}{vector. Specifies the size of the fully connected layers. Default 14.}
+
+\item{pooling}{logical. Specifies whether pooling is included in the architecture. Default FALSE.}
+
+\item{batch_norm}{logical. Specifies whether batch normalization is included in the architecture. Default TRUE.}
+
+\item{dropout}{logical. Specifies whether dropout is included in the architecture. Default FALSE.}
+
+\item{verbose}{logical. Specifies whether the architecture should be printed. Default FALSE.}
+}
+\value{
+A list containing:
+\itemize{
+\item net: a list of generated architectures.
+\item arch: a list of architecture dictionaries.
+}
 }
 \description{
-Generate Convolutional Neural Network architecture
+Generate architectures for Convolutional Neural Network
 }
 \seealso{
-\code{\link{generate_arch_list}}, \code{\link{generate_dnn_architecture}}
+\code{\link{generate_arch_list}},
+ \code{\link{generate_dnn_architecture}}
 }

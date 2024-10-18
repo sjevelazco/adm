@@ -1,14 +1,20 @@
-#' Generate Deep Neural Network architecture
+#' Generate architectures for Deep Neural Network
 #'
-#' @param number_of_features
-#' @param number_of_outputs
-#' @param number_of_hidden_layers
-#' @param hidden_layers_size
-#' @param verbose
+#' @param number_of_features numeric. Value that specifies the number of features in the dataset.
+#' @param number_of_outputs numeric. Value that specifies the number of outputs.
+#' @param number_of_hidden_layers  numeric. Number of hidden layers in the neural network. Default 2.
+#' @param hidden_layers_size numeric vector. Size of each hidden layer in the neural network. Default c(14, 7).
+#' @param verbose logical. Whether to print the architecture. Default FALSE.
+#' @param batch_norm logical. Whether to include batch normalization layers. Default TRUE.
+#' @param dropout logical. Specifies whether dropout is included in the architecture. Default FALSE.
 #'
 #' @importFrom torch nn_module nn_linear nnf_relu torch_manual_seed
 #'
-#' @return
+#' @return A list containing:
+#' \itemize{
+#' \item net: a list of generated architectures.
+#' \item arch: a list of architecture string
+#' }
 #'
 #' @seealso \code{\link{generate_arch_list}}, \code{\link{generate_cnn_architecture}}
 #' @export

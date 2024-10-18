@@ -2,7 +2,7 @@
 % Please edit documentation in R/select_arch_list.R
 \name{select_arch_list}
 \alias{select_arch_list}
-\title{Select arch list}
+\title{Select architectures for Convolutional Neural Network or Deep Neural Network}
 \usage{
 select_arch_list(
   arch_list,
@@ -13,8 +13,19 @@ select_arch_list(
 )
 }
 \arguments{
-\item{min_max}{}
+\item{arch_list}{list. Containing Convolutional Neural Network or Deep Neural Network architectures.}
+
+\item{type}{character. Indicating the type of network. Options are "dnn" or "cnn".}
+
+\item{method}{character. Indicating the method to select architectures. Default is "percentile".}
+
+\item{n_samples}{integer. Specifying the number of samples to select per group. Default is 1.}
+
+\item{min_max}{logical. If TRUE, include networks with minimal and maximal parameters.}
+}
+\value{
+A list with new architecture list, dictionary, and changes made.
 }
 \description{
-Select arch list
+Select architectures for Convolutional Neural Network or Deep Neural Network
 }

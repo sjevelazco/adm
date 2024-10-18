@@ -1,16 +1,16 @@
-#' Select arch list
+#' Select architectures for Convolutional Neural Network or Deep Neural Network
 #'
-#' @param arch_list
-#' @param type
-#' @param method
-#' @param n_samples
-#' @param min_max
+#' @param arch_list list. Containing Convolutional Neural Network or Deep Neural Network architectures.
+#' @param type character. Indicating the type of network. Options are "dnn" or "cnn".
+#' @param method character. Indicating the method to select architectures. Default is "percentile".
+#' @param n_samples integer. Specifying the number of samples to select per group. Default is 1.
+#' @param min_max logical. If TRUE, include networks with minimal and maximal parameters.
 #'
 #' @importFrom dplyr bind_rows group_by slice_min tibble select rename left_join join_by
 #' @importFrom stats quantile
 #' @importFrom stringr str_extract_all
 #'
-#' @return
+#' @return A list with new architecture list, dictionary, and changes made.
 #' @export
 #'
 #' @examples
@@ -21,6 +21,10 @@ select_arch_list <-
            n_samples = 1, # TODO
            min_max = TRUE # TODO
   ) {
+    
+    # TODO check documentation of this function
+    # TODO write details about function returns
+    
     parameters <- name <- combination <- old_name <- NULL
 
     architectures <- arch_list
