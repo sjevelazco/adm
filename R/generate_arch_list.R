@@ -1,6 +1,6 @@
-#' Generate architecture list
+#' Generate architecture list for Deep Neural Network and Convolutional Neural Network
 #'
-#' @description This function generates a list of architectures for either a Deep Neural (DNN) or
+#' @description This function generates a list of architectures for either a Deep Neural Netwokd (DNN) or
 #' a Convolutional Neural Network (CNN).
 #'
 #' @param type string. Specifies the type the network. The valid inputs "dnn" and "cnn".
@@ -47,6 +47,9 @@ generate_arch_list <-
            pooling = FALSE,
            batch_norm = TRUE,
            dropout = FALSE) {
+    
+    # TODO check documentation of this function
+    
     Var1 <- Var2 <- NULL
 
     if (type == "dnn") {

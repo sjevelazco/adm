@@ -1,20 +1,28 @@
-#' Generate Convolutional Neural Network architecture
+#' Generate architectures for Convolutional Neural Network
 #'
-#' @param number_of_features
-#' @param number_of_outputs
-#' @param sample_size
-#' @param number_of_conv_layers
-#' @param conv_layers_size
-#' @param conv_layers_kernel
-#' @param conv_layers_stride
-#' @param conv_layers_padding
-#' @param number_of_fc_layers
-#' @param fc_layers_size
-#' @param verbose
+#' @param number_of_features numeric. Value that specifies the number of features in the dataset.
+#' @param number_of_outputs numeric. Value that specifies the number of outputs.
+#' @param sample_size vector. Specifies the size. Default c(11, 11)
+#' @param number_of_conv_layers numeric. Specifies the number of convolutional layers. Default 2.
+#' @param conv_layers_size numeric. the size the convolutional layers. Default c(14, 28).
+#' @param conv_layers_kernel numeric. Specifies the kernel size for layers. Default 3.
+#' @param conv_layers_stride numeric. Specifies the stride for the convolutional layers. Default 1.
+#' @param conv_layers_padding numeric. Specifies the padding for the convolutional layers. Default 0.
+#' @param number_of_fc_layers numeric. Specifies the number of fully connected layers. Default 1.
+#' @param fc_layers_size vector. Specifies the size of the fully connected layers. Default 14.
+#' @param verbose logical. Specifies whether the architecture should be printed. Default FALSE.
+#' @param pooling logical. Specifies whether pooling is included in the architecture. Default FALSE.
+#' @param batch_norm logical. Specifies whether batch normalization is included in the architecture. Default TRUE.
+#' @param dropout logical. Specifies whether dropout is included in the architecture. Default FALSE.
 #'
 #' @importFrom torch nn_module nn_conv2d nn_linear nnf_relu torch_flatten torch_manual_seed
 #'
-#' @return
+#' @return A list containing:
+#' \itemize{
+#' \item net: a list of generated architectures.
+#' \item arch: a list of architecture dictionaries.
+#' }
+#' 
 #' @seealso \code{\link{generate_arch_list}}, \code{\link{generate_dnn_architecture}}
 #' @export
 #'
@@ -34,7 +42,7 @@ generate_cnn_architecture <-
            batch_norm = TRUE,
            dropout = FALSE,
            verbose = FALSE) {
-    ##
+    # TODO check documentation of this function
     if (any(sample_size < (conv_layers_kernel + conv_layers_padding))) {
       stop("Sample dimension is too small for the choosen configuration.")
     }

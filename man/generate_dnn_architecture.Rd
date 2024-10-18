@@ -2,7 +2,7 @@
 % Please edit documentation in R/generate_dnn_architecture.R
 \name{generate_dnn_architecture}
 \alias{generate_dnn_architecture}
-\title{Generate Deep Neural Network architecture}
+\title{Generate architectures for Deep Neural Network}
 \usage{
 generate_dnn_architecture(
   number_of_features = 7,
@@ -15,10 +15,29 @@ generate_dnn_architecture(
 )
 }
 \arguments{
-\item{verbose}{}
+\item{number_of_features}{numeric. Value that specifies the number of features in the dataset.}
+
+\item{number_of_outputs}{numeric. Value that specifies the number of outputs.}
+
+\item{number_of_hidden_layers}{numeric. Number of hidden layers in the neural network. Default 2.}
+
+\item{hidden_layers_size}{numeric vector. Size of each hidden layer in the neural network. Default c(14, 7).}
+
+\item{batch_norm}{logical. Whether to include batch normalization layers. Default TRUE.}
+
+\item{dropout}{logical. Specifies whether dropout is included in the architecture. Default FALSE.}
+
+\item{verbose}{logical. Whether to print the architecture. Default FALSE.}
+}
+\value{
+A list containing:
+\itemize{
+\item net: a list of generated architectures.
+\item arch: a list of architecture string
+}
 }
 \description{
-Generate Deep Neural Network architecture
+Generate architectures for Deep Neural Network
 }
 \seealso{
 \code{\link{generate_arch_list}}, \code{\link{generate_cnn_architecture}}
