@@ -74,9 +74,8 @@
 #' some_sp_2
 #'
 #' # TODO Invert transformation
-#' 
+#'
 #' # TODO Transform raster data
-#' 
 #' }
 adm_transform <- function(data, variable, method, inverse = FALSE, t_terms = NULL) {
   if (inverse) {

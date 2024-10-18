@@ -58,7 +58,7 @@ A list containing:
 }
 }
 \description{
-This function generates a list of architectures for either a Deep Neural (DNN) or 
+This function generates a list of architectures for either a Deep Neural (DNN) or
 a Convolutional Neural Network (CNN).
 }
 \seealso{

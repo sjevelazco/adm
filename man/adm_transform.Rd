@@ -83,6 +83,5 @@ some_sp_2
 # TODO Invert transformation
 
 # TODO Transform raster data
-
 }
 }

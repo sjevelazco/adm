@@ -50,12 +50,12 @@ A list object with:
 Fit and validate Random Forests models
 }
 \seealso{
-\code{\link{fit_abund_cnn}}, 
+\code{\link{fit_abund_cnn}},
 \code{\link{fit_abund_dnn}},
 \code{\link{fit_abund_gam}},
 \code{\link{fit_abund_gbm}},
 \code{\link{fit_abund_glm}},
-\code{\link{fit_abund_net}}, 
-\code{\link{fit_abund_svm}}, 
+\code{\link{fit_abund_net}},
+\code{\link{fit_abund_svm}},
 \code{\link{fit_abund_xgb}}
 }
