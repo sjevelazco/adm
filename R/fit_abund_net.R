@@ -9,6 +9,7 @@
 #' @param predict_part logical. Save predicted abundance for testing data. Default is FALSE.
 #' @param size numerical. The size of the hidden layer.
 #' @param decay numerial. Value for weight decay. Default 0.
+#' @param verbose logical. If FALSE, disables all console messages. Default TRUE
 #'
 #' @importFrom dplyr pull tibble bind_rows as_tibble group_by summarise across
 #' @importFrom kernlab ksvm predict

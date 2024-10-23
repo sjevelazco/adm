@@ -38,6 +38,8 @@ fit_abund_svm(
 \item{sigma}{numeric or character. Either "automatic" (recommended) or the inverse kernel width for the Radial Basis kernel function "rbfdot" and the Laplacian kernel "laplacedot". Default is "automatic".}
 
 \item{C}{numeric. Cost of constraints violation. Default is 1.}
+
+\item{verbose}{logical. If FALSE, disables all console messages. Default TRUE}
 }
 \value{
 A list object with:

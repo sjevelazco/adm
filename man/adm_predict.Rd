@@ -8,9 +8,9 @@ adm_predict(
   models,
   pred,
   training_data = NULL,
-  invert_transform = NULL,
   nchunk = 1,
   predict_area = NULL,
+  invert_transform = NULL,
   transform_negative = FALSE
 )
 }
@@ -29,6 +29,8 @@ where models are predicted for large scales and high resolution. Default = 1}
 
 \item{predict_area}{SpatVector, SpatialPolygon, or SpatialPolygonDataFrame. Spatial polygon
 used for restring prediction into only a given region. Default = NULL}
+
+\item{invert_transform}{logical. Invert transformation of response variable. Useful for those cases that the response variable was transformed with one of the method in \code{\link{adm_transform}}. Default NULL}
 
 \item{transform_negative}{logical. If TRUE, all negative values in the prediction will be set to zero.
 default FALSE.}

@@ -10,6 +10,7 @@
 #' @param kernel character. A string defining the kernel used in the algorithm. Default is "rbfdot".
 #' @param sigma numeric or character. Either "automatic" (recommended) or the inverse kernel width for the Radial Basis kernel function "rbfdot" and the Laplacian kernel "laplacedot". Default is "automatic".
 #' @param C numeric. Cost of constraints violation. Default is 1.
+#' @param verbose logical. If FALSE, disables all console messages. Default TRUE
 #'
 #' @importFrom dplyr pull tibble bind_rows as_tibble group_by summarise across
 #' @importFrom kernlab ksvm predict

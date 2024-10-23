@@ -24,6 +24,10 @@ data_abund_bpdp(
 
 \item{training_data}{data.frame or tibble. Database with response (0,1) and predictor values used to fit a model. Default NULL}
 
+\item{invert_transform}{logical. Invert transformation of response variable. Useful for those cases that the response variable was transformed with one of the method in \code{\link{adm_transform}}. Default NULL}
+
+\item{response_name}{character. Name of the response variable. Default NULL}
+
 \item{training_boundaries}{character. Plot training conditions boundaries based on training data (i.e., presences, presences and absences, etc). If training_boundaries = "convexh", function will delimit training environmental region based on a convex-hull. If training_boundaries = "rectangle", function will delimit training environmental region based on four straight lines. If used any methods it is necessary provide data in training_data argument. If NULL all predictors will be used. Default NULL.}
 
 \item{projection_data}{SpatRaster. Raster layer with environmental variables used for model projection. Default NULL}

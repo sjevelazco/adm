@@ -52,8 +52,6 @@ fit_abund_xgb(
 \item{objective}{character. The learning task and the corresponding learning objective. Default is "reg:squarederror", regression with squared loss.}
 
 \item{verbose}{logical. If FALSE, disables all console messages. Default TRUE.}
-
-\item{fit_formula}{formula. A formula object with response and predictor variables (e.g. formula(abund ~ temp + precipt + sand + landform)). Note that the variables used here must be consistent with those used in response, predictors, and predictors_f arguments. Default NULL}
 }
 \value{
 A list object with:

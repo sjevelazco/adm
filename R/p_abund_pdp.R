@@ -55,7 +55,7 @@ p_abund_pdp <-
            alpha = 0.2,
            theme = ggplot2::theme_classic()) {
     
-    Type <- Value <- val <- Abundance <- NULL
+    Type <- Value <- val <- Abundance <- sym <- NULL
 
     if (class(model)[1] == "list") {
       if (all(c("model", "predictors", "performance", "performance_part", "predicted_part") %in% names(model))

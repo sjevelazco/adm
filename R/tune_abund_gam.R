@@ -117,7 +117,7 @@ tune_abund_gam <-
         }
       )
 
-      l <- list(cbind(grid[i, c("comb_id", "family_call", "inter")], model$performance))
+      l <- list(cbind(grid[i, c("comb_id", "family_call", "inter")], model[,"performance"]))
       names(l) <- grid[i, "comb_id"]
       l
     }
@@ -126,9 +126,9 @@ tune_abund_gam <-
     hyper_combinations <- lapply(hyper_combinations, function(x) dplyr::bind_rows(x)) %>%
       dplyr::bind_rows()
 
-    if ("model$performance" %in% names(hyper_combinations)) {
+    if ("performance" %in% names(hyper_combinations)) {
       hyper_combinations <- hyper_combinations %>%
-        dplyr::select(-`model$performance`)
+        dplyr::select(-performance)
     }
 
     hyper_combinations <- hyper_combinations %>%
