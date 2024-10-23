@@ -28,6 +28,8 @@
 #'  variable and the second column with predicted suitability.
 #' }
 #'
+#' @seealso \code{\link{data_abund_bpdp}}, \code{\link{p_abund_pdp}}, \code{\link{p_abund_bpdp}}
+#'
 #' @export
 #'
 #' @examples

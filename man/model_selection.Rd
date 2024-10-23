@@ -7,7 +7,16 @@
 model_selection(hyper_combinations, metrics)
 }
 \arguments{
-\item{metrics}{}
+\item{hyper_combinations}{tibble or data.frame. with hyperparameter combinations and performance metrics}
+
+\item{metrics}{character. with the performance metrics to be considered}
+}
+\value{
+A list containing:
+\itemize{
+\item optimal_combination: tibble with the optimal hyperparameter combination.
+\item all_combinations: all the other combinations.
+}
 }
 \description{
 Best hyperparameter selection

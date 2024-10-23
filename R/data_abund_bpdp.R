@@ -17,15 +17,15 @@
 #' @importFrom terra minmax
 #' @importFrom torch dataset torch_tensor
 #'
+#' @seealso \code{\link{data_abund_pdp}}, \code{\link{p_abund_pdp}}, \code{\link{p_abund_bpdp}}
+#' 
 #' @return A list with two tibbles "pdpdata" and "resid".
 #' \itemize{
 #' \item pspdata: has data to construct partial dependence surface plot, the first two column includes
-#' values of the selected environmental variables, the third column with predicted suitability.
+#' values of the selected environmental variables, the third column the predicted suitability.
 #' \item training_boundaries: has data to plot boundaries of training data.
 #' }
 #'
-#'
-#' @seealso \code{\link{data_abund_pdp},  \link{p_abund_bpdp}, \link{p_abund_pdp}}
 #' @export
 #'
 #' @examples
