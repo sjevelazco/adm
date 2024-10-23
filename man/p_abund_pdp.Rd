@@ -2,7 +2,7 @@
 % Please edit documentation in R/p_abund_pdp.R
 \name{p_abund_pdp}
 \alias{p_abund_pdp}
-\title{ADM Partial Dependent Plot}
+\title{Partial dependent plots for abundance-based distribution models}
 \usage{
 p_abund_pdp(
   model,
@@ -21,8 +21,51 @@ p_abund_pdp(
 )
 }
 \arguments{
-\item{theme}{}
+\item{model}{A model object found in the first element of the list returned
+by any function from the fit_abund_ or tune_abund_ function families}
+
+\item{predictors}{character. Vector of predictor name(s) to calculate partial dependence plots.
+If NULL all predictors will be used. Default NULL}
+
+\item{resolution}{numeric. Number of equally spaced points at which to predict abundance 
+values for continuous predictors. Default 50}
+
+\item{resid}{logical. Calculate residuals based on training data. Default FALSE}
+
+\item{training_data}{data.frame or tibble. Database with response and predictor values used
+to fit a model. Default NULL}
+
+\item{projection_data}{SpatRaster. Raster layer with environmental variables used for model
+projection. When this argument is used, function will calculate partial dependence curves
+distinguishing conditions used in training and projection conditions
+(i.e., projection data present in projection area but not training). Default NULL}
+
+\item{rug}{logical. Add rug plot to partial dependence plot. Default FALSE}
+
+\item{colorl}{character. Vector with colors to plot partial dependence curves. Default c("#462777", "#6DCC57")}
+
+\item{colorp}{character. Color to plot residuals. Default "black"}
+
+\item{alpha}{numeric. Transparency of residuals. Default 0.2}
+
+\item{theme}{ggplot2 theme. Default ggplot2::theme_classic()}
+}
+\value{
+A ggplot object
 }
 \description{
-ADM Partial Dependent Plot
+Create partial dependence plots to explore the marginal effect of
+predictors on modeled abundance
+}
+\details{
+This function creates partial dependent plots to explore the marginal effect of
+predictors on modeled abundance. If projection_data is used, function will extract the minimum and
+maximum values found in a region or time period to which a model will be projected. 
+If the range of projection data is greater than of the training data it will be 
+plotted with a different color. Partial dependence plot could be used to interpret a 
+model or to explore how a model may extrapolate outside the environmental conditions
+used to train the model.
+}
+\seealso{
+\code{\link{data_abund_pdp}}, \code{\link{data_abund_bpdp}}, \code{\link{p_abund_bpdp}}
 }

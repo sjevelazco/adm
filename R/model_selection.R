@@ -1,14 +1,17 @@
 #' Best hyperparameter selection
 #'
-#' @param hyper_combinations
-#' @param metrics
+#' @param hyper_combinations tibble or data.frame. with hyperparameter combinations and performance metrics
+#' @param metrics character. with the performance metrics to be considered
 #'
 #' @importFrom dplyr filter select %>%
 #'
-#' @return
+#' @return A list containing:
+#' \itemize{
+#' \item optimal_combination: tibble with the optimal hyperparameter combination.
+#' \item all_combinations: all the other combinations.
+#' }
+#' 
 #' @export
-#'
-#' @examples
 model_selection <- function(hyper_combinations, metrics) {
   comb_id <- pdisp_dist <- NULL
 

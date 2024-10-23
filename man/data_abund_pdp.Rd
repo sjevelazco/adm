@@ -47,3 +47,6 @@ variable, the second column with predicted suitability, and the third
 \description{
 Calculate data to construct partial dependence plots
 }
+\seealso{
+\code{\link{data_abund_bpdp}}, \code{\link{p_abund_pdp}}, \code{\link{p_abund_bpdp}}
+}

@@ -2,17 +2,17 @@
 % Please edit documentation in R/p_abund_bpdp.R
 \name{p_abund_bpdp}
 \alias{p_abund_bpdp}
-\title{Bivariate partial dependence plot(s)}
+\title{Bivariate partial dependence plots for abundance-based distribution models}
 \usage{
 p_abund_bpdp(
   model,
   predictors = NULL,
   resolution = 50,
   training_data = NULL,
+  projection_data = NULL,
+  training_boundaries = NULL,
   invert_transform = NULL,
   response_name = NULL,
-  training_boundaries = NULL,
-  projection_data = NULL,
   color_gradient = c("#000004", "#1B0A40", "#4A0C69", "#781B6C", "#A42C5F", "#CD4345",
     "#EC6824", "#FA990B", "#F7CF3D", "#FCFFA4"),
   color_training_boundaries = "white",
@@ -22,10 +22,51 @@ p_abund_bpdp(
 )
 }
 \arguments{
-\item{set_max}{TODO max abundance on scale}
+\item{model}{A model object found in the first element of the list returned
+by any function from the fit_abund_ or tune_abund_ function families}
 
-\item{set_min}{TODO min abundance on scale}
+\item{predictors}{character. Vector of predictor name(s) to calculate partial dependence plots.
+If NULL all predictors will be used. Default NULL}
+
+\item{resolution}{numeric. Number of equally spaced points at which to predict abundance 
+values for continuous predictors. Default 50}
+
+\item{training_data}{data.frame or tibble. Database with response and predictor values used
+to fit a model. Default NULL}
+
+\item{projection_data}{SpatRaster. Raster layer with environmental variables used for model
+projection. When this argument is used, function will calculate partial dependence curves
+distinguishing conditions used in training and projection conditions
+(i.e., projection data present in projection area but not training). Default NULL}
+
+\item{training_boundaries}{character. Plot training conditions boundaries based on training
+data.
+If training_boundaries = "convexh", function will delimit training environmental region based on a
+convex-hull. If training_boundaries = "rectangle", function will delimit training environmental
+region based on four straight lines. If used any methods it is necessary provide
+data in training_data argument.If NULL all predictors will be used. Default NULL.}
+
+\item{invert_transform}{logical. Invert transformation of response variable. Default NULL}
+
+\item{response_name}{character. Name of the response variable. Default NULL}
+
+\item{color_gradient}{character. Vector with gradient colors. Default c("#000004", "#1B0A40", "#4A0C69", "#781B6C", "#A42C5F", "#CD4345", "#EC6824", "#FA990B", "#F7CF3D", "#FCFFA4")}
+
+\item{color_training_boundaries}{character. A vector with one color used to color points of residuals, Default "white"}
+
+\item{set_max}{numeric. Set a maximum abundance value to plot}
+
+\item{set_min}{numeric. Set a minimum abundance value to plot}
+
+\item{theme}{ggplot2 theme. Default ggplot2::theme_classic()}
+}
+\value{
+A ggplot object
 }
 \description{
-This function creates bivariate partial dependence plots to explore the bivariate marginal effect of predictors.
+Create bivariate partial dependence plots to explore the marginal effect of
+predictors on modeled abundance
+}
+\seealso{
+\code{\link{data_abund_pdp}}, \code{\link{data_abund_bpdp}}, \code{\link{p_abund_pdp}}
 }
