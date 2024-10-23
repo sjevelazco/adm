@@ -21,7 +21,7 @@
 #' convex-hull. If training_boundaries = "rectangle", function will delimit training environmental
 #' region based on four straight lines. If used any methods it is necessary provide
 #' data in training_data argument.If NULL all predictors will be used. Default NULL.
-#' @param invert_transform logical. Invert transformation of response variable. Useful for those cases that the response variable was transformed. see \code{\link{adm::adm_transform}}. Default NULL
+#' @param invert_transform logical. Invert transformation of response variable. Useful for those cases that the response variable was transformed with one of the method in \code{\link{adm_transform}}. Default NULL
 #' @param response_name character. Name of the response variable. Default NULL
 #' @param color_gradient character. Vector with gradient colors. Default c("#000004", "#1B0A40", "#4A0C69", "#781B6C", "#A42C5F", "#CD4345", "#EC6824", "#FA990B", "#F7CF3D", "#FCFFA4")
 #' @param color_training_boundaries character. A vector with one color used to color points of residuals, Default "white"
@@ -66,7 +66,7 @@ p_abund_bpdp <-
            set_max = NULL,
            set_min = NULL,
            theme = ggplot2::theme_classic()) {
-    Abundance <- Type <- Value <- val <- NULL
+    Abundance <- Type <- Value <- val <- sym <- NULL
 
     if (class(model)[1] == "list") {
       if (all(c("model", "predictors", "performance", "performance_part", "predicted_part") %in% names(model))

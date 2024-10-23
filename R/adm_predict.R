@@ -15,6 +15,7 @@
 #' used for restring prediction into only a given region. Default = NULL
 #' @param training_data data.frame or tibble. Data used to fit the models. It is necessary
 #' to predict GAM and GLM models. Default NULL
+#' @param invert_transform logical. Invert transformation of response variable. Useful for those cases that the response variable was transformed with one of the method in \code{\link{adm_transform}}. Default NULL
 #' @param transform_negative logical. If TRUE, all negative values in the prediction will be set to zero.
 #' default FALSE.
 #'
@@ -169,9 +170,9 @@ adm_predict <-
   function(models,
            pred,
            training_data = NULL,
-           invert_transform = NULL,
            nchunk = 1,
            predict_area = NULL,
+           invert_transform = NULL,
            transform_negative = FALSE) {
     . <- model <- threshold <- thr_value <- self <- NULL
 

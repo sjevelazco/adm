@@ -27,6 +27,10 @@ data_abund_pdp(
 \item{training_data}{data.frame. Database with response and predictor values used
 to fit a model. Default NULL. Required for GLM, GAM, DNN, NET, RAF, SVM models}
 
+\item{invert_transform}{logical. Invert transformation of response variable. Useful for those cases that the response variable was transformed with one of the method in \code{\link{adm_transform}}. Default NULL}
+
+\item{response_name}{character. Name of the response variable. Default NULL}
+
 \item{projection_data}{SpatRaster. Raster layer with environmental variables used for model
 projection. When this argument is used, function will calculate partial dependence curves
 distinguishing conditions used in training and projection conditions

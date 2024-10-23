@@ -10,6 +10,8 @@
 #' projection. When this argument is used, function will calculate partial dependence curves
 #' distinguishing conditions used in training and projection conditions
 #' (i.e., projection data present in projection area but not training). Default NULL
+#' @param invert_transform logical. Invert transformation of response variable. Useful for those cases that the response variable was transformed with one of the method in \code{\link{adm_transform}}. Default NULL
+#' @param response_name character. Name of the response variable. Default NULL
 #'
 #' @importFrom dplyr select tibble
 #' @importFrom gbm predict.gbm
@@ -42,7 +44,7 @@ data_abund_pdp <-
            invert_transform = NULL,
            response_name = NULL,
            projection_data = NULL) {
-    self <- NULL
+    self <- Abundance_inverted <- NULL
 
     # Extract training data
     # TODO

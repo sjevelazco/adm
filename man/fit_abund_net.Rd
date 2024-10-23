@@ -35,6 +35,8 @@ fit_abund_net(
 \item{size}{numerical. The size of the hidden layer.}
 
 \item{decay}{numerial. Value for weight decay. Default 0.}
+
+\item{verbose}{logical. If FALSE, disables all console messages. Default TRUE}
 }
 \value{
 A list object with:
