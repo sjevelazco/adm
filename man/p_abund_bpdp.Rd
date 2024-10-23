@@ -46,7 +46,7 @@ convex-hull. If training_boundaries = "rectangle", function will delimit trainin
 region based on four straight lines. If used any methods it is necessary provide
 data in training_data argument.If NULL all predictors will be used. Default NULL.}
 
-\item{invert_transform}{logical. Invert transformation of response variable. Default NULL}
+\item{invert_transform}{logical. Invert transformation of response variable. Useful for those cases that the response variable was transformed. see \code{\link{adm::adm_transform}}. Default NULL}
 
 \item{response_name}{character. Name of the response variable. Default NULL}
 
