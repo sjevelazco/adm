@@ -14,7 +14,7 @@
 #' @param distribution character. A string specifying the distribution to be used. See \link[gamlss.dist]{gamlss.family} documentation for details. Use distribution = gamlss.dist::NO(). Default NULL
 #' @param verbose logical. If FALSE, disables all console messages. Default TRUE
 #' @param control_gamlss function. control parameters of the outer iterations algorithm in gamlss
-#' See \link[gamlss.contro]{gamlss} documentation for details. Default gamlss.control()
+#' See \link[gamlss]{gamlss.control} documentation for details. Default gamlss.control()
 #'
 #' @importFrom dplyr bind_rows bind_cols pull tibble as_tibble group_by summarise across
 #' @importFrom gamlss gamlss pb predictAll gamlss.control

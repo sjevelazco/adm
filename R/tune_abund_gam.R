@@ -47,7 +47,7 @@ tune_abund_gam <-
            metrics = NULL,
            n_cores = 1,
            verbose = FALSE) {
-    . <- discrete <- i <- NULL
+    . <- discrete <- i <- performance <- NULL
 
     if (is.null(metrics) |
       !all(metrics %in% c("corr_spear", "corr_pear", "mae", "inter", "slope", "pdisp"))) {

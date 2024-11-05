@@ -35,6 +35,10 @@ values for continuous predictors. Default 50}
 \item{training_data}{data.frame or tibble. Database with response and predictor values used
 to fit a model. Default NULL}
 
+\item{invert_transform}{logical. If TRUE, inverse transformation of response variable will be applied.}
+
+\item{response_name}{character. Name of the response variable. Default NULL}
+
 \item{projection_data}{SpatRaster. Raster layer with environmental variables used for model
 projection. When this argument is used, function will calculate partial dependence curves
 distinguishing conditions used in training and projection conditions

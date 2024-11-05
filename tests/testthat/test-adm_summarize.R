@@ -6,14 +6,10 @@ test_that("adm_summarize", {
   data("sppabund")
 
   # Extract data
-  some_sp <- sppabund %>%
-    dplyr::filter(species == "Species one") %>%
-    dplyr::select(species, ind_ha, x, y, .part)
-
   # Species abundance data, coordinates, and partition
   some_sp <- sppabund %>%
     dplyr::filter(species == "Species one") %>%
-    dplyr::select(species, ind_ha, x, y, .part)
+    dplyr::select(species, ind_ha, x, y, starts_with(".part"))
   some_sp
 
   # Extract data

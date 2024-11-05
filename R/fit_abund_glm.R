@@ -14,7 +14,7 @@
 #' @param poly integer >= 2. If used with values >= 2 model will use polynomials for those continuous variables (i.e. used in predictors argument). Default is 0.
 #' @param inter_order integer >= 0. The interaction order between explanatory variables. Default is 0.
 #' @param control_gamlss function. control parameters of the outer iterations algorithm in gamlss
-#' See \link[gamlss.contro]{gamlss} documentation for details. Default gamlss.control()
+#' See \link[gamlss]{gamlss.control} documentation for details. Default gamlss.control()
 #' @param verbose logical. If FALSE, disables all console messages. Default TRUE
 #'
 #' @importFrom dplyr bind_rows pull tibble as_tibble group_by summarise across
@@ -132,7 +132,6 @@ fit_abund_glm <-
            partition,
            predict_part = FALSE,
            distribution = NULL,
-           inter = "automatic",
            poly = 0,
            inter_order = 0,
            control_gamlss = gamlss.control(trace = FALSE),

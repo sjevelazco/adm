@@ -49,7 +49,7 @@ fit_abund_gam(
 \item{verbose}{logical. If FALSE, disables all console messages. Default TRUE}
 
 \item{control_gamlss}{function. control parameters of the outer iterations algorithm in gamlss
-See \link[gamlss.contro]{gamlss} documentation for details. Default gamlss.control()}
+See \link[gamlss]{gamlss.control} documentation for details. Default gamlss.control()}
 }
 \value{
 A list object with:

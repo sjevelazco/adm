@@ -21,6 +21,8 @@
 #' @param colorp character. Color to plot residuals. Default "black"
 #' @param alpha numeric. Transparency of residuals. Default 0.2
 #' @param theme ggplot2 theme. Default ggplot2::theme_classic()
+#' @param invert_transform logical. If TRUE, inverse transformation of response variable will be applied.
+#' @param response_name character. Name of the response variable. Default NULL
 #'
 #' @details This function creates partial dependent plots to explore the marginal effect of
 #' predictors on modeled abundance. If projection_data is used, function will extract the minimum and
