@@ -3,3 +3,5 @@
 ^\.github
 ^\.vscode
 ^codecov\.yml$
+^_pkgdown\.yml$
+^docs$

@@ -16,7 +16,6 @@ fit_abund_glm(
   partition,
   predict_part = FALSE,
   distribution = NULL,
-  inter = "automatic",
   poly = 0,
   inter_order = 0,
   control_gamlss = gamlss.control(trace = FALSE),
@@ -51,7 +50,7 @@ fit_abund_glm(
 \item{inter_order}{integer >= 0. The interaction order between explanatory variables. Default is 0.}
 
 \item{control_gamlss}{function. control parameters of the outer iterations algorithm in gamlss
-See \link[gamlss.contro]{gamlss} documentation for details. Default gamlss.control()}
+See \link[gamlss]{gamlss.control} documentation for details. Default gamlss.control()}
 
 \item{verbose}{logical. If FALSE, disables all console messages. Default TRUE}
 }
