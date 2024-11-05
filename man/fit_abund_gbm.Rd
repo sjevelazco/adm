@@ -60,3 +60,33 @@ A list object with:
 \description{
 Fit and validate Generalized Boosted Regression models
 }
+\examples{
+\dontrun{
+require(dplyr)
+
+data("sppabund")
+
+some_sp <- sppabund \%>\%
+  filter(species == "Species one")
+
+gbm_1 <- fit_abund_gbm(
+  data = some_sp,
+  response = "ind_ha",
+  predictors = c("bio12","elevation","sand"),
+  predictors_f = c("eco"),
+  partition = ".part",
+  distribution = "gaussian",
+  n.trees = 100,
+  interaction.depth = 5,
+  n.minobsinnode = 5,
+  shrinkage = 0.1,
+  predict_part = TRUE
+)
+
+gbm_1$model
+gbm_1$predicted_part
+gbm_1$performance_part
+gbm_1$performance
+gbm_1$predictors
+}
+}

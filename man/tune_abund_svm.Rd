@@ -56,3 +56,36 @@ A list object with:
 \description{
 Fit and validate Support Vector Machine models with exploration of hyper-parameters that optimize performance
 }
+\examples{
+\dontrun{
+require(dplyr)
+
+data("sppabund")
+
+some_sp <- sppabund \%>\%
+  filter(species == "Species two")
+
+svm_grid <- expand.grid(
+  sigma = "automatic",
+  C = c(0.5,1,2),
+  kernel = c("rbfdot","laplacedot")
+)
+
+tuned_svm <- tune_abund_svm(
+  data = some_sp,
+  response = "ind_ha",
+  predictors = c("bio12","elevation","sand"),
+  predictors_f = c("eco"),
+  partition = ".part",
+  predict_part = TRUE,
+  metrics = c("corr_pear","mae"),
+  grid = svm_grid,
+  n_cores = 3
+)
+
+tuned_svm$model
+tuned_svm$performance
+tuned_svm$optimal_combination
+tuned_svm$all_combinations
+}
+}
