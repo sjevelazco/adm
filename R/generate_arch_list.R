@@ -32,6 +32,64 @@
 #' @export
 #'
 #' @examples
+#' \dontrun{
+#' # Generating architectures for DNN, using batch normalization and dropout
+#' dnn_archs <- generate_arch_list(
+#'   type = "dnn",
+#'   number_of_features = 4,
+#'   number_of_outputs = 1,
+#'   n_layers = c(2, 3, 4),
+#'   n_neurons = c(8, 16, 32, 64),
+#'   batch_norm = TRUE,
+#'   dropout = 0.2
+#' )
+#' 
+#' dnn_archs$arch_dict # Matrices describing the networks
+#' length(dnn_archs$arch_list) # Generated 336 DNN architectures
+#' 
+#' # Generating architectures for CNN, using batch normalization, dropout and average pooling
+#' # Note that arguments meaning change with the context
+#' 
+#' cnn_archs <- generate_arch_list(
+#'   type = "cnn",
+#'   number_of_features = 4,
+#'   number_of_outputs = 1,
+#'   n_layers = c(2, 3, 4), # now convolutional layers
+#'   n_neurons = c(8, 16, 32, 64),
+#'   sample_size = c(11, 11),
+#'   number_of_fc_layers = c(2,4), # fully connected layers
+#'   fc_layers_size = c(16,8), 
+#'   conv_layers_kernel = 3,
+#'   conv_layers_stride = 1,
+#'   conv_layers_padding = 0,
+#'   pooling = 1,
+#'   batch_norm = TRUE,
+#'   dropout = 0.2
+#' )
+#' 
+#' cnn_archs$arch_dict # Matrices describing the networks
+#' length(cnn_archs$arch_list) # Generated 6720 CNN architectures
+#' 
+#' # The list size can be easily and greatly reduced with select_arch_list
+#' 
+#' dnn_archs_redux <- dnn_archs %>% select_arch_list(
+#'   type = c("dnn"),
+#'   method = "percentile",
+#'   n_samples = 1,
+#'   min_max = TRUE # Keep the network with the minimum and maximum number of parameters
+#' )
+#' 
+#' length(dnn_archs_redux$arch_list) # from 336 to 29 architectures
+#' 
+#' cnn_archs_redux <- cnn_archs %>% select_arch_list(
+#'   type = c("cnn"),
+#'   method = "percentile",
+#'   n_samples = 1,
+#'   min_max = TRUE # Keep the network with the minimum and maximum number of parameters
+#' )
+#' 
+#' length(cnn_archs_redux$arch_list) # from 6720 to 77 architectures
+#' }
 generate_arch_list <-
   function(type,
            number_of_features,
