@@ -33,6 +33,37 @@
 #' @export
 #'
 #' @examples
+#' \dontrun{
+#' require(dplyr)
+#' 
+#' data("sppabund")
+#' 
+#' some_sp <- sppabund %>%
+#'   filter(species == "Species two")
+#' 
+#' svm_grid <- expand.grid(
+#'   sigma = "automatic",
+#'   C = c(0.5,1,2),
+#'   kernel = c("rbfdot","laplacedot")
+#' )
+#' 
+#' tuned_svm <- tune_abund_svm(
+#'   data = some_sp,
+#'   response = "ind_ha",
+#'   predictors = c("bio12","elevation","sand"),
+#'   predictors_f = c("eco"),
+#'   partition = ".part",
+#'   predict_part = TRUE,
+#'   metrics = c("corr_pear","mae"),
+#'   grid = svm_grid,
+#'   n_cores = 3
+#' )
+#' 
+#' tuned_svm$model
+#' tuned_svm$performance
+#' tuned_svm$optimal_combination
+#' tuned_svm$all_combinations
+#' }
 tune_abund_svm <-
   function(data,
            response,
@@ -61,8 +92,8 @@ tune_abund_svm <-
       message("Grid not provided. Using the default one for Support Vector Machines.")
       grid <- expand.grid(grid_dict)
     } else if (all(names(grid) %in% c("C", "sigma", "kernel"))) {
-      user_hyper <- names(grid)[which(names(grid_dict) == names(grid))]
-      default_hyper <- names(grid_dict)[which(names(grid_dict) != user_hyper)]
+      user_hyper <- names(grid)[which(names(grid_dict) %in% names(grid))]
+      default_hyper <- names(grid_dict)[which(!names(grid_dict) %in% user_hyper)]
 
       user_list <- grid_dict[default_hyper]
       for (i in user_hyper) {
@@ -78,7 +109,7 @@ tune_abund_svm <-
         message("Using provided grid.")
       }
     } else {
-      stop('Grid expected to be any combination between "c", "sigma" and "kernel" hyperparameters.')
+      stop('Grid expected to be any combination between "C", "sigma" and "kernel" hyperparameters.')
     }
 
 

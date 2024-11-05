@@ -30,6 +30,49 @@
 #' @export
 #'
 #' @examples
+#' \dontrun{
+#' data("sppabund")
+#' 
+#' some_sp <- sppabund %>%
+#'   filter(species == "Species one")
+#' 
+#' svm_1 <- fit_abund_svm(
+#'   data = some_sp,
+#'   response = "ind_ha",
+#'   predictors = c("bio12","elevation","sand"),
+#'   predictors_f = c("eco"),
+#'   partition = ".part",
+#'   kernel = "rbfdot",
+#'   sigma = "automatic",
+#'   C = 1,
+#'   predict_part = TRUE
+#' )
+#' 
+#' svm_1$model
+#' svm_1$predicted_part
+#' svm_1$performance_part
+#' svm_1$performance
+#' svm_1$predictors
+#' 
+#' # Using different kernel and C value
+#' svm_2 <- fit_abund_svm(
+#'   data = some_sp,
+#'   response = "ind_ha",
+#'   predictors = c("bio12","elevation","sand"),
+#'   predictors_f = c("eco"),
+#'   partition = ".part",
+#'   kernel = "laplacedot",
+#'   sigma = "automatic",
+#'   C = 2,
+#'   predict_part = TRUE
+#' )
+#' 
+#' svm_2$model
+#' svm_2$predicted_part
+#' svm_2$performance_part
+#' svm_2$performance
+#' svm_2$predictors
+#' }
 fit_abund_svm <-
   function(data,
            response,

@@ -68,3 +68,89 @@ A list object with:
 \description{
 Fit and validate Generalized Linear Models
 }
+\examples{
+\dontrun{
+require(dplyr)
+data("sppabund")
+
+some_sp <- sppabund \%>\%
+  filter(species == "Species one")
+
+glm_1 <- fit_abund_glm(
+  data = some_sp,
+  response = "ind_ha",
+  predictors = c("bio12","elevation","sand"),
+  predictors_f = c("eco"),
+  partition = ".part",
+  distribution = "NO",
+  poly = 0,
+  inter_order = 0,
+  predict_part = TRUE
+)
+
+glm_1$model
+glm_1$predicted_part
+glm_1$performance_part
+glm_1$performance
+glm_1$predictors
+
+# Using second order polynomials and first order interaction terms
+glm_2 <- fit_abund_glm(
+  data = some_sp,
+  response = "ind_ha",
+  predictors = c("bio12","elevation","sand"),
+  predictors_f = c("eco"),
+  partition = ".part",
+  distribution = "NO",
+  poly = 2,
+  inter_order = 1,
+  predict_part = TRUE
+)
+
+glm_2$model
+glm_2$predicted_part
+glm_2$performance_part
+glm_2$performance
+glm_2$predictors
+
+# Using third order polynomials and second order interaction terms
+glm_3 <- fit_abund_glm(
+  data = some_sp,
+  response = "ind_ha",
+  predictors = c("bio12","elevation","sand"),
+  predictors_f = c("eco"),
+  partition = ".part",
+  distribution = "NO",
+  poly = 3,
+  inter_order = 2,
+  predict_part = TRUE
+)
+
+glm_3$model
+glm_3$predicted_part
+glm_3$performance_part
+glm_3$performance
+glm_3$predictors
+
+# Setting formulas for different distribution parameters
+glm_4 <- fit_abund_glm(
+  data = some_sp,
+  response = "ind_ha",
+  predictors = c("bio12","elevation","sand"),
+  predictors_f = c("eco"),
+  partition = ".part",
+  distribution = "NO",
+  fit_formula = ind_ha ~ bio12 + elevation + sand + eco,
+  sigma_formula = ind_ha ~ bio12 + elevation + sand,
+  poly = 0,
+  inter_order = 0,
+  predict_part = TRUE
+)
+
+glm_4$model
+glm_4$predicted_part
+glm_4$performance_part
+glm_4$performance
+glm_4$predictors
+}
+}

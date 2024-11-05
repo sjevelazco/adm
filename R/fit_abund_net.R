@@ -30,6 +30,31 @@
 #' @export
 #'
 #' @examples
+#' \dontrun{
+#' require(dplyr)
+#' 
+#' data("sppabund")
+#' 
+#' some_sp <- sppabund %>%
+#'   filter(species == "Species one")
+#' 
+#' net_1 <- fit_abund_net(
+#'   data = some_sp,
+#'   response = "ind_ha",
+#'   predictors = c("bio12","elevation","sand"),
+#'   predictors_f = c("eco"),
+#'   partition = ".part",
+#'   size = 32,
+#'   decay = 0.01,
+#'   predict_part = TRUE
+#' )
+#' 
+#' net_1$model
+#' net_1$predicted_part
+#' net_1$performance_part
+#' net_1$performance
+#' net_1$predictors
+#' }
 fit_abund_net <-
   function(data,
            response,

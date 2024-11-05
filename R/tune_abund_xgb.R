@@ -67,8 +67,8 @@ tune_abund_xgb <-
       message("Grid not provided. Using the default one for eXtreme Gradient Boosting.")
       grid <- expand.grid(grid_dict)
     } else if (all(names(grid) %in% names(grid_dict))) {
-      user_hyper <- names(grid)[which(names(grid_dict) == names(grid))]
-      default_hyper <- names(grid_dict)[which(names(grid_dict) != user_hyper)]
+      user_hyper <- names(grid)[which(names(grid_dict) %in% names(grid))]
+      default_hyper <- names(grid_dict)[which(!names(grid_dict) %in% user_hyper)]
 
       user_list <- grid_dict[default_hyper]
       for (i in user_hyper) {

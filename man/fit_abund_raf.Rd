@@ -51,6 +51,32 @@ A list object with:
 \description{
 Fit and validate Random Forests models
 }
+\examples{
+\dontrun{
+require(dplyr)
+data("sppabund")
+
+some_sp <- sppabund \%>\%
+  filter(species == "Species one")
+
+raf_1 <- fit_abund_raf(
+  data = some_sp,
+  response = "ind_ha",
+  predictors = c("bio12","elevation","sand"),
+  predictors_f = c("eco"),
+  partition = ".part",
+  mtry = 3,
+  ntree = 500,
+  predict_part = TRUE
+)
+
+raf_1$model
+raf_1$predicted_part
+raf_1$performance_part
+raf_1$performance
+raf_1$predictors
+}
+}
 \seealso{
 \code{\link{fit_abund_cnn}},
 \code{\link{fit_abund_dnn}},

@@ -58,7 +58,31 @@ Fit and validate Random Forest models with exploration of hyper-parameters that 
 }
 \examples{
 \dontrun{
-TODO
 require(dplyr)
+data("sppabund")
+some_sp <- sppabund \%>\%
+  filter(species == "Species two")
+
+raf_grid <- expand.grid(
+  mtry = c(1,2,3,4),
+  ntree = seq(from = 100, to = 1000, by = 100)
+)
+
+tuned_raf <- tune_abund_raf(
+  data = some_sp,
+  response = "ind_ha",
+  predictors = c("bio12","elevation","sand"),
+  predictors_f = c("eco"),
+  partition = ".part",
+  predict_part = TRUE,
+  metrics = c("corr_pear","mae"),
+  grid = raf_grid,
+  n_cores = 3
+)
+
+tuned_raf$model
+tuned_raf$performance
+tuned_raf$optimal_combination
+tuned_raf$all_combinations
 }
 }

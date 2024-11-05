@@ -35,8 +35,34 @@
 #'
 #' @examples
 #' \dontrun{
-#' TODO
 #' require(dplyr)
+#' 
+#' data("sppabund")
+#' 
+#' some_sp <- sppabund %>%
+#'   filter(species == "Species two")
+#' 
+#' net_grid <- expand.grid(
+#'   size = seq(from = 8, to = 32, by = 6),
+#'   decay = seq(from = 0, to = 0.4, by = 0.01)
+#' )
+#' 
+#' tuned_net <- tune_abund_net(
+#'   data = some_sp,
+#'   response = "ind_ha",
+#'   predictors = c("bio12","elevation","sand"),
+#'   predictors_f = c("eco"),
+#'   partition = ".part",
+#'   predict_part = TRUE,
+#'   metrics = c("corr_pear","mae"),
+#'   grid = net_grid,
+#'   n_cores = 3
+#' )
+#' 
+#' tuned_net$model
+#' tuned_net$performance
+#' tuned_net$optimal_combination
+#' tuned_net$all_combinations
 #' }
 tune_abund_net <-
   function(data,
