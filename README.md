@@ -8,7 +8,7 @@ Abundance distribution models
 
 ### Structure of adm
 
-<a href='https://sjevelazco.github.io/adm'><img src="https://raw.githubusercontent.com/sjevelazco/adm/main/man/figures/adm.png" align="centre" height="550"/></a>
+<a href='https://sjevelazco.github.io/adm'><img src="man/figures/adm.png" align="centre" height="550"/></a>
 
 
 ### Installation
