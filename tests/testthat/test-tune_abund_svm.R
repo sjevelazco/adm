@@ -3,15 +3,15 @@ data("sppabund")
 some_sp <- sppabund %>%
   dplyr::filter(species == "Species two") %>%
   dplyr::select(-.part2, -.part3)
-svm_grid <- expand.grid(
+grid_0 <- expand.grid(
   sigma = "automatic",
   C = c(0.5, 2),
   kernel = c("rbfdot", "laplacedot")
 )
 
-test_that("tune_abund_svm and fit_aund_svm", {
+test_that("tune_abund_svm and fit_abund_svm", {
   set.seed(1)
-  tuned_svm <- tune_abund_svm(
+  tuned_ <- tune_abund_svm(
     data = some_sp,
     response = "ind_ha",
     predictors = c("bio12", "elevation", "sand"),
@@ -19,16 +19,16 @@ test_that("tune_abund_svm and fit_aund_svm", {
     partition = ".part",
     predict_part = TRUE,
     metrics = c("corr_pear", "mae"),
-    grid = svm_grid,
+    grid = grid_0,
     n_cores = 1
   )
-  expect_equal(names(tuned_svm), c(
+  expect_equal(names(tuned_), c(
     "model", "predictors", "performance", "performance_part",
     "predicted_part", "optimal_combination", "all_combinations"
   ))
-  expect_equal(class(tuned_svm$model)[1], "ksvm")
-  expect_equal(round(tuned_svm$performance$corr_spear_mean, 2), 0.58)
-  expect_equal(tuned_svm$optimal_combination$C, 0.5)
+  expect_equal(class(tuned_$model)[1], "ksvm")
+  expect_equal(round(tuned_$performance$corr_spear_mean, 2), 0.58)
+  expect_equal(tuned_$optimal_combination$C, 0.5)
 })
 
 test_that("test errors", {
@@ -40,7 +40,7 @@ test_that("test errors", {
     partition = ".part",
     predict_part = TRUE,
     # metrics = c("corr_pear","mae"),
-    grid = svm_grid,
+    grid = grid_0,
     n_cores = 1
   ))
 })
@@ -54,7 +54,7 @@ test_that("message", {
     partition = ".part",
     predict_part = TRUE,
     metrics = c("corr_pear", "mae"),
-    grid = svm_grid,
+    grid = grid_0,
     n_cores = 1,
     verbose = FALSE
   ))
