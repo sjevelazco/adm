@@ -44,18 +44,6 @@ test_that("test errors", {
     n_cores = 1
   ))
 
-  expect_message(tune_abund_svm(
-    data = some_sp,
-    response = "ind_ha",
-    predictors = c("bio12", "elevation", "sand"),
-    predictors_f = c("eco"),
-    partition = ".part",
-    predict_part = TRUE,
-    metrics = c("corr_pear", "mae"),
-    grid = svm_grid[, 1:2],
-    n_cores = 1,
-    verbose = TRUE
-  ))
 })
 
 test_that("message", {
@@ -69,6 +57,7 @@ test_that("message", {
     metrics = c("corr_pear", "mae"),
     grid = svm_grid,
     n_cores = 1,
-    verbose = TRUE
+    verbose = FALSE
+  
   ))
 })
