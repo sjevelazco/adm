@@ -129,14 +129,14 @@ fit_abund_xgb <-
 
 
         sp_train <- list(
-          data = Matrix::Matrix(as.matrix(train_set[, c(predictors, predictors_f)]), sparse = T),
+          data = Matrix::Matrix(as.matrix(train_set[, c(predictors, predictors_f)]), sparse = TRUE),
           target = train_set[, response]
         )
 
         sp_train <- with(sp_train, xgboost::xgb.DMatrix(data, label = target, nthread = 1))
 
         sp_test <- list(
-          data = Matrix::Matrix(as.matrix(test_set[, c(predictors, predictors_f)]), sparse = T)
+          data = Matrix::Matrix(as.matrix(test_set[, c(predictors, predictors_f)]), sparse = TRUE)
         )
 
         sp_test <- with(sp_test, xgboost::xgb.DMatrix(data, nthread = 1))
@@ -181,7 +181,7 @@ fit_abund_xgb <-
 
     # fit final model with all data
     full_train <- list(
-      data = Matrix::Matrix(as.matrix(data[, c(predictors, predictors_f)]), sparse = T),
+      data = Matrix::Matrix(as.matrix(data[, c(predictors, predictors_f)]), sparse = TRUE),
       target = data[, response]
     )
     full_train <- with(
