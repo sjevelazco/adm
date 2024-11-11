@@ -85,7 +85,7 @@ tune_abund_net <-
 
     # making grid
     if (is.null(grid)) {
-      message("Grid not provided. Using the default one for Random Forest.")
+      message("Grid not provided. Using the default one for Shallow Neural Networks.")
       size <- seq(from = length(c(predictors, predictors_f)), to = 50, by = 2)
       decay <- seq(from = 0, to = 0.9, by = 0.1)
       grid <- expand.grid(size = size, decay = decay)

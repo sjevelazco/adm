@@ -10,7 +10,7 @@
 #' @param conv_layers_padding numeric. Specifies the padding for the convolutional layers. Default 0.
 #' @param number_of_fc_layers numeric. Specifies the number of fully connected layers. Default 1.
 #' @param fc_layers_size vector. Specifies the size of the fully connected layers. Default 14.
-#' @param pooling numeric. Specifies whether pooling is included in the architecture. Default NULL
+#' @param pooling numeric. Specifies 2D average pooling kernel size. Default NULL
 #' @param batch_norm logical. Specifies whether batch normalization is included in the architecture. Default TRUE.
 #' @param dropout numeric. Default 0.
 #' @param verbose logical. Specifies whether the architecture should be printed. Default FALSE.
