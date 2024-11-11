@@ -48,9 +48,11 @@ balance_dataset <-
     abs_to_remove <- length(abs_indexes) - n_absence
 
     if (abs_to_remove == 0) {
-      stop("Dataset already balanced at given ratio.")
+      message("No change in dataset, it is already balanced at given ratio.")
+      return(data)
     } else if (abs_to_remove < 0) {
-      stop("Few absence points to balance at given ratio.")
+      message("No change in dataset, few absence points to balance at given ratio.")
+      return(data)
     }
 
     removed_abs <- sample(abs_indexes, abs_to_remove)
