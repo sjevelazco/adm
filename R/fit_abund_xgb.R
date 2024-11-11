@@ -34,6 +34,46 @@
 #' @export
 #'
 #' @examples
+#' \dontrun{
+#' require(terra)
+#' require(dplyr)
+#' 
+#' # Database with species abundance and x and y coordinates
+#' data("sppabund")
+#' 
+#' # Extract data for a single species
+#' some_sp <- sppabund %>%
+#'   dplyr::filter(species == "Species one") %>% 
+#'   dplyr::select(-.part2, -.part3)
+#' 
+#' # Explore reponse variables
+#' some_sp$ind_ha %>% range()
+#' some_sp$ind_ha %>% hist()
+#' 
+#' # Here we balance number of absences
+#' some_sp <- 
+#'   balance_dataset(some_sp, response = "ind_ha", absence_ratio=0.2)
+#' 
+#' # Fit a XGB model
+#' mxgb <- fit_abund_xgb(
+#'   data = some_sp,
+#'   response = "ind_ha",
+#'   predictors = c("bio12","elevation","sand"),
+#'   predictors_f = NULL,
+#'   partition = ".part",
+#'   nrounds = 200,
+#'   max_depth = 5,
+#'   eta = 0.1,
+#'   gamma = 1,
+#'   colsample_bytree = 0.7,
+#'   min_child_weight = 2,
+#'   subsample = 0.3,
+#'   objective = "reg:squarederror",
+#'   predict_part = TRUE
+#' )
+#' 
+#' mxgb
+#' }
 fit_abund_xgb <-
   function(data,
            response,
@@ -52,6 +92,11 @@ fit_abund_xgb <-
            verbose = TRUE) {
     . <- mae <- pdisp <- NULL
 
+    if(!is.null(predictors_f)){
+      warning("Categorical variables aren't available for XGB and will be ignored.")
+      predictors_f <- NULL
+    }
+    
     # Adequate database
     data <- adapt_df(
       data = data,
@@ -123,35 +168,33 @@ fit_abund_xgb <-
         if (verbose) {
           message("-- Partition number ", j, "/", length(folds))
         }
-
+        
         train_set <- data[data[, p_names[h]] != folds[j], ]
         test_set <- data[data[, p_names[h]] == folds[j], ]
 
 
         sp_train <- list(
-          data = Matrix::Matrix(as.matrix(train_set[, c(predictors, predictors_f)]), sparse = TRUE),
+          data = stats::model.matrix(~ . - 1, data = train_set[, c(predictors, predictors_f)]),
           target = train_set[, response]
         )
 
-        sp_train <- with(sp_train, xgboost::xgb.DMatrix(data, label = target, nthread = 1))
-
         sp_test <- list(
-          data = Matrix::Matrix(as.matrix(test_set[, c(predictors, predictors_f)]), sparse = TRUE)
+          data = stats::model.matrix(~ . - 1, data = test_set[, c(predictors, predictors_f)]),
+          target = test_set[, response]
         )
 
-        sp_test <- with(sp_test, xgboost::xgb.DMatrix(data, nthread = 1))
-
         set.seed(13)
-        model <- xgboost::xgb.train(
-          params,
-          sp_train,
+        model <- xgboost::xgboost(
+          params = params,
+          data = sp_train$data,
+          label = sp_train$target,
           nrounds = nrounds,
           verbose = 0
         )
 
         pred <-
-          suppressMessages(stats::predict(model, sp_test, type = "response"))
-        observed <- test_set[, response]
+          suppressMessages(predict(model, sp_test$data, type = "response"))
+        observed <- sp_test$target
         eval_partial[[j]] <- dplyr::tibble(
           model = "xgb",
           adm_eval(obs = observed, pred = pred)
@@ -181,18 +224,15 @@ fit_abund_xgb <-
 
     # fit final model with all data
     full_train <- list(
-      data = Matrix::Matrix(as.matrix(data[, c(predictors, predictors_f)]), sparse = TRUE),
+      data = stats::model.matrix(~ . - 1, data = data[, c(predictors, predictors_f)]),
       target = data[, response]
-    )
-    full_train <- with(
-      full_train,
-      xgboost::xgb.DMatrix(data, label = target, nthread = 1)
     )
 
     set.seed(13)
-    full_model <- xgboost::xgb.train(
+    full_model <- xgboost::xgboost(
       params = params,
-      data = full_train,
+      data = full_train$data,
+      label = full_train$target,
       nrounds = nrounds,
       verbose = 0
     )

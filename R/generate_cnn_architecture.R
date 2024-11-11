@@ -39,7 +39,7 @@ generate_cnn_architecture <-
            conv_layers_padding = 0,
            number_of_fc_layers = 1,
            fc_layers_size = c(28),
-           pooling = FALSE,
+           pooling = NULL,
            batch_norm = TRUE,
            dropout = FALSE,
            verbose = FALSE) {
@@ -48,8 +48,14 @@ generate_cnn_architecture <-
       stop("Sample dimension is too small for the choosen configuration.")
     }
 
-    if (pooling & !is.numeric(pooling)) {
-      stop("Pooling should be a numeric value.")
+    if (!is.null(pooling)) {
+      if(!is.numeric(pooling)){
+        stop("Pooling should be a numeric value.") 
+      } else if (pooling == 0){
+        warning("Pooling == 0 is ignored.")
+      }
+    } else {
+      pooling <- 0
     }
 
     ##
@@ -83,7 +89,7 @@ generate_cnn_architecture <-
         stop("Sample dimension is too small for the choosen configuration.")
       }
 
-      if (is.numeric(pooling)) {
+      if (pooling > 0) {
         sample_size[[1]] <- res_calculate(
           "layer",
           sample_size[[1]],
@@ -111,7 +117,7 @@ generate_cnn_architecture <-
           sample_size[[2]],
           pooling
         )
-      } else if (!pooling) {
+      } else if (pooling == 0) {
         sample_size[[1]] <- res_calculate(
           "layer",
           sample_size[[1]],
@@ -215,11 +221,11 @@ generate_cnn_architecture <-
         seq <- paste0(seq, "\n      self$bn_conv", i, "() %>%")
       }
 
-      if (is.numeric(pooling)) {
+      if (pooling > 0) {
         seq <- paste0(seq, "\n      nnf_avg_pool2d(", pooling, ") %>%")
       }
 
-      if (dropout & dropout > 0 & dropout < 1 & is.numeric(dropout)) {
+      if (dropout > 0 & dropout < 1 & is.numeric(dropout)) {
         seq <- paste0(seq, "\n      torch::nnf_dropout(p=", dropout, ") %>%")
       }
 

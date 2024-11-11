@@ -33,6 +33,53 @@
 #' @export
 #'
 #' @examples
+#' \dontrun{
+#' require(dplyr)
+#' 
+#' # Database with species abundance and x and y coordinates
+#' data("sppabund")
+#' 
+#' # Extract data for a single species
+#' some_sp <- sppabund %>%
+#'   dplyr::filter(species == "Species one") %>% 
+#'   dplyr::select(-.part2, -.part3)
+#' 
+#' # Explore reponse variables
+#' some_sp$ind_ha %>% range()
+#' some_sp$ind_ha %>% hist()
+#' 
+#' # Here we balance number of absences
+#' some_sp <- 
+#'   balance_dataset(some_sp, response = "ind_ha", absence_ratio=0.2)
+#' 
+#' # Generate a architecture
+#' dnn_arch <- generate_dnn_architecture(
+#'   number_of_features = 3,
+#'   number_of_outputs = 1,
+#'   number_of_hidden_layers = 3,
+#'   hidden_layers_size = c(8, 16, 8),
+#'   batch_norm = TRUE
+#' )
+#' 
+#' # Fit a NET model
+#' mdnn <- fit_abund_dnn(
+#'   data = some_sp,
+#'   response = "ind_ha",
+#'   predictors = c("bio12","elevation","sand"),
+#'   predictors_f = NULL,
+#'   partition = ".part",
+#'   learning_rate = 0.01,
+#'   n_epochs = 10,
+#'   batch_size = 32,
+#'   validation_patience = 2,
+#'   fitting_patience = 5,
+#'   custom_architecture = dnn_arch,
+#'   verbose = TRUE,
+#'   predict_part = TRUE
+#' )
+#' 
+#' mdnn
+#' }
 fit_abund_dnn <-
   function(data,
            response,
@@ -53,6 +100,11 @@ fit_abund_dnn <-
       variables <- dplyr::bind_rows(c(c = predictors, f = predictors_f))
     } else {
       variables <- dplyr::bind_rows(c(c = predictors))
+    }
+    
+    if(!is.null(predictors_f)){
+      warning("Categorical variables aren't available for DNN and will be ignored.")
+      predictors_f <- NULL
     }
 
     # Adequate database

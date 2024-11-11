@@ -35,6 +35,8 @@
 #' @export
 #'
 #' @examples
+#' \dontrun{
+#' }
 tune_abund_gam <-
   function(data,
            response,

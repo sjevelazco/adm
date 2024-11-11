@@ -36,15 +36,24 @@
 #' @examples
 #' \dontrun{
 #' require(dplyr)
+#' 
+#' # Database with species abundance and x and y coordinates
 #' data("sppabund")
+#' 
+#' # Extract data for a single species
 #' some_sp <- sppabund %>%
-#'   filter(species == "Species two")
+#'   dplyr::filter(species == "Species two") %>% 
+#'   dplyr::select(-.part2, -.part3)
 #' 
-#' raf_grid <- expand.grid(
-#'   mtry = c(1,2,3,4),
-#'   ntree = seq(from = 100, to = 1000, by = 100)
-#' )
+#' # Explore reponse variables
+#' some_sp$ind_ha %>% range()
+#' some_sp$ind_ha %>% hist()
 #' 
+#' # Here we balance number of absences
+#' some_sp <- 
+#'   balance_dataset(some_sp, response = "ind_ha", absence_ratio=0.2)
+#' 
+#' # Tune a RAF model
 #' tuned_raf <- tune_abund_raf(
 #'   data = some_sp,
 #'   response = "ind_ha",
@@ -57,10 +66,7 @@
 #'   n_cores = 3
 #' )
 #' 
-#' tuned_raf$model
-#' tuned_raf$performance
-#' tuned_raf$optimal_combination
-#' tuned_raf$all_combinations
+#' tuned_raf
 #' }
 tune_abund_raf <-
   function(data,
