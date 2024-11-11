@@ -53,6 +53,12 @@
 #' some_sp <-
 #'   balance_dataset(some_sp, response = "ind_ha", absence_ratio = 0.2)
 #'
+#' # Grid for Random Forest
+#' raf_grid <- expand.grid(
+#'   mtry = seq(from = 2, to = 3, by = 1),
+#'   ntree = seq(from = 500, to = 1000, by = 100)
+#' )
+#' 
 #' # Tune a RAF model
 #' tuned_raf <- tune_abund_raf(
 #'   data = some_sp,
@@ -79,7 +85,7 @@ tune_abund_raf <-
            grid = NULL,
            metrics = NULL,
            n_cores = 1,
-           verbose = FALSE) {
+           verbose = TRUE) {
     i <- NULL
 
     if (is.null(metrics) |
@@ -124,7 +130,8 @@ tune_abund_raf <-
           partition = partition,
           predict_part = predict_part,
           mtry = grid[i, "mtry"],
-          ntree = grid[i, "ntree"]
+          ntree = grid[i, "ntree"], 
+          verbose = verbose
         )
       l <- list(cbind(grid[i, ], model$performance))
       names(l) <- grid[i, "comb_id"]
@@ -149,7 +156,8 @@ tune_abund_raf <-
         partition = partition,
         predict_part = predict_part,
         mtry = ranked_combinations[[1]][[1, "mtry"]],
-        ntree = ranked_combinations[[1]][[1, "ntree"]]
+        ntree = ranked_combinations[[1]][[1, "ntree"]],
+        verbose = verbose
       )
 
     message(

@@ -75,7 +75,7 @@ tune_abund_net <-
            grid = NULL,
            metrics = NULL,
            n_cores = 1,
-           verbose = FALSE) {
+           verbose = TRUE) {
     i <- NULL
 
     if (is.null(metrics) |
