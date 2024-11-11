@@ -33,7 +33,7 @@ tune_abund_svm(
 
 \item{predict_part}{logical. Save predicted abundance for testing data. Default is FALSE.}
 
-\item{grid}{tibble or data.frame. A dataframe with "kernel", "sigma", "C" as columns and 
+\item{grid}{tibble or data.frame. A dataframe with "kernel", "sigma", "C" as columns and
 its values combinations as rows. If now grid is provided, funcion will create a default grid combining
 the next hyperparameters: C = seq(0.2, 1, by = 0.2), sigma = "automatic", kernel = c("rbfdot", "laplacedot").
 In case one or more hyperparameters are provided, the function will complete the grid with the default values.}
@@ -70,18 +70,18 @@ some_sp <- sppabund \%>\%
 
 svm_grid <- expand.grid(
   sigma = "automatic",
-  C = c(0.5, 1,2),
-  kernel = c("rbfdot","laplacedot")
+  C = c(0.5, 1, 2),
+  kernel = c("rbfdot", "laplacedot")
 )
 
 tuned_svm <- tune_abund_svm(
   data = some_sp,
   response = "ind_ha",
-  predictors = c("bio12","elevation","sand"),
+  predictors = c("bio12", "elevation", "sand"),
   predictors_f = c("eco"),
   partition = ".part",
   predict_part = TRUE,
-  metrics = c("corr_pear","mae"),
+  metrics = c("corr_pear", "mae"),
   grid = svm_grid,
   n_cores = 3
 )

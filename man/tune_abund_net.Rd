@@ -73,11 +73,11 @@ net_grid <- expand.grid(
 tuned_net <- tune_abund_net(
   data = some_sp,
   response = "ind_ha",
-  predictors = c("bio12","elevation","sand"),
+  predictors = c("bio12", "elevation", "sand"),
   predictors_f = c("eco"),
   partition = ".part",
   predict_part = TRUE,
-  metrics = c("corr_pear","mae"),
+  metrics = c("corr_pear", "mae"),
   grid = net_grid,
   n_cores = 3
 )

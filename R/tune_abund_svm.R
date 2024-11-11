@@ -7,7 +7,7 @@
 #' @param fit_formula formula. A formula object with response and predictor variables (e.g. formula(abund ~ temp + precipt + sand + landform)). Note that the variables used here must be consistent with those used in response, predictors, and predictors_f arguments. Default NULL
 #' @param partition character. Column name with training and validation partition groups.
 #' @param predict_part logical. Save predicted abundance for testing data. Default is FALSE.
-#' @param grid tibble or data.frame. A dataframe with "kernel", "sigma", "C" as columns and 
+#' @param grid tibble or data.frame. A dataframe with "kernel", "sigma", "C" as columns and
 #' its values combinations as rows. If now grid is provided, funcion will create a default grid combining
 #' the next hyperparameters: C = seq(0.2, 1, by = 0.2), sigma = "automatic", kernel = c("rbfdot", "laplacedot").
 #' In case one or more hyperparameters are provided, the function will complete the grid with the default values.
@@ -38,30 +38,30 @@
 #' @examples
 #' \dontrun{
 #' require(dplyr)
-#' 
+#'
 #' data("sppabund")
-#' 
+#'
 #' some_sp <- sppabund %>%
 #'   dplyr::filter(species == "Species two")
-#' 
+#'
 #' svm_grid <- expand.grid(
 #'   sigma = "automatic",
-#'   C = c(0.5, 1,2),
-#'   kernel = c("rbfdot","laplacedot")
+#'   C = c(0.5, 1, 2),
+#'   kernel = c("rbfdot", "laplacedot")
 #' )
-#' 
+#'
 #' tuned_svm <- tune_abund_svm(
 #'   data = some_sp,
 #'   response = "ind_ha",
-#'   predictors = c("bio12","elevation","sand"),
+#'   predictors = c("bio12", "elevation", "sand"),
 #'   predictors_f = c("eco"),
 #'   partition = ".part",
 #'   predict_part = TRUE,
-#'   metrics = c("corr_pear","mae"),
+#'   metrics = c("corr_pear", "mae"),
 #'   grid = svm_grid,
 #'   n_cores = 3
 #' )
-#' 
+#'
 #' tuned_svm$model
 #' tuned_svm$performance
 #' tuned_svm$optimal_combination
@@ -98,12 +98,14 @@ tune_abund_svm <-
     } else if (all(c("C", "sigma", "kernel") %in% nms_grid)) {
       message("Using provided grid.")
     } else if (any(!c("C", "sigma", "kernel") %in% nms_grid)) {
-      message("Adding default hyperparameter for: ",
-              paste(names(grid_dict)[!names(grid_dict) %in% nms_grid], collapse = ", "))
-      
+      message(
+        "Adding default hyperparameter for: ",
+        paste(names(grid_dict)[!names(grid_dict) %in% nms_grid], collapse = ", ")
+      )
+
       user_hyper <- names(grid)[which(names(grid_dict) %in% names(grid))]
       default_hyper <- names(grid_dict)[which(!names(grid_dict) %in% user_hyper)]
-      
+
       user_list <- grid_dict[default_hyper]
       for (i in user_hyper) {
         l <- grid[[i]] %>%
@@ -112,9 +114,8 @@ tune_abund_svm <-
         names(l) <- i
         user_list <- append(user_list, l)
       }
-      
+
       grid <- expand.grid(user_list)
-      
     } else {
       stop('Grid expected to be any combination between "C", "sigma" and "kernel" hyperparameters.')
     }

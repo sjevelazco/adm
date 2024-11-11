@@ -22,7 +22,7 @@
 #' \item net: a list of generated architectures.
 #' \item arch: a list of architecture dictionaries.
 #' }
-#' 
+#'
 #' @seealso \code{\link{generate_arch_list}},
 #'  \code{\link{generate_dnn_architecture}}
 #' @export
@@ -43,15 +43,15 @@ generate_cnn_architecture <-
            batch_norm = TRUE,
            dropout = 0,
            verbose = FALSE) {
-    # TODO check documentation of argument of this function dropout and pooling 
+    # TODO check documentation of argument of this function dropout and pooling
     if (any(sample_size < (conv_layers_kernel + conv_layers_padding))) {
       stop("Sample dimension is too small for the choosen configuration.")
     }
 
     if (!is.null(pooling)) {
-      if(!is.numeric(pooling)){
-        stop("Pooling should be a numeric value.") 
-      } else if (pooling == 0){
+      if (!is.numeric(pooling)) {
+        stop("Pooling should be a numeric value.")
+      } else if (pooling == 0) {
         warning("Pooling == 0 is ignored.")
       }
     } else {

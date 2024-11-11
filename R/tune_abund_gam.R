@@ -36,6 +36,7 @@
 #'
 #' @examples
 #' \dontrun{
+#'
 #' }
 tune_abund_gam <-
   function(data,
@@ -102,10 +103,11 @@ tune_abund_gam <-
       # if (grid[i, "discrete"] == 1) {
       #   data_fam[, response] <- round(data[, response])
       # }
-      
-      model <- tryCatch({
-        model <-
-          fit_abund_gam(
+
+      model <- tryCatch(
+        {
+          model <-
+            fit_abund_gam(
               data = data_fam,
               response = response,
               predictors = predictors,
@@ -123,7 +125,7 @@ tune_abund_gam <-
         }
       )
 
-      l <- list(cbind(grid[i, c("comb_id", "family_call", "inter")], model[,"performance"]))
+      l <- list(cbind(grid[i, c("comb_id", "family_call", "inter")], model[, "performance"]))
       names(l) <- grid[i, "comb_id"]
       l
     }

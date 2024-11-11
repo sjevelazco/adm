@@ -56,15 +56,30 @@ Fit and validate Support Vector Machine models
 }
 \examples{
 \dontrun{
+require(terra)
+require(dplyr)
+
+# Database with species abundance and x and y coordinates
 data("sppabund")
 
+# Extract data for a single species
 some_sp <- sppabund \%>\%
-  filter(species == "Species one")
+  dplyr::filter(species == "Species one") \%>\%
+  dplyr::select(-.part2, -.part3)
 
-svm_1 <- fit_abund_svm(
+# Explore reponse variables
+some_sp$ind_ha \%>\% range()
+some_sp$ind_ha \%>\% hist()
+
+# Here we balance number of absences
+some_sp <-
+  balance_dataset(some_sp, response = "ind_ha", absence_ratio = 0.2)
+
+# Fit a SVM model
+msvm <- fit_abund_svm(
   data = some_sp,
   response = "ind_ha",
-  predictors = c("bio12","elevation","sand"),
+  predictors = c("bio12", "elevation", "sand"),
   predictors_f = c("eco"),
   partition = ".part",
   kernel = "rbfdot",
@@ -73,29 +88,6 @@ svm_1 <- fit_abund_svm(
   predict_part = TRUE
 )
 
-svm_1$model
-svm_1$predicted_part
-svm_1$performance_part
-svm_1$performance
-svm_1$predictors
-
-# Using different kernel and C value
-svm_2 <- fit_abund_svm(
-  data = some_sp,
-  response = "ind_ha",
-  predictors = c("bio12","elevation","sand"),
-  predictors_f = c("eco"),
-  partition = ".part",
-  kernel = "laplacedot",
-  sigma = "automatic",
-  C = 2,
-  predict_part = TRUE
-)
-
-svm_2$model
-svm_2$predicted_part
-svm_2$performance_part
-svm_2$performance
-svm_2$predictors
+msvm
 }
 }

@@ -11,8 +11,8 @@
 #' @param batch_size numeric. A batch is a subset of the training set used in a single iteration of the training process. The size of each batch is referred to as the batch size. Default = 32
 #' @param custom_architecture a Torch nn_module_generator object. A neural network architecture to be used instead of the internal default one. Default NULL
 #' @param verbose logical. If FALSE, disables all console messages. Default TRUE
-#' @param validation_patience 
-#' @param fitting_patience 
+#' @param validation_patience
+#' @param fitting_patience
 #'
 #' @importFrom dplyr bind_rows bind_cols pull tibble as_tibble group_by summarise across
 #' @importFrom luz setup set_opt_hparams fit
@@ -35,23 +35,23 @@
 #' @examples
 #' \dontrun{
 #' require(dplyr)
-#' 
+#'
 #' # Database with species abundance and x and y coordinates
 #' data("sppabund")
-#' 
+#'
 #' # Extract data for a single species
 #' some_sp <- sppabund %>%
-#'   dplyr::filter(species == "Species one") %>% 
+#'   dplyr::filter(species == "Species one") %>%
 #'   dplyr::select(-.part2, -.part3)
-#' 
+#'
 #' # Explore reponse variables
 #' some_sp$ind_ha %>% range()
 #' some_sp$ind_ha %>% hist()
-#' 
+#'
 #' # Here we balance number of absences
-#' some_sp <- 
-#'   balance_dataset(some_sp, response = "ind_ha", absence_ratio=0.2)
-#' 
+#' some_sp <-
+#'   balance_dataset(some_sp, response = "ind_ha", absence_ratio = 0.2)
+#'
 #' # Generate a architecture
 #' dnn_arch <- generate_dnn_architecture(
 #'   number_of_features = 3,
@@ -60,12 +60,12 @@
 #'   hidden_layers_size = c(8, 16, 8),
 #'   batch_norm = TRUE
 #' )
-#' 
+#'
 #' # Fit a NET model
 #' mdnn <- fit_abund_dnn(
 #'   data = some_sp,
 #'   response = "ind_ha",
-#'   predictors = c("bio12","elevation","sand"),
+#'   predictors = c("bio12", "elevation", "sand"),
 #'   predictors_f = NULL,
 #'   partition = ".part",
 #'   learning_rate = 0.01,
@@ -77,7 +77,7 @@
 #'   verbose = TRUE,
 #'   predict_part = TRUE
 #' )
-#' 
+#'
 #' mdnn
 #' }
 fit_abund_dnn <-
@@ -101,8 +101,8 @@ fit_abund_dnn <-
     } else {
       variables <- dplyr::bind_rows(c(c = predictors))
     }
-    
-    if(!is.null(predictors_f)){
+
+    if (!is.null(predictors_f)) {
       warning("Categorical variables aren't available for DNN and will be ignored.")
       predictors_f <- NULL
     }

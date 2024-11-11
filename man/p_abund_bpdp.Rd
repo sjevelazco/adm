@@ -28,7 +28,7 @@ by any function from the fit_abund_ or tune_abund_ function families}
 \item{predictors}{character. Vector of predictor name(s) to calculate partial dependence plots.
 If NULL all predictors will be used. Default NULL}
 
-\item{resolution}{numeric. Number of equally spaced points at which to predict abundance 
+\item{resolution}{numeric. Number of equally spaced points at which to predict abundance
 values for continuous predictors. Default 50}
 
 \item{training_data}{data.frame or tibble. Database with response and predictor values used
