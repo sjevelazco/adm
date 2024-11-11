@@ -49,7 +49,7 @@ tune_abund_gam <-
            grid = NULL,
            metrics = NULL,
            n_cores = 1,
-           verbose = FALSE) {
+           verbose = TRUE) {
     . <- discrete <- i <- performance <- NULL
 
     if (is.null(metrics) |

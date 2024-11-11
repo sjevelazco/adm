@@ -99,7 +99,7 @@ tune_abund_glm <-
            grid = NULL,
            metrics = NULL,
            n_cores = 1,
-           verbose = FALSE) {
+           verbose = TRUE) {
     . <- poly <- inter_order <- distribution <- discrete <- i <- performance <- NULL
 
     if (is.null(metrics) |
