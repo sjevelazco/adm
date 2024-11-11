@@ -15,9 +15,9 @@ generate_cnn_architecture(
   conv_layers_padding = 0,
   number_of_fc_layers = 1,
   fc_layers_size = c(28),
-  pooling = FALSE,
+  pooling = NULL,
   batch_norm = TRUE,
-  dropout = FALSE,
+  dropout = 0,
   verbose = FALSE
 )
 }
@@ -42,11 +42,11 @@ generate_cnn_architecture(
 
 \item{fc_layers_size}{vector. Specifies the size of the fully connected layers. Default 14.}
 
-\item{pooling}{logical. Specifies whether pooling is included in the architecture. Default FALSE.}
+\item{pooling}{numeric. Specifies whether pooling is included in the architecture. Default NULL}
 
 \item{batch_norm}{logical. Specifies whether batch normalization is included in the architecture. Default TRUE.}
 
-\item{dropout}{logical. Specifies whether dropout is included in the architecture. Default FALSE.}
+\item{dropout}{numeric. Default 0.}
 
 \item{verbose}{logical. Specifies whether the architecture should be printed. Default FALSE.}
 }
