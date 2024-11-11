@@ -7,7 +7,9 @@
 #' @param fit_formula formula. A formula object with response and predictor variables (e.g. formula(abund ~ temp + precipt + sand + landform)). Note that the variables used here must be consistent with those used in response, predictors, and predictors_f arguments. Default NULL
 #' @param partition character. Column name with training and validation partition groups.
 #' @param predict_part logical. Save predicted abundance for testing data. Default = FALSE
-#' @param grid tibble or data.frame. A dataframe with "mtry" and "ntree" as columns and its values combinations as rows.
+#' @param grid tibble or data.frame. A dataframe with "mtry" and "ntree" as columns and its values combinations as rows. If no grid is provided, function will create a default grid combining the next hyperparameters:
+#' mtry = seq(2, length(predictors), by = 1), ntree = seq(500, 1000, by = 100).
+#' In case one or more hyperparameters are provided, the function will complete the grid with the default values.
 #' @param metrics character. Vector with one or more metrics from c("corr_spear","corr_pear","mae","pdisp","inter","slope").
 #' @param n_cores numeric. Number of cores used in parallel processing.
 #' @param verbose logical. If FALSE, disables all console messages. Default TRUE
@@ -40,12 +42,12 @@
 #' # Database with species abundance and x and y coordinates
 #' data("sppabund")
 #'
-#' # Extract data for a single species
+#' # Select data for a single species
 #' some_sp <- sppabund %>%
 #'   dplyr::filter(species == "Species two") %>%
 #'   dplyr::select(-.part2, -.part3)
 #'
-#' # Explore reponse variables
+#' # Explore response variables
 #' some_sp$ind_ha %>% range()
 #' some_sp$ind_ha %>% hist()
 #'
@@ -58,7 +60,7 @@
 #'   mtry = seq(from = 2, to = 3, by = 1),
 #'   ntree = seq(from = 500, to = 1000, by = 100)
 #' )
-#' 
+#'
 #' # Tune a RAF model
 #' tuned_raf <- tune_abund_raf(
 #'   data = some_sp,
@@ -130,7 +132,7 @@ tune_abund_raf <-
           partition = partition,
           predict_part = predict_part,
           mtry = grid[i, "mtry"],
-          ntree = grid[i, "ntree"], 
+          ntree = grid[i, "ntree"],
           verbose = verbose
         )
       l <- list(cbind(grid[i, ], model$performance))

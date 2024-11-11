@@ -5,10 +5,14 @@
 #' @param predictors character. Vector with the column names of quantitative predictor variables (i.e. continuous variables). Usage predictors = c("temp", "precipt", "sand")
 #' @param predictors_f character. Vector with the column names of qualitative predictor variables (i.e. ordinal or nominal variables type). Usage predictors_f = c("landform")
 #' @param fit_formula formula. A formula object with response and predictor variables (e.g. formula(abund ~ temp + precipt + sand + landform)). Note that the variables used here must be consistent with those used in response, predictors, and predictors_f arguments. Default NULL
+#' @param sigma_formula formula. formula for fitting a model to the nu parameter. Usage sigma_formula = ~ precipt + temp
+#' @param nu_formula formula. formula for fitting a model to the nu parameter. Usage nu_formula = ~ precipt + temp
+#' @param tau_formula formula. formula for fitting a model to the tau parameter. Usage tau_formula = ~ precipt + temp
 #' @param partition character. Column name with training and validation partition groups.
 #' @param predict_part logical. Save predicted abundance for testing data. Default = FALSE
-#' @param grid tibble or data.frame. A dataframe with "family_call", "inter" as columns and its values combinations as rows.
-#' @param metrics character. Vector with one or more metrics from c("corr_spear","corr_pear","mae","pdisp","inter","slope").
+#' @param grid tibble or data.frame. A dataframe with 'distribution', 'inter' as columns and its values combinations as rows. If no grid is provided, function will create a default grid combining the next hyperparameters: distribution = all families selected by family_selector, inter = "automatic". In case one or more hyperparameters are provided, the function will complete the grid with the default values.
+#'
+#' @param metrics character. Vector with one or more metrics from c("corr_spear","corr_pear","mae","pdisp","inter","slope")
 #' @param n_cores numeric. Number of cores used in parallel processing.
 #' @param verbose logical. If FALSE, disables all console messages. Default TRUE
 #'
@@ -36,7 +40,14 @@
 #'
 #' @examples
 #' \dontrun{
+#' require(dplyr)
 #'
+#' data("sppabund")
+#'
+#' # Select data for a single species
+#' some_sp <- sppabund %>%
+#'   dplyr::filter(species == "Species two") %>%
+#'   dplyr::select(-.part2, -.part3)
 #' }
 tune_abund_gam <-
   function(data,
@@ -44,6 +55,9 @@ tune_abund_gam <-
            predictors,
            predictors_f = NULL,
            fit_formula = NULL,
+           sigma_formula = ~1,
+           nu_formula = ~1,
+           tau_formula = ~1,
            partition,
            predict_part = FALSE,
            grid = NULL,
@@ -68,17 +82,17 @@ tune_abund_gam <-
     # making grid
     if (is.null(grid)) {
       message("Families not provided. Picking recommended families to fit data.")
-      family_call <- family_selector(data, response)$family_call
+      distribution <- family_selector(data, response)$distribution
       inter <- "automatic"
-      grid <- expand.grid(family_call = family_call, inter = inter)
-      grid <- dplyr::left_join(grid, families_bank, by = "family_call") %>%
-        dplyr::select(family_call, discrete, inter)
-    } else if (is.data.frame(grid) & all(names(grid) %in% c("family_call", "inter")) & all(grid$family_call %in% families_bank$family_call)) {
+      grid <- expand.grid(distribution = distribution, inter = inter)
+      grid <- dplyr::left_join(grid, families_bank, by = "distribution") %>%
+        dplyr::select(distribution, discrete, inter)
+    } else if (is.data.frame(grid) & all(names(grid) %in% c("distribution", "inter")) & all(grid$distribution %in% families_bank$distribution)) {
       message("Testing with provided grid.")
-      grid <- dplyr::left_join(grid, families_bank, by = "family_call") %>%
-        dplyr::select(family_call, discrete, inter)
+      grid <- dplyr::left_join(grid, families_bank, by = "distribution") %>%
+        dplyr::select(distribution, discrete, inter)
     } else {
-      stop("Grid names expected to be 'family_call' and 'inter'.")
+      stop("Grid names expected to be 'distribution' and 'inter'.")
     }
 
     comb_id <- paste("comb_", 1:nrow(grid), sep = "")
@@ -115,7 +129,7 @@ tune_abund_gam <-
               fit_formula = fit_formula,
               partition = partition,
               predict_part = predict_part,
-              distribution = grid[i, "family_call"],
+              distribution = grid[i, "distribution"],
               inter = grid[i, "inter"]
             )
         },
@@ -125,7 +139,7 @@ tune_abund_gam <-
         }
       )
 
-      l <- list(cbind(grid[i, c("comb_id", "family_call", "inter")], model[, "performance"]))
+      l <- list(cbind(grid[i, c("comb_id", "distribution", "inter")], model[, "performance"]))
       names(l) <- grid[i, "comb_id"]
       l
     }
@@ -148,9 +162,9 @@ tune_abund_gam <-
 
     # fit final model
 
-    choosen_family <- ranked_combinations[[1]][1, "family_call"]
+    choosen_family <- ranked_combinations[[1]][1, "distribution"]
     full_data <- data
-    if (families_bank[which(families_bank$family_call == choosen_family), "discrete"] == 1) {
+    if (families_bank[which(families_bank$distribution == choosen_family), "discrete"] == 1) {
       full_data[, "ind_ha"] <- round(full_data[, "ind_ha"])
     }
 

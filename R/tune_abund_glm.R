@@ -5,9 +5,15 @@
 #' @param predictors character. Vector with the column names of quantitative predictor variables (i.e. continuous variables). Usage predictors = c("temp", "precipt", "sand")
 #' @param predictors_f character. Vector with the column names of qualitative predictor variables (i.e. ordinal or nominal variables type). Usage predictors_f = c("landform")
 #' @param fit_formula formula. A formula object with response and predictor variables (e.g. formula(abund ~ temp + precipt + sand + landform)). Note that the variables used here must be consistent with those used in response, predictors, and predictors_f arguments. Default NULL
+#' @param sigma_formula formula. formula for fitting a model to the nu parameter. Usage sigma_formula = ~ precipt + temp
+#' @param nu_formula formula. formula for fitting a model to the nu parameter. Usage nu_formula = ~ precipt + temp
+#' @param tau_formula formula. formula for fitting a model to the tau parameter. Usage tau_formula = ~ precipt + temp
 #' @param partition character. Column name with training and validation partition groups.
 #' @param predict_part logical. Save predicted abundance for testing data. Default = FALSE
-#' @param grid tibble or data.frame. A dataframe with "distribution", "poly", "inter_order" as columns and its values combinations as rows.
+#' @param grid tibble or data.frame. A dataframe with "distribution", "poly", "inter_order" as columns and its values combinations as rows. If no grid is provided, function will create a default grid combining the next hyperparameters:
+#' poly = c(1, 2, 3),
+#' inter_order = c(0, 1, 2),
+#' distribution = families_hp$family_call. In case one or more hyperparameters are provided, the function will complete the grid with the default values.
 #' @param metrics character. Vector with one or more metrics from c("corr_spear","corr_pear","mae","pdisp","inter","slope").
 #' @param n_cores numeric. Number of cores used in parallel processing.
 #' @param verbose logical. If FALSE, disables all console messages. Default TRUE
@@ -43,12 +49,12 @@
 #' # Database with species abundance and x and y coordinates
 #' data("sppabund")
 #'
-#' # Extract data for a single species
+#' # Select data for a single species
 #' some_sp <- sppabund %>%
 #'   dplyr::filter(species == "Species one") %>%
 #'   dplyr::select(-.part2, -.part3)
 #'
-#' # Explore reponse variables
+#' # Explore response variables
 #' some_sp$ind_ha %>% range()
 #' some_sp$ind_ha %>% hist()
 #'
@@ -100,7 +106,7 @@ tune_abund_glm <-
            metrics = NULL,
            n_cores = 1,
            verbose = TRUE) {
-    . <- poly <- inter_order <- distribution <- discrete <- i <- performance <- NULL
+    . <- poly <- inter_order <- distribution <- discrete <- i <- performance <- family_call <- NULL
 
     if (is.null(metrics) |
       !all(metrics %in% c("corr_spear", "corr_pear", "mae", "inter", "slope", "pdisp"))) {

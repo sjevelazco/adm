@@ -16,7 +16,7 @@ tune_abund_gbm(
   distribution,
   metrics = NULL,
   n_cores = 1,
-  verbose = FALSE
+  verbose = TRUE
 )
 }
 \arguments{
@@ -34,7 +34,11 @@ tune_abund_gbm(
 
 \item{predict_part}{logical. Save predicted abundance for testing data. Default = FALSE}
 
-\item{grid}{tibble or data.frame. A dataframe with "n.trees", "interaction.depth", "n.minobsinnode" and "shrinkage" as columns and its values as rows.}
+\item{grid}{tibble or data.frame. A dataframe with "n.trees", "interaction.depth", "n.minobsinnode" and "shrinkage" as columns and its values as rows. If no grid is provided, function will create a default grid combining the next hyperparameters:
+n.trees = c(100, 200, 300),
+interaction.depth = c(1, 2, 3),
+n.minobsinnode = c(5, 10, 15),
+shrinkage = seq(0.001, 0.1, by = 0.05). In case one or more hyperparameters are provided, the function will complete the grid with the default values.}
 
 \item{distribution}{character. A string specifying the distribution to be used. See gbm::gbm documentation for details.}
 
@@ -66,9 +70,12 @@ require(dplyr)
 
 data("sppabund")
 
+# Select data for a single species
 some_sp <- sppabund \%>\%
-  filter(species == "Species two")
+  dplyr::filter(species == "Species two") \%>\%
+  dplyr::select(-.part2, -.part3)
 
+# Grid for Gradient Boosting Machines
 gbm_grid <- expand.grid(
   interaction.depth = c(2, 4, 8, 16),
   n.trees = c(100, 500, 1000),
