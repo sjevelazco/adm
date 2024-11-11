@@ -90,16 +90,20 @@ tune_abund_gam <-
     progress <- function(n) utils::setTxtProgressBar(pb, n)
     opts <- list(progress = progress)
 
-    hyper_combinations <- foreach::foreach(i = 1:nrow(grid), .options.snow = opts, .export = c("fit_abund_gam", "adm_eval"), .packages = c("dplyr", "gamlss")) %dopar% {
+    hyper_combinations <- foreach::foreach(
+      i = 1:nrow(grid),
+      .options.snow = opts,
+      .export = c("fit_abund_gam", "adm_eval"),
+      .packages = c("dplyr", "gamlss")
+    ) %dopar% {
       data_fam <- data
-      if (grid[i, "discrete"] == 1) {
-        data_fam[, response] <- round(data[, response])
-      }
-
-      model <- tryCatch(
-        {
-          model <-
-            fit_abund_gam(
+      # if (grid[i, "discrete"] == 1) {
+      #   data_fam[, response] <- round(data[, response])
+      # }
+      
+      model <- tryCatch({
+        model <-
+          fit_abund_gam(
               data = data_fam,
               response = response,
               predictors = predictors,
