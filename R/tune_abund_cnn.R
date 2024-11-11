@@ -15,7 +15,7 @@
 #' n_epochs = 10
 #' learning_rate = seq(from = 0.1, to = 0.2, by = 0.1)
 #' validation_patience = 2
-#' fitting_patience = 5. In case one or more hyperparameters are provided, the function will complete the grid with the default values.   
+#' fitting_patience = 5. In case one or more hyperparameters are provided, the function will complete the grid with the default values.
 #' @param architectures list or character. A list object containing a list of architectures (nn_modules_generators from torch), called "arch_list", and a list of matrices describing each architecture, called ("arch_dict"); use generate_arch_list function to create it. It's also possible to use "fit_intern", what will construct the default neural network architecture of fit_abund_cnn. If NULL, a list of architectures will be generated. Default NULL
 #' @param metrics character. Vector with one or more metrics from c("corr_spear","corr_pear","mae","pdisp","inter","slope").
 #' @param n_cores numeric. Number of cores used in parallel processing.

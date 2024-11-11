@@ -11,7 +11,7 @@
 #' @param partition character. Column name with training and validation partition groups.
 #' @param predict_part logical. Save predicted abundance for testing data. Default = FALSE
 #' @param grid tibble or data.frame. A dataframe with 'distribution', 'inter' as columns and its values combinations as rows. If no grid is provided, function will create a default grid combining the next hyperparameters: distribution = all families selected by family_selector, inter = "automatic". In case one or more hyperparameters are provided, the function will complete the grid with the default values.
-#' 
+#'
 #' @param metrics character. Vector with one or more metrics from c("corr_spear","corr_pear","mae","pdisp","inter","slope")
 #' @param n_cores numeric. Number of cores used in parallel processing.
 #' @param verbose logical. If FALSE, disables all console messages. Default TRUE
@@ -40,7 +40,14 @@
 #'
 #' @examples
 #' \dontrun{
+#' require(dplyr)
 #'
+#' data("sppabund")
+#'
+#' # Select data for a single species
+#' some_sp <- sppabund %>%
+#'   dplyr::filter(species == "Species two") %>%
+#'   dplyr::select(-.part2, -.part3)
 #' }
 tune_abund_gam <-
   function(data,

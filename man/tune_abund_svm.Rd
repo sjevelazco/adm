@@ -35,9 +35,9 @@ tune_abund_svm(
 
 \item{grid}{tibble or data.frame. A dataframe with "kernel", "sigma", "C" as columns and
 its values combinations as rows. If now grid is provided, funcion will create a default grid combining
-the next hyperparameters: 
-C = seq(0.2, 1, by = 0.2), 
-sigma = "automatic", 
+the next hyperparameters:
+C = seq(0.2, 1, by = 0.2),
+sigma = "automatic",
 kernel = c("rbfdot", "laplacedot").
 In case one or more hyperparameters are provided, the function will complete the grid with the default values.}
 
@@ -68,9 +68,12 @@ require(dplyr)
 
 data("sppabund")
 
+# Select data for a single species
 some_sp <- sppabund \%>\%
-  dplyr::filter(species == "Species two")
+  dplyr::filter(species == "Species two") \%>\%
+  dplyr::select(-.part2, -.part3)
 
+# Explore repose variables
 svm_grid <- expand.grid(
   sigma = "automatic",
   C = c(0.5, 1, 2),

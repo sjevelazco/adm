@@ -31,16 +31,16 @@ tune_abund_xgb(
 
 \item{predict_part}{logical. Save predicted abundance for testing data. Default = FALSE}
 
-\item{grid}{tibble or data.frame. A dataframe with "n.trees", "interaction.depth", "n.minobsinnode" and "shrinkage" as columns and its values combinations as rows. If no grid is provided, function will 
-create a default grid combining the next hyperparameters: 
+\item{grid}{tibble or data.frame. A dataframe with "n.trees", "interaction.depth", "n.minobsinnode" and "shrinkage" as columns and its values combinations as rows. If no grid is provided, function will
+create a default grid combining the next hyperparameters:
 nrounds = c(100, 200, 300),
 max_depth = c(4, 6, 8),
 eta = c(0.2, 0.4, 0.5),
 gamma = c(1, 5, 10),
 colsample_bytree = c(0.5, 1, 2),
 min_child_weight = c(0.5, 1, 2),
-subsample = c(0.5, 0.75, 1). 
-In case one or more hyperparameters are provided, the function will complete 
+subsample = c(0.5, 0.75, 1).
+In case one or more hyperparameters are provided, the function will complete
 the grid with the default values.}
 
 \item{objective}{character. The learning task and the corresponding learning objective. Default is "reg:squarederror", regression with squared loss.}

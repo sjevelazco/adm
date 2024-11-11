@@ -25,7 +25,7 @@ test_that("tune_abund_raf", {
     grid = raf_grid,
     n_cores = 1
   )
-  
+
   dim(tuned_raf$optimal_combination) %>% expect_equal(c(1, 16))
   expect_true(tuned_raf$performance$corr_spear_mean < 0.5)
 })
@@ -42,7 +42,7 @@ test_that("test errors", {
     grid = raf_grid,
     n_cores = 1
   ))
-  
+
   expect_error(tune_abund_raf(
     data = some_sp,
     response = "ind_ha",
@@ -57,7 +57,6 @@ test_that("test errors", {
     ),
     n_cores = 1
   ))
-  
 })
 
 test_that("incomplete gird", {
@@ -70,11 +69,12 @@ test_that("incomplete gird", {
     predict_part = TRUE,
     metrics = c("corr_pear", "mae"),
     grid = expand.grid(
-      mtry = seq(from = 2, to = 3, by = 1)),
+      mtry = seq(from = 2, to = 3, by = 1)
+    ),
     n_cores = 1,
     verbose = FALSE
   )
-  
+
   length(tuned_raf) %>% expect_equal(7)
 })
 
@@ -88,9 +88,9 @@ test_that("message", {
     predict_part = TRUE,
     metrics = c("corr_pear", "mae"),
     grid = expand.grid(
-      mtry = seq(from = 2, to = 3, by = 1)),
+      mtry = seq(from = 2, to = 3, by = 1)
+    ),
     n_cores = 1,
     verbose = FALSE
   ))
 })
-

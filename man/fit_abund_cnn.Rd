@@ -51,8 +51,6 @@ fit_abund_cnn(
 
 \item{batch_size}{numeric. A batch is a subset of the training set used in a single iteration of the training process. The size of each batch is referred to as the batch size. Default = 32}
 
-\item{validation_patience}{}
-
 \item{fitting_patience}{}
 
 \item{custom_architecture}{a Torch nn_module_generator object. A neural network architecture to be used instead of the internal default one. Default NULL}

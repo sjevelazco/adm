@@ -43,7 +43,6 @@ test_that("test errors", {
     grid = svm_grid,
     n_cores = 1
   ))
-
 })
 
 test_that("message", {
@@ -58,6 +57,5 @@ test_that("message", {
     grid = svm_grid,
     n_cores = 1,
     verbose = FALSE
-  
   ))
 })

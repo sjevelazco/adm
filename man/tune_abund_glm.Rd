@@ -77,12 +77,12 @@ require(gamlss)
 # Database with species abundance and x and y coordinates
 data("sppabund")
 
-# Extract data for a single species
+# Select data for a single species
 some_sp <- sppabund \%>\%
   dplyr::filter(species == "Species one") \%>\%
   dplyr::select(-.part2, -.part3)
 
-# Explore reponse variables
+# Explore response variables
 some_sp$ind_ha \%>\% range()
 some_sp$ind_ha \%>\% hist()
 

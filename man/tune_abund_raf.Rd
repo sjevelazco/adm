@@ -33,8 +33,8 @@ tune_abund_raf(
 
 \item{predict_part}{logical. Save predicted abundance for testing data. Default = FALSE}
 
-\item{grid}{tibble or data.frame. A dataframe with "mtry" and "ntree" as columns and its values combinations as rows. If no grid is provided, function will create a default grid combining the next hyperparameters: 
-mtry = seq(2, length(predictors), by = 1), ntree = seq(500, 1000, by = 100). 
+\item{grid}{tibble or data.frame. A dataframe with "mtry" and "ntree" as columns and its values combinations as rows. If no grid is provided, function will create a default grid combining the next hyperparameters:
+mtry = seq(2, length(predictors), by = 1), ntree = seq(500, 1000, by = 100).
 In case one or more hyperparameters are provided, the function will complete the grid with the default values.}
 
 \item{metrics}{character. Vector with one or more metrics from c("corr_spear","corr_pear","mae","pdisp","inter","slope").}
@@ -65,12 +65,12 @@ require(dplyr)
 # Database with species abundance and x and y coordinates
 data("sppabund")
 
-# Extract data for a single species
+# Select data for a single species
 some_sp <- sppabund \%>\%
   dplyr::filter(species == "Species two") \%>\%
   dplyr::select(-.part2, -.part3)
 
-# Explore reponse variables
+# Explore response variables
 some_sp$ind_ha \%>\% range()
 some_sp$ind_ha \%>\% hist()
 

@@ -67,6 +67,13 @@ Fit and validate Generalized Additive Models with exploration of hyper-parameter
 }
 \examples{
 \dontrun{
+require(dplyr)
 
+data("sppabund")
+
+# Select data for a single species
+some_sp <- sppabund \%>\%
+  dplyr::filter(species == "Species two") \%>\%
+  dplyr::select(-.part2, -.part3)
 }
 }

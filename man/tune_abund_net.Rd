@@ -33,10 +33,10 @@ tune_abund_net(
 
 \item{predict_part}{logical. Save predicted abundance for testing data. Default = FALSE}
 
-\item{grid}{tibble or data.frame. A dataframe with "size" and "decay" as columns and its values 
-combinations as rows. If no grid is provided, function will create a default grid combining the 
-next hyperparameters: size = seq(from = length(c(predictors, predictors_f)), to = 50, by = 2), 
-decay = seq(from = 0, to = 0.9, by = 0.1). In case one or 
+\item{grid}{tibble or data.frame. A dataframe with "size" and "decay" as columns and its values
+combinations as rows. If no grid is provided, function will create a default grid combining the
+next hyperparameters: size = seq(from = length(c(predictors, predictors_f)), to = 50, by = 2),
+decay = seq(from = 0, to = 0.9, by = 0.1). In case one or
 more hyperparameters are provided, the function will complete the grid with the default values.}
 
 \item{metrics}{character. Vector with one or more metrics from c("corr_spear","corr_pear","mae","pdisp","inter","slope").}
@@ -66,9 +66,12 @@ require(dplyr)
 
 data("sppabund")
 
+# Select data for a single species
 some_sp <- sppabund \%>\%
-  filter(species == "Species two")
+  dplyr::filter(species == "Species two") \%>\%
+  dplyr::select(-.part2, -.part3)
 
+# Explore response variables
 net_grid <- expand.grid(
   size = seq(from = 8, to = 32, by = 6),
   decay = seq(from = 0, to = 0.4, by = 0.01)

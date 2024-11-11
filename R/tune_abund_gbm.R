@@ -44,9 +44,12 @@
 #'
 #' data("sppabund")
 #'
+#' # Select data for a single species
 #' some_sp <- sppabund %>%
-#'   filter(species == "Species two")
+#'   dplyr::filter(species == "Species two") %>%
+#'   dplyr::select(-.part2, -.part3)
 #'
+#' # Grid for Gradient Boosting Machines
 #' gbm_grid <- expand.grid(
 #'   interaction.depth = c(2, 4, 8, 16),
 #'   n.trees = c(100, 500, 1000),
