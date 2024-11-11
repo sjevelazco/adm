@@ -114,10 +114,6 @@
 <dd><p>numeric. A batch is a subset of the training set used in a single iteration of the training process. The size of each batch is referred to as the batch size. Default = 32</p></dd>
 
 
-<dt id="arg-validation-patience">validation_patience<a class="anchor" aria-label="anchor" href="#arg-validation-patience"></a></dt>
-<dd></dd>
-
-
 <dt id="arg-fitting-patience">fitting_patience<a class="anchor" aria-label="anchor" href="#arg-fitting-patience"></a></dt>
 <dd></dd>
 
@@ -139,6 +135,74 @@
 <li><p>predicted_part: Observed and predicted abundance for each test partition.</p></li>
 </ul></div>
 
+    <div class="section level2">
+    <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
+<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="va"><a href="https://rspatial.org/" class="external-link">terra</a></span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Database with species abundance and x and y coordinates</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"sppabund"</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Extract data for a single species</span></span></span>
+<span class="r-in"><span><span class="va">some_sp</span> <span class="op">&lt;-</span> <span class="va">sppabund</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span></span>
+<span class="r-in"><span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">species</span> <span class="op">==</span> <span class="st">"Species one"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span></span>
+<span class="r-in"><span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="op">-</span><span class="va">.part2</span>, <span class="op">-</span><span class="va">.part3</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Explore reponse variables</span></span></span>
+<span class="r-in"><span><span class="va">some_sp</span><span class="op">$</span><span class="va">ind_ha</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/range.html" class="external-link">range</a></span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">some_sp</span><span class="op">$</span><span class="va">ind_ha</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rspatial.github.io/terra/reference/hist.html" class="external-link">hist</a></span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Here we balance number of absences</span></span></span>
+<span class="r-in"><span><span class="va">some_sp</span> <span class="op">&lt;-</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="balance_dataset.html">balance_dataset</a></span><span class="op">(</span><span class="va">some_sp</span>, response <span class="op">=</span> <span class="st">"ind_ha"</span>, absence_ratio <span class="op">=</span> <span class="fl">0.2</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">envar</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"external/envar.tif"</span>, package <span class="op">=</span> <span class="st">"adm"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">envar</span> <span class="op">&lt;-</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/rast.html" class="external-link">rast</a></span><span class="op">(</span><span class="va">envar</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Generate an architecture</span></span></span>
+<span class="r-in"><span><span class="va">cnn_arch</span> <span class="op">&lt;-</span> <span class="fu"><a href="generate_cnn_architecture.html">generate_cnn_architecture</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  number_of_features <span class="op">=</span> <span class="fl">3</span>,</span></span>
+<span class="r-in"><span>  number_of_outputs <span class="op">=</span> <span class="fl">1</span>,</span></span>
+<span class="r-in"><span>  sample_size <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">11</span>, <span class="fl">11</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  number_of_conv_layers <span class="op">=</span> <span class="fl">2</span>,</span></span>
+<span class="r-in"><span>  conv_layers_size <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">14</span>, <span class="fl">28</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  conv_layers_kernel <span class="op">=</span> <span class="fl">3</span>,</span></span>
+<span class="r-in"><span>  conv_layers_stride <span class="op">=</span> <span class="fl">1</span>,</span></span>
+<span class="r-in"><span>  conv_layers_padding <span class="op">=</span> <span class="fl">0</span>,</span></span>
+<span class="r-in"><span>  number_of_fc_layers <span class="op">=</span> <span class="fl">1</span>,</span></span>
+<span class="r-in"><span>  fc_layers_size <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">28</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  pooling <span class="op">=</span> <span class="cn">NULL</span>,</span></span>
+<span class="r-in"><span>  batch_norm <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
+<span class="r-in"><span>  dropout <span class="op">=</span> <span class="fl">0</span>,</span></span>
+<span class="r-in"><span>  verbose <span class="op">=</span> <span class="cn">T</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Fit a CNN model</span></span></span>
+<span class="r-in"><span><span class="va">mcnn</span> <span class="op">&lt;-</span> <span class="fu">fit_abund_cnn</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  data <span class="op">=</span> <span class="va">some_sp</span>,</span></span>
+<span class="r-in"><span>  response <span class="op">=</span> <span class="st">"ind_ha"</span>,</span></span>
+<span class="r-in"><span>  predictors <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"bio12"</span>, <span class="st">"elevation"</span>, <span class="st">"sand"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  predictors_f <span class="op">=</span> <span class="cn">NULL</span>,</span></span>
+<span class="r-in"><span>  partition <span class="op">=</span> <span class="st">".part"</span>,</span></span>
+<span class="r-in"><span>  x <span class="op">=</span> <span class="st">"x"</span>,</span></span>
+<span class="r-in"><span>  y <span class="op">=</span> <span class="st">"y"</span>,</span></span>
+<span class="r-in"><span>  rasters <span class="op">=</span> <span class="va">envar</span>,</span></span>
+<span class="r-in"><span>  sample_size <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">11</span>, <span class="fl">11</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  learning_rate <span class="op">=</span> <span class="fl">0.01</span>,</span></span>
+<span class="r-in"><span>  n_epochs <span class="op">=</span> <span class="fl">100</span>,</span></span>
+<span class="r-in"><span>  batch_size <span class="op">=</span> <span class="fl">32</span>,</span></span>
+<span class="r-in"><span>  validation_patience <span class="op">=</span> <span class="fl">2</span>,</span></span>
+<span class="r-in"><span>  fitting_patience <span class="op">=</span> <span class="fl">5</span>,</span></span>
+<span class="r-in"><span>  custom_architecture <span class="op">=</span> <span class="va">cnn_arch</span>,</span></span>
+<span class="r-in"><span>  verbose <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
+<span class="r-in"><span>  predict_part <span class="op">=</span> <span class="cn">TRUE</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">mcnn</span></span></span>
+<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
+</code></pre></div>
+    </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
 

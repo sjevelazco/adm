@@ -48,9 +48,9 @@
 <span>  conv_layers_padding <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  number_of_fc_layers <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  fc_layers_size <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">28</span><span class="op">)</span>,</span>
-<span>  pooling <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  pooling <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  batch_norm <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  dropout <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  dropout <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  verbose <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -100,7 +100,7 @@
 
 
 <dt id="arg-pooling">pooling<a class="anchor" aria-label="anchor" href="#arg-pooling"></a></dt>
-<dd><p>logical. Specifies whether pooling is included in the architecture. Default FALSE.</p></dd>
+<dd><p>numeric. Specifies whether pooling is included in the architecture. Default NULL</p></dd>
 
 
 <dt id="arg-batch-norm">batch_norm<a class="anchor" aria-label="anchor" href="#arg-batch-norm"></a></dt>
@@ -108,7 +108,7 @@
 
 
 <dt id="arg-dropout">dropout<a class="anchor" aria-label="anchor" href="#arg-dropout"></a></dt>
-<dd><p>logical. Specifies whether dropout is included in the architecture. Default FALSE.</p></dd>
+<dd><p>numeric. Default 0.</p></dd>
 
 
 <dt id="arg-verbose">verbose<a class="anchor" aria-label="anchor" href="#arg-verbose"></a></dt>

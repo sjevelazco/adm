@@ -48,7 +48,7 @@
 <span>  architectures <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  metrics <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  n_cores <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  verbose <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>  verbose <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -81,7 +81,12 @@
 
 
 <dt id="arg-grid">grid<a class="anchor" aria-label="anchor" href="#arg-grid"></a></dt>
-<dd><p>tibble or data.frame. A dataframe with "batch_size", "n_epochs", "learning_rate" as columns and its values combinations as rows.</p></dd>
+<dd><p>tibble or data.frame. A dataframe with "batch_size", "n_epochs", "learning_rate" as columns and its values combinations as rows. If no grid is provided, function will create a default grid combining the next hyperparameters:
+batch_size = 2^seq(4, 6)
+n_epochs = 10
+learning_rate = seq(from = 0.1, to = 0.2, by = 0.1)
+validation_patience = 2
+fitting_patience = 5. In case one or more hyperparameters are provided, the function will complete the grid with the default values.</p></dd>
 
 
 <dt id="arg-architectures">architectures<a class="anchor" aria-label="anchor" href="#arg-architectures"></a></dt>

@@ -43,12 +43,15 @@
 <span>  <span class="va">predictors</span>,</span>
 <span>  predictors_f <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  fit_formula <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  sigma_formula <span class="op">=</span> <span class="op">~</span><span class="fl">1</span>,</span>
+<span>  nu_formula <span class="op">=</span> <span class="op">~</span><span class="fl">1</span>,</span>
+<span>  tau_formula <span class="op">=</span> <span class="op">~</span><span class="fl">1</span>,</span>
 <span>  <span class="va">partition</span>,</span>
 <span>  predict_part <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  grid <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  metrics <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  n_cores <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  verbose <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>  verbose <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -76,6 +79,18 @@
 <dd><p>formula. A formula object with response and predictor variables (e.g. formula(abund ~ temp + precipt + sand + landform)). Note that the variables used here must be consistent with those used in response, predictors, and predictors_f arguments. Default NULL</p></dd>
 
 
+<dt id="arg-sigma-formula">sigma_formula<a class="anchor" aria-label="anchor" href="#arg-sigma-formula"></a></dt>
+<dd><p>formula. formula for fitting a model to the nu parameter. Usage sigma_formula = ~ precipt + temp</p></dd>
+
+
+<dt id="arg-nu-formula">nu_formula<a class="anchor" aria-label="anchor" href="#arg-nu-formula"></a></dt>
+<dd><p>formula. formula for fitting a model to the nu parameter. Usage nu_formula = ~ precipt + temp</p></dd>
+
+
+<dt id="arg-tau-formula">tau_formula<a class="anchor" aria-label="anchor" href="#arg-tau-formula"></a></dt>
+<dd><p>formula. formula for fitting a model to the tau parameter. Usage tau_formula = ~ precipt + temp</p></dd>
+
+
 <dt id="arg-partition">partition<a class="anchor" aria-label="anchor" href="#arg-partition"></a></dt>
 <dd><p>character. Column name with training and validation partition groups.</p></dd>
 
@@ -85,11 +100,11 @@
 
 
 <dt id="arg-grid">grid<a class="anchor" aria-label="anchor" href="#arg-grid"></a></dt>
-<dd><p>tibble or data.frame. A dataframe with "family_call", "inter" as columns and its values combinations as rows.</p></dd>
+<dd><p>tibble or data.frame. A dataframe with 'distribution', 'inter' as columns and its values combinations as rows. If no grid is provided, function will create a default grid combining the next hyperparameters: distribution = all families selected by family_selector, inter = "automatic". In case one or more hyperparameters are provided, the function will complete the grid with the default values.</p></dd>
 
 
 <dt id="arg-metrics">metrics<a class="anchor" aria-label="anchor" href="#arg-metrics"></a></dt>
-<dd><p>character. Vector with one or more metrics from c("corr_spear","corr_pear","mae","pdisp","inter","slope").</p></dd>
+<dd><p>character. Vector with one or more metrics from c("corr_spear","corr_pear","mae","pdisp","inter","slope")</p></dd>
 
 
 <dt id="arg-n-cores">n_cores<a class="anchor" aria-label="anchor" href="#arg-n-cores"></a></dt>
@@ -111,6 +126,20 @@
 <li><p>all_combinations: A tibble with all hyperparameters combinations and its performance.</p></li>
 </ul></div>
 
+    <div class="section level2">
+    <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
+<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"sppabund"</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Select data for a single species</span></span></span>
+<span class="r-in"><span><span class="va">some_sp</span> <span class="op">&lt;-</span> <span class="va">sppabund</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span></span>
+<span class="r-in"><span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">species</span> <span class="op">==</span> <span class="st">"Species two"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span></span>
+<span class="r-in"><span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="op">-</span><span class="va">.part2</span>, <span class="op">-</span><span class="va">.part3</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
+</code></pre></div>
+    </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
 

@@ -128,6 +128,68 @@ a Convolutional Neural Network (CNN).</p>
     <div class="dont-index"><p><code><a href="generate_dnn_architecture.html">generate_dnn_architecture</a></code>, <code><a href="generate_cnn_architecture.html">generate_cnn_architecture</a></code></p></div>
     </div>
 
+    <div class="section level2">
+    <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
+<span class="r-in"><span><span class="co"># Generating architectures for DNN, using batch normalization and dropout</span></span></span>
+<span class="r-in"><span><span class="va">dnn_archs</span> <span class="op">&lt;-</span> <span class="fu">generate_arch_list</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  type <span class="op">=</span> <span class="st">"dnn"</span>,</span></span>
+<span class="r-in"><span>  number_of_features <span class="op">=</span> <span class="fl">4</span>,</span></span>
+<span class="r-in"><span>  number_of_outputs <span class="op">=</span> <span class="fl">1</span>,</span></span>
+<span class="r-in"><span>  n_layers <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">3</span>, <span class="fl">4</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  n_neurons <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">8</span>, <span class="fl">16</span>, <span class="fl">32</span>, <span class="fl">64</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  batch_norm <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
+<span class="r-in"><span>  dropout <span class="op">=</span> <span class="fl">0.2</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">dnn_archs</span><span class="op">$</span><span class="va">arch_dict</span> <span class="co"># Matrices describing the networks</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">dnn_archs</span><span class="op">$</span><span class="va">arch_list</span><span class="op">)</span> <span class="co"># Generated 336 DNN architectures</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Generating architectures for CNN, using batch normalization, dropout and average pooling</span></span></span>
+<span class="r-in"><span><span class="co"># Note that arguments meaning change with the context</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">cnn_archs</span> <span class="op">&lt;-</span> <span class="fu">generate_arch_list</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  type <span class="op">=</span> <span class="st">"cnn"</span>,</span></span>
+<span class="r-in"><span>  number_of_features <span class="op">=</span> <span class="fl">4</span>,</span></span>
+<span class="r-in"><span>  number_of_outputs <span class="op">=</span> <span class="fl">1</span>,</span></span>
+<span class="r-in"><span>  n_layers <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">3</span>, <span class="fl">4</span><span class="op">)</span>, <span class="co"># now convolutional layers</span></span></span>
+<span class="r-in"><span>  n_neurons <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">8</span>, <span class="fl">16</span>, <span class="fl">32</span>, <span class="fl">64</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  sample_size <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">11</span>, <span class="fl">11</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  number_of_fc_layers <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">4</span><span class="op">)</span>, <span class="co"># fully connected layers</span></span></span>
+<span class="r-in"><span>  fc_layers_size <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">16</span>, <span class="fl">8</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  conv_layers_kernel <span class="op">=</span> <span class="fl">3</span>,</span></span>
+<span class="r-in"><span>  conv_layers_stride <span class="op">=</span> <span class="fl">1</span>,</span></span>
+<span class="r-in"><span>  conv_layers_padding <span class="op">=</span> <span class="fl">0</span>,</span></span>
+<span class="r-in"><span>  pooling <span class="op">=</span> <span class="fl">1</span>,</span></span>
+<span class="r-in"><span>  batch_norm <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
+<span class="r-in"><span>  dropout <span class="op">=</span> <span class="fl">0.2</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">cnn_archs</span><span class="op">$</span><span class="va">arch_dict</span> <span class="co"># Matrices describing the networks</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">cnn_archs</span><span class="op">$</span><span class="va">arch_list</span><span class="op">)</span> <span class="co"># Generated 6720 CNN architectures</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># The list size can be easily and greatly reduced with select_arch_list</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">dnn_archs_redux</span> <span class="op">&lt;-</span> <span class="va">dnn_archs</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="select_arch_list.html">select_arch_list</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"dnn"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  method <span class="op">=</span> <span class="st">"percentile"</span>,</span></span>
+<span class="r-in"><span>  n_samples <span class="op">=</span> <span class="fl">1</span>,</span></span>
+<span class="r-in"><span>  min_max <span class="op">=</span> <span class="cn">TRUE</span> <span class="co"># Keep the network with the minimum and maximum number of parameters</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">dnn_archs_redux</span><span class="op">$</span><span class="va">arch_list</span><span class="op">)</span> <span class="co"># from 336 to 29 architectures</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">cnn_archs_redux</span> <span class="op">&lt;-</span> <span class="va">cnn_archs</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="select_arch_list.html">select_arch_list</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"cnn"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  method <span class="op">=</span> <span class="st">"percentile"</span>,</span></span>
+<span class="r-in"><span>  n_samples <span class="op">=</span> <span class="fl">1</span>,</span></span>
+<span class="r-in"><span>  min_max <span class="op">=</span> <span class="cn">TRUE</span> <span class="co"># Keep the network with the minimum and maximum number of parameters</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">cnn_archs_redux</span><span class="op">$</span><span class="va">arch_list</span><span class="op">)</span> <span class="co"># from 6720 to 77 architectures</span></span></span>
+<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
+</code></pre></div>
+    </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
 
