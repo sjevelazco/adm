@@ -94,6 +94,8 @@ fit_abund_dnn <-
            fitting_patience = 5,
            custom_architecture = NULL,
            verbose = TRUE) {
+    # TODO check argument description validation_patience and fitting_patience
+    
     . <- self <- model <- mae <- pdisp <- NULL
     # Variables
     if (!is.null(predictors_f)) {

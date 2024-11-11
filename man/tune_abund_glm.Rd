@@ -18,7 +18,7 @@ tune_abund_glm(
   grid = NULL,
   metrics = NULL,
   n_cores = 1,
-  verbose = FALSE
+  verbose = TRUE
 )
 }
 \arguments{
@@ -32,11 +32,20 @@ tune_abund_glm(
 
 \item{fit_formula}{formula. A formula object with response and predictor variables (e.g. formula(abund ~ temp + precipt + sand + landform)). Note that the variables used here must be consistent with those used in response, predictors, and predictors_f arguments. Default NULL}
 
+\item{sigma_formula}{formula. formula for fitting a model to the nu parameter. Usage sigma_formula = ~ precipt + temp}
+
+\item{nu_formula}{formula. formula for fitting a model to the nu parameter. Usage nu_formula = ~ precipt + temp}
+
+\item{tau_formula}{formula. formula for fitting a model to the tau parameter. Usage tau_formula = ~ precipt + temp}
+
 \item{partition}{character. Column name with training and validation partition groups.}
 
 \item{predict_part}{logical. Save predicted abundance for testing data. Default = FALSE}
 
-\item{grid}{tibble or data.frame. A dataframe with "distribution", "poly", "inter_order" as columns and its values combinations as rows.}
+\item{grid}{tibble or data.frame. A dataframe with "distribution", "poly", "inter_order" as columns and its values combinations as rows. If no grid is provided, function will create a default grid combining the next hyperparameters:
+poly = c(1, 2, 3),
+inter_order = c(0, 1, 2),
+distribution = families_hp$family_call. In case one or more hyperparameters are provided, the function will complete the grid with the default values.}
 
 \item{metrics}{character. Vector with one or more metrics from c("corr_spear","corr_pear","mae","pdisp","inter","slope").}
 

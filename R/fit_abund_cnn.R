@@ -17,8 +17,8 @@
 #' @param batch_size numeric. A batch is a subset of the training set used in a single iteration of the training process. The size of each batch is referred to as the batch size. Default = 32
 #' @param custom_architecture a Torch nn_module_generator object. A neural network architecture to be used instead of the internal default one. Default NULL
 #' @param verbose logical. If FALSE, disables all console messages. Default TRUE
-#' @param validation_patience
-#' @param fitting_patience
+#' @param validation_patience 
+#' @param fitting_patience 
 #'
 #' @importFrom dplyr bind_rows bind_cols pull tibble as_tibble group_by summarise across
 #' @importFrom luz setup set_opt_hparams fit
@@ -123,6 +123,7 @@ fit_abund_cnn <-
            fitting_patience = 5,
            custom_architecture = NULL,
            verbose = TRUE) {
+    # TODO check argument description validation_patience and fitting_patience
     . <- self <- corr_spear <- pdisp <- envar <- mae <- NULL
     # Variables
     if (!is.null(predictors_f)) {

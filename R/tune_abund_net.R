@@ -7,7 +7,12 @@
 #' @param fit_formula formula. A formula object with response and predictor variables (e.g. formula(abund ~ temp + precipt + sand + landform)). Note that the variables used here must be consistent with those used in response, predictors, and predictors_f arguments. Default NULL
 #' @param partition character. Column name with training and validation partition groups.
 #' @param predict_part logical. Save predicted abundance for testing data. Default = FALSE
-#' @param grid tibble or data.frame. A dataframe with "mtry" and "ntree" as columns and its values combinations as rows.
+#' @param grid tibble or data.frame. A dataframe with "size" and "decay" as columns and its values 
+#' combinations as rows. If no grid is provided, function will create a default grid combining the 
+#' next hyperparameters: size = seq(from = length(c(predictors, predictors_f)), to = 50, by = 2), 
+#' decay = seq(from = 0, to = 0.9, by = 0.1). In case one or 
+#' more hyperparameters are provided, the function will complete the grid with the default values.
+#' 
 #' @param metrics character. Vector with one or more metrics from c("corr_spear","corr_pear","mae","pdisp","inter","slope").
 #' @param n_cores numeric. Number of cores used in parallel processing.
 #' @param verbose logical. If FALSE, disables all console messages. Default TRUE

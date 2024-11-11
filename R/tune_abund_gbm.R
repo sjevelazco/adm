@@ -7,7 +7,11 @@
 #' @param fit_formula formula. A formula object with response and predictor variables (e.g. formula(abund ~ temp + precipt + sand + landform)). Note that the variables used here must be consistent with those used in response, predictors, and predictors_f arguments. Default NULL
 #' @param partition character. Column name with training and validation partition groups.
 #' @param predict_part logical. Save predicted abundance for testing data. Default = FALSE
-#' @param grid tibble or data.frame. A dataframe with "n.trees", "interaction.depth", "n.minobsinnode" and "shrinkage" as columns and its values as rows.
+#' @param grid tibble or data.frame. A dataframe with "n.trees", "interaction.depth", "n.minobsinnode" and "shrinkage" as columns and its values as rows. If no grid is provided, function will create a default grid combining the next hyperparameters:
+#' n.trees = c(100, 200, 300),
+#' interaction.depth = c(1, 2, 3),
+#' n.minobsinnode = c(5, 10, 15),
+#' shrinkage = seq(0.001, 0.1, by = 0.05). In case one or more hyperparameters are provided, the function will complete the grid with the default values.
 #' @param distribution character. A string specifying the distribution to be used. See gbm::gbm documentation for details.
 #' @param metrics character. Vector with one or more metrics from c("corr_spear","corr_pear","mae","pdisp","inter","slope").
 #' @param n_cores numeric. Number of cores used in parallel processing.

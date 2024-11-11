@@ -9,7 +9,10 @@
 #' @param predict_part logical. Save predicted abundance for testing data. Default is FALSE.
 #' @param grid tibble or data.frame. A dataframe with "kernel", "sigma", "C" as columns and
 #' its values combinations as rows. If now grid is provided, funcion will create a default grid combining
-#' the next hyperparameters: C = seq(0.2, 1, by = 0.2), sigma = "automatic", kernel = c("rbfdot", "laplacedot").
+#' the next hyperparameters: 
+#' C = seq(0.2, 1, by = 0.2), 
+#' sigma = "automatic", 
+#' kernel = c("rbfdot", "laplacedot").
 #' In case one or more hyperparameters are provided, the function will complete the grid with the default values.
 #' @param metrics character. Vector with one or more metrics from c("corr_spear","corr_pear","mae","pdisp","inter","slope").
 #' @param n_cores numeric. Number of cores used in parallel processing.
