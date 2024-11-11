@@ -93,12 +93,17 @@ tune_abund_glm <-
     progress <- function(n) utils::setTxtProgressBar(pb, n)
     opts <- list(progress = progress)
 
-    hyper_combinations <- foreach::foreach(i = 1:nrow(grid), .options.snow = opts, .export = c("fit_abund_glm", "adm_eval"), .packages = c("dplyr")) %dopar% {
+    hyper_combinations <- foreach::foreach(
+      i = 1:nrow(grid),
+      .options.snow = opts,
+      .export = c("fit_abund_glm", "adm_eval"),
+      .packages = c("dplyr")
+    ) %dopar% {
       data_fam <- data
-      if (grid[i, "discrete"] == 1) {
-        data_fam[, response] <- round(data[, response])
-      }
-
+      # if (grid[i, "discrete"] == 1) {
+      #   data_fam[, response] <- round(data[, response])
+      # }
+      
       model <- tryCatch(
         {
           model <-
