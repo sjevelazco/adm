@@ -39,50 +39,50 @@
 #' require(terra)
 #' require(dplyr)
 #' require(gamlss)
-#' 
+#'
 #' # Database with species abundance and x and y coordinates
 #' data("sppabund")
-#' 
+#'
 #' # Extract data for a single species
 #' some_sp <- sppabund %>%
-#'   dplyr::filter(species == "Species one") %>% 
+#'   dplyr::filter(species == "Species one") %>%
 #'   dplyr::select(-.part2, -.part3)
-#' 
+#'
 #' # Explore reponse variables
 #' some_sp$ind_ha %>% range()
 #' some_sp$ind_ha %>% hist()
-#' 
+#'
 #' # Here we balance number of absences
-#' some_sp <- 
-#'   balance_dataset(some_sp, response = "ind_ha", absence_ratio=0.2)
-#' 
+#' some_sp <-
+#'   balance_dataset(some_sp, response = "ind_ha", absence_ratio = 0.2)
+#'
 #' # Explore different family distributions
 #' suitable_distributions <- family_selector(data = some_sp, response = "ind_ha")
 #' suitable_distributions
-#' 
+#'
 #' # Create a grid
 #' glm_grid <- expand.grid(
-#'   poly = c(2,3),
-#'   inter_order = c(1,2),
+#'   poly = c(2, 3),
+#'   inter_order = c(1, 2),
 #'   distribution = suitable_distributions$family_call
 #' )
-#' 
+#'
 #' # Tune a GLM model
 #' tuned_glm <- tune_abund_glm(
 #'   data = some_sp,
 #'   response = "ind_ha",
-#'   predictors = c("bio12","elevation","sand"),
+#'   predictors = c("bio12", "elevation", "sand"),
 #'   fit_formula = formula("ind_ha ~ bio12 + elevation + sand + eco"),
 #'   sigma_formula = formula("ind_ha ~ bio12 + elevation"),
 #'   nu_formula = formula("ind_ha ~ bio12 + elevation"),
 #'   predictors_f = c("eco"),
 #'   partition = ".part",
 #'   predict_part = TRUE,
-#'   metrics = c("corr_pear","mae"),
+#'   metrics = c("corr_pear", "mae"),
 #'   grid = glm_grid,
 #'   n_cores = 3
 #' )
-#' 
+#'
 #' tuned_glm
 #' }
 tune_abund_glm <-
@@ -100,7 +100,7 @@ tune_abund_glm <-
            metrics = NULL,
            n_cores = 1,
            verbose = FALSE) {
-    . <- poly <- inter_order <- distribution <- discrete <- i <- performance <-NULL
+    . <- poly <- inter_order <- distribution <- discrete <- i <- performance <- NULL
 
     if (is.null(metrics) |
       !all(metrics %in% c("corr_spear", "corr_pear", "mae", "inter", "slope", "pdisp"))) {
@@ -156,7 +156,7 @@ tune_abund_glm <-
       # if (grid[i, "discrete"] == 1) {
       #   data_fam[, response] <- round(data[, response])
       # }
-      
+
       model <- tryCatch(
         {
           model <-
@@ -183,7 +183,7 @@ tune_abund_glm <-
         }
       )
 
-      l <- list(cbind(grid[i, c("comb_id", "distribution", "poly", "inter_order")], model[,"performance"]))
+      l <- list(cbind(grid[i, c("comb_id", "distribution", "poly", "inter_order")], model[, "performance"]))
       names(l) <- grid[i, "comb_id"]
       l
     }

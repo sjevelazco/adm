@@ -70,24 +70,24 @@ require(terra)
 require(dplyr)
 require(gamlss)
 
-# Datasbase with species abundance and x and y coordinates
+# Database with species abundance and x and y coordinates
 data("sppabund")
 
 # Extract data for a single species
 some_sp <- sppabund \%>\%
-  dplyr::filter(species == "Species one") \%>\% 
+  dplyr::filter(species == "Species one") \%>\%
   dplyr::select(-.part2, -.part3)
 
-# Explor reponse variables
+# Explore reponse variables
 some_sp$ind_ha \%>\% range()
 some_sp$ind_ha \%>\% hist()
 
 # Here we balance number of absences
-some_sp <- 
-  balance_dataset(some_sp, response = "ind_ha", absence_ratio=0.2)
+some_sp <-
+  balance_dataset(some_sp, response = "ind_ha", absence_ratio = 0.2)
 
 # Explore different family distributions
-family_selector(data = some_sp, response = "ind_ha") \%>\% tail
+family_selector(data = some_sp, response = "ind_ha") \%>\% tail()
 
 # Fit a GAM model
 mgam <- fit_abund_gam(
@@ -101,6 +101,5 @@ mgam <- fit_abund_gam(
 )
 
 mgam
-
 }
 }

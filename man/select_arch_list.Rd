@@ -36,7 +36,7 @@ big_arch_list <- generate_arch_list(
   type = "dnn",
   number_of_features = 4,
   number_of_outputs = 1,
-  n_layers = seq(from=2, to=6, by=1),
+  n_layers = seq(from = 2, to = 6, by = 1),
   n_neurons = c(8, 16, 32, 64)
 )
 

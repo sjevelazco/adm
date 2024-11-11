@@ -66,3 +66,45 @@ A list object with:
 \description{
 Fit and validate Extreme Gradient Boosting models
 }
+\examples{
+\dontrun{
+require(terra)
+require(dplyr)
+
+# Database with species abundance and x and y coordinates
+data("sppabund")
+
+# Extract data for a single species
+some_sp <- sppabund \%>\%
+  dplyr::filter(species == "Species one") \%>\%
+  dplyr::select(-.part2, -.part3)
+
+# Explore reponse variables
+some_sp$ind_ha \%>\% range()
+some_sp$ind_ha \%>\% hist()
+
+# Here we balance number of absences
+some_sp <-
+  balance_dataset(some_sp, response = "ind_ha", absence_ratio = 0.2)
+
+# Fit a XGB model
+mxgb <- fit_abund_xgb(
+  data = some_sp,
+  response = "ind_ha",
+  predictors = c("bio12", "elevation", "sand"),
+  predictors_f = NULL,
+  partition = ".part",
+  nrounds = 200,
+  max_depth = 5,
+  eta = 0.1,
+  gamma = 1,
+  colsample_bytree = 0.7,
+  min_child_weight = 2,
+  subsample = 0.3,
+  objective = "reg:squarederror",
+  predict_part = TRUE
+)
+
+mxgb
+}
+}

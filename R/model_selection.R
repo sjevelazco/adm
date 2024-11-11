@@ -10,7 +10,7 @@
 #' \item optimal_combination: tibble with the optimal hyperparameter combination.
 #' \item all_combinations: all the other combinations.
 #' }
-#' 
+#'
 #' @export
 model_selection <- function(hyper_combinations, metrics) {
   comb_id <- pdisp_dist <- NULL

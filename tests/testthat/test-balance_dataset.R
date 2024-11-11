@@ -11,7 +11,7 @@ test_that("absence_ratio 0.5", {
     response = "ind_ha",
     absence_ratio = 0.5
   )
-  
+
   expect_equal(
     nrow(some_sp_2),
     672
@@ -24,7 +24,7 @@ test_that("absence_ratio 0", {
     response = "ind_ha",
     absence_ratio = 0
   )
-  
+
   expect_equal(
     nrow(some_sp_2),
     448
@@ -37,7 +37,7 @@ test_that("absence_ratio 0", {
     response = "ind_ha",
     absence_ratio = 0
   )
-  
+
   expect_message(
     balance_dataset(
       data = some_sp_2,

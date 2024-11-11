@@ -10,6 +10,9 @@ tune_abund_glm(
   predictors,
   predictors_f = NULL,
   fit_formula = NULL,
+  sigma_formula = ~1,
+  nu_formula = ~1,
+  tau_formula = ~1,
   partition,
   predict_part = FALSE,
   grid = NULL,
@@ -33,7 +36,7 @@ tune_abund_glm(
 
 \item{predict_part}{logical. Save predicted abundance for testing data. Default = FALSE}
 
-\item{grid}{tibble or data.frame. A dataframe with "family_call", "poly", "inter_order" as columns and its values combinations as rows.}
+\item{grid}{tibble or data.frame. A dataframe with "distribution", "poly", "inter_order" as columns and its values combinations as rows.}
 
 \item{metrics}{character. Vector with one or more metrics from c("corr_spear","corr_pear","mae","pdisp","inter","slope").}
 
@@ -55,4 +58,56 @@ A list object with:
 }
 \description{
 Fit and validate Generalized Linear Models with exploration of hyper-parameters that optimize performance
+}
+\examples{
+\dontrun{
+require(terra)
+require(dplyr)
+require(gamlss)
+
+# Database with species abundance and x and y coordinates
+data("sppabund")
+
+# Extract data for a single species
+some_sp <- sppabund \%>\%
+  dplyr::filter(species == "Species one") \%>\%
+  dplyr::select(-.part2, -.part3)
+
+# Explore reponse variables
+some_sp$ind_ha \%>\% range()
+some_sp$ind_ha \%>\% hist()
+
+# Here we balance number of absences
+some_sp <-
+  balance_dataset(some_sp, response = "ind_ha", absence_ratio = 0.2)
+
+# Explore different family distributions
+suitable_distributions <- family_selector(data = some_sp, response = "ind_ha")
+suitable_distributions
+
+# Create a grid
+glm_grid <- expand.grid(
+  poly = c(2, 3),
+  inter_order = c(1, 2),
+  distribution = suitable_distributions$family_call
+)
+
+# Tune a GLM model
+tuned_glm <- tune_abund_glm(
+  data = some_sp,
+  response = "ind_ha",
+  predictors = c("bio12", "elevation", "sand"),
+  fit_formula = formula("ind_ha ~ bio12 + elevation + sand + eco"),
+  sigma_formula = formula("ind_ha ~ bio12 + elevation"),
+  nu_formula = formula("ind_ha ~ bio12 + elevation"),
+  predictors_f = c("eco"),
+  partition = ".part",
+  predict_part = TRUE,
+  metrics = c("corr_pear", "mae"),
+  grid = glm_grid,
+  n_cores = 3
+)
+
+tuned_glm
+}
 }

@@ -2,12 +2,12 @@
 #'
 #' @description Create bivariate partial dependence plots to explore the marginal effect of
 #' predictors on modeled abundance
-#' 
+#'
 #' @param model A model object found in the first element of the list returned
 #' by any function from the fit_abund_ or tune_abund_ function families
 #' @param predictors character. Vector of predictor name(s) to calculate partial dependence plots.
 #' If NULL all predictors will be used. Default NULL
-#' @param resolution numeric. Number of equally spaced points at which to predict abundance 
+#' @param resolution numeric. Number of equally spaced points at which to predict abundance
 #' values for continuous predictors. Default 50
 #' @param training_data data.frame or tibble. Database with response and predictor values used
 #' to fit a model. Default NULL
@@ -25,7 +25,7 @@
 #' @param response_name character. Name of the response variable. Default NULL
 #' @param color_gradient character. Vector with gradient colors. Default c("#000004", "#1B0A40", "#4A0C69", "#781B6C", "#A42C5F", "#CD4345", "#EC6824", "#FA990B", "#F7CF3D", "#FCFFA4")
 #' @param color_training_boundaries character. A vector with one color used to color points of residuals, Default "white"
-#' @param set_max numeric. Set a maximum abundance value to plot 
+#' @param set_max numeric. Set a maximum abundance value to plot
 #' @param set_min numeric. Set a minimum abundance value to plot
 #' @param theme ggplot2 theme. Default ggplot2::theme_classic()
 #'
@@ -35,8 +35,8 @@
 #' @importFrom utils combn
 #'
 #' @seealso \code{\link{data_abund_pdp}}, \code{\link{data_abund_bpdp}}, \code{\link{p_abund_pdp}}
-#' 
-#' 
+#'
+#'
 #' @return A ggplot object
 #' @export
 #'

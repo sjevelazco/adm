@@ -31,7 +31,7 @@ test_that("adm_summarize", {
       distribution = NO()
     )
   )
-  
+
 
   # Fit SVM
   m_svm <- fit_abund_svm(

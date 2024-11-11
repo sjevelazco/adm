@@ -37,28 +37,28 @@
 #' \dontrun{
 #' require(terra)
 #' require(dplyr)
-#' 
+#'
 #' # Database with species abundance and x and y coordinates
 #' data("sppabund")
-#' 
+#'
 #' # Extract data for a single species
 #' some_sp <- sppabund %>%
-#'   dplyr::filter(species == "Species one") %>% 
+#'   dplyr::filter(species == "Species one") %>%
 #'   dplyr::select(-.part2, -.part3)
-#' 
+#'
 #' # Explore reponse variables
 #' some_sp$ind_ha %>% range()
 #' some_sp$ind_ha %>% hist()
-#' 
+#'
 #' # Here we balance number of absences
-#' some_sp <- 
-#'   balance_dataset(some_sp, response = "ind_ha", absence_ratio=0.2)
-#' 
+#' some_sp <-
+#'   balance_dataset(some_sp, response = "ind_ha", absence_ratio = 0.2)
+#'
 #' # Fit a XGB model
 #' mxgb <- fit_abund_xgb(
 #'   data = some_sp,
 #'   response = "ind_ha",
-#'   predictors = c("bio12","elevation","sand"),
+#'   predictors = c("bio12", "elevation", "sand"),
 #'   predictors_f = NULL,
 #'   partition = ".part",
 #'   nrounds = 200,
@@ -71,7 +71,7 @@
 #'   objective = "reg:squarederror",
 #'   predict_part = TRUE
 #' )
-#' 
+#'
 #' mxgb
 #' }
 fit_abund_xgb <-
@@ -92,11 +92,11 @@ fit_abund_xgb <-
            verbose = TRUE) {
     . <- mae <- pdisp <- NULL
 
-    if(!is.null(predictors_f)){
+    if (!is.null(predictors_f)) {
       warning("Categorical variables aren't available for XGB and will be ignored.")
       predictors_f <- NULL
     }
-    
+
     # Adequate database
     data <- adapt_df(
       data = data,
@@ -168,7 +168,7 @@ fit_abund_xgb <-
         if (verbose) {
           message("-- Partition number ", j, "/", length(folds))
         }
-        
+
         train_set <- data[data[, p_names[h]] != folds[j], ]
         test_set <- data[data[, p_names[h]] == folds[j], ]
 

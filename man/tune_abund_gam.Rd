@@ -56,3 +56,8 @@ A list object with:
 \description{
 Fit and validate Generalized Additive Models with exploration of hyper-parameters that optimize performance
 }
+\examples{
+\dontrun{
+
+}
+}

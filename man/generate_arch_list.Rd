@@ -87,8 +87,8 @@ cnn_archs <- generate_arch_list(
   n_layers = c(2, 3, 4), # now convolutional layers
   n_neurons = c(8, 16, 32, 64),
   sample_size = c(11, 11),
-  number_of_fc_layers = c(2,4), # fully connected layers
-  fc_layers_size = c(16,8), 
+  number_of_fc_layers = c(2, 4), # fully connected layers
+  fc_layers_size = c(16, 8),
   conv_layers_kernel = 3,
   conv_layers_stride = 1,
   conv_layers_padding = 0,

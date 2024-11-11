@@ -70,20 +70,20 @@ some_sp <- sppabund \%>\%
   filter(species == "Species two")
 
 gbm_grid <- expand.grid(
-  interaction.depth = c(2,4,8,16),
-  n.trees = c(100,500,1000),
-  n.minobsinnode = c(2,5,8),
-  shrinkage = c(0.1,0.5,0.7)
+  interaction.depth = c(2, 4, 8, 16),
+  n.trees = c(100, 500, 1000),
+  n.minobsinnode = c(2, 5, 8),
+  shrinkage = c(0.1, 0.5, 0.7)
 )
 
 tuned_gbm <- tune_abund_gbm(
   data = some_sp,
   response = "ind_ha",
-  predictors = c("bio12","elevation","sand"),
+  predictors = c("bio12", "elevation", "sand"),
   predictors_f = c("eco"),
   partition = ".part",
   predict_part = TRUE,
-  metrics = c("corr_pear","mae"),
+  metrics = c("corr_pear", "mae"),
   grid = gbm_grid,
   distribution = "gaussian",
   n_cores = 3

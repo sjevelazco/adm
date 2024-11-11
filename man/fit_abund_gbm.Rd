@@ -62,17 +62,30 @@ Fit and validate Generalized Boosted Regression models
 }
 \examples{
 \dontrun{
+require(terra)
 require(dplyr)
 
+# Database with species abundance and x and y coordinates
 data("sppabund")
 
+# Extract data for a single species
 some_sp <- sppabund \%>\%
-  filter(species == "Species one")
+  dplyr::filter(species == "Species one") \%>\%
+  dplyr::select(-.part2, -.part3)
 
-gbm_1 <- fit_abund_gbm(
+# Explore reponse variables
+some_sp$ind_ha \%>\% range()
+some_sp$ind_ha \%>\% hist()
+
+# Here we balance number of absences
+some_sp <-
+  balance_dataset(some_sp, response = "ind_ha", absence_ratio = 0.2)
+
+# Fit a GBM model
+mgbm <- fit_abund_gbm(
   data = some_sp,
   response = "ind_ha",
-  predictors = c("bio12","elevation","sand"),
+  predictors = c("bio12", "elevation", "sand"),
   predictors_f = c("eco"),
   partition = ".part",
   distribution = "gaussian",
@@ -83,10 +96,6 @@ gbm_1 <- fit_abund_gbm(
   predict_part = TRUE
 )
 
-gbm_1$model
-gbm_1$predicted_part
-gbm_1$performance_part
-gbm_1$performance
-gbm_1$predictors
+mgbm
 }
 }

@@ -20,7 +20,7 @@
 #' @importFrom torch dataset torch_tensor
 #'
 #' @seealso \code{\link{data_abund_pdp}}, \code{\link{p_abund_pdp}}, \code{\link{p_abund_bpdp}}
-#' 
+#'
 #' @return A list with two tibbles "pdpdata" and "resid".
 #' \itemize{
 #' \item pspdata: has data to construct partial dependence surface plot, the first two column includes

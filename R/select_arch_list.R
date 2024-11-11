@@ -20,23 +20,23 @@
 #'   type = "dnn",
 #'   number_of_features = 4,
 #'   number_of_outputs = 1,
-#'   n_layers = seq(from=2, to=6, by=1),
+#'   n_layers = seq(from = 2, to = 6, by = 1),
 #'   n_neurons = c(8, 16, 32, 64)
 #' )
-#' 
+#'
 #' length(big_arch_list$arch_list) # 5456 architectures!
-#' 
+#'
 #' # It can be reduced sampling network architectures by its parameters number
-#' 
+#'
 #' reduced_arch_list <- big_arch_list %>% select_arch_list(
 #'   type = c("dnn"),
 #'   method = "percentile",
 #'   n_samples = 1, # Keep at least one of each deepness
 #'   min_max = TRUE # Keep the network with the minimum and maximum number of parameters
 #' )
-#' 
+#'
 #' length(reduced_arch_list$arch_list) # from 5456 to 92 architectures!!
-#' 
+#'
 #' # See architectures names, deepness and number of parameters
 #' reduced_arch_list$changes
 #' }
@@ -47,10 +47,9 @@ select_arch_list <-
            n_samples = 1, # TODO
            min_max = TRUE # TODO
   ) {
-    
     # TODO check documentation of this function
     # TODO write details about function returns
-    
+
     parameters <- name <- combination <- old_name <- NULL
 
     architectures <- arch_list
