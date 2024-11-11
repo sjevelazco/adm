@@ -10,10 +10,10 @@
 #' @param conv_layers_padding numeric. Specifies the padding for the convolutional layers. Default 0.
 #' @param number_of_fc_layers numeric. Specifies the number of fully connected layers. Default 1.
 #' @param fc_layers_size vector. Specifies the size of the fully connected layers. Default 14.
-#' @param verbose logical. Specifies whether the architecture should be printed. Default FALSE.
-#' @param pooling logical. Specifies whether pooling is included in the architecture. Default FALSE.
+#' @param pooling numeric. Specifies whether pooling is included in the architecture. Default NULL
 #' @param batch_norm logical. Specifies whether batch normalization is included in the architecture. Default TRUE.
-#' @param dropout logical. Specifies whether dropout is included in the architecture. Default FALSE.
+#' @param dropout numeric. Default 0.
+#' @param verbose logical. Specifies whether the architecture should be printed. Default FALSE.
 #'
 #' @importFrom torch nn_module nn_conv2d nn_linear nnf_relu torch_flatten torch_manual_seed
 #'
@@ -39,11 +39,11 @@ generate_cnn_architecture <-
            conv_layers_padding = 0,
            number_of_fc_layers = 1,
            fc_layers_size = c(28),
-           pooling = FALSE,
+           pooling = NULL,
            batch_norm = TRUE,
-           dropout = FALSE,
+           dropout = 0,
            verbose = FALSE) {
-    # TODO check documentation of this function
+    # TODO check documentation of argument of this function dropout and pooling 
     if (any(sample_size < (conv_layers_kernel + conv_layers_padding))) {
       stop("Sample dimension is too small for the choosen configuration.")
     }
