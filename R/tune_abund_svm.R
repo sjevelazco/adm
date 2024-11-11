@@ -39,11 +39,11 @@
 #' data("sppabund")
 #' 
 #' some_sp <- sppabund %>%
-#'   filter(species == "Species two")
+#'   dplyr::filter(species == "Species two")
 #' 
 #' svm_grid <- expand.grid(
 #'   sigma = "automatic",
-#'   C = c(0.5,1,2),
+#'   C = c(0.5, 1,2),
 #'   kernel = c("rbfdot","laplacedot")
 #' )
 #' 
