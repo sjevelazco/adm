@@ -36,56 +36,41 @@
 #' @examples
 #' \dontrun{
 #' require(terra)
+#' require(dplyr)
 #' require(gamlss)
-#'
+#' 
 #' # Datasbase with species abundance and x and y coordinates
 #' data("sppabund")
-#'
-#' # Raster data with environmental variables
-#' envar <- system.file("external/envar.tif", package = "adm")
-#' envar <- terra::rast(envar)
-#'
+#' 
 #' # Extract data for a single species
 #' some_sp <- sppabund %>%
-#'   filter(species == "Species one") %>%
-#'   dplyr::select(species, ind_ha, x, y, .part)
-#'
-#' # Extract environmental data from envar raster for all locations in spp
-#' some_sp <-
-#'   adm_extract(
-#'     data = some_sp,
-#'     x = "x",
-#'     y = "y",
-#'     env_layer = envar,
-#'     variables = NULL,
-#'     filter_na = FALSE
-#'   )
-#'
-#' some_sp
-#'
+#'   dplyr::filter(species == "Species one") %>% 
+#'   dplyr::select(-.part2, -.part3)
+#' 
 #' # Explor reponse variables
 #' some_sp$ind_ha %>% range()
 #' some_sp$ind_ha %>% hist()
-#'
-#' # Here we will roudn data to the nearest integer
-#' some_sp <- some_sp %>% adm_transform("ind_ha", "log1")
-#' some_sp %>% dplyr::select(ind_ha, ind_ha_log)
-#'
+#' 
+#' # Here we balance number of absences
+#' some_sp <- 
+#'   balance_dataset(some_sp, response = "ind_ha", absence_ratio=0.2)
+#' 
 #' # Explore different family distributions
-#' family_selector(data = some_sp, response = "ind_ha_log1")
-#'
+#' family_selector(data = some_sp, response = "ind_ha") %>% tail
+#' 
 #' # Fit a GAM model
 #' mgam <- fit_abund_gam(
 #'   data = some_sp,
-#'   response = "ind_ha_log1",
+#'   response = "ind_ha",
 #'   predictors = c("elevation", "sand", "bio3", "bio12"),
 #'   sigma_formula = ~ elevation + bio3 + bio12,
 #'   predictors_f = NULL,
 #'   partition = ".part",
-#'   distribution = gamlss.dist::NO()
+#'   distribution = gamlss.dist::ZAGA()
 #' )
-#'
+#' 
 #' mgam
+#' 
 #' }
 fit_abund_gam <-
   function(data,

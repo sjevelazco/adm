@@ -8,15 +8,15 @@
 #'   \item{ind_ha}{species abundance expressed as individuals per hectare}
 #'   \item{x}{longitude of species occurrences}
 #'   \item{y}{latitude of species occurrences}
-#'   \item{.part}{partition folds}
 #'   \item{bio1}{bioclimatic variable related to annual mean temperature}
 #'   \item{bio3}{bioclimatic variable related to isothermality}
 #'   \item{bio12}{bioclimatic variable related to annual precipitation}
 #'   \item{bio15}{bioclimatic variable related to precipitation seasonality}
 #'   \item{cfvo}{edaphic variable related to volumetric fraction of coarse fragments}
-#'   \item{sant}{edaphic variable related to soil sand content}
 #'   \item{elevation}{topographic elevation}
-#'   ...
+#'   \item{sand}{edaphic variable related to soil sand content}
+#'   \item{eoc}{ecoregion}
+#'   \item{.part1 ... .part3}{repeate k-folds}
 #' }
 #' @examples
 #' \dontrun{
