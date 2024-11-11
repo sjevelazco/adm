@@ -7,7 +7,10 @@
 #' @param fit_formula formula. A formula object with response and predictor variables (e.g. formula(abund ~ temp + precipt + sand + landform)). Note that the variables used here must be consistent with those used in response, predictors, and predictors_f arguments. Default NULL
 #' @param partition character. Column name with training and validation partition groups.
 #' @param predict_part logical. Save predicted abundance for testing data. Default is FALSE.
-#' @param grid tibble or data.frame. A dataframe with "kernel", "sigma", "C" as columns and its values combinations as rows.
+#' @param grid tibble or data.frame. A dataframe with "kernel", "sigma", "C" as columns and 
+#' its values combinations as rows. If now grid is provided, funcion will create a default grid combining
+#' the next hyperparameters: C = seq(0.2, 1, by = 0.2), sigma = "automatic", kernel = c("rbfdot", "laplacedot").
+#' In case one or more hyperparameters are provided, the function will complete the grid with the default values.
 #' @param metrics character. Vector with one or more metrics from c("corr_spear","corr_pear","mae","pdisp","inter","slope").
 #' @param n_cores numeric. Number of cores used in parallel processing.
 #' @param verbose logical. If FALSE, disables all console messages. Default TRUE
@@ -88,13 +91,19 @@ tune_abund_svm <-
     )
 
     # making grid
+    nms_grid <- names(grid)
     if (is.null(grid)) {
       message("Grid not provided. Using the default one for Support Vector Machines.")
       grid <- expand.grid(grid_dict)
-    } else if (all(names(grid) %in% c("C", "sigma", "kernel"))) {
+    } else if (all(c("C", "sigma", "kernel") %in% nms_grid)) {
+      message("Using provided grid.")
+    } else if (any(!c("C", "sigma", "kernel") %in% nms_grid)) {
+      message("Adding default hyperparameter for: ",
+              paste(names(grid_dict)[!names(grid_dict) %in% nms_grid], collapse = ", "))
+      
       user_hyper <- names(grid)[which(names(grid_dict) %in% names(grid))]
       default_hyper <- names(grid_dict)[which(!names(grid_dict) %in% user_hyper)]
-
+      
       user_list <- grid_dict[default_hyper]
       for (i in user_hyper) {
         l <- grid[[i]] %>%
@@ -103,11 +112,9 @@ tune_abund_svm <-
         names(l) <- i
         user_list <- append(user_list, l)
       }
-
+      
       grid <- expand.grid(user_list)
-      if (all(names(grid) %in% c("C", "sigma", "kernel")) & length(names(grid)) == 3) {
-        message("Using provided grid.")
-      }
+      
     } else {
       stop('Grid expected to be any combination between "C", "sigma" and "kernel" hyperparameters.')
     }
