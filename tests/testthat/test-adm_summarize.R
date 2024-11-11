@@ -22,13 +22,16 @@ test_that("adm_summarize", {
     )
 
   # Fit RA
-  m_raf <- fit_abund_gam(
-    data = some_sp,
-    response = "ind_ha",
-    predictors = c("elevation", "sand", "bio3", "bio12"),
-    partition = ".part",
-    distribution = NO()
+  suppressWarnings(
+    m_raf <- fit_abund_gam(
+      data = some_sp,
+      response = "ind_ha",
+      predictors = c("elevation", "sand", "bio3", "bio12"),
+      partition = ".part",
+      distribution = NO()
+    )
   )
+  
 
   # Fit SVM
   m_svm <- fit_abund_svm(
