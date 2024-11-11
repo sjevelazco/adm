@@ -7,7 +7,7 @@
 #' @param fit_formula formula. A formula object with response and predictor variables (e.g. formula(abund ~ temp + precipt + sand + landform)). Note that the variables used here must be consistent with those used in response, predictors, and predictors_f arguments. Default NULL
 #' @param partition character. Column name with training and validation partition groups.
 #' @param predict_part logical. Save predicted abundance for testing data. Default = FALSE
-#' @param grid tibble or data.frame. A dataframe with "family_call", "poly", "inter_order" as columns and its values combinations as rows.
+#' @param grid tibble or data.frame. A dataframe with "distribution", "poly", "inter_order" as columns and its values combinations as rows.
 #' @param metrics character. Vector with one or more metrics from c("corr_spear","corr_pear","mae","pdisp","inter","slope").
 #' @param n_cores numeric. Number of cores used in parallel processing.
 #' @param verbose logical. If FALSE, disables all console messages. Default TRUE
@@ -35,19 +35,72 @@
 #' @export
 #'
 #' @examples
+#' \dontrun{
+#' require(terra)
+#' require(dplyr)
+#' require(gamlss)
+#' 
+#' # Database with species abundance and x and y coordinates
+#' data("sppabund")
+#' 
+#' # Extract data for a single species
+#' some_sp <- sppabund %>%
+#'   dplyr::filter(species == "Species one") %>% 
+#'   dplyr::select(-.part2, -.part3)
+#' 
+#' # Explore reponse variables
+#' some_sp$ind_ha %>% range()
+#' some_sp$ind_ha %>% hist()
+#' 
+#' # Here we balance number of absences
+#' some_sp <- 
+#'   balance_dataset(some_sp, response = "ind_ha", absence_ratio=0.2)
+#' 
+#' # Explore different family distributions
+#' suitable_distributions <- family_selector(data = some_sp, response = "ind_ha")
+#' suitable_distributions
+#' 
+#' # Create a grid
+#' glm_grid <- expand.grid(
+#'   poly = c(2,3),
+#'   inter_order = c(1,2),
+#'   distribution = suitable_distributions$family_call
+#' )
+#' 
+#' # Tune a GLM model
+#' tuned_glm <- tune_abund_glm(
+#'   data = some_sp,
+#'   response = "ind_ha",
+#'   predictors = c("bio12","elevation","sand"),
+#'   fit_formula = formula("ind_ha ~ bio12 + elevation + sand + eco"),
+#'   sigma_formula = formula("ind_ha ~ bio12 + elevation"),
+#'   nu_formula = formula("ind_ha ~ bio12 + elevation"),
+#'   predictors_f = c("eco"),
+#'   partition = ".part",
+#'   predict_part = TRUE,
+#'   metrics = c("corr_pear","mae"),
+#'   grid = glm_grid,
+#'   n_cores = 3
+#' )
+#' 
+#' tuned_glm
+#' }
 tune_abund_glm <-
   function(data,
            response,
            predictors,
            predictors_f = NULL,
            fit_formula = NULL,
+           sigma_formula = ~1,
+           nu_formula = ~1,
+           tau_formula = ~1,
            partition,
            predict_part = FALSE,
            grid = NULL,
            metrics = NULL,
            n_cores = 1,
            verbose = FALSE) {
-    . <- poly <- inter_order <- family_call <- discrete <- i <- performance <-NULL
+    . <- poly <- inter_order <- distribution <- discrete <- i <- performance <-NULL
 
     if (is.null(metrics) |
       !all(metrics %in% c("corr_spear", "corr_pear", "mae", "inter", "slope", "pdisp"))) {
@@ -69,16 +122,16 @@ tune_abund_glm <-
       grid <- list(
         poly = c(1, 2, 3),
         inter_order = c(0, 1, 2),
-        family_call = families_hp$family_call
+        distribution = families_hp$family_call
       ) %>%
         expand.grid() %>%
-        dplyr::left_join(families_hp, by = "family_call")
-    } else if (is.data.frame(grid) & all(names(grid) %in% c("family_call", "poly", "inter_order")) & all(grid$family_call %in% families_bank$family_call)) {
+        dplyr::left_join(families_hp, by = "distribution")
+    } else if (is.data.frame(grid) & all(names(grid) %in% c("distribution", "poly", "inter_order")) & all(grid$distribution %in% families_bank$family_call)) {
       message("Testing with provided grid.")
-      grid <- dplyr::left_join(grid, families_bank, by = "family_call") %>%
-        dplyr::select(poly, inter_order, family_call, discrete)
+      grid <- dplyr::left_join(grid, families_bank %>% rename(distribution = family_call), by = "distribution") %>%
+        dplyr::select(poly, inter_order, distribution, discrete)
     } else {
-      stop("Grid names expected to be 'family_call', 'poly' and 'inter_order'.")
+      stop("Grid names expected to be 'distribution', 'poly' and 'inter_order'.")
     }
 
     comb_id <- paste("comb_", 1:nrow(grid), sep = "")
@@ -113,9 +166,12 @@ tune_abund_glm <-
               predictors = predictors,
               predictors_f = predictors_f,
               fit_formula = fit_formula,
+              sigma_formula = sigma_formula,
+              nu_formula = nu_formula,
+              tau_formula = tau_formula,
               partition = partition,
               predict_part = predict_part,
-              distribution = grid[i, "family_call"],
+              distribution = grid[i, "distribution"],
               poly = grid[i, "poly"],
               inter_order = grid[i, "inter_order"],
               verbose = FALSE
@@ -127,7 +183,7 @@ tune_abund_glm <-
         }
       )
 
-      l <- list(cbind(grid[i, c("comb_id", "family_call", "poly", "inter_order")], model[,"performance"]))
+      l <- list(cbind(grid[i, c("comb_id", "distribution", "poly", "inter_order")], model[,"performance"]))
       names(l) <- grid[i, "comb_id"]
       l
     }
@@ -150,11 +206,11 @@ tune_abund_glm <-
 
     # fit final model
 
-    choosen_family <- ranked_combinations[[1]][1, "family_call"]
+    choosen_family <- ranked_combinations[[1]][1, "distribution"]
     choosen_poly <- ranked_combinations[[1]][1, "poly"]
     choosen_inter_order <- ranked_combinations[[1]][1, "inter_order"]
     full_data <- data
-    if (families_bank[which(families_bank$family_call == choosen_family), "discrete"] == 1) {
+    if (families_bank[which(families_bank$distribution == choosen_family), "discrete"] == 1) {
       full_data[, "ind_ha"] <- round(full_data[, "ind_ha"])
     }
 
@@ -166,6 +222,9 @@ tune_abund_glm <-
         predictors = predictors,
         predictors_f = predictors_f,
         fit_formula = fit_formula,
+        sigma_formula = sigma_formula,
+        nu_formula = nu_formula,
+        tau_formula = tau_formula,
         partition = partition,
         predict_part = predict_part,
         distribution = choosen_family,
@@ -175,7 +234,7 @@ tune_abund_glm <-
 
     message(
       "The best model was a GLM with:",
-      "\n family = ",
+      "\n distribution = ",
       choosen_family,
       "\n poly = ",
       choosen_poly,

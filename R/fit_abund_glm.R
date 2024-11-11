@@ -37,29 +37,43 @@
 #'
 #' @examples
 #' \dontrun{
+#' require(terra)
 #' require(dplyr)
+#' require(gamlss)
+#' 
+#' # Database with species abundance and x and y coordinates
 #' data("sppabund")
 #' 
+#' # Extract data for a single species
 #' some_sp <- sppabund %>%
-#'   filter(species == "Species one")
+#'   dplyr::filter(species == "Species one") %>% 
+#'   dplyr::select(-.part2, -.part3)
 #' 
+#' # Explore reponse variables
+#' some_sp$ind_ha %>% range()
+#' some_sp$ind_ha %>% hist()
+#' 
+#' # Here we balance number of absences
+#' some_sp <- 
+#'   balance_dataset(some_sp, response = "ind_ha", absence_ratio=0.2)
+#' 
+#' # Explore different family distributions
+#' family_selector(data = some_sp, response = "ind_ha") %>% tail
+#' 
+#' # Fit a GLM model
 #' glm_1 <- fit_abund_glm(
 #'   data = some_sp,
 #'   response = "ind_ha",
 #'   predictors = c("bio12","elevation","sand"),
 #'   predictors_f = c("eco"),
 #'   partition = ".part",
-#'   distribution = "NO",
+#'   distribution = "ZAGA",
 #'   poly = 0,
 #'   inter_order = 0,
 #'   predict_part = TRUE
 #' )
 #' 
-#' glm_1$model
-#' glm_1$predicted_part
-#' glm_1$performance_part
-#' glm_1$performance
-#' glm_1$predictors
+#' glm_1
 #' 
 #' # Using second order polynomials and first order interaction terms
 #' glm_2 <- fit_abund_glm(
@@ -68,17 +82,13 @@
 #'   predictors = c("bio12","elevation","sand"),
 #'   predictors_f = c("eco"),
 #'   partition = ".part",
-#'   distribution = "NO",
+#'   distribution = "ZAGA",
 #'   poly = 2,
 #'   inter_order = 1,
 #'   predict_part = TRUE
 #' )
 #' 
-#' glm_2$model
-#' glm_2$predicted_part
-#' glm_2$performance_part
-#' glm_2$performance
-#' glm_2$predictors
+#' glm_2
 #' 
 #' # Using third order polynomials and second order interaction terms
 #' glm_3 <- fit_abund_glm(
@@ -87,17 +97,13 @@
 #'   predictors = c("bio12","elevation","sand"),
 #'   predictors_f = c("eco"),
 #'   partition = ".part",
-#'   distribution = "NO",
+#'   distribution = "ZAGA",
 #'   poly = 3,
 #'   inter_order = 2,
 #'   predict_part = TRUE
 #' )
 #' 
-#' glm_3$model
-#' glm_3$predicted_part
-#' glm_3$performance_part
-#' glm_3$performance
-#' glm_3$predictors
+#' glm_3
 #' 
 #' # Setting formulas for different distribution parameters
 #' glm_4 <- fit_abund_glm(
@@ -106,7 +112,7 @@
 #'   predictors = c("bio12","elevation","sand"),
 #'   predictors_f = c("eco"),
 #'   partition = ".part",
-#'   distribution = "NO",
+#'   distribution = "ZAGA",
 #'   fit_formula = ind_ha ~ bio12 + elevation + sand + eco,
 #'   sigma_formula = ind_ha ~ bio12 + elevation + sand,
 #'   poly = 0,
@@ -114,11 +120,7 @@
 #'   predict_part = TRUE
 #' )
 #' 
-#' glm_4$model
-#' glm_4$predicted_part
-#' glm_4$performance_part
-#' glm_4$performance
-#' glm_4$predictors
+#' glm_4
 #' }
 fit_abund_glm <-
   function(data,
