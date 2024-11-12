@@ -90,14 +90,24 @@ tune_abund_svm <-
       stop("Metrics is needed to be defined in 'metric' argument")
     }
 
+    # making grid
     grid_dict <- list(
       C = seq(0.2, 1, by = 0.2),
       sigma = "automatic",
       kernel = c("rbfdot", "laplacedot")
     )
 
-    # making grid
+    # Check hyperparameters names
     nms_grid <- names(grid)
+    correct_nms_grid <- names(grid_dict)
+
+    if (!all(nms_grid %in% correct_nms_grid)) {
+      stop(
+        paste(paste(nms_grid[!nms_grid %in% correct_nms_grid], collapse = ", "), " is not hyperparameters\n"),
+        "Grid expected to be any combination between ", paste(correct_nms_grid, collapse = ", ")
+      )
+    }
+
     if (is.null(grid)) {
       message("Grid not provided. Using the default one for Support Vector Machines.")
       grid <- expand.grid(grid_dict)
@@ -167,7 +177,7 @@ tune_abund_svm <-
     ranked_combinations <- model_selection(hyper_combinations, metrics)
 
     # fit final model
-    message("Fitting the best model...")
+    message("\nFitting the best model...")
     final_model <-
       fit_abund_svm(
         data = data,
