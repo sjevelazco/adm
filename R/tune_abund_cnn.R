@@ -211,7 +211,7 @@ tune_abund_cnn <-
     ranked_combinations <- model_selection(hyper_combinations, metrics)
 
     # fit final model
-    message("Fitting the best model...")
+    message("\nFitting the best model...")
     final_model <-
       fit_abund_cnn(
         data = data,
