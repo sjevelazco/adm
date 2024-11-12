@@ -2,7 +2,7 @@
 % Please edit documentation in R/tune_abund_net.R
 \name{tune_abund_net}
 \alias{tune_abund_net}
-\title{Fit and validate Artificial Neural Networks models with exploration of hyper-parameters that optimize performance}
+\title{Fit and validate Shallow Neural Networks models with exploration of hyper-parameters that optimize performance}
 \usage{
 tune_abund_net(
   data,
@@ -58,25 +58,35 @@ A list object with:
 }
 }
 \description{
-Fit and validate Artificial Neural Networks models with exploration of hyper-parameters that optimize performance
+Fit and validate Shallow Neural Networks models with exploration of hyper-parameters that optimize performance
 }
 \examples{
 \dontrun{
 require(dplyr)
 
+# Database with species abundance and x and y coordinates
 data("sppabund")
 
 # Select data for a single species
 some_sp <- sppabund \%>\%
-  dplyr::filter(species == "Species two") \%>\%
+  dplyr::filter(species == "Species one") \%>\%
   dplyr::select(-.part2, -.part3)
 
 # Explore response variables
+some_sp$ind_ha \%>\% range()
+some_sp$ind_ha \%>\% hist()
+
+# Here we balance number of absences
+some_sp <-
+  balance_dataset(some_sp, response = "ind_ha", absence_ratio = 0.2)
+
+# Create a grid
 net_grid <- expand.grid(
   size = seq(from = 8, to = 32, by = 6),
   decay = seq(from = 0, to = 0.4, by = 0.01)
 )
 
+# Tune a NET model
 tuned_net <- tune_abund_net(
   data = some_sp,
   response = "ind_ha",
@@ -89,9 +99,6 @@ tuned_net <- tune_abund_net(
   n_cores = 3
 )
 
-tuned_net$model
-tuned_net$performance
-tuned_net$optimal_combination
-tuned_net$all_combinations
+tuned_net
 }
 }

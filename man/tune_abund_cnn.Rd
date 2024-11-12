@@ -74,3 +74,109 @@ A list object with:
 \description{
 Fit and validate Convolutional Neural Network with exploration of hyper-parameters that optimize performance
 }
+\examples{
+\dontrun{
+require(dplyr)
+
+# Database with species abundance and x and y coordinates
+data("sppabund")
+
+# Select data for a single species
+some_sp <- sppabund \%>\%
+  dplyr::filter(species == "Species one") \%>\%
+  dplyr::select(-.part2, -.part3)
+
+# Explore response variables
+some_sp$ind_ha \%>\% range()
+some_sp$ind_ha \%>\% hist()
+
+# Here we balance number of absences
+some_sp <-
+  balance_dataset(some_sp, response = "ind_ha", absence_ratio = 0.2)
+
+# Generate some architectures
+many_archs <- generate_arch_list(
+  type = "cnn",
+  number_of_features = 3,
+  number_of_outputs = 1,
+  n_layers = c(2, 3),
+  n_neurons = c(16,32),
+  sample_size = c(11, 11),
+  number_of_fc_layers = c(1), # fully connected layers
+  fc_layers_size = c(16), 
+  conv_layers_kernel = 3,
+  conv_layers_stride = 1,
+  conv_layers_padding = 0,
+  batch_norm = TRUE
+) \%>\% select_arch_list(
+  type = c("cnn"),
+  method = "percentile",
+  n_samples = 1,
+  min_max = TRUE
+)
+
+# Create a grid
+# Obs.: the grid is tested with every architecture, thus it can get very large.
+cnn_grid <- expand.grid(
+  learning_rate = c(0.01, 0.005),
+  n_epochs = c(50,100),
+  batch_size = c(32),
+  validation_patience = c(2,4),
+  fitting_patience = c(2,4)
+)
+
+# Tune a cnn model
+tuned_cnn <- tune_abund_cnn(
+  data = some_sp,
+  response = "ind_ha",
+  predictors = c("bio12", "elevation", "sand"),
+  partition = ".part",
+  predict_part = TRUE,
+  metrics = c("corr_pear", "mae"),
+  grid = cnn_grid,
+  rasters = system.file("external/envar.tif", package = "adm"),
+  x = "x",
+  y = "y",
+  sample_size = c(11,11),
+  architectures = many_archs,
+  n_cores = 3
+)
+tuned_cnn
+
+# It is also possible to use a only one architecture 
+one_arch <- generate_cnn_architecture(
+  number_of_features = 3,
+  number_of_outputs = 1,
+  sample_size = c(11, 11),
+  number_of_conv_layers = 2,
+  conv_layers_size = c(14, 28),
+  conv_layers_kernel = 3,
+  conv_layers_stride = 1,
+  conv_layers_padding = 0,
+  number_of_fc_layers = 1,
+  fc_layers_size = c(28),
+  pooling = NULL,
+  batch_norm = TRUE,
+  dropout = 0,
+  verbose = T
+)
+
+tuned_cnn_2 <- tune_abund_cnn(
+  data = some_sp,
+  response = "ind_ha",
+  predictors = c("bio12", "elevation", "sand"),
+  partition = ".part",
+  predict_part = TRUE,
+  metrics = c("corr_pear", "mae"),
+  grid = cnn_grid,
+  architectures = one_arch,
+  rasters = system.file("external/envar.tif", package = "adm"),
+  x = "x",
+  y = "y",
+  sample_size = c(11,11),
+  n_cores = 3
+)
+
+tuned_cnn_2
+}
+}

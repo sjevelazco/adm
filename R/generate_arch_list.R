@@ -14,9 +14,9 @@
 #' @param conv_layers_kernel numeric. Specifies the kernel size for layers. Default 3.
 #' @param conv_layers_stride numeric. Specifies the stride for the convolutional layers. Default 1.
 #' @param conv_layers_padding  numeric. Specifies the padding for the convolutional layers. Default 0.
-#' @param pooling logical. Specifies whether pooling is included in the architecture. Default FALSE.
+#' @param pooling numeric. Specifies 2D average pooling kernel size. Default NULL
 #' @param batch_norm logical. Specifies whether batch normalization is included in the architecture. Default TRUE.
-#' @param dropout logical. Specifies whether dropout is included in the architecture. Default FALSE.
+#' @param dropout numeric. Default 0.
 #'
 #' @importFrom dplyr rename
 #' @importFrom tidyr unnest_wider
@@ -102,9 +102,9 @@ generate_arch_list <-
            conv_layers_kernel = 3,
            conv_layers_stride = 1,
            conv_layers_padding = 0,
-           pooling = FALSE,
+           pooling = NULL,
            batch_norm = TRUE,
-           dropout = FALSE) {
+           dropout = 0) {
     # TODO check documentation of this function
 
     Var1 <- Var2 <- NULL

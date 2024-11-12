@@ -70,7 +70,6 @@ Fit and validate Generalized Linear Models with exploration of hyper-parameters 
 }
 \examples{
 \dontrun{
-require(terra)
 require(dplyr)
 require(gamlss)
 

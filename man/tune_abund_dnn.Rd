@@ -62,3 +62,86 @@ A list object with:
 \description{
 Fit and validate Deep Neural Network model with exploration of hyper-parameters that optimize performance
 }
+\examples{
+\dontrun{
+require(dplyr)
+
+# Database with species abundance and x and y coordinates
+data("sppabund")
+
+# Select data for a single species
+some_sp <- sppabund \%>\%
+  dplyr::filter(species == "Species one") \%>\%
+  dplyr::select(-.part2, -.part3)
+  
+# Explore response variables
+some_sp$ind_ha \%>\% range()
+some_sp$ind_ha \%>\% hist()
+
+# Here we balance number of absences
+some_sp <-
+  balance_dataset(some_sp, response = "ind_ha", absence_ratio = 0.2)
+
+# Generate some architectures
+many_archs <- generate_arch_list(
+  type = "dnn",
+  number_of_features = 3,
+  number_of_outputs = 1,
+  n_layers = c(2,3),
+  n_neurons = c(6, 12, 16)
+) \%>\% select_arch_list(
+  type = c("dnn"),
+  method = "percentile",
+  n_samples = 1,
+  min_max = TRUE
+)
+
+# Create a grid
+# Obs.: the grid is tested with every architecture, thus it can get very large.
+dnn_grid <- expand.grid(
+  learning_rate = c(0.01, 0.005),
+  n_epochs = c(50,100),
+  batch_size = c(32),
+  validation_patience = c(2,4),
+  fitting_patience = c(2,4)
+)
+
+# Tune a DNN model
+tuned_dnn <- tune_abund_dnn(
+  data = some_sp,
+  response = "ind_ha",
+  predictors = c("bio12", "elevation", "sand"),
+  partition = ".part",
+  predict_part = TRUE,
+  metrics = c("corr_pear", "mae"),
+  grid = dnn_grid,
+  architectures = many_archs,
+  n_cores = 3
+)
+
+tuned_dnn
+
+# It is also possible to use a only one architecture 
+one_arch <- generate_dnn_architecture(
+  number_of_features = 3,
+  number_of_outputs = 1,
+  number_of_hidden_layers = 3,
+  hidden_layers_size = c(8, 16, 8),
+  batch_norm = TRUE
+)
+
+tuned_dnn_2 <- tune_abund_dnn(
+  data = some_sp,
+  response = "ind_ha",
+  predictors = c("bio12", "elevation", "sand"),
+  partition = ".part",
+  predict_part = TRUE,
+  metrics = c("corr_pear", "mae"),
+  grid = dnn_grid,
+  architectures = one_arch,
+  n_cores = 3
+)
+
+tuned_dnn_2
+}
+}

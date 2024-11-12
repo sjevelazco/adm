@@ -12,7 +12,7 @@ tune_abund_xgb(
   partition,
   predict_part = FALSE,
   grid = NULL,
-  objective = "reg:squarrederror",
+  objective = "reg:squarederror",
   metrics = NULL,
   n_cores = 1,
   verbose = TRUE
@@ -65,4 +65,45 @@ A list object with:
 }
 \description{
 Fit and validate Extreme Gradient Boosting models with exploration of hyper-parameters that optimize performance
+}
+\examples{
+\dontrun{
+require(dplyr)
+# Database with species abundance and x and y coordinates
+data("sppabund")
+# Select data for a single species
+some_sp <- sppabund \%>\%
+  dplyr::filter(species == "Species two") \%>\%
+  dplyr::select(-.part2, -.part3)
+# Explore response variables
+some_sp$ind_ha \%>\% range()
+some_sp$ind_ha \%>\% hist()
+# Here we balance number of absences
+some_sp <-
+  balance_dataset(some_sp, response = "ind_ha", absence_ratio = 0.2)
+# Create a grid
+xgb_grid <- expand.grid(
+  nrounds = c(100,300),
+  max_depth = c(4,6,8),
+  eta = c(0.2,0.5),
+  gamma = c(1,5,10),
+  colsample_bytree = c(0.5,1),
+  min_child_weight = c(0.5,1,2),
+  subsample = c(0.5,1)
+)
+# Tune a XGB model
+tuned_xgb <- tune_abund_xgb(
+  data = some_sp,
+  response = "ind_ha",
+  predictors = c("bio12", "elevation", "sand"),
+  predictors_f = c("eco"),
+  partition = ".part",
+  predict_part = TRUE,
+  metrics = c("corr_pear", "mae"),
+  grid = xgb_grid,
+  objective = "reg:squarederror",
+  n_cores = 3
+)
+tuned_xgb
+}
 }
