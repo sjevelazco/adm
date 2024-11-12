@@ -183,7 +183,7 @@ tune_abund_svm <-
       )
 
     message(
-      "The best model was a Support Vector Machine with sigma = ",
+      "The best model was achieved with: \n sigma = ",
       ranked_combinations[[1]][[1, "sigma"]],
       ", kernel = ",
       ranked_combinations[[1]][[1, "kernel"]],

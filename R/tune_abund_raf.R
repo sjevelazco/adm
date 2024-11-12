@@ -163,7 +163,7 @@ tune_abund_raf <-
       )
 
     message(
-      "The best model was a Random Forest with mtry = ",
+      "The best model was achieved with: \n mtry = ",
       ranked_combinations[[1]][[1, "mtry"]],
       " and ntree = ",
       ranked_combinations[[1]][[1, "ntree"]]

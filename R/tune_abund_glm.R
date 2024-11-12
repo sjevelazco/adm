@@ -239,7 +239,7 @@ tune_abund_glm <-
       )
 
     message(
-      "The best model was a GLM with:",
+      "The best model was achieved with:",
       "\n distribution = ",
       choosen_family,
       "\n poly = ",
