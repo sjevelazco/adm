@@ -84,5 +84,5 @@ test_that("incomplete grid", {
     verbose = FALSE
   )
   
-  length(tuned_) %>% expect_equal(7)
+  expect_true(all(c("shrinkage", "n.minobsinnode") %in% names(tuned_$optimal_combination)))
 })
