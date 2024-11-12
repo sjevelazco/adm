@@ -43,6 +43,45 @@
 #' @export
 #'
 #' @examples
+#' \dontrun{
+#' require(dplyr)
+#' # Database with species abundance and x and y coordinates
+#' data("sppabund")
+#' # Select data for a single species
+#' some_sp <- sppabund %>%
+#'   dplyr::filter(species == "Species two") %>%
+#'   dplyr::select(-.part2, -.part3)
+#' # Explore response variables
+#' some_sp$ind_ha %>% range()
+#' some_sp$ind_ha %>% hist()
+#' # Here we balance number of absences
+#' some_sp <-
+#'   balance_dataset(some_sp, response = "ind_ha", absence_ratio = 0.2)
+#' # Create a grid
+#' xgb_grid <- expand.grid(
+#'   nrounds = c(100,300),
+#'   max_depth = c(4,6,8),
+#'   eta = c(0.2,0.5),
+#'   gamma = c(1,5,10),
+#'   colsample_bytree = c(0.5,1),
+#'   min_child_weight = c(0.5,1,2),
+#'   subsample = c(0.5,1)
+#' )
+#' # Tune a XGB model
+#' tuned_xgb <- tune_abund_xgb(
+#'   data = some_sp,
+#'   response = "ind_ha",
+#'   predictors = c("bio12", "elevation", "sand"),
+#'   predictors_f = c("eco"),
+#'   partition = ".part",
+#'   predict_part = TRUE,
+#'   metrics = c("corr_pear", "mae"),
+#'   grid = xgb_grid,
+#'   objective = "reg:squarederror",
+#'   n_cores = 3
+#' )
+#' tuned_xgb
+#' }
 tune_abund_xgb <-
   function(data,
            response,
@@ -51,7 +90,7 @@ tune_abund_xgb <-
            partition,
            predict_part = FALSE,
            grid = NULL,
-           objective = "reg:squarrederror",
+           objective = "reg:squarederror",
            metrics = NULL,
            n_cores = 1,
            verbose = TRUE) {
@@ -72,13 +111,37 @@ tune_abund_xgb <-
 
 
     # making grid
+    grid_dict <- list(
+      nrounds = c(100,300),
+      max_depth = c(4,6,8),
+      eta = c(0.2,0.5),
+      gamma = c(1,5,10),
+      colsample_bytree = c(0.5,1),
+      min_child_weight = c(0.5,1,2),
+      subsample = c(0.5,1)
+    )
+    
+    nms_hypers <- names(grid_dict)
+    nms_grid <- names(grid)
     if (is.null(grid)) {
-      message("Grid not provided. Using the default one for eXtreme Gradient Boosting.")
+      message("Grid not provided. Using the default one for Shallow Neural Networks.")
       grid <- expand.grid(grid_dict)
-    } else if (all(names(grid) %in% names(grid_dict))) {
-      user_hyper <- names(grid)[which(names(grid_dict) %in% names(grid))]
+    } else if (any(!nms_grid %in% nms_hypers)){
+      stop(
+        "Unrecognized hyperparameter: ",
+        paste(nms_grid[!nms_grid %in% nms_hypers], collapse = ", ")
+      )
+    } else if (all(nms_hypers %in% nms_grid)) {
+      message("Using provided grid.")
+    } else if (any(!nms_hypers %in% nms_grid)) {
+      message(
+        "Adding default hyperparameter for: ",
+        paste(names(grid_dict)[!names(grid_dict) %in% nms_grid], collapse = ", ")
+      )
+      
+      user_hyper <- names(grid)[which(names(grid) %in% names(grid_dict))]
       default_hyper <- names(grid_dict)[which(!names(grid_dict) %in% user_hyper)]
-
+      
       user_list <- grid_dict[default_hyper]
       for (i in user_hyper) {
         l <- grid[[i]] %>%
@@ -87,13 +150,12 @@ tune_abund_xgb <-
         names(l) <- i
         user_list <- append(user_list, l)
       }
-
+      
       grid <- expand.grid(user_list)
-      if (all(names(grid) %in% names(grid_dict)) & length(names(grid)) == 7) {
-        message("Using provided grid.")
-      }
     } else {
-      stop('Grid expected to be any combination between "n.trees", "interaction.depth", "n.minobsinnode" and "shrinkage"  hyperparameters.')
+      stop("Grid expected to be any combination between ", 
+           paste0(nms_hypers, collapse = ", "), 
+           " hyperparameters.")
     }
 
     comb_id <- paste("comb_", 1:nrow(grid), sep = "")

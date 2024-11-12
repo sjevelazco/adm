@@ -240,7 +240,7 @@ generate_cnn_architecture <-
         seq <- paste0(seq, "\n      self$bn_linear", i, "() %>%")
       }
 
-      if (dropout & dropout > 0 & dropout < 1 & is.numeric(dropout) & i < length(fc_layer_names)) {
+      if (dropout > 0 & dropout < 1 & is.numeric(dropout) & i < length(fc_layer_names)) {
         seq <- paste0(seq, "\n      torch::nnf_dropout(p=", dropout, ") %>%")
       }
 

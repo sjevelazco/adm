@@ -9,7 +9,7 @@
 #' @param learning_rate numeric. The size of the step taken during the optimization process. Default = 0.01
 #' @param n_epochs numeric. Max number of times the learning algorithm will work through the training set. Default = 10
 #' @param batch_size numeric. A batch is a subset of the training set used in a single iteration of the training process. The size of each batch is referred to as the batch size. Default = 32
-#' @param custom_architecture a Torch nn_module_generator object. A neural network architecture to be used instead of the internal default one. Default NULL
+#' @param custom_architecture a Torch nn_module_generator object or a generate_dnn_architecture output. A neural network architecture to be used instead of the internal default one. Default NULL
 #' @param verbose logical. If FALSE, disables all console messages. Default TRUE
 #' @param validation_patience
 #' @param fitting_patience

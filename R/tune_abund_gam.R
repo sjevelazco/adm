@@ -41,13 +41,45 @@
 #' @examples
 #' \dontrun{
 #' require(dplyr)
-#'
+#' require(gamlss)
+#' 
+#' # Database with species abundance and x and y coordinates
 #' data("sppabund")
-#'
 #' # Select data for a single species
 #' some_sp <- sppabund %>%
-#'   dplyr::filter(species == "Species two") %>%
+#'   dplyr::filter(species == "Species one") %>%
 #'   dplyr::select(-.part2, -.part3)
+#' # Explore response variables
+#' some_sp$ind_ha %>% range()
+#' some_sp$ind_ha %>% hist()
+#' # Here we balance number of absences
+#' some_sp <-
+#'   balance_dataset(some_sp, response = "ind_ha", absence_ratio = 0.2)
+#' # Explore different family distributions
+#' suitable_distributions <- family_selector(data = some_sp, response = "ind_ha")
+#' suitable_distributions
+#' # Create a grid
+#' gam_grid <- expand.grid(
+#'   inter = "automatic",
+#'   distribution = suitable_distributions$family_call
+#' )
+#' # Tune a GAM model
+#' tuned_gam <- tune_abund_gam(
+#'   data = some_sp,
+#'   response = "ind_ha",
+#'   predictors = c("bio12", "elevation", "sand"),
+#'   fit_formula = formula("ind_ha ~ bio12 + elevation + sand + eco"),
+#'   sigma_formula = formula("ind_ha ~ bio12 + elevation"),
+#'   nu_formula = formula("ind_ha ~ bio12 + elevation"),
+#'   predictors_f = c("eco"),
+#'   partition = ".part",
+#'   predict_part = TRUE,
+#'   metrics = c("corr_pear", "mae"),
+#'   grid = gam_grid,
+#'   n_cores = 3
+#' )
+#' 
+#' tuned_gam
 #' }
 tune_abund_gam <-
   function(data,
@@ -70,34 +102,55 @@ tune_abund_gam <-
       !all(metrics %in% c("corr_spear", "corr_pear", "mae", "inter", "slope", "pdisp"))) {
       stop("Metrics is needed to be defined in 'metric' argument")
     }
-
-    variables <- dplyr::bind_rows(c(c = predictors, f = predictors_f)) %>%
-      t() %>%
-      as.vector()
-
-    families_bank <-
-      system.file("external/families_bank.txt", package = "adm") %>%
-      utils::read.delim(., header = TRUE, quote = "\t") # families_bank
-
+    
     # making grid
+    suitable_distributions <- family_selector(data, response)
+    
+    grid_dict <- list(
+      inter = "automatic",
+      distribution = suitable_distributions$family_call
+    )
+    
+    nms_hypers <- names(grid_dict)
+    nms_grid <- names(grid)
     if (is.null(grid)) {
-      message("Families not provided. Picking recommended families to fit data.")
-      distribution <- family_selector(data, response)$distribution
-      inter <- "automatic"
-      grid <- expand.grid(distribution = distribution, inter = inter)
-      grid <- dplyr::left_join(grid, families_bank, by = "distribution") %>%
-        dplyr::select(distribution, discrete, inter)
-    } else if (is.data.frame(grid) & all(names(grid) %in% c("distribution", "inter")) & all(grid$distribution %in% families_bank$distribution)) {
-      message("Testing with provided grid.")
-      grid <- dplyr::left_join(grid, families_bank, by = "distribution") %>%
-        dplyr::select(distribution, discrete, inter)
+      message("Grid not provided. Using the default one for Generalized Additive Models.")
+      grid <- expand.grid(grid_dict)
+    } else if (any(!nms_grid %in% nms_hypers)){
+      stop(
+        "Unrecognized hyperparameter: ",
+        paste(nms_grid[!nms_grid %in% nms_hypers], collapse = ", ")
+      )
+    } else if (all(nms_hypers %in% nms_grid)) {
+      message("Using provided grid.")
+    } else if (any(!nms_hypers %in% nms_grid)) {
+      message(
+        "Adding default hyperparameter for: ",
+        paste(names(grid_dict)[!names(grid_dict) %in% nms_grid], collapse = ", ")
+      )
+      
+      user_hyper <- names(grid)[which(names(grid) %in% names(grid_dict))]
+      default_hyper <- names(grid_dict)[which(!names(grid_dict) %in% user_hyper)]
+      
+      user_list <- grid_dict[default_hyper]
+      for (i in user_hyper) {
+        l <- grid[[i]] %>%
+          unique() %>%
+          list()
+        names(l) <- i
+        user_list <- append(user_list, l)
+      }
+      
+      grid <- expand.grid(user_list)
     } else {
-      stop("Grid names expected to be 'distribution' and 'inter'.")
+      stop("Grid expected to be any combination between ", 
+           paste0(nms_hypers, collapse = ", "), 
+           " hyperparameters.")
     }
-
+    
     comb_id <- paste("comb_", 1:nrow(grid), sep = "")
     grid <- cbind(comb_id, grid)
-
+    
     # looping the grid
     message("Searching for optimal hyperparameters...")
 

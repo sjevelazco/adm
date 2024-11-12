@@ -42,14 +42,23 @@
 #' \dontrun{
 #' require(dplyr)
 #'
+#' # Database with species abundance and x and y coordinates
 #' data("sppabund")
 #'
 #' # Select data for a single species
 #' some_sp <- sppabund %>%
-#'   dplyr::filter(species == "Species two") %>%
+#'   dplyr::filter(species == "Species one") %>%
 #'   dplyr::select(-.part2, -.part3)
 #'
-#' # Grid for Gradient Boosting Machines
+#' # Explore response variables
+#' some_sp$ind_ha %>% range()
+#' some_sp$ind_ha %>% hist()
+#'
+#' # Here we balance number of absences
+#' some_sp <-
+#'   balance_dataset(some_sp, response = "ind_ha", absence_ratio = 0.2)
+#'   
+#' # Create a grid
 #' gbm_grid <- expand.grid(
 #'   interaction.depth = c(2, 4, 8, 16),
 #'   n.trees = c(100, 500, 1000),
@@ -70,10 +79,7 @@
 #'   n_cores = 3
 #' )
 #'
-#' tuned_gbm$model
-#' tuned_gbm$performance
-#' tuned_gbm$optimal_combination
-#' tuned_gbm$all_combinations
+#' tuned_gbm
 #' }
 tune_abund_gbm <-
   function(data,
@@ -92,23 +98,36 @@ tune_abund_gbm <-
       !all(metrics %in% c("corr_spear", "corr_pear", "mae", "inter", "slope", "pdisp"))) {
       stop("Metrics is needed to be defined in 'metric' argument")
     }
-
+    
+    # making grid
     grid_dict <- list(
       n.trees = c(100, 200, 300),
       interaction.depth = c(1, 2, 3),
       n.minobsinnode = c(5, 10, 15),
       shrinkage = seq(0.001, 0.1, by = 0.05)
     )
-
-
-    # making grid
+    
+    nms_hypers <- names(grid_dict)
+    nms_grid <- names(grid)
     if (is.null(grid)) {
-      message("Grid not provided. Using the default one for Gradient Boosting Machines.")
+      message("Grid not provided. Using the default one for Gradient Boosted Regression.")
       grid <- expand.grid(grid_dict)
-    } else if (all(names(grid) %in% names(grid_dict))) {
-      user_hyper <- names(grid)[which(names(grid_dict) %in% names(grid))]
+    } else if (any(!nms_grid %in% nms_hypers)){
+      stop(
+        "Unrecognized hyperparameter: ",
+        paste(nms_grid[!nms_grid %in% nms_hypers], collapse = ", ")
+      )
+    } else if (all(nms_hypers %in% nms_grid)) {
+      message("Using provided grid.")
+    } else if (any(!nms_hypers %in% nms_grid)) {
+      message(
+        "Adding default hyperparameter for: ",
+        paste(names(grid_dict)[!names(grid_dict) %in% nms_grid], collapse = ", ")
+      )
+      
+      user_hyper <- names(grid)[which(names(grid) %in% names(grid_dict))]
       default_hyper <- names(grid_dict)[which(!names(grid_dict) %in% user_hyper)]
-
+      
       user_list <- grid_dict[default_hyper]
       for (i in user_hyper) {
         l <- grid[[i]] %>%
@@ -117,13 +136,12 @@ tune_abund_gbm <-
         names(l) <- i
         user_list <- append(user_list, l)
       }
-
+      
       grid <- expand.grid(user_list)
-      if (all(names(grid) %in% names(grid_dict)) & length(names(grid)) == 4) {
-        message("Using provided grid.")
-      }
     } else {
-      stop('Grid expected to be any combination between "n.trees", "interaction.depth", "n.minobsinnode" and "shrinkage"  hyperparameters.')
+      stop("Grid expected to be any combination between ", 
+           paste0(nms_hypers, collapse = ", "), 
+           " hyperparameters.")
     }
 
     comb_id <- paste("comb_", 1:nrow(grid), sep = "")

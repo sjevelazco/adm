@@ -59,30 +59,31 @@ tune_abund_dnn <-
     }
 
     # architectures
-    if (all(architectures != "fit_intern")) {
-      if (is.null(architectures)) {
-        message("Architectures not provided. Using the default set for Deep Neural Networks.")
-        architectures <- generate_arch_list(
-          number_of_features = length(predictors) + length(predictors_f),
-          number_of_outputs = length(response)
-        )
+    architectures <- dnn_arch #debug
+    if (is.list(architectures)){
+      # check if it is from generate_arch_list or generate_dnn_architecture
+      if (all(names(architectures) %in% c("net","arch","arch_dict"))){
+        # generated with generate_dnn_architecture
+        arch_dict <- architectures$arch_dict
+        arch_list <- list(architectures$net)
+        names(arch_list) <- paste0("arch-",arch_dict %>% names() %>% stringr::str_replace_all("[^0-9]", ""),"-1")
+      } else if (all(names(architectures) %in% c("arch_list","arch_dict","changes"))) {
+        # generated with generate_arch_list
         arch_list <- architectures$arch_list
         arch_dict <- architectures$arch_dict
-      } else if (!all(names(architectures) %in% c("arch_list", "arch_dict", "changes"))) {
-        stop("architectures expected to be a list with two other lists, arch_list and arch_dict, or 'fit_intern'.")
-      } else {
-        arch_list <- architectures$arch_list
-        arch_dict <- architectures$arch_dict
-        if (!all(sapply(arch_list, class) == c("neural_net", "nn_module", "nn_module_generator"))) {
-          stop('Expected "neural_net", "nn_module", "nn_module_generator" objects in arch_list.')
-        } else {
-          message("Using provided architectures.")
-        }
       }
-    } else {
+    } else if (is.null(architectures) | all(architectures == "fit_intern")) {
+      # use the default Deep Neural Network architecture
       message("Using the fit_abund_dnn() intern DNN architecture.")
       arch_list <- list("fit_intern" = NULL)
       arch_dict <- list("fit_intern" = NULL)
+    }
+    
+    if (!all(sapply(arch_list, class) == c("neural_net", "nn_module", "nn_module_generator"))) {
+      stop('Expected "neural_net", "nn_module", "nn_module_generator" objects in arch_list.
+      Please, use generate_arch_list or generate_dnn_architecture outputs.')
+    } else {
+      message("Using provided architectures.")
     }
 
     archs <- names(arch_list)
@@ -207,17 +208,6 @@ tune_abund_dnn <-
       n_layers, " layers with ",
       paste(arch_dict[[layer_index]][, size_index %>% as.numeric()], collapse = "->"), " neurons "
     )
-
-    # if (ranked_combinations[[1]][1, "arch"] != "fit_intern") {
-    #   n_layers <- as.numeric(arch_indexes[[1]][1])
-    #   n_comb <- as.numeric(arch_indexes[[1]][2])
-    #
-    #   structure <- arch_dict[[n_layers]][, n_comb]
-    #   message(
-    #     "Used a ", n_layers, " hidden layers DNN structured as ",
-    #     paste0(structure, collapse = "-")
-    #   )
-    # }
 
     selected_arch <- ranked_combinations[[1]][1, "arch"] %>%
       as.character()
