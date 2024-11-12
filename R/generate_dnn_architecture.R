@@ -12,8 +12,9 @@
 #'
 #' @return A list containing:
 #' \itemize{
-#' \item net: a list of generated architectures.
-#' \item arch: a list of architecture string
+#' \item net: a instantiated torch neural net.
+#' \item arch: a string with a R expression to instantiate the neural network.
+#' \item arch_dict: a list with a matrix describing the architecture structure.
 #' }
 #'
 #' @seealso \code{\link{generate_arch_list}}, \code{\link{generate_cnn_architecture}}
@@ -26,7 +27,7 @@ generate_dnn_architecture <-
            number_of_hidden_layers = 2,
            hidden_layers_size = c(14, 7),
            batch_norm = TRUE,
-           dropout = 0.2,
+           dropout = 0,
            verbose = FALSE) {
     arch <- "net <- torch::nn_module(
   'neural_net',
@@ -94,7 +95,7 @@ generate_dnn_architecture <-
         seq <- paste0(seq, "\n      self$bn", i, "() %>%")
       }
 
-      if (dropout & dropout > 0 & dropout < 1 & is.numeric(dropout) & i < length(layer_names)) {
+      if (dropout > 0 & dropout < 1 & is.numeric(dropout) & i < length(layer_names)) {
         seq <- paste0(seq, "\n      torch::nnf_dropout(p=", dropout, ") %>%")
       }
 
@@ -115,7 +116,14 @@ generate_dnn_architecture <-
       cat(arch)
     }
 
-    return_list <- list(net = net, arch = arch)
+    # Creating arch_dict
+    arch_dict <- as.matrix(hidden_layers_size) %>%
+      list
+    names(arch_dict) <- paste0(number_of_hidden_layers,"_layer_net")
+    row.names(arch_dict[[1]]) <- paste0("layer_",seq(1,number_of_hidden_layers))
+    
+    
+    return_list <- list(net = net, arch = arch, arch_dict = arch_dict)
 
     return(return_list)
   }

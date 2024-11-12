@@ -42,20 +42,30 @@
 #' \dontrun{
 #' require(dplyr)
 #'
+#' # Database with species abundance and x and y coordinates
 #' data("sppabund")
 #'
 #' # Select data for a single species
 #' some_sp <- sppabund %>%
-#'   dplyr::filter(species == "Species two") %>%
+#'   dplyr::filter(species == "Species one") %>%
 #'   dplyr::select(-.part2, -.part3)
 #'
-#' # Explore repose variables
+#' # Explore response variables
+#' some_sp$ind_ha %>% range()
+#' some_sp$ind_ha %>% hist()
+#'
+#' # Here we balance number of absences
+#' some_sp <-
+#'   balance_dataset(some_sp, response = "ind_ha", absence_ratio = 0.2)
+#'   
+#' # Create a grid
 #' svm_grid <- expand.grid(
 #'   sigma = "automatic",
 #'   C = c(0.5, 1, 2),
 #'   kernel = c("rbfdot", "laplacedot")
 #' )
 #'
+#' # Tune a SVM model
 #' tuned_svm <- tune_abund_svm(
 #'   data = some_sp,
 #'   response = "ind_ha",
@@ -68,10 +78,7 @@
 #'   n_cores = 3
 #' )
 #'
-#' tuned_svm$model
-#' tuned_svm$performance
-#' tuned_svm$optimal_combination
-#' tuned_svm$all_combinations
+#' tuned_svm
 #' }
 tune_abund_svm <-
   function(data,
@@ -90,26 +97,32 @@ tune_abund_svm <-
       stop("Metrics is needed to be defined in 'metric' argument")
     }
 
+    # making grid
     grid_dict <- list(
       C = seq(0.2, 1, by = 0.2),
       sigma = "automatic",
       kernel = c("rbfdot", "laplacedot")
     )
 
-    # making grid
+    nms_hypers <- names(grid_dict)
     nms_grid <- names(grid)
     if (is.null(grid)) {
       message("Grid not provided. Using the default one for Support Vector Machines.")
       grid <- expand.grid(grid_dict)
-    } else if (all(c("C", "sigma", "kernel") %in% nms_grid)) {
+    } else if (any(!nms_grid %in% nms_hypers)){
+      stop(
+        "Unrecognized hyperparameter: ",
+        paste(nms_grid[!nms_grid %in% nms_hypers], collapse = ", ")
+      )
+    } else if (all(nms_hypers %in% nms_grid)) {
       message("Using provided grid.")
-    } else if (any(!c("C", "sigma", "kernel") %in% nms_grid)) {
+    } else if (any(!nms_hypers %in% nms_grid)) {
       message(
         "Adding default hyperparameter for: ",
         paste(names(grid_dict)[!names(grid_dict) %in% nms_grid], collapse = ", ")
       )
 
-      user_hyper <- names(grid)[which(names(grid_dict) %in% names(grid))]
+      user_hyper <- names(grid)[which(names(grid) %in% names(grid_dict))]
       default_hyper <- names(grid_dict)[which(!names(grid_dict) %in% user_hyper)]
 
       user_list <- grid_dict[default_hyper]
@@ -123,9 +136,10 @@ tune_abund_svm <-
 
       grid <- expand.grid(user_list)
     } else {
-      stop('Grid expected to be any combination between "C", "sigma" and "kernel" hyperparameters.')
+      stop("Grid expected to be any combination between ", 
+           paste0(nms_hypers, collapse = ", "), 
+           " hyperparameters.")
     }
-
 
     comb_id <- paste("comb_", 1:nrow(grid), sep = "")
     grid <- cbind(comb_id, grid)

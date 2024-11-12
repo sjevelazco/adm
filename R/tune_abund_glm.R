@@ -42,7 +42,6 @@
 #'
 #' @examples
 #' \dontrun{
-#' require(terra)
 #' require(dplyr)
 #' require(gamlss)
 #'
@@ -112,34 +111,53 @@ tune_abund_glm <-
       !all(metrics %in% c("corr_spear", "corr_pear", "mae", "inter", "slope", "pdisp"))) {
       stop("Metrics is needed to be defined in 'metric' argument")
     }
-
-    variables <- dplyr::bind_rows(c(c = predictors, f = predictors_f)) %>%
-      t() %>%
-      as.vector()
-
-    families_bank <-
-      system.file("external/families_bank.txt", package = "adm") %>%
-      utils::read.delim(., header = TRUE, quote = "\t") # families_bank
-
+    
     # making grid
+    suitable_distributions <- family_selector(data, response)
+    
+    grid_dict <- list(
+      poly = c(2,3),
+      inter_order = c(1,2),
+      distribution = suitable_distributions$family_call
+    )
+    
+    nms_hypers <- names(grid_dict)
+    nms_grid <- names(grid)
     if (is.null(grid)) {
-      message("Grid not provided. Using the default one for GLM.")
-      families_hp <- family_selector(data, response)
-      grid <- list(
-        poly = c(1, 2, 3),
-        inter_order = c(0, 1, 2),
-        distribution = families_hp$family_call
-      ) %>%
-        expand.grid() %>%
-        dplyr::left_join(families_hp, by = "distribution")
-    } else if (is.data.frame(grid) & all(names(grid) %in% c("distribution", "poly", "inter_order")) & all(grid$distribution %in% families_bank$family_call)) {
-      message("Testing with provided grid.")
-      grid <- dplyr::left_join(grid, families_bank %>% rename(distribution = family_call), by = "distribution") %>%
-        dplyr::select(poly, inter_order, distribution, discrete)
+      message("Grid not provided. Using the default one for Generalized Linear Models.")
+      grid <- expand.grid(grid_dict)
+    } else if (any(!nms_grid %in% nms_hypers)){
+      stop(
+        "Unrecognized hyperparameter: ",
+        paste(nms_grid[!nms_grid %in% nms_hypers], collapse = ", ")
+      )
+    } else if (all(nms_hypers %in% nms_grid)) {
+      message("Using provided grid.")
+    } else if (any(!nms_hypers %in% nms_grid)) {
+      message(
+        "Adding default hyperparameter for: ",
+        paste(names(grid_dict)[!names(grid_dict) %in% nms_grid], collapse = ", ")
+      )
+      
+      user_hyper <- names(grid)[which(names(grid) %in% names(grid_dict))]
+      default_hyper <- names(grid_dict)[which(!names(grid_dict) %in% user_hyper)]
+      
+      user_list <- grid_dict[default_hyper]
+      for (i in user_hyper) {
+        l <- grid[[i]] %>%
+          unique() %>%
+          list()
+        names(l) <- i
+        user_list <- append(user_list, l)
+      }
+      
+      grid <- expand.grid(user_list)
     } else {
-      stop("Grid names expected to be 'distribution', 'poly' and 'inter_order'.")
+      stop("Grid expected to be any combination between ", 
+           paste0(nms_hypers, collapse = ", "), 
+           " hyperparameters.")
     }
-
+    
     comb_id <- paste("comb_", 1:nrow(grid), sep = "")
     grid <- cbind(comb_id, grid)
 
@@ -158,16 +176,11 @@ tune_abund_glm <-
       .export = c("fit_abund_glm", "adm_eval"),
       .packages = c("dplyr")
     ) %dopar% {
-      data_fam <- data
-      # if (grid[i, "discrete"] == 1) {
-      #   data_fam[, response] <- round(data[, response])
-      # }
-
       model <- tryCatch(
         {
           model <-
             fit_abund_glm(
-              data = data_fam,
+              data = data,
               response = response,
               predictors = predictors,
               predictors_f = predictors_f,
