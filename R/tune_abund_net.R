@@ -157,7 +157,7 @@ tune_abund_net <-
       )
 
     message(
-      "The best model was a Artificial Neural Network with size = ",
+      "The best model was achieved with: \n size = ",
       ranked_combinations[[1]][[1, "size"]],
       " and decay = ",
       ranked_combinations[[1]][[1, "decay"]]

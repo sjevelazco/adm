@@ -183,7 +183,7 @@ tune_abund_gam <-
       )
 
     message(
-      "The best model was a GAM with:",
+      "The best model was achieved with:",
       "\n family = ",
       choosen_family,
       "\n inter = ",
