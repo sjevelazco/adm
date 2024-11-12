@@ -41,7 +41,7 @@ fit_abund_dnn(
 
 \item{fitting_patience}{}
 
-\item{custom_architecture}{a Torch nn_module_generator object. A neural network architecture to be used instead of the internal default one. Default NULL}
+\item{custom_architecture}{a Torch nn_module_generator object or a generate_dnn_architecture output. A neural network architecture to be used instead of the internal default one. Default NULL}
 
 \item{verbose}{logical. If FALSE, disables all console messages. Default TRUE}
 }

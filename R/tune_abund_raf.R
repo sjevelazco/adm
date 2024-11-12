@@ -101,16 +101,20 @@ tune_abund_raf <-
       ntree = seq(from = 500, to = 1000, by = 100)
     )
     
-    nms_hypers <- names(grid_dict)
+    # Check hyperparameters names
     nms_grid <- names(grid)
-    if (is.null(grid)) {
-      message("Grid not provided. Using the default one for Shallow Neural Networks.")
-      grid <- expand.grid(grid_dict)
-    } else if (any(!nms_grid %in% nms_hypers)){
+    nms_hypers <- names(grid_dict)
+    
+    if (!all(nms_grid %in% nms_hypers)) {
       stop(
-        "Unrecognized hyperparameter: ",
-        paste(nms_grid[!nms_grid %in% nms_hypers], collapse = ", ")
+        paste(paste(nms_grid[!nms_grid %in% nms_hypers], collapse = ", "), " is not hyperparameters\n"),
+        "Grid expected to be any combination between ", paste(nms_hypers, collapse = ", ")
       )
+    }
+    
+    if (is.null(grid)) {
+      message("Grid not provided. Using the default one for Random Forests.")
+      grid <- expand.grid(grid_dict)
     } else if (all(nms_hypers %in% nms_grid)) {
       message("Using provided grid.")
     } else if (any(!nms_hypers %in% nms_grid)) {
@@ -132,10 +136,6 @@ tune_abund_raf <-
       }
       
       grid <- expand.grid(user_list)
-    } else {
-      stop("Grid expected to be any combination between ", 
-           paste0(nms_hypers, collapse = ", "), 
-           " hyperparameters.")
     }
     
     comb_id <- paste("comb_", 1:nrow(grid), sep = "")

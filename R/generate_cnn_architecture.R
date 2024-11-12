@@ -19,8 +19,9 @@
 #'
 #' @return A list containing:
 #' \itemize{
-#' \item net: a list of generated architectures.
-#' \item arch: a list of architecture dictionaries.
+#' \item net: a instantiated torch neural net.
+#' \item arch: a string with a R expression to instantiate the neural network.
+#' \item arch_dict: a list with a matrix describing the architecture structure.
 #' }
 #'
 #' @seealso \code{\link{generate_arch_list}},
@@ -265,7 +266,14 @@ generate_cnn_architecture <-
       cat(arch)
     }
 
-    return_list <- list(net = net, arch = arch)
+    # Creating arch_dict
+    arch_dict <- c(conv_layers_size, fc_layers_size) %>% 
+      as.matrix() %>%
+      list
+    names(arch_dict) <- paste0("conv",number_of_conv_layers,"-fc",number_of_fc_layers,"-net")
+    row.names(arch_dict[[1]]) <- c(paste0("conv_",seq(1,number_of_conv_layers)),paste0("fc_",seq(1,number_of_fc_layers)))
+    
+    return_list <- list(net = net, arch = arch, arch_dict = arch_dict)
 
     return(return_list)
   }

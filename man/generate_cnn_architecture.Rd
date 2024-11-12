@@ -53,8 +53,9 @@ generate_cnn_architecture(
 \value{
 A list containing:
 \itemize{
-\item net: a list of generated architectures.
-\item arch: a list of architecture dictionaries.
+\item net: a instantiated torch neural net.
+\item arch: a string with a R expression to instantiate the neural network.
+\item arch_dict: a list with a matrix describing the architecture structure.
 }
 }
 \description{

@@ -44,6 +44,110 @@
 #' @export
 #'
 #' @examples
+#' \dontrun{
+#' require(dplyr)
+#' 
+#' # Database with species abundance and x and y coordinates
+#' data("sppabund")
+#' 
+#' # Select data for a single species
+#' some_sp <- sppabund %>%
+#'   dplyr::filter(species == "Species one") %>%
+#'   dplyr::select(-.part2, -.part3)
+#' 
+#' # Explore response variables
+#' some_sp$ind_ha %>% range()
+#' some_sp$ind_ha %>% hist()
+#' 
+#' # Here we balance number of absences
+#' some_sp <-
+#'   balance_dataset(some_sp, response = "ind_ha", absence_ratio = 0.2)
+#' 
+#' # Generate some architectures
+#' many_archs <- generate_arch_list(
+#'   type = "cnn",
+#'   number_of_features = 3,
+#'   number_of_outputs = 1,
+#'   n_layers = c(2, 3),
+#'   n_neurons = c(16,32),
+#'   sample_size = c(11, 11),
+#'   number_of_fc_layers = c(1), # fully connected layers
+#'   fc_layers_size = c(16), 
+#'   conv_layers_kernel = 3,
+#'   conv_layers_stride = 1,
+#'   conv_layers_padding = 0,
+#'   batch_norm = TRUE
+#' ) %>% select_arch_list(
+#'   type = c("cnn"),
+#'   method = "percentile",
+#'   n_samples = 1,
+#'   min_max = TRUE
+#' )
+#' 
+#' # Create a grid
+#' # Obs.: the grid is tested with every architecture, thus it can get very large.
+#' cnn_grid <- expand.grid(
+#'   learning_rate = c(0.01, 0.005),
+#'   n_epochs = c(50,100),
+#'   batch_size = c(32),
+#'   validation_patience = c(2,4),
+#'   fitting_patience = c(2,4)
+#' )
+#' 
+#' # Tune a cnn model
+#' tuned_cnn <- tune_abund_cnn(
+#'   data = some_sp,
+#'   response = "ind_ha",
+#'   predictors = c("bio12", "elevation", "sand"),
+#'   partition = ".part",
+#'   predict_part = TRUE,
+#'   metrics = c("corr_pear", "mae"),
+#'   grid = cnn_grid,
+#'   rasters = system.file("external/envar.tif", package = "adm"),
+#'   x = "x",
+#'   y = "y",
+#'   sample_size = c(11,11),
+#'   architectures = many_archs,
+#'   n_cores = 3
+#' )
+#' tuned_cnn
+#' 
+#' # It is also possible to use a only one architecture 
+#' one_arch <- generate_cnn_architecture(
+#'   number_of_features = 3,
+#'   number_of_outputs = 1,
+#'   sample_size = c(11, 11),
+#'   number_of_conv_layers = 2,
+#'   conv_layers_size = c(14, 28),
+#'   conv_layers_kernel = 3,
+#'   conv_layers_stride = 1,
+#'   conv_layers_padding = 0,
+#'   number_of_fc_layers = 1,
+#'   fc_layers_size = c(28),
+#'   pooling = NULL,
+#'   batch_norm = TRUE,
+#'   dropout = 0,
+#'   verbose = T
+#' )
+#' 
+#' tuned_cnn_2 <- tune_abund_cnn(
+#'   data = some_sp,
+#'   response = "ind_ha",
+#'   predictors = c("bio12", "elevation", "sand"),
+#'   partition = ".part",
+#'   predict_part = TRUE,
+#'   metrics = c("corr_pear", "mae"),
+#'   grid = cnn_grid,
+#'   architectures = one_arch,
+#'   rasters = system.file("external/envar.tif", package = "adm"),
+#'   x = "x",
+#'   y = "y",
+#'   sample_size = c(11,11),
+#'   n_cores = 3
+#' )
+#' 
+#' tuned_cnn_2
+#' }
 tune_abund_cnn <-
   function(data,
            response,
@@ -66,78 +170,107 @@ tune_abund_cnn <-
     }
 
     # architectures
-    if (all(architectures != "fit_intern")) {
-      if (is.null(architectures)) {
-        message("Architectures not provided. Using the default set for Convolutional Neural Networks.")
-        architectures <- generate_arch_list(
-          type = "cnn",
-          number_of_features = length(predictors) + length(predictors_f),
-          number_of_outputs = length(response)
-        )
+    if (is.list(architectures)){
+      # check if it is from generate_arch_list or generate_cnn_architecture
+      if (all(names(architectures) %in% c("net","arch","arch_dict"))){
+        # generated with generate_cnn_architecture
+        arch_dict <- architectures$arch_dict
+        arch_list <- list(architectures$net)
+        names(arch_list) <- paste0("arch-",arch_dict %>% names() %>% stringr::str_replace_all("-net", "-1"))
+      } else if (all(names(architectures) %in% c("arch_list","arch_dict","changes"))) {
+        # generated with generate_arch_list
         arch_list <- architectures$arch_list
         arch_dict <- architectures$arch_dict
-      } else if (!all(names(architectures) %in% c("arch_list", "arch_dict", "changes"))) {
-        stop("architectures expected to be a list with two other lists, arch_list and arch_dict, or 'fit_intern'.")
-      } else {
-        arch_list <- architectures$arch_list
-        arch_dict <- architectures$arch_dict
-        if (!all(sapply(arch_list, class) == c("conv_neural_net", "nn_module", "nn_module_generator"))) {
-          stop('Expected "neural_net", "nn_module", "nn_module_generator" objects in arch_list.')
-        } else {
-          message("Using provided architectures.")
-        }
       }
-    } else {
-      message("Using the fit_abund_cnn() intern CNN architecture.")
+    } else if (is.null(architectures) | all(architectures == "fit_intern")) {
+      # use the default Deep Neural Network architecture
+      message("Using the fit_abund_cnn() intern DNN architecture.")
       arch_list <- list("fit_intern" = NULL)
       arch_dict <- list("fit_intern" = NULL)
     }
-
-    archs <- names(arch_list)
-
+    
+    if (all(names(arch_list) != c("fit_intern"))){
+      if (!all(sapply(arch_list, class) == c("conv_neural_net", "nn_module", "nn_module_generator"))) {
+        stop('Expected "conv_neural_net", "nn_module", "nn_module_generator" objects in arch_list.
+      Please, use generate_arch_list or generate_cnn_architecture outputs.')
+      } else {
+        message("Using provided architectures.")
+      }
+    }
+    
     if (!class(rasters) %in% "character") {
       stop("Please, provide a path to the raster file.")
     }
 
     # making grid
-    if (is.null(grid)) {
-      message("Grid not provided. Using the default one for Convolutional Neural Networks.")
-      batch_size <- 2^seq(4, 6)
-      # n_epochs <- seq(10,20,by=10)
-      n_epochs <- 10
-      learning_rate <- seq(from = 0.1, to = 0.2, by = 0.1)
-      validation_patience <- 2
-      fitting_patience <- 5
-      grid <- expand.grid(
-        arch = archs,
-        batch_size = batch_size,
-        n_epochs = n_epochs,
-        learning_rate = learning_rate,
-        validation_patience = validation_patience,
-        fitting_patience = fitting_patience
+    grid_dict <- list(
+      learning_rate = c(0.01, 0.005),
+      n_epochs = c(100,200),
+      batch_size = c(16,32),
+      validation_patience = c(2,4),
+      fitting_patience = c(2,4)
+    )
+    
+    archs <- names(arch_list)
+    
+    # Check hyperparameters names
+    nms_grid <- names(grid)
+    nms_hypers <- names(grid_dict)
+    
+    if (!all(nms_grid %in% nms_hypers)) {
+      stop(
+        paste(paste(nms_grid[!nms_grid %in% nms_hypers], collapse = ", "), " is not hyperparameters\n"),
+        "Grid expected to be any combination between ", paste(nms_hypers, collapse = ", ")
       )
-    } else {
-      if (all(names(grid) %in% c("batch_size", "n_epochs", "learning_rate", "validation_patience", "fitting_patience")) & length(names(grid)) == 5) {
-        batch_size <- unique(grid[, "batch_size"])
-        n_epochs <- unique(grid[, "n_epochs"])
-        learning_rate <- unique(grid[, "learning_rate"])
-        validation_patience <- unique(grid[, "validation_patience"])
-        fitting_patience <- unique(grid[, "fitting_patience"])
-        grid <- expand.grid(
-          arch = archs,
-          batch_size = batch_size,
-          n_epochs = n_epochs,
-          learning_rate = learning_rate,
-          validation_patience = validation_patience,
-          fitting_patience = fitting_patience
-        )
-      } else {
-        stop("Grid names expected to be batch_size, n_epochs, learning_rate, validation_patience and fitting_patience")
-      }
     }
-
+    
+    if (is.null(grid)) {
+      message("Grid not provided. Using the default one for Support Vector Machines.")
+      
+      grid_dict <- append(grid_dict, list(arch = archs))
+      
+      grid <- expand.grid(grid_dict)
+    } else if (all(nms_hypers %in% nms_grid)) {
+      user_list <- list()
+      for (i in nms_grid) {
+        l <- grid[[i]] %>%
+          unique() %>%
+          list()
+        names(l) <- i
+        user_list <- append(user_list, l)
+      }
+      
+      user_list <- append(user_list, list(arch = archs))
+      
+      grid <- expand.grid(user_list)
+      
+      message("Using provided grid.")
+    } else if (any(!nms_hypers %in% nms_grid)) {
+      message(
+        "Adding default hyperparameter for: ",
+        paste(names(grid_dict)[!names(grid_dict) %in% nms_grid], collapse = ", ")
+      )
+      
+      user_hyper <- names(grid)[which(names(grid) %in% names(grid_dict))]
+      default_hyper <- names(grid_dict)[which(!names(grid_dict) %in% user_hyper)]
+      
+      user_list <- grid_dict[default_hyper]
+      for (i in user_hyper) {
+        l <- grid[[i]] %>%
+          unique() %>%
+          list()
+        names(l) <- i
+        user_list <- append(user_list, l)
+      }
+      
+      user_list <- append(user_list, list(arch = archs))
+      
+      grid <- expand.grid(user_list)
+    }
+    
     comb_id <- paste("comb_", 1:nrow(grid), sep = "")
     grid <- cbind(comb_id, grid)
+    message(paste0("Testing ",nrow(grid)," combinations."))
 
     # looping the grid
     message("Searching for optimal hyperparameters...")

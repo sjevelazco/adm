@@ -66,20 +66,30 @@ Fit and validate Support Vector Machine models with exploration of hyper-paramet
 \dontrun{
 require(dplyr)
 
+# Database with species abundance and x and y coordinates
 data("sppabund")
 
 # Select data for a single species
 some_sp <- sppabund \%>\%
-  dplyr::filter(species == "Species two") \%>\%
+  dplyr::filter(species == "Species one") \%>\%
   dplyr::select(-.part2, -.part3)
 
-# Explore repose variables
+# Explore response variables
+some_sp$ind_ha \%>\% range()
+some_sp$ind_ha \%>\% hist()
+
+# Here we balance number of absences
+some_sp <-
+  balance_dataset(some_sp, response = "ind_ha", absence_ratio = 0.2)
+  
+# Create a grid
 svm_grid <- expand.grid(
   sigma = "automatic",
   C = c(0.5, 1, 2),
   kernel = c("rbfdot", "laplacedot")
 )
 
+# Tune a SVM model
 tuned_svm <- tune_abund_svm(
   data = some_sp,
   response = "ind_ha",
@@ -92,9 +102,6 @@ tuned_svm <- tune_abund_svm(
   n_cores = 3
 )
 
-tuned_svm$model
-tuned_svm$performance
-tuned_svm$optimal_combination
-tuned_svm$all_combinations
+tuned_svm
 }
 }

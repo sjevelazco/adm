@@ -10,7 +10,7 @@ generate_dnn_architecture(
   number_of_hidden_layers = 2,
   hidden_layers_size = c(14, 7),
   batch_norm = TRUE,
-  dropout = 0.2,
+  dropout = 0,
   verbose = FALSE
 )
 }
@@ -32,8 +32,9 @@ generate_dnn_architecture(
 \value{
 A list containing:
 \itemize{
-\item net: a list of generated architectures.
-\item arch: a list of architecture string
+\item net: a instantiated torch neural net.
+\item arch: a string with a R expression to instantiate the neural network.
+\item arch_dict: a list with a matrix describing the architecture structure.
 }
 }
 \description{

@@ -16,9 +16,9 @@ generate_arch_list(
   conv_layers_kernel = 3,
   conv_layers_stride = 1,
   conv_layers_padding = 0,
-  pooling = FALSE,
+  pooling = NULL,
   batch_norm = TRUE,
-  dropout = FALSE
+  dropout = 0
 )
 }
 \arguments{
@@ -44,11 +44,11 @@ generate_arch_list(
 
 \item{conv_layers_padding}{numeric. Specifies the padding for the convolutional layers. Default 0.}
 
-\item{pooling}{logical. Specifies whether pooling is included in the architecture. Default FALSE.}
+\item{pooling}{numeric. Specifies 2D average pooling kernel size. Default NULL}
 
 \item{batch_norm}{logical. Specifies whether batch normalization is included in the architecture. Default TRUE.}
 
-\item{dropout}{logical. Specifies whether dropout is included in the architecture. Default FALSE.}
+\item{dropout}{numeric. Default 0.}
 }
 \value{
 A list containing:

@@ -68,14 +68,23 @@ Fit and validate Generalized Boosted Regression models with exploration of hyper
 \dontrun{
 require(dplyr)
 
+# Database with species abundance and x and y coordinates
 data("sppabund")
 
 # Select data for a single species
 some_sp <- sppabund \%>\%
-  dplyr::filter(species == "Species two") \%>\%
+  dplyr::filter(species == "Species one") \%>\%
   dplyr::select(-.part2, -.part3)
 
-# Grid for Gradient Boosting Machines
+# Explore response variables
+some_sp$ind_ha \%>\% range()
+some_sp$ind_ha \%>\% hist()
+
+# Here we balance number of absences
+some_sp <-
+  balance_dataset(some_sp, response = "ind_ha", absence_ratio = 0.2)
+  
+# Create a grid
 gbm_grid <- expand.grid(
   interaction.depth = c(2, 4, 8, 16),
   n.trees = c(100, 500, 1000),
@@ -96,9 +105,6 @@ tuned_gbm <- tune_abund_gbm(
   n_cores = 3
 )
 
-tuned_gbm$model
-tuned_gbm$performance
-tuned_gbm$optimal_combination
-tuned_gbm$all_combinations
+tuned_gbm
 }
 }

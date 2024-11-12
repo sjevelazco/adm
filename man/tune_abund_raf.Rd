@@ -78,7 +78,7 @@ some_sp$ind_ha \%>\% hist()
 some_sp <-
   balance_dataset(some_sp, response = "ind_ha", absence_ratio = 0.2)
 
-# Grid for Random Forest
+# Create a grid
 raf_grid <- expand.grid(
   mtry = seq(from = 2, to = 3, by = 1),
   ntree = seq(from = 500, to = 1000, by = 100)

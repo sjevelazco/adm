@@ -217,9 +217,9 @@ fit_abund_cnn <-
         conv_layers_padding = 0,
         number_of_fc_layers = 1,
         fc_layers_size = c(length(variables)),
-        pooling = FALSE,
+        pooling = NULL,
         batch_norm = TRUE,
-        dropout = FALSE,
+        dropout = 0,
         verbose = FALSE
       )$net
     }
