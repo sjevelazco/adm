@@ -42,7 +42,7 @@ generate_cnn_architecture(
 
 \item{fc_layers_size}{vector. Specifies the size of the fully connected layers. Default 14.}
 
-\item{pooling}{numeric. Specifies whether pooling is included in the architecture. Default NULL}
+\item{pooling}{numeric. Specifies 2D average pooling kernel size. Default NULL}
 
 \item{batch_norm}{logical. Specifies whether batch normalization is included in the architecture. Default TRUE.}
 

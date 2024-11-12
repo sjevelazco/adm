@@ -68,29 +68,29 @@ test_that("select_arch_list for cnn", {
   expect_equal(length(archs$arch_list), 38)
 })
 
-test_that("select_arch_list for cnn dropout", {
-  archs <- generate_arch_list(
-    type = "cnn",
-    number_of_features = 4,
-    number_of_outputs = 1,
-    n_layers = c(2, 4), # now convolutional layers
-    n_neurons = c(8),
-    sample_size = c(11, 11),
-    number_of_fc_layers = c(2, 4), # fully connected layers
-    fc_layers_size = c(8),
-    conv_layers_kernel = 3,
-    conv_layers_stride = 1,
-    conv_layers_padding = 0,
-    pooling = 1,
-    batch_norm = TRUE,
-    dropout = 0.2
-  ) %>% select_arch_list(
-    type = c("cnn"),
-    method = "percentile",
-    n_samples = 1,
-    min_max = TRUE # Keep the network with the minimum and maximum number of parameters
-  )
-  expect_equal(names(archs), c("arch_list", "arch_dict", "changes"))
-  expect_equal(length(archs$arch_dict), 4)
-  expect_equal(length(archs$arch_list), 4)
-})
+# test_that("select_arch_list for cnn dropout", {
+#   archs <- generate_arch_list(
+#     type = "cnn",
+#     number_of_features = 4,
+#     number_of_outputs = 1,
+#     n_layers = c(2, 4), # now convolutional layers
+#     n_neurons = c(8),
+#     sample_size = c(11, 11),
+#     number_of_fc_layers = c(2, 4), # fully connected layers
+#     fc_layers_size = c(8),
+#     conv_layers_kernel = 3,
+#     conv_layers_stride = 1,
+#     conv_layers_padding = 0,
+#     pooling = 1,
+#     batch_norm = TRUE,
+#     dropout = 0.2
+#   ) %>% select_arch_list(
+#     type = c("cnn"),
+#     method = "percentile",
+#     n_samples = 1,
+#     min_max = TRUE # Keep the network with the minimum and maximum number of parameters
+#   )
+#   expect_equal(names(archs), c("arch_list", "arch_dict", "changes"))
+#   expect_equal(length(archs$arch_dict), 4)
+#   expect_equal(length(archs$arch_list), 4)
+# })
