@@ -185,7 +185,7 @@ tune_abund_gbm <-
     ranked_combinations <- model_selection(hyper_combinations, metrics)
 
     # fit final model
-    message("Fitting the best model...")
+    message("\nFitting the best model...")
     final_model <-
       fit_abund_gbm(
         data = data,
@@ -204,7 +204,7 @@ tune_abund_gbm <-
       )
 
     message(
-      "The best model was a GBM with n.trees = ",
+      "The best model was achieved with: \n n.trees = ",
       ranked_combinations[[1]][1, "n.trees"],
       ", interaction.depth = ",
       ranked_combinations[[1]][1, "interaction.depth"],

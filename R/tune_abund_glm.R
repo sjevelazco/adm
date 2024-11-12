@@ -233,7 +233,7 @@ tune_abund_glm <-
       full_data[, "ind_ha"] <- round(full_data[, "ind_ha"])
     }
 
-    message("Fitting the best model...")
+    message("\nFitting the best model...")
     final_model <-
       fit_abund_glm(
         data = full_data,
@@ -252,7 +252,7 @@ tune_abund_glm <-
       )
 
     message(
-      "The best model was a GLM with:",
+      "The best model was achieved with:",
       "\n distribution = ",
       choosen_family,
       "\n poly = ",

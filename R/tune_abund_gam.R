@@ -221,7 +221,7 @@ tune_abund_gam <-
       full_data[, "ind_ha"] <- round(full_data[, "ind_ha"])
     }
 
-    message("Fitting the best model...")
+    message("\nFitting the best model...")
     final_model <-
       fit_abund_gam(
         data = full_data,
@@ -236,7 +236,7 @@ tune_abund_gam <-
       )
 
     message(
-      "The best model was a GAM with:",
+      "The best model was achieved with:",
       "\n family = ",
       choosen_family,
       "\n inter = ",

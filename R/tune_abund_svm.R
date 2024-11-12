@@ -104,16 +104,21 @@ tune_abund_svm <-
       kernel = c("rbfdot", "laplacedot")
     )
 
-    nms_hypers <- names(grid_dict)
+
+    # Check hyperparameters names
     nms_grid <- names(grid)
+    nms_hypers <- names(grid_dict)
+
+    if (!all(nms_grid %in% nms_hypers)) {
+      stop(
+        paste(paste(nms_grid[!nms_grid %in% nms_hypers], collapse = ", "), " is not hyperparameters\n"),
+        "Grid expected to be any combination between ", paste(nms_hypers, collapse = ", ")
+      )
+    }
+
     if (is.null(grid)) {
       message("Grid not provided. Using the default one for Support Vector Machines.")
       grid <- expand.grid(grid_dict)
-    } else if (any(!nms_grid %in% nms_hypers)){
-      stop(
-        "Unrecognized hyperparameter: ",
-        paste(nms_grid[!nms_grid %in% nms_hypers], collapse = ", ")
-      )
     } else if (all(nms_hypers %in% nms_grid)) {
       message("Using provided grid.")
     } else if (any(!nms_hypers %in% nms_grid)) {
@@ -135,10 +140,6 @@ tune_abund_svm <-
       }
 
       grid <- expand.grid(user_list)
-    } else {
-      stop("Grid expected to be any combination between ", 
-           paste0(nms_hypers, collapse = ", "), 
-           " hyperparameters.")
     }
 
     comb_id <- paste("comb_", 1:nrow(grid), sep = "")
@@ -181,7 +182,7 @@ tune_abund_svm <-
     ranked_combinations <- model_selection(hyper_combinations, metrics)
 
     # fit final model
-    message("Fitting the best model...")
+    message("\nFitting the best model...")
     final_model <-
       fit_abund_svm(
         data = data,
@@ -197,7 +198,7 @@ tune_abund_svm <-
       )
 
     message(
-      "The best model was a Support Vector Machine with sigma = ",
+      "The best model was achieved with: \n sigma = ",
       ranked_combinations[[1]][[1, "sigma"]],
       ", kernel = ",
       ranked_combinations[[1]][[1, "kernel"]],

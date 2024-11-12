@@ -211,7 +211,7 @@ tune_abund_cnn <-
     ranked_combinations <- model_selection(hyper_combinations, metrics)
 
     # fit final model
-    message("Fitting the best model...")
+    message("\nFitting the best model...")
     final_model <-
       fit_abund_cnn(
         data = data,
@@ -235,7 +235,7 @@ tune_abund_cnn <-
     arch_indexes <- stringr::str_extract_all(ranked_combinations[[1]][1, "arch"], "\\d+")
 
     message(
-      "The best model was a DNN with learning_rate = ",
+      "The best model was achieved with: \n learning_rate = ",
       ranked_combinations[[1]][1, "learning_rate"],
       "\n patience = ",
       ranked_combinations[[1]][1, "validation_patience"],

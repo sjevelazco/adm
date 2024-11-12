@@ -176,7 +176,7 @@ tune_abund_raf <-
     ranked_combinations <- model_selection(hyper_combinations, metrics)
 
     # fit final model
-    message("Fitting the best model...")
+    message("\nFitting the best model...")
     final_model <-
       fit_abund_raf(
         data = data,
@@ -192,7 +192,7 @@ tune_abund_raf <-
       )
 
     message(
-      "The best model was a Random Forest with mtry = ",
+      "The best model was achieved with: \n mtry = ",
       ranked_combinations[[1]][[1, "mtry"]],
       " and ntree = ",
       ranked_combinations[[1]][[1, "ntree"]]

@@ -201,7 +201,7 @@ tune_abund_xgb <-
     ranked_combinations <- model_selection(hyper_combinations, metrics)
 
     # fit final model
-    message("Fitting the best model...")
+    message("\nFitting the best model...")
     final_model <-
       fit_abund_xgb(
         data = data,
@@ -222,7 +222,7 @@ tune_abund_xgb <-
       )
 
     message(
-      "The best model was a XGBoost with: \n max_depth = ",
+      "The best model was achieved with: \n max_depth = ",
       ranked_combinations[[1]][1, "max_depth"],
       "\n eta = ",
       ranked_combinations[[1]][1, "eta"],
