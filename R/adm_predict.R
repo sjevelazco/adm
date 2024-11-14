@@ -401,7 +401,7 @@ adm_predict <-
           r <- pred[[!terra::is.factor(pred)]][[1]]
           r[!is.na(r)] <- NA
           r[as.numeric(rownames(pred_df))] <-
-            suppressMessages(gamlss::predictAll(m[[i]], pred_df, type = "response"))
+            suppressMessages(stats::predict(m[[i]], pred_df, type = "response"))
 
           model_c[[i]][rowset] <- r[rowset]
         }
