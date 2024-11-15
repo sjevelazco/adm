@@ -4,7 +4,16 @@
 \alias{cnn_make_samples}
 \title{Creates sample data for Convolutional Neural Network}
 \usage{
-cnn_make_samples(data, x, y, response, raster, size = 5)
+cnn_make_samples(
+  data,
+  x,
+  y,
+  response,
+  raster,
+  raster_padding = FALSE,
+  padding_method = NULL,
+  size = 5
+)
 }
 \arguments{
 \item{data}{data.frame or tibble. Database that includes longitude, latitude, and response columns.}
@@ -16,6 +25,10 @@ cnn_make_samples(data, x, y, response, raster, size = 5)
 \item{response}{string. Specifying the name of the column with response.}
 
 \item{raster}{SpatRaster. Raster from which predictor data will be cropped.}
+
+\item{raster_padding}{logical. If TRUE, the raster will be padded when cropping extends beyond its boundaries. Useful for ensuring all focal cells have the same size output even at the edges of the raster. Default FALSE}
+
+\item{padding_method}{string or NULL. Method used for padding the raster if raster_padding is TRUE. Options are "mean", "median", "zero". Ignored if raster_padding is FALSE. Default NULL}
 
 \item{size}{numeric. Size of the cropped raster, number o cell in each direction of a focal cell}
 }

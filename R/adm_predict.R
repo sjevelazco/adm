@@ -18,6 +18,7 @@
 #' @param invert_transform logical. Invert transformation of response variable. Useful for those cases that the response variable was transformed with one of the method in \code{\link{adm_transform}}. Default NULL
 #' @param transform_negative logical. If TRUE, all negative values in the prediction will be set to zero.
 #' default FALSE.
+#' @param sample_size numeric. A vector containing the dimensions, in pixels, of raster samples. See cnn_make_samples beforehand. Default c(11,11)
 #'
 #' @return A list of SpatRaster with continuous and/or binary predictions
 #'
@@ -173,7 +174,8 @@ adm_predict <-
            nchunk = 1,
            predict_area = NULL,
            invert_transform = NULL,
-           transform_negative = FALSE) {
+           transform_negative = FALSE,
+           sample_size = c(11,11)) {
     . <- model <- threshold <- thr_value <- self <- NULL
 
     # TODO write codes to predict CNN ANN adapt GLM and GAM to use gamlss
@@ -217,8 +219,12 @@ adm_predict <-
       m <- lapply(models, function(x) {
         x[[1]]
       })
+      
+      m_detect <- lapply(models, function(x) {
+        x[["predictors"]]
+      })
 
-      names(m) <- paste0("m_", 1:length(m))
+      names(m) <- names(m_detect) <- paste0("m_", 1:length(m))
 
       # Extract model names object
       clss <- sapply(m, function(x) {
@@ -245,6 +251,7 @@ adm_predict <-
 
     # if(chunk){
     cell <- terra::as.data.frame(pred, cells = TRUE, na.rm = TRUE)[, "cell"]
+    cell_coord <- terra::as.data.frame(pred, xy = TRUE, na.rm = TRUE)[, c("x","y")]
     set <-
       c(
         seq(1, length(cell), length.out = nchunk) # length.out = nchunk
@@ -270,6 +277,7 @@ adm_predict <-
     # Write here the loop
     for (CH in seq_len((length(set) - 1))) {
       rowset <- set[CH]:(set[CH + 1] - 1)
+      pred_coord <- cell_coord[rowset,]
       rowset <- cell[rowset]
       pred_df <- pred[rowset]
       rownames(pred_df) <- rowset
@@ -414,23 +422,60 @@ adm_predict <-
       wm <- which(clss == "luz_module_fitted")
       if (length(wm) > 0) {
         wm <- names(wm)
-
+        
         # create_dataset definition
-        create_dataset <- torch::dataset(
-          "dataset",
-          initialize = function(df, response_variable = 0) {
-            self$df <- df
-          },
-          .getitem = function(index) {
-            x <- torch::torch_tensor(as.numeric(self$df[index, ]))
-            list(x = x)
-          },
-          .length = function() {
-            nrow(self$df)
-          }
-        )
+        if(m_detect[[wm]][["model"]] == "cnn") {
+          create_dataset <- torch::dataset(
+            "dataset",
+            initialize = function(data_list) {
+              self$predictors <- data_list$predictors
+            },
+            .getitem = function(index) {
+              x <- torchvision::transform_to_tensor(self$predictors[[index]])
+              list(x = x)
+            },
+            .length = function() {
+              length(self$predictors)
+            }
+          )
+          
+          pred_names <- m_detect[[wm]] %>% 
+            dplyr::select(-model,-response) %>%
+            t() %>% 
+            as.vector()
+          
+          crop_size <- cnn_get_crop_size(sample_size)
+          pred_samples <- cnn_make_samples(
+            data = pred_coord,
+            x = "x",
+            y = "y",
+            response = NULL,
+            raster = terra::extend(pred[[pred_names]], c(crop_size,crop_size)),
+            raster_padding = FALSE,
+            padding_method = NULL,
+            size = crop_size
+          )
+          
+          pred_dataset <- create_dataset(pred_samples)
+          
+        } else {
+          create_dataset <- torch::dataset(
+            "dataset",
+            initialize = function(df, response_variable = 0) {
+              self$df <- df
+            },
+            .getitem = function(index) {
+              x <- torch::torch_tensor(as.numeric(self$df[index, ]))
+              list(x = x)
+            },
+            .length = function() {
+              nrow(self$df)
+            }
+          )
+          
+          pred_dataset <- create_dataset(pred_df)
+        }
 
-        pred_dataset <- create_dataset(pred_df)
         for (i in wm) {
           r <- pred[[!terra::is.factor(pred)]][[1]]
           r[!is.na(r)] <- NA
@@ -605,6 +650,7 @@ adm_predict <-
     df <- data.frame(
       alg = c(
         "luz_module_fitted",
+        "luz_module_fitted_cnn",
         "gamlss_gam",
         "gamlss_glm",
         "gbm",
@@ -613,9 +659,15 @@ adm_predict <-
         "ksvm",
         "xgb.booster"
       ),
-      names = c("dnn", "gam", "glm", "gbm", "net", "raf", "svm","xgb")
+      names = c("dnn", "cnn", "gam", "glm", "gbm", "net", "raf", "svm","xgb")
     )
-
+    
+    for (i in 1:length(names(clss))) {
+      if (m_detect[[names(clss)[[i]]]][["model"]]=="cnn") {
+        clss[[i]] <- paste0(clss[[i]],"_cnn")
+      }
+    }
+    
     names(model_c) <-
       dplyr::left_join(data.frame(alg = clss), df, by = "alg")[, 2]
     model_c <- mapply(function(x, n) {

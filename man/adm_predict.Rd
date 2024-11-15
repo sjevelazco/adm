@@ -11,7 +11,8 @@ adm_predict(
   nchunk = 1,
   predict_area = NULL,
   invert_transform = NULL,
-  transform_negative = FALSE
+  transform_negative = FALSE,
+  sample_size = c(11, 11)
 )
 }
 \arguments{
@@ -34,6 +35,8 @@ used for restring prediction into only a given region. Default = NULL}
 
 \item{transform_negative}{logical. If TRUE, all negative values in the prediction will be set to zero.
 default FALSE.}
+
+\item{sample_size}{numeric. A vector containing the dimensions, in pixels, of raster samples. See cnn_make_samples beforehand. Default c(11,11)}
 }
 \value{
 A list of SpatRaster with continuous and/or binary predictions

@@ -4,7 +4,15 @@
 \alias{croppin_hood}
 \title{Crop rasters around a point (Convolutional Neural Networks)}
 \usage{
-croppin_hood(occ, x, y, raster, size)
+croppin_hood(
+  occ,
+  x,
+  y,
+  raster,
+  size,
+  raster_padding = FALSE,
+  padding_method = NULL
+)
 }
 \arguments{
 \item{occ}{tibble or data.frame. Database with response, predictors, and partition values}
@@ -16,6 +24,10 @@ croppin_hood(occ, x, y, raster, size)
 \item{raster}{SpatRaster. Raster with environmental variables.}
 
 \item{size}{numeric. Size of the cropped raster, number o cell in each direction of a focal cell}
+
+\item{raster_padding}{logical. If TRUE, the raster will be padded when cropping extends beyond its boundaries. Useful for ensuring all focal cells have the same size output even at the edges of the raster. Default FALSE}
+
+\item{padding_method}{string or NULL. Method used for padding the raster if raster_padding is TRUE. Options are "mean", "median", "zero". Ignored if raster_padding is FALSE. Default NULL}
 }
 \value{
 SpatRaster. Croped raster

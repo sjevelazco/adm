@@ -69,6 +69,22 @@ pre_tr_te <- function(data, p_names, h) {
   return(list(train = train, test = test, np2 = np2))
 }
 
+#' cnn_get_crop_size
+#'
+#' @noRd
+cnn_get_crop_size <-
+  function(sample_size){
+    if (!is.vector(sample_size)) {
+      stop("Please, provide a vector containing the sample size c(width,height)")
+    } else if (!(sample_size[[1]] == sample_size[[2]])) {
+      stop("adm currently only accepts square samples.")
+    } else {
+      crop_size <- floor(sample_size[[1]] / 2)
+    }
+    
+    return(crop_size)
+}
+
 #' Crop rasters around a point (Convolutional Neural Networks)
 #'
 #' @description Crop rasters for a single spatial point. Function used internally to construct Convolutional Neural Networks
@@ -77,6 +93,8 @@ pre_tr_te <- function(data, p_names, h) {
 #' @param x character. Column name with spatial x coordinates
 #' @param y character. Column name with spatial y coordinates
 #' @param raster SpatRaster. Raster with environmental variables.
+#' @param raster_padding logical. If TRUE, the raster will be padded when cropping extends beyond its boundaries. Useful for ensuring all focal cells have the same size output even at the edges of the raster. Default FALSE
+#' @param padding_method string or NULL. Method used for padding the raster if raster_padding is TRUE. Options are "mean", "median", "zero". Ignored if raster_padding is FALSE. Default NULL
 #' @param size numeric. Size of the cropped raster, number o cell in each direction of a focal cell
 #'
 #' @importFrom terra colFromX rowFromY xFromCol yFromRow rast ext crop
@@ -105,22 +123,55 @@ pre_tr_te <- function(data, p_names, h) {
 #' plot(sampl_r[[1]])
 #' points(some_sp[1, c("x", "y")], pch = 19)
 #' }
-croppin_hood <- function(occ, x, y, raster, size) {
+croppin_hood <- function(occ, 
+                         x, 
+                         y, 
+                         raster, 
+                         size, 
+                         raster_padding = FALSE, 
+                         padding_method = NULL) {
+  if(raster_padding & is.null(padding_method)){
+    stop("Padding method needed.")
+  }
+  
   long <- as.numeric(occ[, x])
   lat <- as.numeric(occ[, y])
 
+  if(raster_padding){
+    raster <- extend(raster,c(size,size))
+  }
+  
   rst.col <- terra::colFromX(raster, long)
   rst.row <- terra::rowFromY(raster, lat)
-
+  
   x.max <- terra::xFromCol(raster, rst.col + size)
   x.min <- terra::xFromCol(raster, rst.col - size)
   y.max <- terra::yFromRow(raster, rst.row - size)
   y.min <- terra::yFromRow(raster, rst.row + size)
-
+  
   r <- terra::rast()
   terra::ext(r) <- c(x.min, x.max, y.min, y.max)
 
   cropped <- terra::crop(raster, r, snap = "out")
+  
+  if(raster_padding){
+    if(padding_method=="mean"){
+      padding_values <- terra::global(cropped,mean,na.rm=TRUE)
+    } else if (padding_method=="median"){
+      padding_values <- terra::global(cropped,median,na.rm=TRUE)
+    } else if (padding_method=="zero"){
+      padding_values <- data.frame(
+        value = rep(0,length(names(cropped))),
+        row.names = names(cropped))
+    } else {
+      stop("Invalid padding method.")
+    }
+    
+    for (i in 1:length(names(cropped))) {
+      cropped[[i]][is.na(cropped[[i]])] <- padding_values[i,]
+    }
+  }
+  
   return(cropped)
 }
 
