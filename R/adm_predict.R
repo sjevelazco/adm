@@ -282,17 +282,80 @@ adm_predict <-
       ## %######################################################%##
 
       #### xgboost models ####
-      # wm <- which(clss == "xgb.booster")
-      # if (length(clss) > 0){
-      #   wm <- names(wm)
-      #   for (i in wm) {
-      #     r <- pred[[!terra::is.factor(pred)]][[1]]
-      #     r[!is.na(r)] <- NA
-      #     r[as.numeric(rownames(pred_df))] <-
-      #
-      #     model_c[[i]][rowset] <- r[rowset]
-      #   }
-      # }
+      wm <- which(clss == "xgb.booster")
+      if (length(wm) > 0) {
+        wm <- names(wm)
+        for (i in wm) {
+          r <- pred[[!terra::is.factor(pred)]][[1]]
+          r[!is.na(r)] <- NA
+          
+          # Test factor levels TODO
+          f_n2 <- m[[i]]$feature_names # training var names
+          f_names <- which(sapply(pred_df, class) == "factor") %>% names()
+          
+          if (length(f_names) > 0) {
+            f_encoded <- stringr::str_detect(f_n2, stringr::str_c(f_names, collapse = "|"))
+          } else {
+            f_encoded <- FALSE
+          }
+          
+          if (any(f_encoded)) {
+            f_names <- c(f_n2[!f_encoded],f_names) 
+          } else {
+            f_names <- f_n2
+          }
+          
+          f_n <- which(sapply(pred_df[f_names], class) == "factor") %>% names()
+          f <- lapply(f_n, function(x) {
+            gsub(x, "", grep(x, f_n2, value = TRUE))
+          })
+          names(f) <- f_n
+          
+          # TODO
+          if (length(f) > 0) {
+            for (ii in 1:length(f)) {
+              vf <- f[[ii]] %>%
+                unique()
+              vf2 <- pred_df[, names(f[ii])] %>% unique()
+              vfilter <- list()
+              if (sum(!vf2 %in% vf) > 0) {
+                vfilter[[ii]] <- !pred_df[, names(f[ii])] %in% vf
+              }
+            }
+            if (length(vfilter) > 0) {
+              if (length(vfilter) > 1) {
+                vfilter <- vapply(do.call("rbind", vfilter), any, logical(1))
+              } else {
+                vfilter <- vfilter[[1]]
+              }
+            } else {
+              vfilter <- 0
+            }
+          } else {
+            vfilter <- 0
+          }
+          ##
+          if (sum(vfilter) > 0) { # TODO
+            # v <- rep(0, nrow(pred_df))
+            # v[!vfilter] <-
+            #   kernlab::predict(m[[i]], pred_df[!vfilter, ] %>%
+            #                      dplyr::mutate(dplyr::across(
+            #                        .cols = names(f),
+            #                        .fns = ~ droplevels(.)
+            #                      )), type = "response")#[, 2]
+            # r[as.numeric(rownames(pred_df))] <- v
+            # rm(v)
+          } else {
+            pred_matrix <- list(
+              data = stats::model.matrix(~ . - 1, data = pred_df[m[[i]]$feature_names])
+            )
+            
+            r[as.numeric(rownames(pred_df))] <-
+              stats::predict(m[[i]], pred_matrix$data, type = "response")
+          }
+          model_c[[i]][rowset] <- r[rowset]
+        }
+      }
 
       #### ann models ####
       wm <- which(clss == "nnet")
@@ -386,7 +449,7 @@ adm_predict <-
           r <- pred[[!terra::is.factor(pred)]][[1]]
           r[!is.na(r)] <- NA
           r[as.numeric(rownames(pred_df))] <-
-            suppressMessages(predict(m[[i]], newdata = pred_df, data = training_data, type = "response"))
+            suppressMessages(stats::predict(m[[i]], newdata = pred_df, data = training_data, type = "response"))
 
           model_c[[i]][rowset] <- r[rowset]
         }
@@ -547,9 +610,10 @@ adm_predict <-
         "gbm",
         "nnet",
         "randomforest",
-        "ksvm"
+        "ksvm",
+        "xgb.booster"
       ),
-      names = c("dnn", "gam", "glm", "gbm", "net", "raf", "svm")
+      names = c("dnn", "gam", "glm", "gbm", "net", "raf", "svm","xgb")
     )
 
     names(model_c) <-
