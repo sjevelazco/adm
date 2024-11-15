@@ -183,7 +183,8 @@ tune_abund_gam <-
               partition = partition,
               predict_part = predict_part,
               distribution = grid[i, "distribution"],
-              inter = grid[i, "inter"]
+              inter = grid[i, "inter"],
+              verbose = verbose
             )
         },
         error = function(err) {
@@ -232,7 +233,8 @@ tune_abund_gam <-
         partition = partition,
         predict_part = predict_part,
         distribution = choosen_family,
-        inter = ranked_combinations[[1]][1, "inter"]
+        inter = ranked_combinations[[1]][1, "inter"],
+        verbose = verbose
       )
 
     message(

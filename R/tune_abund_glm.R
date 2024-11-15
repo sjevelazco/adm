@@ -193,7 +193,7 @@ tune_abund_glm <-
               distribution = grid[i, "distribution"],
               poly = grid[i, "poly"],
               inter_order = grid[i, "inter_order"],
-              verbose = FALSE
+              verbose = verbose
             )
         },
         error = function(err) {
@@ -248,7 +248,8 @@ tune_abund_glm <-
         predict_part = predict_part,
         distribution = choosen_family,
         poly = choosen_poly,
-        inter_order = choosen_inter_order
+        inter_order = choosen_inter_order, 
+        verbose = verbose
       )
 
     message(

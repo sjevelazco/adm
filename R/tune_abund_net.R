@@ -164,7 +164,8 @@ tune_abund_net <-
           partition = partition,
           predict_part = predict_part,
           size = grid[i, "size"],
-          decay = grid[i, "decay"]
+          decay = grid[i, "decay"],
+          verbose = verbose
         )
       l <- list(cbind(grid[i, ], model$performance))
       names(l) <- grid[i, "comb_id"]
@@ -189,7 +190,8 @@ tune_abund_net <-
         partition = partition,
         predict_part = predict_part,
         size = ranked_combinations[[1]][[1, "size"]],
-        decay = ranked_combinations[[1]][[1, "decay"]]
+        decay = ranked_combinations[[1]][[1, "decay"]],
+        verbose = verbose
       )
 
     message(
