@@ -16,8 +16,8 @@
 #' @param objective character. The learning task and the corresponding learning objective. Default is "reg:squarederror", regression with squared loss.
 #' @param verbose logical. If FALSE, disables all console messages. Default TRUE.
 #'
-#' @importFrom dplyr bind_rows pull tibble as_tibble group_by summarise across
-#' @importFrom stats sd
+#' @importFrom dplyr bind_rows select starts_with pull tibble as_tibble group_by summarise across bind_cols
+#' @importFrom stats model.matrix predict sd
 #' @importFrom xgboost xgboost
 #'
 #' @return
@@ -193,7 +193,7 @@ fit_abund_xgb <-
         )
 
         pred <-
-          suppressMessages(predict(model, sp_test$data, type = "response"))
+          suppressMessages(stats::predict(model, sp_test$data, type = "response"))
         observed <- sp_test$target
         eval_partial[[j]] <- dplyr::tibble(
           model = "xgb",
