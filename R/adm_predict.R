@@ -262,11 +262,10 @@ adm_predict <-
     # Create list for storing raster for current condition
     model_c <- as.list(names(m))
     names(model_c) <- names(m)
+
     for (i in seq_along(model_c)) {
       model_c[[i]] <- r
     }
-
-
 
     # Write here the loop
     for (CH in seq_len((length(set) - 1))) {
@@ -475,8 +474,22 @@ adm_predict <-
           r[!is.na(r)] <- NA
 
           # Test factor levels
-          f_n <- which(sapply(pred_df, class) == "factor") %>% names()
-          f_n2 <- m[[i]]@xmatrix[[1]] %>% colnames()
+          f_n2 <- m[[i]]@xmatrix %>% colnames() # training var names
+          f_names <- which(sapply(pred_df, class) == "factor") %>% names()
+          
+          if (length(f_names) > 0) {
+            f_encoded <- stringr::str_detect(f_n2, stringr::str_c(f_names, collapse = "|"))
+          } else {
+            f_encoded <- FALSE
+          }
+          
+          if (any(f_encoded)) {
+            f_names <- c(f_n2[!f_encoded],f_names) 
+          } else {
+            f_names <- f_n2
+          }
+ 
+          f_n <- which(sapply(pred_df[f_names], class) == "factor") %>% names()
           f <- lapply(f_n, function(x) {
             gsub(x, "", grep(x, f_n2, value = TRUE))
           })
@@ -512,12 +525,12 @@ adm_predict <-
                 dplyr::mutate(dplyr::across(
                   .cols = names(f),
                   .fns = ~ droplevels(.)
-                )), type = "response")[, 2]
+                )), type = "response")#[, 2]
             r[as.numeric(rownames(pred_df))] <- v
             rm(v)
           } else {
             r[as.numeric(rownames(pred_df))] <-
-              kernlab::predict(m[[i]], pred_df, type = "response")[, 2]
+              kernlab::predict(m[[i]], pred_df, type = "response")
           }
           model_c[[i]][rowset] <- r[rowset]
         }
