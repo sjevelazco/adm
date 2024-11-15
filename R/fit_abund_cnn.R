@@ -9,22 +9,22 @@
 #' @param x character. The name of the column containing longitude information for each observation.
 #' @param y character. The name of the column containing latitude information for each observation.
 #' @param rasters a terra SpatRaster object. A raster containing the predictor variables to be cropped around each observation.
-#' @param sample_size numeric. The dimension, in pixels, of raster samples. See cnn_make_samples beforehand. Default c(11,11)
+#' @param sample_size numeric. A vector containing the dimensions, in pixels, of raster samples. See cnn_make_samples beforehand. Default c(11,11)
 #' @param partition character. Column name with training and validation partition groups.
 #' @param predict_part logical. Save predicted abundance for testing data. Default = FALSE
 #' @param learning_rate numeric. The size of the step taken during the optimization process. Default = 0.01
-#' @param n_epochs numeric. How many times the learning algorithm will work through the training set. Default = 10
+#' @param n_epochs numeric. Maximum number of times the learning algorithm will work through the training set. Default = 10
 #' @param batch_size numeric. A batch is a subset of the training set used in a single iteration of the training process. The size of each batch is referred to as the batch size. Default = 32
 #' @param custom_architecture a Torch nn_module_generator object. A neural network architecture to be used instead of the internal default one. Default NULL
 #' @param verbose logical. If FALSE, disables all console messages. Default TRUE
-#' @param validation_patience
-#' @param fitting_patience
+#' @param validation_patience numerical. An integer indicating the number of epochs without loss improvement tolerated by the algorithm in the validation process. If the patience limit is exceeded, the training ends. Default 2  
+#' @param fitting_patience numerical. The same as validation_patience, but in the final model fitting process. Default 5
 #'
-#' @importFrom dplyr bind_rows bind_cols pull tibble as_tibble group_by summarise across
-#' @importFrom luz setup set_opt_hparams fit
+#' @importFrom dplyr bind_rows select starts_with pull tibble as_tibble group_by summarise across bind_cols
+#' @importFrom luz setup set_opt_hparams fit luz_callback_early_stopping
 #' @importFrom stats sd
 #' @importFrom terra rast
-#' @importFrom torch dataset torch_tensor torch_manual_seed nn_module nn_conv2d nn_linear nnf_relu torch_flatten dataloader nn_l1_loss optim_adam
+#' @importFrom torch dataset torch_tensor torch_manual_seed dataloader nn_l1_loss optim_adam
 #' @importFrom torchvision transform_to_tensor
 #'
 #' @return
@@ -143,14 +143,8 @@ fit_abund_cnn <-
     )
 
     # Get cropsize
-    if (!is.vector(sample_size)) {
-      stop("Please, provide a vector containing the sample size c(width,height)")
-    } else if (!(sample_size[[1]] == sample_size[[2]])) {
-      stop("adm currently only accepts square samples.")
-    } else {
-      crop_size <- floor(sample_size[[1]] / 2)
-    }
-
+    crop_size <- cnn_get_crop_size(sample_size)
+    
     # # ---- Formula ----
     # if (is.null(fit_formula)) {
     #   formula1 <- stats::formula(paste(response, "~", paste(c(
@@ -245,13 +239,14 @@ fit_abund_cnn <-
       samples_list <- list()
       for (fold in folds) {
         fold_mtx <- data[data[, p_names[h]] == fold, c(x, y, response)] %>%
-          cnn_make_samples(x, y, response, rasters, crop_size) %>%
+          cnn_make_samples(x, y, response, rasters, size = crop_size) %>%
           list()
 
         names(fold_mtx) <- fold
 
         samples_list <- append(samples_list, fold_mtx)
       }
+      rm(fold_mtx)
 
       eval_partial <- list()
       pred_test <- list()
@@ -281,6 +276,8 @@ fit_abund_cnn <-
           predictors = train_concatened_predictors,
           response = train_concatened_responses
         )
+        rm(train_concatened_predictors,
+           train_concatened_responses)
 
         train_dataloader <- create_dataset(train_data_list) %>%
           torch::dataloader(batch_size = batch_size, shuffle = TRUE)
@@ -418,7 +415,7 @@ fit_abund_cnn <-
           c(mae:pdisp),
           list(
             mean = ~ mean(.x, na.rm = TRUE),
-            sd = ~ sd(.x, na.rm = TRUE)
+            sd = ~ stats::sd(.x, na.rm = TRUE)
           )
         ),
         .groups = "drop"

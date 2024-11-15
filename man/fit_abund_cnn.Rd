@@ -39,7 +39,7 @@ fit_abund_cnn(
 
 \item{rasters}{a terra SpatRaster object. A raster containing the predictor variables to be cropped around each observation.}
 
-\item{sample_size}{numeric. The dimension, in pixels, of raster samples. See cnn_make_samples beforehand. Default c(11,11)}
+\item{sample_size}{numeric. A vector containing the dimensions, in pixels, of raster samples. See cnn_make_samples beforehand. Default c(11,11)}
 
 \item{partition}{character. Column name with training and validation partition groups.}
 
@@ -47,11 +47,13 @@ fit_abund_cnn(
 
 \item{learning_rate}{numeric. The size of the step taken during the optimization process. Default = 0.01}
 
-\item{n_epochs}{numeric. How many times the learning algorithm will work through the training set. Default = 10}
+\item{n_epochs}{numeric. Maximum number of times the learning algorithm will work through the training set. Default = 10}
 
 \item{batch_size}{numeric. A batch is a subset of the training set used in a single iteration of the training process. The size of each batch is referred to as the batch size. Default = 32}
 
-\item{fitting_patience}{}
+\item{validation_patience}{numerical. An integer indicating the number of epochs without loss improvement tolerated by the algorithm in the validation process. If the patience limit is exceeded, the training ends. Default 2}
+
+\item{fitting_patience}{numerical. The same as validation_patience, but in the final model fitting process. Default 5}
 
 \item{custom_architecture}{a Torch nn_module_generator object. A neural network architecture to be used instead of the internal default one. Default NULL}
 
