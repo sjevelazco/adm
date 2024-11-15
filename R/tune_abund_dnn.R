@@ -261,7 +261,8 @@ tune_abund_dnn <-
           batch_size = grid[i, "batch_size"],
           custom_architecture = arch_list[[grid[i, "arch"]]],
           validation_patience = grid[i, "validation_patience"],
-          fitting_patience = grid[i, "fitting_patience"]
+          fitting_patience = grid[i, "fitting_patience"], 
+          verbose = verbose
         )
       l <- list(cbind(grid[i, ], model$performance))
       names(l) <- grid[i, "comb_id"]
@@ -295,7 +296,8 @@ tune_abund_dnn <-
         batch_size = ranked_combinations[[1]][1, "batch_size"],
         custom_architecture = arch_list[[ranked_combinations[[1]][1, "arch"]]],
         validation_patience = ranked_combinations[[1]][1, "validation_patience"],
-        fitting_patience = ranked_combinations[[1]][1, "fitting_patience"]
+        fitting_patience = ranked_combinations[[1]][1, "fitting_patience"],
+        verbose = verbose
       )
 
     arch_indexes <- stringr::str_extract_all(ranked_combinations[[1]][1, "arch"], "\\d+")

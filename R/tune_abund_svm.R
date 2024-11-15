@@ -168,7 +168,8 @@ tune_abund_svm <-
           predict_part = predict_part,
           sigma = grid[[i, "sigma"]],
           kernel = grid[[i, "kernel"]],
-          C = grid[[i, "C"]]
+          C = grid[[i, "C"]], 
+          verbose = verbose
         )
       l <- list(cbind(grid[i, ], model$performance))
       names(l) <- grid[i, "comb_id"]
@@ -194,7 +195,8 @@ tune_abund_svm <-
         predict_part = predict_part,
         sigma = ranked_combinations[[1]][[1, "sigma"]],
         kernel = ranked_combinations[[1]][[1, "kernel"]],
-        C = ranked_combinations[[1]][[1, "C"]]
+        C = ranked_combinations[[1]][[1, "C"]],
+        verbose = verbose
       )
 
     message(
