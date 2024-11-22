@@ -1,4 +1,8 @@
 require(dplyr)
+
+#install torch
+torch::install_torch()
+
 data("sppabund")
 some_sp <- sppabund %>%
   dplyr::filter(species == "Species one") %>%

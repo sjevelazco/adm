@@ -160,6 +160,7 @@ tune_abund_glm <-
     
     comb_id <- paste("comb_", 1:nrow(grid), sep = "")
     grid <- cbind(comb_id, grid)
+    grid$distribution <- as.character(grid$distribution)
 
     # looping the grid
     message("Searching for optimal hyperparameters...")
