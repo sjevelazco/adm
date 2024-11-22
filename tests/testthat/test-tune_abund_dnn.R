@@ -1,4 +1,8 @@
 require(dplyr)
+
+#install torch
+torch::install_torch()
+
 data("sppabund")
 some_sp <- sppabund %>%
   dplyr::filter(species == "Species one") %>%
@@ -25,7 +29,7 @@ dnn_grid <- expand.grid(
   fitting_patience = c(2,4)
 )
 
-test_that("tune_abund_svm and fit_abund_svm", {
+test_that("tune_abund_dnn and fit_abund_dnn", {
   set.seed(1)
   tuned_ <- tune_abund_dnn(
     data = some_sp,
