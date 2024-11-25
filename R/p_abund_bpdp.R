@@ -90,9 +90,9 @@ p_abund_bpdp <-
       }
     }
 
-    if (class(model)[1] == "luz_module_fitted") {
+    if (class(model)[1] %in% c("luz_module_fitted","xgb.Booster")) {
       if (!is.null(training_data)) {
-        v <- training_data[variables[1, 2:ncol(variables)] %>%
+        v <- training_data[variables[1, 3:ncol(variables)] %>%
           as.vector() %>%
           unlist()] %>% sapply(class)
       } else {

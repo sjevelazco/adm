@@ -27,7 +27,14 @@ data_abund_pdp(
 \item{training_data}{data.frame. Database with response and predictor values used
 to fit a model. Default NULL. Required for GLM, GAM, DNN, NET, RAF, SVM models}
 
-\item{invert_transform}{logical. Invert transformation of response variable. Useful for those cases that the response variable was transformed with one of the method in \code{\link{adm_transform}}. Default NULL}
+\item{invert_transform}{vector. A vector containing method and terms to invert transformation of response variable. Useful for those cases that the response variable was transformed with one of the method in \code{\link{adm_transform}}. Usage:
+\itemize{
+\item For "01": invert_transform = c(method = "01", a = min(x), b = max(x))
+\item For "zscore": invert_transform = c(method = "zscore", a = mean(x), b = sd(x))
+\item For "log" and "log1: not needed.
+\item Can't invert "round" transformations.
+\item Default NULL
+}}
 
 \item{response_name}{character. Name of the response variable. Default NULL}
 

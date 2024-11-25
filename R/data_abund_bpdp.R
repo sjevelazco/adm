@@ -66,7 +66,7 @@ data_abund_bpdp <-
       training_boundaries <- 1
     }
 
-    if (any(class(model)[1] == c("gamlss", "luz_module_fitted"))) {
+    if (any(class(model)[1] == c("gamlss", "luz_module_fitted", "xgb.Booster"))) {
       if (is.null(training_data)) {
         stop(
           "For estimating partial plot data for GLM, GAM and DNN it is necessary to provide calibration data in 'training_data' argument"
@@ -170,6 +170,7 @@ data_abund_bpdp <-
 
     # Predict model
 
+    #### dnn ####
     if (class(model)[1] == "luz_module_fitted") {
       create_dataset <- torch::dataset(
         "dataset",
@@ -201,6 +202,7 @@ data_abund_bpdp <-
         )
     }
 
+    #### glm and gam ####
     if (class(model)[1] == "gamlss") {
       suit_c <-
         data.frame(suit_c[1:2],
@@ -215,6 +217,19 @@ data_abund_bpdp <-
         )
     }
 
+    #### xgb ####
+    if (class(model)[1] == "xgb.Booster") {
+      pred_matrix <- list(
+        data = stats::model.matrix(~ . - 1, data = suit_c[,model$feature_names])
+      )
+      
+      suit_c <-
+        data.frame(suit_c[1:2],
+                   Abundance = suppressMessages(stats::predict(model, newdata = pred_matrix$data, type = "response"))
+        )
+    }
+    
+    #### gbm ####
     if (class(model)[1] == "gbm") {
       suit_c <-
         data.frame(suit_c[1:2],
@@ -225,7 +240,7 @@ data_abund_bpdp <-
         )
     }
 
-
+    #### net ####
     if (class(model)[1] == "nnet.formula") {
       suit_c <-
         data.frame(suit_c[1:2],
@@ -235,13 +250,15 @@ data_abund_bpdp <-
         )
     }
 
+    #### raf ####
     if (class(model)[1] == "randomForest.formula") {
       suit_c <-
         data.frame(suit_c[1:2], Abundance = suppressMessages(
           stats::predict(model, suit_c, type = "response")
         ))
     }
-
+    
+    #### svm ####
     if (class(model)[1] == "ksvm") {
       suit_c <-
         data.frame(suit_c[1:2],

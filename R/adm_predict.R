@@ -418,7 +418,7 @@ adm_predict <-
         }
       }
 
-      #### dnn models ####
+      #### dnn and cnn models ####
       wm <- which(clss == "luz_module_fitted")
       if (length(wm) > 0) {
         wm <- names(wm)
