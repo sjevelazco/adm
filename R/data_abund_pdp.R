@@ -10,7 +10,14 @@
 #' projection. When this argument is used, function will calculate partial dependence curves
 #' distinguishing conditions used in training and projection conditions
 #' (i.e., projection data present in projection area but not training). Default NULL
-#' @param invert_transform logical. Invert transformation of response variable. Useful for those cases that the response variable was transformed with one of the method in \code{\link{adm_transform}}. Default NULL
+#' @param invert_transform vector. A vector containing method and terms to invert transformation of response variable. Useful for those cases that the response variable was transformed with one of the method in \code{\link{adm_transform}}. Usage:
+#' \itemize{
+#' \item For "01": invert_transform = c(method = "01", a = min(x), b = max(x))
+#' \item For "zscore": invert_transform = c(method = "zscore", a = mean(x), b = sd(x))
+#' \item For "log" and "log1: not needed.
+#' \item Can't invert "round" transformations.
+#' \item Default NULL
+#' }
 #' @param response_name character. Name of the response variable. Default NULL
 #'
 #' @importFrom dplyr select tibble
@@ -46,26 +53,6 @@ data_abund_pdp <-
            projection_data = NULL) {
     self <- Abundance_inverted <- NULL
 
-    # Extract training data
-    # TODO
-    # if (class(model)[1] == "gam") {
-    #   x <- model$model[attr(model$terms, "term.labels")]
-    # }
-
-    # TODO
-    # if (class(model)[1] == "graf") {
-    #   x <- model$obsx
-    #   x <- x[names(model$peak)]
-    # }
-
-    # TODO
-    # if (class(model)[1] == "glm") {
-    #   flt <- grepl("[I(]", attr(model$terms, "term.labels")) |
-    #     grepl(":", attr(model$terms, "term.labels"))
-    #   flt <- attr(model$terms, "term.labels")[!flt]
-    #   x <- model$model[flt]
-    # }
-
     if (class(model)[1] == "list") {
       if (all(c("model", "predictors", "performance", "performance_part", "predicted_part") %in% names(model))
       ) {
@@ -74,7 +61,7 @@ data_abund_pdp <-
       }
     }
 
-    if (any(class(model)[1] == c("gamlss", "luz_module_fitted"))) {
+    if (any(class(model)[1] == c("gamlss", "luz_module_fitted", "xgb.Booster"))) {
       if (is.null(training_data)) {
         stop(
           "For estimating partial plot data for Generalized Linear Models (GLM), Generalized Additive Models (GAM) and Deep Neural Network (DNN) it is necessary to provide calibration data in 'training_data' argument"
@@ -136,7 +123,56 @@ data_abund_pdp <-
     names(suit_c)[1] <- predictors
 
     # Predict model
-
+    
+    #### cnn ####
+    # if (class(model)[1] == "luz_module_fitted" & variables[["model"]] == "cnn") {
+    #   create_dataset <- torch::dataset(
+    #     "dataset",
+    #     initialize = function(data_list) {
+    #       self$predictors <- data_list$predictors
+    #     },
+    #     .getitem = function(index) {
+    #       x <- torchvision::transform_to_tensor(self$predictors[[index]])
+    #       list(x = x)
+    #     },
+    #     .length = function() {
+    #       length(self$predictors)
+    #     }
+    #   )
+    #   
+    #   pred_names <- variables %>% 
+    #     dplyr::select(-model,-response) %>%
+    #     t() %>% 
+    #     as.vector()
+    #   
+    #   crop_size <- cnn_get_crop_size(sample_size)
+    #   pred_samples <- cnn_make_samples(
+    #     data = pred_coord,
+    #     x = "x",
+    #     y = "y",
+    #     response = NULL,
+    #     raster = terra::extend(pred[[pred_names]], c(crop_size,crop_size)),
+    #     raster_padding = FALSE,
+    #     padding_method = NULL,
+    #     size = crop_size
+    #   )
+    #   
+    #   pred_dataset <- create_dataset(pred_samples)
+    #   
+    #   suit_c <-
+    #     data.frame(suit_c[1],
+    #                Abundance = suppressMessages(
+    #                  stats::predict(
+    #                    model,
+    #                    newdata = pred_dataset,
+    #                    type = "response"
+    #                  ) %>%
+    #                    as.numeric()
+    #                )
+    #     )
+    # }
+    
+    #### dnn #### 
     if (class(model)[1] == "luz_module_fitted") {
       create_dataset <- torch::dataset(
         "dataset",
@@ -184,6 +220,7 @@ data_abund_pdp <-
       }
     }
 
+    #### gam and glm ####
     if (class(model)[1] == "gamlss") {
       suit_c <-
         data.frame(suit_c[1],
@@ -205,6 +242,31 @@ data_abund_pdp <-
       }
     }
 
+    #### xgb ####
+    if (class(model)[1] == "xgb.Booster") {
+      pred_matrix <- list(
+        data = stats::model.matrix(~ . - 1, data = suit_c[,model$feature_names])
+      )
+      
+      suit_c <-
+        data.frame(suit_c[1],
+                   Abundance = suppressMessages(stats::predict(model, newdata = pred_matrix$data, type = "response"))
+        )
+      
+      if (resid) {
+        pred_matrix_r <- list(
+          data = stats::model.matrix(~ . - 1, data = x[,model$feature_names])
+        )
+        
+        suit_r <-
+          data.frame(x[predictors], Abundance = suppressMessages(stats::predict(model, newdata = pred_matrix_r$data, type = "response")))
+        result <- list("pdpdata" = suit_c, "resid" = suit_r)
+      } else {
+        result <- list("pdpdata" = suit_c, "resid" = NA)
+      }
+    }
+    
+    #### gbm ####
     if (class(model)[1] == "gbm") {
       suit_c <-
         data.frame(suit_c[1],
@@ -219,7 +281,7 @@ data_abund_pdp <-
       }
     }
 
-
+    #### net ####
     if (class(model)[1] == "nnet.formula") {
       suit_c <-
         data.frame(suit_c[1],
@@ -244,6 +306,7 @@ data_abund_pdp <-
       }
     }
 
+    #### raf ####
     if (class(model)[1] == "randomForest.formula") {
       suit_c <-
         data.frame(suit_c[1],
@@ -262,15 +325,16 @@ data_abund_pdp <-
       }
     }
 
+    #### svm ####
     if (class(model)[1] == "ksvm") {
       suit_c <-
         data.frame(suit_c[1],
-          Abundance = kernlab::predict(model, suit_c, type = "response")[, 2]
+          Abundance = kernlab::predict(model, suit_c, type = "response")
         )
       if (resid) {
         suit_r <-
           data.frame(x[predictors],
-            Abundance = kernlab::predict(model, x, type = "response")[, 2]
+            Abundance = kernlab::predict(model, x, type = "response")
           )
         result <- list("pdpdata" = suit_c, "resid" = suit_r)
       } else {

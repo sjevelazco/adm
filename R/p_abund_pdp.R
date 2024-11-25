@@ -73,7 +73,7 @@ p_abund_pdp <-
       stop("Variables not present in training data. Did you use the wrong dataset?")
     }
 
-    if (class(model)[1] == "luz_module_fitted") {
+    if (class(model)[1] %in% c("luz_module_fitted","xgb.Booster")) {
       if (!is.null(training_data)) {
         v <- training_data[variables[1, 2:ncol(variables)] %>%
           as.vector() %>%
