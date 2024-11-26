@@ -40,6 +40,23 @@ A list containing:
 \description{
 Generate architectures for Deep Neural Network
 }
+\examples{
+\dontrun{
+# Generate a Deep Neural Network with:
+dnn_arch <- generate_dnn_architecture(
+  number_of_features = 8, # eight input variables
+  number_of_outputs = 1, # one output
+  number_of_hidden_layers = 5, # five layers between input and output 
+  hidden_layers_size = c(8, 16, 32, 16, 8), # of this size, respectively
+  batch_norm = TRUE, # with batch normalization
+  dropout = 0, # without dropout
+)
+
+dnn_arch$net() # a torch net
+dnn_arch$arch \%>\% cat # the torch code to create it 
+dnn_arch$arch_dict # and a quick description of its structure 
+}
+}
 \seealso{
 \code{\link{generate_arch_list}}, \code{\link{generate_cnn_architecture}}
 }
