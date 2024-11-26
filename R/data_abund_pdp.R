@@ -42,6 +42,44 @@
 #' @export
 #'
 #' @examples
+#' \dontrun{
+#' require(dplyr)
+#' require(terra)
+#' 
+#' # Load  data
+#' envar <- system.file("external/envar.tif", package = "adm") %>%
+#'   rast()
+#'   
+#' data("sppabund")
+#' some_sp <- sppabund %>%
+#'   filter(species == "Species one")
+#' 
+#' # Fit some models
+#' mglm <- fit_abund_glm(
+#'   data = some_sp,
+#'   response = "ind_ha",
+#'   predictors = c("bio12","elevation","sand"),
+#'   predictors_f = c("eco"),
+#'   partition = ".part",
+#'   distribution = "ZAIG",
+#'   poly = 3,
+#'   inter_order = 0,
+#'   predict_part = TRUE
+#' )
+#' 
+#' # Prepare data for Partial Dependence Plots
+#' pdp_data <- data_abund_pdp(
+#'   model = mglm,
+#'   predictors = "bio12",
+#'   resolution = 25,
+#'   resid = TRUE,
+#'   training_data = some_sp,
+#'   response_name = "Abundance",
+#'   projection_data = envar
+#' )
+#' 
+#' pdp_data
+#' }
 data_abund_pdp <-
   function(model,
            predictors,
@@ -52,6 +90,10 @@ data_abund_pdp <-
            response_name = NULL,
            projection_data = NULL) {
     self <- Abundance_inverted <- NULL
+    
+    if (length(predictors)>1){
+      stop("Please provide only one predictor.")
+    }
 
     if (class(model)[1] == "list") {
       if (all(c("model", "predictors", "performance", "performance_part", "predicted_part") %in% names(model))
@@ -59,6 +101,8 @@ data_abund_pdp <-
         variables <- model$predictors
         model <- model[[1]]
       }
+    } else {
+      stop('Please, use tune_abund_ or fit_abund_ output list in "model" argument.')
     }
 
     if (any(class(model)[1] == c("gamlss", "luz_module_fitted", "xgb.Booster"))) {

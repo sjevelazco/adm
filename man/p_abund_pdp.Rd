@@ -70,6 +70,104 @@ plotted with a different color. Partial dependence plot could be used to interpr
 model or to explore how a model may extrapolate outside the environmental conditions
 used to train the model.
 }
+\examples{
+\dontrun{
+require(dplyr)
+require(terra)
+
+# Load data
+envar <- system.file("external/envar.tif", package = "adm") \%>\%
+  rast()
+  
+data("sppabund")
+some_sp <- sppabund \%>\%
+  filter(species == "Species one")
+
+# Fit some models
+mglm <- fit_abund_glm(
+  data = some_sp,
+  response = "ind_ha",
+  predictors = c("bio12","elevation","sand"),
+  predictors_f = c("eco"),
+  partition = ".part",
+  distribution = "ZAIG",
+  poly = 3,
+  inter_order = 0,
+  predict_part = TRUE
+)
+
+# Partial Dependence Plots:
+
+# In different resolutions
+p_abund_pdp(
+  model = mglm,
+  resolution = 50,
+  training_data = some_sp,
+  response_name = "Abundance"
+)
+
+p_abund_pdp(
+  model = mglm,
+  resolution = 5,
+  training_data = some_sp,
+  response_name = "Abundance"
+)
+
+# Especific variables and different resulotions
+p_abund_pdp(
+  model = mglm,
+  predictors = c("bio12","sand"),
+  training_data = some_sp,
+  response_name = "Abundance"
+)
+
+# With residuals and rug plot
+p_abund_pdp(
+  model = mglm,
+  training_data = some_sp,
+  response_name = "Abundance",
+  resid = TRUE
+)
+
+p_abund_pdp(
+  model = mglm,
+  training_data = some_sp,
+  response_name = "Abundance",
+  rug = TRUE
+)
+
+p_abund_pdp(
+  model = mglm,
+  training_data = some_sp,
+  response_name = "Abundance",
+  resid = TRUE,
+  rug = TRUE
+)
+
+# Partial depence plot for training and projection condition found in a projection area
+p_abund_pdp(
+  model = mglm,
+  training_data = some_sp,
+  projection_data = envar,
+  response_name = "Abundance",
+  rug = TRUE
+)
+
+# Custumize colors and theme
+p_abund_pdp(
+  model = mglm,
+  predictors = NULL,
+  resolution = 100,
+  resid = TRUE,
+  training_data = some_sp,
+  projection_data = envar,
+  colorl = c("blue", "red"),
+  colorp = "darkgray",
+  alpha = 0.4,
+  theme = ggplot2::theme_dark()
+)
+}
+}
 \seealso{
 \code{\link{data_abund_pdp}}, \code{\link{data_abund_bpdp}}, \code{\link{p_abund_bpdp}}
 }

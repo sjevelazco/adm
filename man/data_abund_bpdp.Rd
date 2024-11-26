@@ -43,6 +43,45 @@ values of the selected environmental variables, the third column the predicted s
 \description{
 Calculate data to construct bivariate partial dependence for two predictor set
 }
+\examples{
+\dontrun{
+require(dplyr)
+require(terra)
+
+# Load data
+envar <- system.file("external/envar.tif", package = "adm") \%>\%
+  rast()
+data("sppabund")
+some_sp <- sppabund \%>\%
+  filter(species == "Species one")
+
+# Fit some models
+mglm <- fit_abund_glm(
+  data = some_sp,
+  response = "ind_ha",
+  predictors = c("bio12","elevation","sand"),
+  predictors_f = c("eco"),
+  partition = ".part",
+  distribution = "ZAIG",
+  poly = 3,
+  inter_order = 0,
+  predict_part = TRUE
+)
+
+# Prepare data for Bivariate Partial Dependence Plots
+bpdp_data <- data_abund_bpdp(
+  model = mglm,
+  predictors = c("bio12","sand"),
+  resolution = 25,
+  training_data = some_sp,
+  response_name = "Abundance",
+  projection_data = envar,
+  training_boundaries = "convexh"
+)
+
+bpdp_data
+}
+}
 \seealso{
 \code{\link{data_abund_pdp}}, \code{\link{p_abund_pdp}}, \code{\link{p_abund_bpdp}}
 }

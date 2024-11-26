@@ -41,6 +41,77 @@
 #' @export
 #'
 #' @examples
+#' \dontrun{
+#' require(terra)
+#' require(dplyr)
+#' 
+#' # Load data
+#' envar <- system.file("external/envar.tif", package = "adm") %>%
+#'   rast()
+#' data("sppabund")
+#' some_sp <- sppabund %>%
+#'   filter(species == "Species one")
+#' 
+#' # Fit some models 
+#' mglm <- fit_abund_glm(
+#'   data = some_sp,
+#'   response = "ind_ha",
+#'   predictors = c("bio12","elevation","sand"),
+#'   predictors_f = c("eco"),
+#'   partition = ".part",
+#'   distribution = "ZAIG",
+#'   poly = 3,
+#'   inter_order = 0,
+#'   predict_part = TRUE
+#' )
+#' 
+#' # Bivariate Dependence Plots:
+#' # In different resolutions
+#' p_abund_bpdp(
+#'   model = mglm,
+#'   predictors = c("bio12","sand"),
+#'   training_data = some_sp,
+#'   resolution = 50
+#' )
+#' 
+#' p_abund_bpdp(
+#'   model = mglm,
+#'   predictors = c("bio12","sand"),
+#'   training_data = some_sp,
+#'   resolution = 25
+#' )
+#' 
+#' # With projection and training boundaries
+#' p_abund_bpdp(
+#'   model = mglm,
+#'   predictors = c("bio12","elevation","sand"),
+#'   training_data = some_sp,
+#'   projection_data = envar,
+#'   training_boundaries = "rectangle"
+#' )
+#' 
+#' p_abund_bpdp(
+#'   model = mglm,
+#'   predictors = c("bio12","elevation","sand"), 
+#'   training_data = some_sp,
+#'   projection_data = envar,
+#'   training_boundaries = "convexh"
+#' )
+#' 
+#' # Customize colors and theme
+#' p_abund_bpdp(
+#'   model = mglm,
+#'   predictors = c("bio12","sand"),
+#'   training_data = some_sp,
+#'   projection_data = envar,
+#'   training_boundaries = "convexh",
+#'   color_gradient = 
+#'     c("#122414","#183C26","#185437","#106D43","#0F874C",
+#'       "#2D9F54","#61B463","#8DC982","#B3E0A7","#D7F9D0"),
+#'   color_training_boundaries = "purple",
+#'   theme = ggplot2::theme_dark()
+#' )
+#' }
 p_abund_bpdp <-
   function(model,
            predictors = NULL,
@@ -68,6 +139,10 @@ p_abund_bpdp <-
            theme = ggplot2::theme_classic()) {
     Abundance <- Type <- Value <- val <- sym <- NULL
 
+    if (!is.null(predictors) & length(predictors)<2){
+      stop("Please provide at least two predictors.")
+    }
+    
     if (class(model)[1] == "list") {
       if (all(c("model", "predictors", "performance", "performance_part", "predicted_part") %in% names(model))
       ) {
@@ -75,6 +150,8 @@ p_abund_bpdp <-
         model_l <- model
         model <- model[[1]]
       }
+    } else {
+      stop('Please, use tune_abund_ or fit_abund_ output list in "model" argument.')
     }
 
     if (!is.null(training_boundaries) & is.null(training_data)) {

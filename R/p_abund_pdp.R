@@ -42,6 +42,102 @@
 #' @export
 #'
 #' @examples
+#' \dontrun{
+#' require(dplyr)
+#' require(terra)
+#' 
+#' # Load data
+#' envar <- system.file("external/envar.tif", package = "adm") %>%
+#'   rast()
+#'   
+#' data("sppabund")
+#' some_sp <- sppabund %>%
+#'   filter(species == "Species one")
+#' 
+#' # Fit some models
+#' mglm <- fit_abund_glm(
+#'   data = some_sp,
+#'   response = "ind_ha",
+#'   predictors = c("bio12","elevation","sand"),
+#'   predictors_f = c("eco"),
+#'   partition = ".part",
+#'   distribution = "ZAIG",
+#'   poly = 3,
+#'   inter_order = 0,
+#'   predict_part = TRUE
+#' )
+#' 
+#' # Partial Dependence Plots:
+#' 
+#' # In different resolutions
+#' p_abund_pdp(
+#'   model = mglm,
+#'   resolution = 50,
+#'   training_data = some_sp,
+#'   response_name = "Abundance"
+#' )
+#' 
+#' p_abund_pdp(
+#'   model = mglm,
+#'   resolution = 5,
+#'   training_data = some_sp,
+#'   response_name = "Abundance"
+#' )
+#' 
+#' # Especific variables and different resulotions
+#' p_abund_pdp(
+#'   model = mglm,
+#'   predictors = c("bio12","sand"),
+#'   training_data = some_sp,
+#'   response_name = "Abundance"
+#' )
+#' 
+#' # With residuals and rug plot
+#' p_abund_pdp(
+#'   model = mglm,
+#'   training_data = some_sp,
+#'   response_name = "Abundance",
+#'   resid = TRUE
+#' )
+#' 
+#' p_abund_pdp(
+#'   model = mglm,
+#'   training_data = some_sp,
+#'   response_name = "Abundance",
+#'   rug = TRUE
+#' )
+#' 
+#' p_abund_pdp(
+#'   model = mglm,
+#'   training_data = some_sp,
+#'   response_name = "Abundance",
+#'   resid = TRUE,
+#'   rug = TRUE
+#' )
+#' 
+#' # Partial depence plot for training and projection condition found in a projection area
+#' p_abund_pdp(
+#'   model = mglm,
+#'   training_data = some_sp,
+#'   projection_data = envar,
+#'   response_name = "Abundance",
+#'   rug = TRUE
+#' )
+#' 
+#' # Custumize colors and theme
+#' p_abund_pdp(
+#'   model = mglm,
+#'   predictors = NULL,
+#'   resolution = 100,
+#'   resid = TRUE,
+#'   training_data = some_sp,
+#'   projection_data = envar,
+#'   colorl = c("blue", "red"),
+#'   colorp = "darkgray",
+#'   alpha = 0.4,
+#'   theme = ggplot2::theme_dark()
+#' )
+#' }
 p_abund_pdp <-
   function(model,
            predictors = NULL,
@@ -65,6 +161,8 @@ p_abund_pdp <-
         model_l <- model
         model <- model[[1]]
       }
+    } else {
+      stop('Please, use tune_abund_ or fit_abund_ output list in "model" argument.')
     }
 
     if (!all(variables[1, 2:ncol(variables)] %>%
@@ -114,7 +212,6 @@ p_abund_pdp <-
       v <- v[names(v) %in% predictors]
     }
 
-
     if (is.null(response_name)) {
       response_name <- "Abundance"
     }
@@ -139,7 +236,6 @@ p_abund_pdp <-
           xn <- data.frame(crv[[1]])[, 1]
           p[[i]] <-
             ggplot2::ggplot(crv[[1]], ggplot2::aes(x = !!xn, y = !!sym(response_name))) +
-            # ggplot2::scale_y_continuous(limits = c(0, 1)) +
             ggplot2::labs(x = names(crv[[1]])[1]) +
             {
               if (resid) {
@@ -154,9 +250,11 @@ p_abund_pdp <-
 
           if (rug) {
             xn2 <- data.frame(crv[[2]])[, 1]
+            
+            rug_df <- crv[[2]] %>% mutate(!!response_name := max(crv[[1]][response_name]))
             p[[i]] <- p[[i]] +
               ggplot2::geom_rug(
-                data = crv[[2]],
+                data = rug_df,
                 ggplot2::aes(!!xn2, !!sym(response_name)),
                 sides = "b",
                 alpha = 0.3
@@ -166,7 +264,6 @@ p_abund_pdp <-
           xn <- data.frame(crv[[1]])[, 1]
           p[[i]] <-
             ggplot2::ggplot(crv[[1]], ggplot2::aes(!!xn, !!sym(response_name))) +
-            # ggplot2::scale_y_continuous(limits = c(0, 1)) +
             ggplot2::geom_col(fill = rev(colorl)[1]) +
             ggplot2::labs(x = names(crv[[1]])[1])
         }
@@ -207,7 +304,6 @@ p_abund_pdp <-
               breaks = c("Projection", "Training"),
               name = "Range"
             ) +
-            # ggplot2::scale_y_continuous(limits = c(0, 1)) +
             ggplot2::geom_vline(
               xintercept = rvar,
               col = "gray70",
@@ -216,19 +312,20 @@ p_abund_pdp <-
 
           if (rug) {
             xn2 <- data.frame(crv[[2]])[, 1]
+            
+            rug_df <- crv[[2]] %>% mutate(!!response_name := max(crv[[1]][response_name]))
             p[[i]] <- p[[i]] +
               ggplot2::geom_rug(
-                data = crv[[2]],
+                data = rug_df,
                 ggplot2::aes(!!xn2, !!sym(response_name)),
                 sides = "b",
                 alpha = 0.5
-              )
+              ) 
           }
         } else {
           xn <- crv[[1]] %>% dplyr::pull(names(crv[[1]])[1])
           p[[i]] <-
             ggplot2::ggplot(crv[[1]], ggplot2::aes(!!xn, !!sym(response_name))) +
-            # ggplot2::scale_y_continuous(limits = c(0, 1)) +
             ggplot2::geom_col(fill = rev(colorl)[1]) +
             ggplot2::labs(x = names(crv[[1]])[1])
         }
