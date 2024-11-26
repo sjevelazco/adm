@@ -58,6 +58,46 @@ variable, the second column with predicted suitability, and the third
 \description{
 Calculate data to construct partial dependence plots
 }
+\examples{
+\dontrun{
+require(dplyr)
+require(terra)
+
+# Load  data
+envar <- system.file("external/envar.tif", package = "adm") \%>\%
+  rast()
+  
+data("sppabund")
+some_sp <- sppabund \%>\%
+  filter(species == "Species one")
+
+# Fit some models
+mglm <- fit_abund_glm(
+  data = some_sp,
+  response = "ind_ha",
+  predictors = c("bio12","elevation","sand"),
+  predictors_f = c("eco"),
+  partition = ".part",
+  distribution = "ZAIG",
+  poly = 3,
+  inter_order = 0,
+  predict_part = TRUE
+)
+
+# Prepare data for Partial Dependence Plots
+pdp_data <- data_abund_pdp(
+  model = mglm,
+  predictors = "bio12",
+  resolution = 25,
+  resid = TRUE,
+  training_data = some_sp,
+  response_name = "Abundance",
+  projection_data = envar
+)
+
+pdp_data
+}
+}
 \seealso{
 \code{\link{data_abund_bpdp}}, \code{\link{p_abund_pdp}}, \code{\link{p_abund_bpdp}}
 }

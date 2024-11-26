@@ -31,6 +31,43 @@
 #' @export
 #'
 #' @examples
+#' \dontrun{
+#' require(dplyr)
+#' require(terra)
+#' 
+#' # Load data
+#' envar <- system.file("external/envar.tif", package = "adm") %>%
+#'   rast()
+#' data("sppabund")
+#' some_sp <- sppabund %>%
+#'   filter(species == "Species one")
+#' 
+#' # Fit some models
+#' mglm <- fit_abund_glm(
+#'   data = some_sp,
+#'   response = "ind_ha",
+#'   predictors = c("bio12","elevation","sand"),
+#'   predictors_f = c("eco"),
+#'   partition = ".part",
+#'   distribution = "ZAIG",
+#'   poly = 3,
+#'   inter_order = 0,
+#'   predict_part = TRUE
+#' )
+#' 
+#' # Prepare data for Bivariate Partial Dependence Plots
+#' bpdp_data <- data_abund_bpdp(
+#'   model = mglm,
+#'   predictors = c("bio12","sand"),
+#'   resolution = 25,
+#'   training_data = some_sp,
+#'   response_name = "Abundance",
+#'   projection_data = envar,
+#'   training_boundaries = "convexh"
+#' )
+#' 
+#' bpdp_data
+#' }
 data_abund_bpdp <-
   function(model,
            predictors,
@@ -42,6 +79,10 @@ data_abund_bpdp <-
            projection_data = NULL) {
     self <- Abundance_inverted <- NULL
 
+    if (!is.null(predictors) & length(predictors)<2){
+      stop("Please provide at least two predictors.")
+    }
+    
     # Extract training data
 
     if (class(model)[1] == "list") {
@@ -50,6 +91,8 @@ data_abund_bpdp <-
         variables <- model$predictors
         model <- model[[1]]
       }
+    } else {
+      stop('Please, use tune_abund_ or fit_abund_ output list in "model" argument.')
     }
 
     if (!is.null(training_boundaries) & is.null(training_data)) {
