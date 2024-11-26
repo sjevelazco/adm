@@ -29,6 +29,28 @@
 #' @export
 #'
 #' @examples
+#' \dontrun{
+#' # Generate a Conclutional Neural Network with:
+#' cnn_arch <- generate_cnn_architecture(
+#'   number_of_features = 7, # seven input variables
+#'   number_of_outputs = 1, # one output
+#'   sample_size = c(11, 11), # image dimensions
+#'   number_of_conv_layers = 2, # two convolutional layers between input and output
+#'   conv_layers_size = c(14, 28), # of this size, respectively
+#'   conv_layers_kernel = 3, # with a 3 pixels kernel
+#'   conv_layers_stride = 1, # walking 1 pixel at a time
+#'   conv_layers_padding = 1, # with 1 pixel of padding
+#'   number_of_fc_layers = 1, # followed by one fully connected layer
+#'   fc_layers_size = c(28), # with 28 neurons
+#'   pooling = NULL, # without average pooling
+#'   batch_norm = TRUE, # with batch normalization
+#'   dropout = 0 # and without dropout 
+#' )
+#' 
+#' cnn_arch$net() # a torch net
+#' cnn_arch$arch %>% cat # the torch code to create it 
+#' cnn_arch$arch_dict # and a quick description of its structure 
+#' }
 generate_cnn_architecture <-
   function(number_of_features = 7,
            number_of_outputs = 1,

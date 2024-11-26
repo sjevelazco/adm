@@ -20,6 +20,32 @@
 #' @export
 #'
 #' @examples
+#' \dontrun{
+#' require(dplyr)
+#' require(terra)
+#' 
+#' # Load data
+#' envar <- system.file("external/envar.tif", package = "adm") %>%
+#'   rast()
+#' data("sppabund")
+#' some_sp <- sppabund %>%
+#'   filter(species == "Species one")
+#' 
+#' cnn_samples <- cnn_make_samples(
+#'   data = some_sp,
+#'   x = "x", # x coordinates for each point
+#'   y = "y", # y coordinates for each point
+#'   response = "ind_ha",
+#'   raster = envar[[c("bio12","sand","elevation")]],
+#'   size = 5 # how many pixels from point to border?
+#' )
+#' 
+#' length(cnn_samples$predictors) #  938 matrix sets
+#' dim(cnn_samples$predictors[[1]]) # three 11x11 channels
+#' rast(cnn_samples$predictors[[1]]) %>% plot()
+#' 
+#' cnn_samples$response[[1]] # linked to a label
+#' }
 cnn_make_samples <- function(data,
                              x,
                              y,
