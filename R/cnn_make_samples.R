@@ -42,6 +42,7 @@
 #' 
 #' length(cnn_samples$predictors) #  938 matrix sets
 #' dim(cnn_samples$predictors[[1]]) # three 11x11 channels
+#' cnn_samples$predictors[[1]] # representing predictor variables
 #' rast(cnn_samples$predictors[[1]]) %>% plot()
 #' 
 #' cnn_samples$response[[1]] # linked to a label
@@ -67,7 +68,9 @@ cnn_make_samples <- function(data,
       size = size
     )
     
+    samples_nms <- names(pred_x)
     pred_x <- terra::as.array(pred_x)
+    dimnames(pred_x)[[3]] <- samples_nms
 
     for (j in 1:dim(pred_x)[3]) {
       ary <- pred_x[, , j]

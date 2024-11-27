@@ -63,6 +63,7 @@ cnn_samples <- cnn_make_samples(
 
 length(cnn_samples$predictors) #  938 matrix sets
 dim(cnn_samples$predictors[[1]]) # three 11x11 channels
+cnn_samples$predictors[[1]] # representing predictor variables
 rast(cnn_samples$predictors[[1]]) \%>\% plot()
 
 cnn_samples$response[[1]] # linked to a label
