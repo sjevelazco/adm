@@ -231,5 +231,13 @@ fit_abund_net <-
       performance_part = eval_partial,
       predicted_part = part_pred
     )
+    
+    # Standardize output list
+    for (i in 2:length(data_list)) {
+      if (!class(data_list[[i]])[1] == "tbl_df"){
+        data_list[[i]] <- dplyr::as_tibble(data_list[[i]])
+      }
+    }
+    
     return(data_list)
   }
