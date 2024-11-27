@@ -246,6 +246,13 @@ tune_abund_gam <-
     )
 
     final_list <- c(final_model, ranked_combinations)
+    
+    # Standardize output list
+    for (i in 2:length(final_list)) {
+      if (!class(final_list[[i]])[1] == "tbl_df"){
+        final_list[[i]] <- dplyr::as_tibble(final_list[[i]])
+      }
+    }
 
     return(final_list)
   }
