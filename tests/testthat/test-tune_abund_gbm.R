@@ -1,0 +1,88 @@
+require(dplyr)
+data("sppabund")
+some_sp <- sppabund %>%
+  dplyr::filter(species == "Species two") %>%
+  dplyr::select(-.part2, -.part3)
+grid_0 <- expand.grid(
+  interaction.depth = c(2, 4, 8),
+  n.trees = c(100, 500),
+  n.minobsinnode = c(2, 5),
+  shrinkage = c(0.1, 0.7)
+)
+
+
+test_that("tune_abund_gbm and fit_abund_gbm", {
+  set.seed(1)
+  tuned_ <- tune_abund_gbm(
+    data = some_sp,
+    response = "ind_ha",
+    predictors = c("bio12", "elevation", "sand"),
+    predictors_f = c("eco"),
+    partition = ".part",
+    predict_part = TRUE,
+    metrics = c("corr_pear", "mae"),
+    grid = grid_0,
+    distribution = "gaussian",
+    n_cores = 3
+  )
+  
+  expect_equal(names(tuned_), c(
+    "model", "predictors", "performance", "performance_part",
+    "predicted_part", "optimal_combination", "all_combinations"
+  ))
+  expect_equal(class(tuned_$model)[1], "gbm")
+  expect_true(round(tuned_$performance$corr_spear_mean, 2)>0.5)
+  expect_equal(dim(tuned_$all_combinations), c(24, 18))
+})
+
+test_that("test errors", {
+  expect_error(tune_abund_gbm(
+    data = some_sp,
+    response = "ind_ha",
+    predictors = c("bio12", "elevation", "sand"),
+    predictors_f = c("eco"),
+    partition = ".part",
+    predict_part = TRUE,
+    # metrics = c("corr_pear","mae"),
+    grid = grid_0,
+    n_cores = 1
+  ))
+  
+  expect_error(tune_abund_gbm(
+    data = some_sp,
+    response = "ind_ha",
+    predictors = c("bio12", "elevation", "sand"),
+    predictors_f = c("eco"),
+    partition = ".part",
+    predict_part = TRUE,
+    metrics = c("corr_pear","mae"),
+    grid = expand.grid(
+      mtryE = seq(from = 2, to = 3, by = 1),
+      ntreeE = c(100, 500)
+    ),
+    n_cores = 1
+  ))
+})
+
+test_that("incomplete grid", {
+  tuned_ <- tune_abund_gbm(
+    data = some_sp,
+    response = "ind_ha",
+    predictors = c("bio12", "elevation", "sand"),
+    predictors_f = c("eco"),
+    partition = ".part",
+    predict_part = TRUE,
+    metrics = c("corr_pear", "mae"),
+    distribution = "gaussian",
+    grid = expand.grid(
+      interaction.depth = c(2, 4, 8),
+      n.trees = c(100, 500)
+      # n.minobsinnode = c(2, 5),
+      # shrinkage = c(0.1, 0.7)
+    ),
+    n_cores = 1,
+    verbose = FALSE
+  )
+  
+  expect_true(all(c("shrinkage", "n.minobsinnode") %in% names(tuned_$optimal_combination)))
+})
