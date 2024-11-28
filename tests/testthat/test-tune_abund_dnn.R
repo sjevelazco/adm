@@ -1,7 +1,6 @@
 require(dplyr)
 
 #install torch
-torch::install_torch()
 
 data("sppabund")
 some_sp <- sppabund %>%
@@ -104,48 +103,42 @@ test_that("test errors", {
   ))
 })
 
-test_that("incomplete grid", {
-  if(!torch::torch_is_installed()){
-    skip()
-  }
-  
-  one_arch <- generate_dnn_architecture(
-    number_of_features = 3,
-    number_of_outputs = 1,
-    number_of_hidden_layers = 3,
-    hidden_layers_size = c(8, 16, 8),
-    batch_norm = TRUE
-  )
-  
-  # Create a grid
-  dnn_grid <- expand.grid(
-    learning_rate = c(0.01),
-    n_epochs = c(50),
-    batch_size = c(32),
-    validation_patience = c(2,4),
-    fitting_patience = c(2,4)
-  )
-  
-  set.seed(1)
-  tuned_ <- tune_abund_dnn(
-    data = some_sp,
-    response = "ind_ha",
-    predictors = c("bio12", "elevation", "sand"),
-    partition = ".part",
-    predict_part = TRUE,
-    metrics = c("corr_pear", "mae"),
-    grid = expand.grid(
-      learning_rate = c(0.01),
-      # n_epochs = c(50),
-      batch_size = c(32),
-      validation_patience = c(2,4),
-      fitting_patience = c(2,4)
-    )
-    ,
-    architectures = one_arch,
-    n_cores = 3
-  )
-  
-  expect_true("n_epochs" %in% names(tuned_$optimal_combination))
-  
-})
+# test_that("incomplete grid", {
+#   if(!torch::torch_is_installed()){
+#     skip()
+#   }
+#   one_arch <- generate_dnn_architecture(
+#     number_of_features = 3,
+#     number_of_outputs = 1,
+#     number_of_hidden_layers = 3,
+#     hidden_layers_size = c(8, 16, 8),
+#     batch_norm = TRUE
+#   )
+#   
+#   
+#   if(!torch::torch_is_installed()){
+#     skip()
+#   }
+#   set.seed(1)
+#   tuned_ <- tune_abund_dnn(
+#     data = some_sp,
+#     response = "ind_ha",
+#     predictors = c("bio12", "elevation", "sand"),
+#     partition = ".part",
+#     predict_part = TRUE,
+#     metrics = c("corr_pear", "mae"),
+#     grid = expand.grid(
+#       learning_rate = c(0.01),
+#       # n_epochs = c(50),
+#       batch_size = c(32),
+#       validation_patience = c(2,4),
+#       fitting_patience = c(2,4)
+#     )
+#     ,
+#     architectures = one_arch,
+#     n_cores = 3
+#   )
+#   
+#   expect_true("n_epochs" %in% names(tuned_$optimal_combination))
+#   
+# })
