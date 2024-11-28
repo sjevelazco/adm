@@ -1,7 +1,6 @@
 require(dplyr)
 
 #install torch
-torch::install_torch()
 
 data("sppabund")
 some_sp <- sppabund %>%
@@ -10,42 +9,40 @@ some_sp <- sppabund %>%
 some_sp <-
   balance_dataset(some_sp, response = "ind_ha", absence_ratio = 0.2)
 
-if(!torch::torch_is_installed()){
-  skip()
-}
 
-one_arch <- generate_cnn_architecture(
-  number_of_features = 3,
-  number_of_outputs = 1,
-  sample_size = c(11, 11),
-  number_of_conv_layers = 2,
-  conv_layers_size = c(14, 28),
-  conv_layers_kernel = 3,
-  conv_layers_stride = 1,
-  conv_layers_padding = 0,
-  number_of_fc_layers = 1,
-  fc_layers_size = c(28),
-  pooling = NULL,
-  batch_norm = TRUE,
-  dropout = 0,
-  verbose = T
-)
-
-# Create a grid
-# Obs.: the grid is tested with every architecture, thus it can get very large.
-cnn_grid <- expand.grid(
-  learning_rate = c(0.01),
-  n_epochs = c(50),
-  batch_size = c(32),
-  validation_patience = c(4),
-  fitting_patience = c(4)
-)
 
 
 test_that("tune_abund_svm and fit_abund_svm", {
   if(!torch::torch_is_installed()){
     skip()
   }
+  
+  one_arch <- generate_cnn_architecture(
+    number_of_features = 3,
+    number_of_outputs = 1,
+    sample_size = c(11, 11),
+    number_of_conv_layers = 2,
+    conv_layers_size = c(14, 28),
+    conv_layers_kernel = 3,
+    conv_layers_stride = 1,
+    conv_layers_padding = 0,
+    number_of_fc_layers = 1,
+    fc_layers_size = c(28),
+    pooling = NULL,
+    batch_norm = TRUE,
+    dropout = 0,
+    verbose = T
+  )
+  
+  # Create a grid
+  # Obs.: the grid is tested with every architecture, thus it can get very large.
+  cnn_grid <- expand.grid(
+    learning_rate = c(0.01),
+    n_epochs = c(50),
+    batch_size = c(32),
+    validation_patience = c(4),
+    fitting_patience = c(4)
+  )
   
   set.seed(1)
   tuned_ <- tune_abund_cnn(
@@ -75,6 +72,33 @@ test_that("test errors", {
   if(!torch::torch_is_installed()){
     skip()
   }
+  
+  one_arch <- generate_cnn_architecture(
+    number_of_features = 3,
+    number_of_outputs = 1,
+    sample_size = c(11, 11),
+    number_of_conv_layers = 2,
+    conv_layers_size = c(14, 28),
+    conv_layers_kernel = 3,
+    conv_layers_stride = 1,
+    conv_layers_padding = 0,
+    number_of_fc_layers = 1,
+    fc_layers_size = c(28),
+    pooling = NULL,
+    batch_norm = TRUE,
+    dropout = 0,
+    verbose = T
+  )
+  
+  # Create a grid
+  # Obs.: the grid is tested with every architecture, thus it can get very large.
+  cnn_grid <- expand.grid(
+    learning_rate = c(0.01),
+    n_epochs = c(50),
+    batch_size = c(32),
+    validation_patience = c(4),
+    fitting_patience = c(4)
+  )
   
   expect_error( tune_abund_cnn(
     data = some_sp,
@@ -119,6 +143,33 @@ test_that("incomplete grid", {
   if(!torch::torch_is_installed()){
     skip()
   }
+  
+  one_arch <- generate_cnn_architecture(
+    number_of_features = 3,
+    number_of_outputs = 1,
+    sample_size = c(11, 11),
+    number_of_conv_layers = 2,
+    conv_layers_size = c(14, 28),
+    conv_layers_kernel = 3,
+    conv_layers_stride = 1,
+    conv_layers_padding = 0,
+    number_of_fc_layers = 1,
+    fc_layers_size = c(28),
+    pooling = NULL,
+    batch_norm = TRUE,
+    dropout = 0,
+    verbose = T
+  )
+  
+  # Create a grid
+  # Obs.: the grid is tested with every architecture, thus it can get very large.
+  cnn_grid <- expand.grid(
+    learning_rate = c(0.01),
+    n_epochs = c(50),
+    batch_size = c(32),
+    validation_patience = c(4),
+    fitting_patience = c(4)
+  )
   
   
   tuned_ <- tune_abund_cnn(
