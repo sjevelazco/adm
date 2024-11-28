@@ -38,7 +38,6 @@ test_that("tune_abund_dnn and fit_abund_dnn", {
     skip()
   }
   
-  
   set.seed(1)
   tuned_ <- tune_abund_dnn(
     data = some_sp,
