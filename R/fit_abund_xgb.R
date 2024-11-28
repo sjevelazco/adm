@@ -17,7 +17,7 @@
 #' @param verbose logical. If FALSE, disables all console messages. Default TRUE.
 #'
 #' @importFrom dplyr bind_rows select starts_with pull tibble as_tibble group_by summarise across bind_cols
-#' @importFrom stats model.matrix predict sd
+#' @importFrom stats model.matrix sd
 #' @importFrom xgboost xgboost
 #'
 #' @return
