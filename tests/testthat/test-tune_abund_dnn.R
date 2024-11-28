@@ -12,32 +12,28 @@ some_sp <-
   balance_dataset(some_sp, response = "ind_ha", absence_ratio = 0.2)
 
 # Architecture
-if(!torch::torch_is_installed()){
-  skip()
-}
-
-one_arch <- generate_dnn_architecture(
-  number_of_features = 3,
-  number_of_outputs = 1,
-  number_of_hidden_layers = 3,
-  hidden_layers_size = c(8, 16, 8),
-  batch_norm = TRUE
-)
-
-# Create a grid
-dnn_grid <- expand.grid(
-  learning_rate = c(0.01),
-  n_epochs = c(50),
-  batch_size = c(32),
-  validation_patience = c(2,4),
-  fitting_patience = c(2,4)
-)
 
 test_that("tune_abund_dnn and fit_abund_dnn", {
   if(!torch::torch_is_installed()){
     skip()
   }
   
+  one_arch <- generate_dnn_architecture(
+    number_of_features = 3,
+    number_of_outputs = 1,
+    number_of_hidden_layers = 3,
+    hidden_layers_size = c(8, 16, 8),
+    batch_norm = TRUE
+  )
+  
+  # Create a grid
+  dnn_grid <- expand.grid(
+    learning_rate = c(0.01),
+    n_epochs = c(50),
+    batch_size = c(32),
+    validation_patience = c(2,4),
+    fitting_patience = c(2,4)
+  )
   
   set.seed(1)
   tuned_ <- tune_abund_dnn(
@@ -62,6 +58,23 @@ test_that("test errors", {
   if(!torch::torch_is_installed()){
     skip()
   }
+  
+  one_arch <- generate_dnn_architecture(
+    number_of_features = 3,
+    number_of_outputs = 1,
+    number_of_hidden_layers = 3,
+    hidden_layers_size = c(8, 16, 8),
+    batch_norm = TRUE
+  )
+  
+  # Create a grid
+  dnn_grid <- expand.grid(
+    learning_rate = c(0.01),
+    n_epochs = c(50),
+    batch_size = c(32),
+    validation_patience = c(2,4),
+    fitting_patience = c(2,4)
+  )
   
   expect_error( tune_abund_dnn(
     data = some_sp,
@@ -95,6 +108,23 @@ test_that("incomplete grid", {
   if(!torch::torch_is_installed()){
     skip()
   }
+  
+  one_arch <- generate_dnn_architecture(
+    number_of_features = 3,
+    number_of_outputs = 1,
+    number_of_hidden_layers = 3,
+    hidden_layers_size = c(8, 16, 8),
+    batch_norm = TRUE
+  )
+  
+  # Create a grid
+  dnn_grid <- expand.grid(
+    learning_rate = c(0.01),
+    n_epochs = c(50),
+    batch_size = c(32),
+    validation_patience = c(2,4),
+    fitting_patience = c(2,4)
+  )
   
   set.seed(1)
   tuned_ <- tune_abund_dnn(
