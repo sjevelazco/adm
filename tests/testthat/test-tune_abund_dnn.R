@@ -12,6 +12,10 @@ some_sp <-
   balance_dataset(some_sp, response = "ind_ha", absence_ratio = 0.2)
 
 # Architecture
+if(!torch::torch_is_installed()){
+  skip()
+}
+
 one_arch <- generate_dnn_architecture(
   number_of_features = 3,
   number_of_outputs = 1,
@@ -30,6 +34,11 @@ dnn_grid <- expand.grid(
 )
 
 test_that("tune_abund_dnn and fit_abund_dnn", {
+  if(!torch::torch_is_installed()){
+    skip()
+  }
+  
+  
   set.seed(1)
   tuned_ <- tune_abund_dnn(
     data = some_sp,
@@ -50,6 +59,10 @@ test_that("tune_abund_dnn and fit_abund_dnn", {
 })
 
 test_that("test errors", {
+  if(!torch::torch_is_installed()){
+    skip()
+  }
+  
   expect_error( tune_abund_dnn(
     data = some_sp,
     response = "ind_ha",
@@ -79,6 +92,10 @@ test_that("test errors", {
 })
 
 test_that("incomplete grid", {
+  if(!torch::torch_is_installed()){
+    skip()
+  }
+  
   set.seed(1)
   tuned_ <- tune_abund_dnn(
     data = some_sp,

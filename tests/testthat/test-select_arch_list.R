@@ -1,7 +1,13 @@
 #install torch
-torch::install_torch()
+if(!torch::torch_is_installed()){
+  skip()
+}
 
 test_that("select_arch_list for dnn", {
+  if(!torch::torch_is_installed()){
+    skip()
+  }
+  
   archs <- generate_arch_list(
     type = "dnn",
     number_of_features = 4,
@@ -23,6 +29,10 @@ test_that("select_arch_list for dnn", {
 })
 
 test_that("select_arch_list for dnn, min_max FALSE", {
+  if(!torch::torch_is_installed()){
+    skip()
+  }
+  
   archs <- generate_arch_list(
     type = "dnn",
     number_of_features = 4,
@@ -44,6 +54,10 @@ test_that("select_arch_list for dnn, min_max FALSE", {
 })
 
 test_that("select_arch_list for cnn", {
+  if(!torch::torch_is_installed()){
+    skip()
+  }
+  
   archs <- generate_arch_list(
     type = "cnn",
     number_of_features = 4,
@@ -72,6 +86,10 @@ test_that("select_arch_list for cnn", {
 })
 
 test_that("select_arch_list for cnn dropout", {
+  if(!torch::torch_is_installed()){
+    skip()
+  }
+  
   archs <- generate_arch_list(
     type = "cnn",
     number_of_features = 4,

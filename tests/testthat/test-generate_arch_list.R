@@ -1,7 +1,13 @@
 #install torch
-torch::install_torch()
+
+
 
 test_that("architecture for cnn", {
+  if(!torch::torch_is_installed()){
+    skip()
+  }
+  
+  
   dnn_archs <- generate_arch_list(
     type = "dnn",
     number_of_features = 4,
@@ -19,6 +25,10 @@ test_that("architecture for cnn", {
 
 
 test_that("architecture for cnn", {
+  if(!torch::torch_is_installed()){
+    skip()
+  }
+  
   cnn_archs <- generate_arch_list(
     type = "cnn",
     number_of_features = 4,
