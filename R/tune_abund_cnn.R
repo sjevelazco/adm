@@ -306,7 +306,7 @@ tune_abund_cnn <-
     progress <- function(n) utils::setTxtProgressBar(pb, n)
     opts <- list(progress = progress)
 
-    hyper_combinations <- foreach::foreach(i = 1:nrow(grid), .options.snow = opts, .export = c("fit_abund_cnn", "adm_eval", "cnn_make_samples", "croppin_hood"), .packages = c("dplyr")) %dopar% {
+    hyper_combinations <- foreach::foreach(i = 1:nrow(grid), .options.snow = opts, .export = c("fit_abund_cnn", "adm_eval", "cnn_make_samples", "croppin_hood", "cnn_get_crop_size"), .packages = c("dplyr")) %dopar% {
       model <-
         fit_abund_cnn(
           data = data,

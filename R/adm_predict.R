@@ -176,7 +176,7 @@ adm_predict <-
            invert_transform = NULL,
            transform_negative = FALSE,
            sample_size = c(11, 11)) {
-    . <- model <- threshold <- thr_value <- self <- NULL
+    . <- model <- threshold <- thr_value <- self <- response <- NULL
 
     # TODO write codes to predict CNN ANN adapt GLM and GAM to use gamlss
 
@@ -444,7 +444,7 @@ adm_predict <-
             t() %>%
             as.vector()
 
-          crop_size <- cnn_get_crop_size(sample_size)
+          crop_size <- cnn_get_crop_size(sample_size = sample_size)
           pred_samples <- cnn_make_samples(
             data = pred_coord,
             x = "x",

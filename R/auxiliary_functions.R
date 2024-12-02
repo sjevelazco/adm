@@ -72,8 +72,7 @@ pre_tr_te <- function(data, p_names, h) {
 #' cnn_get_crop_size
 #'
 #' @noRd
-cnn_get_crop_size <-
-  function(sample_size) {
+cnn_get_crop_size <- function(sample_size) {
     if (!is.vector(sample_size)) {
       stop("Please, provide a vector containing the sample size c(width,height)")
     } else if (!(sample_size[[1]] == sample_size[[2]])) {
@@ -97,7 +96,7 @@ cnn_get_crop_size <-
 #' @param padding_method string or NULL. Method used for padding the raster if raster_padding is TRUE. Options are "mean", "median", "zero". Ignored if raster_padding is FALSE. Default NULL
 #' @param size numeric. Size of the cropped raster, number o cell in each direction of a focal cell
 #'
-#' @importFrom terra colFromX rowFromY xFromCol yFromRow rast ext crop
+#' @importFrom terra colFromX rowFromY xFromCol yFromRow rast ext crop extend
 #'
 #' @return SpatRaster. Croped raster
 #' @export
@@ -138,7 +137,7 @@ croppin_hood <- function(occ,
   lat <- as.numeric(occ[, y])
 
   if (raster_padding) {
-    raster <- extend(raster, c(size, size))
+    raster <- terra::extend(raster, c(size, size))
   }
 
   rst.col <- terra::colFromX(raster, long)
