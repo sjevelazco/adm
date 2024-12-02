@@ -11,7 +11,7 @@
 #' @param batch_size numeric. A batch is a subset of the training set used in a single iteration of the training process. The size of each batch is referred to as the batch size. Default = 32
 #' @param custom_architecture a Torch nn_module_generator object or a generate_dnn_architecture output. A neural network architecture to be used instead of the internal default one. Default NULL
 #' @param verbose logical. If FALSE, disables all console messages. Default TRUE
-#' @param validation_patience numerical. An integer indicating the number of epochs without loss improvement tolerated by the algorithm in the validation process. If the patience limit is exceeded, the training ends. Default 2  
+#' @param validation_patience numerical. An integer indicating the number of epochs without loss improvement tolerated by the algorithm in the validation process. If the patience limit is exceeded, the training ends. Default 2
 #' @param fitting_patience numerical. The same as validation_patience, but in the final model fitting process. Default 5
 #'
 #' @importFrom dplyr bind_rows bind_cols pull tibble as_tibble group_by summarise across
@@ -322,10 +322,10 @@ fit_abund_dnn <-
       performance_part = eval_partial,
       predicted_part = part_pred
     )
-    
+
     # Standardize output list
     for (i in 2:length(data_list)) {
-      if (!class(data_list[[i]])[1] == "tbl_df"){
+      if (!class(data_list[[i]])[1] == "tbl_df") {
         data_list[[i]] <- dplyr::as_tibble(data_list[[i]])
       }
     }

@@ -26,8 +26,8 @@ of predicted and observed values.
 This function calculate metric related to the accuracy, discrimination, and precision of a model:
 \itemize{
   \item Accuracy: mean absolute error (mae)
-  \item Discrimination: Spearman’s rank correlation (corr_spear)
-  \item Discrimination: Pearson’s correlation (corr_pear)
+  \item Discrimination: Spearman<U+2019>s rank correlation (corr_spear)
+  \item Discrimination: Pearson<U+2019>s correlation (corr_pear)
   \item Discrimination: regression intercept between observed and predicted values (inter)
   \item Discrimination: regression slope between observed and predicted values (slope)
   \item Precision: ratio between predicted and observed standard deviation (pdisp)

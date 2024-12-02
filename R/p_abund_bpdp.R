@@ -44,19 +44,19 @@
 #' \dontrun{
 #' require(terra)
 #' require(dplyr)
-#' 
+#'
 #' # Load data
 #' envar <- system.file("external/envar.tif", package = "adm") %>%
 #'   rast()
 #' data("sppabund")
 #' some_sp <- sppabund %>%
 #'   filter(species == "Species one")
-#' 
-#' # Fit some models 
+#'
+#' # Fit some models
 #' mglm <- fit_abund_glm(
 #'   data = some_sp,
 #'   response = "ind_ha",
-#'   predictors = c("bio12","elevation","sand"),
+#'   predictors = c("bio12", "elevation", "sand"),
 #'   predictors_f = c("eco"),
 #'   partition = ".part",
 #'   distribution = "ZAIG",
@@ -64,50 +64,52 @@
 #'   inter_order = 0,
 #'   predict_part = TRUE
 #' )
-#' 
+#'
 #' # Bivariate Dependence Plots:
 #' # In different resolutions
 #' p_abund_bpdp(
 #'   model = mglm,
-#'   predictors = c("bio12","sand"),
+#'   predictors = c("bio12", "sand"),
 #'   training_data = some_sp,
 #'   resolution = 50
 #' )
-#' 
+#'
 #' p_abund_bpdp(
 #'   model = mglm,
-#'   predictors = c("bio12","sand"),
+#'   predictors = c("bio12", "sand"),
 #'   training_data = some_sp,
 #'   resolution = 25
 #' )
-#' 
+#'
 #' # With projection and training boundaries
 #' p_abund_bpdp(
 #'   model = mglm,
-#'   predictors = c("bio12","elevation","sand"),
+#'   predictors = c("bio12", "elevation", "sand"),
 #'   training_data = some_sp,
 #'   projection_data = envar,
 #'   training_boundaries = "rectangle"
 #' )
-#' 
+#'
 #' p_abund_bpdp(
 #'   model = mglm,
-#'   predictors = c("bio12","elevation","sand"), 
+#'   predictors = c("bio12", "elevation", "sand"),
 #'   training_data = some_sp,
 #'   projection_data = envar,
 #'   training_boundaries = "convexh"
 #' )
-#' 
+#'
 #' # Customize colors and theme
 #' p_abund_bpdp(
 #'   model = mglm,
-#'   predictors = c("bio12","sand"),
+#'   predictors = c("bio12", "sand"),
 #'   training_data = some_sp,
 #'   projection_data = envar,
 #'   training_boundaries = "convexh",
-#'   color_gradient = 
-#'     c("#122414","#183C26","#185437","#106D43","#0F874C",
-#'       "#2D9F54","#61B463","#8DC982","#B3E0A7","#D7F9D0"),
+#'   color_gradient =
+#'     c(
+#'       "#122414", "#183C26", "#185437", "#106D43", "#0F874C",
+#'       "#2D9F54", "#61B463", "#8DC982", "#B3E0A7", "#D7F9D0"
+#'     ),
 #'   color_training_boundaries = "purple",
 #'   theme = ggplot2::theme_dark()
 #' )
@@ -139,10 +141,10 @@ p_abund_bpdp <-
            theme = ggplot2::theme_classic()) {
     Abundance <- Type <- Value <- val <- sym <- NULL
 
-    if (!is.null(predictors) & length(predictors)<2){
+    if (!is.null(predictors) & length(predictors) < 2) {
       stop("Please provide at least two predictors.")
     }
-    
+
     if (class(model)[1] == "list") {
       if (all(c("model", "predictors", "performance", "performance_part", "predicted_part") %in% names(model))
       ) {
@@ -167,7 +169,7 @@ p_abund_bpdp <-
       }
     }
 
-    if (class(model)[1] %in% c("luz_module_fitted","xgb.Booster")) {
+    if (class(model)[1] %in% c("luz_module_fitted", "xgb.Booster")) {
       if (!is.null(training_data)) {
         v <- training_data[variables[1, 3:ncol(variables)] %>%
           as.vector() %>%
@@ -243,7 +245,7 @@ p_abund_bpdp <-
           invert_transform = invert_transform
         )
 
-      # Coleta os valores de abundância para calcular min e max
+      # Coleta os valores de abund<U+00E2>ncia para calcular min e max
       if (!is.null(set_max)) {
         if (is.numeric(set_max)) {
           crv[[1]][which(crv[[1]] %>% dplyr::pull(response_name) > set_max), response_name] <- set_max

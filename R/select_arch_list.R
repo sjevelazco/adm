@@ -101,7 +101,7 @@ select_arch_list <-
       ]
     }
 
-    # TODO - FAZ SÓ PERCENTIL
+    # TODO - FAZ S<U+00D3> PERCENTIL
     percentile <- stats::quantile(net_size_df$parameters, probs = seq(0, 1, by = 0.1))
     net_size_df$percentile <-
       cut(net_size_df$parameters,

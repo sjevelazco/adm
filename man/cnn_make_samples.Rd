@@ -57,7 +57,7 @@ cnn_samples <- cnn_make_samples(
   x = "x", # x coordinates for each point
   y = "y", # y coordinates for each point
   response = "ind_ha",
-  raster = envar[[c("bio12","sand","elevation")]],
+  raster = envar[[c("bio12", "sand", "elevation")]],
   size = 5 # how many pixels from point to border?
 )
 

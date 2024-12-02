@@ -77,4 +77,3 @@ test_that("incomplete grid", {
 
   expect_true("ntree" %in% names(tuned_$optimal_combination))
 })
-

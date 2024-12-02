@@ -44,12 +44,12 @@
 #'   fc_layers_size = c(28), # with 28 neurons
 #'   pooling = NULL, # without average pooling
 #'   batch_norm = TRUE, # with batch normalization
-#'   dropout = 0 # and without dropout 
+#'   dropout = 0 # and without dropout
 #' )
-#' 
+#'
 #' cnn_arch$net() # a torch net
-#' cnn_arch$arch %>% cat # the torch code to create it 
-#' cnn_arch$arch_dict # and a quick description of its structure 
+#' cnn_arch$arch %>% cat() # the torch code to create it
+#' cnn_arch$arch_dict # and a quick description of its structure
 #' }
 generate_cnn_architecture <-
   function(number_of_features = 7,
@@ -289,12 +289,12 @@ generate_cnn_architecture <-
     }
 
     # Creating arch_dict
-    arch_dict <- c(conv_layers_size, fc_layers_size) %>% 
+    arch_dict <- c(conv_layers_size, fc_layers_size) %>%
       as.matrix() %>%
-      list
-    names(arch_dict) <- paste0("conv",number_of_conv_layers,"-fc",number_of_fc_layers,"-net")
-    row.names(arch_dict[[1]]) <- c(paste0("conv_",seq(1,number_of_conv_layers)),paste0("fc_",seq(1,number_of_fc_layers)))
-    
+      list()
+    names(arch_dict) <- paste0("conv", number_of_conv_layers, "-fc", number_of_fc_layers, "-net")
+    row.names(arch_dict[[1]]) <- c(paste0("conv_", seq(1, number_of_conv_layers)), paste0("fc_", seq(1, number_of_fc_layers)))
+
     return_list <- list(net = net, arch = arch, arch_dict = arch_dict)
 
     return(return_list)

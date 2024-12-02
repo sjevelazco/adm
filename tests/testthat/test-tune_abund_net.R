@@ -9,21 +9,21 @@ net_grid <- expand.grid(
 )
 
 test_that("tune_abund_net", {
-set.seed(123)
-tuned_ <- tune_abund_net(
-  data = some_sp,
-  response = "ind_ha",
-  predictors = c("bio12", "elevation", "sand"),
-  predictors_f = c("eco"),
-  partition = ".part",
-  predict_part = TRUE,
-  metrics = c("corr_pear", "mae"),
-  grid = net_grid,
-  n_cores = 1
-)
+  set.seed(123)
+  tuned_ <- tune_abund_net(
+    data = some_sp,
+    response = "ind_ha",
+    predictors = c("bio12", "elevation", "sand"),
+    predictors_f = c("eco"),
+    partition = ".part",
+    predict_part = TRUE,
+    metrics = c("corr_pear", "mae"),
+    grid = net_grid,
+    n_cores = 1
+  )
 
-dim(tuned_$optimal_combination) %>% expect_equal(c(1, 16))
-expect_true(tuned_$performance$corr_spear_mean < 0.5)
+  dim(tuned_$optimal_combination) %>% expect_equal(c(1, 16))
+  expect_true(tuned_$performance$corr_spear_mean < 0.5)
 })
 
 test_that("test errors", {
@@ -38,7 +38,7 @@ test_that("test errors", {
     grid = grid_0,
     n_cores = 1
   ))
-  
+
   expect_error(tune_abund_net(
     data = some_sp,
     response = "ind_ha",
@@ -64,12 +64,12 @@ test_that("incomplete grid", {
     partition = ".part",
     predict_part = TRUE,
     metrics = c("corr_pear", "mae"),
-    grid =  expand.grid(
+    grid = expand.grid(
       # size = c(4, 8, 12),
       decay = seq(from = 0, to = 0.4, by = 0.1)
     ),
     n_cores = 1
   )
-  
+
   expect_true("size" %in% names(tuned_$optimal_combination))
 })

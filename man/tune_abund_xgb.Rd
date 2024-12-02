@@ -83,13 +83,13 @@ some_sp <-
   balance_dataset(some_sp, response = "ind_ha", absence_ratio = 0.2)
 # Create a grid
 xgb_grid <- expand.grid(
-  nrounds = c(100,300),
-  max_depth = c(4,6,8),
-  eta = c(0.2,0.5),
-  gamma = c(1,5,10),
-  colsample_bytree = c(0.5,1),
-  min_child_weight = c(0.5,1,2),
-  subsample = c(0.5,1)
+  nrounds = c(100, 300),
+  max_depth = c(4, 6, 8),
+  eta = c(0.2, 0.5),
+  gamma = c(1, 5, 10),
+  colsample_bytree = c(0.5, 1),
+  min_child_weight = c(0.5, 1, 2),
+  subsample = c(0.5, 1)
 )
 # Tune a XGB model
 tuned_xgb <- tune_abund_xgb(

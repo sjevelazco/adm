@@ -59,7 +59,7 @@ some_sp <- sppabund \%>\%
 mglm <- fit_abund_glm(
   data = some_sp,
   response = "ind_ha",
-  predictors = c("bio12","elevation","sand"),
+  predictors = c("bio12", "elevation", "sand"),
   predictors_f = c("eco"),
   partition = ".part",
   distribution = "ZAIG",
@@ -71,7 +71,7 @@ mglm <- fit_abund_glm(
 # Prepare data for Bivariate Partial Dependence Plots
 bpdp_data <- data_abund_bpdp(
   model = mglm,
-  predictors = c("bio12","sand"),
+  predictors = c("bio12", "sand"),
   resolution = 25,
   training_data = some_sp,
   response_name = "Abundance",

@@ -66,7 +66,7 @@ require(terra)
 # Load  data
 envar <- system.file("external/envar.tif", package = "adm") \%>\%
   rast()
-  
+
 data("sppabund")
 some_sp <- sppabund \%>\%
   filter(species == "Species one")
@@ -75,7 +75,7 @@ some_sp <- sppabund \%>\%
 mglm <- fit_abund_glm(
   data = some_sp,
   response = "ind_ha",
-  predictors = c("bio12","elevation","sand"),
+  predictors = c("bio12", "elevation", "sand"),
   predictors_f = c("eco"),
   partition = ".part",
   distribution = "ZAIG",

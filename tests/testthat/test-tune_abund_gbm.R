@@ -25,13 +25,13 @@ test_that("tune_abund_gbm and fit_abund_gbm", {
     distribution = "gaussian",
     n_cores = 3
   )
-  
+
   expect_equal(names(tuned_), c(
     "model", "predictors", "performance", "performance_part",
     "predicted_part", "optimal_combination", "all_combinations"
   ))
   expect_equal(class(tuned_$model)[1], "gbm")
-  expect_true(round(tuned_$performance$corr_spear_mean, 2)>0.5)
+  expect_true(round(tuned_$performance$corr_spear_mean, 2) > 0.5)
   expect_equal(dim(tuned_$all_combinations), c(24, 18))
 })
 
@@ -47,7 +47,7 @@ test_that("test errors", {
     grid = grid_0,
     n_cores = 1
   ))
-  
+
   expect_error(tune_abund_gbm(
     data = some_sp,
     response = "ind_ha",
@@ -55,7 +55,7 @@ test_that("test errors", {
     predictors_f = c("eco"),
     partition = ".part",
     predict_part = TRUE,
-    metrics = c("corr_pear","mae"),
+    metrics = c("corr_pear", "mae"),
     grid = expand.grid(
       mtryE = seq(from = 2, to = 3, by = 1),
       ntreeE = c(100, 500)
@@ -83,6 +83,6 @@ test_that("incomplete grid", {
     n_cores = 1,
     verbose = FALSE
   )
-  
+
   expect_true(all(c("shrinkage", "n.minobsinnode") %in% names(tuned_$optimal_combination)))
 })

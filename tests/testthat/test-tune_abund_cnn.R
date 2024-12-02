@@ -1,6 +1,6 @@
 require(dplyr)
 
-#install torch
+# install torch
 
 data("sppabund")
 some_sp <- sppabund %>%
@@ -13,10 +13,10 @@ some_sp <-
 
 
 test_that("tune_abund_svm and fit_abund_svm", {
-  if(!torch::torch_is_installed()){
+  if (!torch::torch_is_installed()) {
     skip()
   }
-  
+
   one_arch <- generate_cnn_architecture(
     number_of_features = 3,
     number_of_outputs = 1,
@@ -33,7 +33,7 @@ test_that("tune_abund_svm and fit_abund_svm", {
     dropout = 0,
     verbose = T
   )
-  
+
   # Create a grid
   # Obs.: the grid is tested with every architecture, thus it can get very large.
   cnn_grid <- expand.grid(
@@ -43,7 +43,7 @@ test_that("tune_abund_svm and fit_abund_svm", {
     validation_patience = c(4),
     fitting_patience = c(4)
   )
-  
+
   set.seed(1)
   tuned_ <- tune_abund_cnn(
     data = some_sp,
@@ -56,7 +56,7 @@ test_that("tune_abund_svm and fit_abund_svm", {
     rasters = system.file("external/envar.tif", package = "adm"),
     x = "x",
     y = "y",
-    sample_size = c(11,11),
+    sample_size = c(11, 11),
     architectures = one_arch,
     n_cores = 3,
     verbose = FALSE
@@ -69,10 +69,10 @@ test_that("tune_abund_svm and fit_abund_svm", {
 })
 
 test_that("test errors", {
-  if(!torch::torch_is_installed()){
+  if (!torch::torch_is_installed()) {
     skip()
   }
-  
+
   one_arch <- generate_cnn_architecture(
     number_of_features = 3,
     number_of_outputs = 1,
@@ -89,7 +89,7 @@ test_that("test errors", {
     dropout = 0,
     verbose = T
   )
-  
+
   # Create a grid
   # Obs.: the grid is tested with every architecture, thus it can get very large.
   cnn_grid <- expand.grid(
@@ -99,8 +99,8 @@ test_that("test errors", {
     validation_patience = c(4),
     fitting_patience = c(4)
   )
-  
-  expect_error( tune_abund_cnn(
+
+  expect_error(tune_abund_cnn(
     data = some_sp,
     response = "ind_ha",
     predictors = c("bio12", "elevation", "sand"),
@@ -111,39 +111,40 @@ test_that("test errors", {
     rasters = system.file("external/envar.tif", package = "adm"),
     x = "x",
     y = "y",
-    sample_size = c(11,11),
+    sample_size = c(11, 11),
     architectures = one_arch,
     n_cores = 3,
     verbose = FALSE
   ))
-  
+
   expect_error(
     tune_abund_cnn(
-    data = some_sp,
-    response = "ind_ha",
-    predictors = c("bio12", "elevation", "sand"),
-    partition = ".part",
-    predict_part = TRUE,
-    metrics = c("corr_pear", "mae"),
-    grid = expand.grid(
-      mtryE = seq(from = 2, to = 3, by = 1),
-      ntreeE = c(100, 500)
-    ),
-    rasters = system.file("external/envar.tif", package = "adm"),
-    x = "x",
-    y = "y",
-    sample_size = c(11,11),
-    architectures = one_arch,
-    n_cores = 3,
-    verbose = FALSE
-  ))
+      data = some_sp,
+      response = "ind_ha",
+      predictors = c("bio12", "elevation", "sand"),
+      partition = ".part",
+      predict_part = TRUE,
+      metrics = c("corr_pear", "mae"),
+      grid = expand.grid(
+        mtryE = seq(from = 2, to = 3, by = 1),
+        ntreeE = c(100, 500)
+      ),
+      rasters = system.file("external/envar.tif", package = "adm"),
+      x = "x",
+      y = "y",
+      sample_size = c(11, 11),
+      architectures = one_arch,
+      n_cores = 3,
+      verbose = FALSE
+    )
+  )
 })
 
 test_that("incomplete grid", {
-  if(!torch::torch_is_installed()){
+  if (!torch::torch_is_installed()) {
     skip()
   }
-  
+
   one_arch <- generate_cnn_architecture(
     number_of_features = 3,
     number_of_outputs = 1,
@@ -160,7 +161,7 @@ test_that("incomplete grid", {
     dropout = 0,
     verbose = T
   )
-  
+
   # Create a grid
   # Obs.: the grid is tested with every architecture, thus it can get very large.
   cnn_grid <- expand.grid(
@@ -170,8 +171,8 @@ test_that("incomplete grid", {
     validation_patience = c(4),
     fitting_patience = c(4)
   )
-  
-  
+
+
   tuned_ <- tune_abund_cnn(
     data = some_sp,
     response = "ind_ha",
@@ -189,12 +190,11 @@ test_that("incomplete grid", {
     rasters = system.file("external/envar.tif", package = "adm"),
     x = "x",
     y = "y",
-    sample_size = c(11,11),
+    sample_size = c(11, 11),
     architectures = one_arch,
     n_cores = 3,
     verbose = FALSE
   )
-  
+
   expect_true("fitting_patience" %in% names(tuned_$optimal_combination))
-  
 })

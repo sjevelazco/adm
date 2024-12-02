@@ -1,6 +1,6 @@
 require(dplyr)
 
-#install torch
+# install torch
 
 data("sppabund")
 some_sp <- sppabund %>%
@@ -13,10 +13,10 @@ some_sp <-
 # Architecture
 
 test_that("tune_abund_dnn and fit_abund_dnn", {
-  if(!torch::torch_is_installed()){
+  if (!torch::torch_is_installed()) {
     skip()
   }
-  
+
   one_arch <- generate_dnn_architecture(
     number_of_features = 3,
     number_of_outputs = 1,
@@ -24,16 +24,16 @@ test_that("tune_abund_dnn and fit_abund_dnn", {
     hidden_layers_size = c(8, 16, 8),
     batch_norm = TRUE
   )
-  
+
   # Create a grid
   dnn_grid <- expand.grid(
     learning_rate = c(0.01),
     n_epochs = c(50),
     batch_size = c(32),
-    validation_patience = c(2,4),
-    fitting_patience = c(2,4)
+    validation_patience = c(2, 4),
+    fitting_patience = c(2, 4)
   )
-  
+
   set.seed(1)
   tuned_ <- tune_abund_dnn(
     data = some_sp,
@@ -54,10 +54,10 @@ test_that("tune_abund_dnn and fit_abund_dnn", {
 })
 
 test_that("test errors", {
-  if(!torch::torch_is_installed()){
+  if (!torch::torch_is_installed()) {
     skip()
   }
-  
+
   one_arch <- generate_dnn_architecture(
     number_of_features = 3,
     number_of_outputs = 1,
@@ -65,17 +65,17 @@ test_that("test errors", {
     hidden_layers_size = c(8, 16, 8),
     batch_norm = TRUE
   )
-  
+
   # Create a grid
   dnn_grid <- expand.grid(
     learning_rate = c(0.01),
     n_epochs = c(50),
     batch_size = c(32),
-    validation_patience = c(2,4),
-    fitting_patience = c(2,4)
+    validation_patience = c(2, 4),
+    fitting_patience = c(2, 4)
   )
-  
-  expect_error( tune_abund_dnn(
+
+  expect_error(tune_abund_dnn(
     data = some_sp,
     response = "ind_ha",
     predictors = c("elevation", "sand"),
@@ -86,7 +86,7 @@ test_that("test errors", {
     architectures = one_arch,
     n_cores = 3
   ))
-  
+
   expect_error(tune_abund_dnn(
     data = some_sp,
     response = "ind_ha",
@@ -114,8 +114,8 @@ test_that("test errors", {
 #     hidden_layers_size = c(8, 16, 8),
 #     batch_norm = TRUE
 #   )
-#   
-#   
+#
+#
 #   if(!torch::torch_is_installed()){
 #     skip()
 #   }
@@ -138,7 +138,7 @@ test_that("test errors", {
 #     architectures = one_arch,
 #     n_cores = 3
 #   )
-#   
+#
 #   expect_true("n_epochs" %in% names(tuned_$optimal_combination))
-#   
+#
 # })

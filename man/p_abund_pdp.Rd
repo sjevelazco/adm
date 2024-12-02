@@ -78,7 +78,7 @@ require(terra)
 # Load data
 envar <- system.file("external/envar.tif", package = "adm") \%>\%
   rast()
-  
+
 data("sppabund")
 some_sp <- sppabund \%>\%
   filter(species == "Species one")
@@ -87,7 +87,7 @@ some_sp <- sppabund \%>\%
 mglm <- fit_abund_glm(
   data = some_sp,
   response = "ind_ha",
-  predictors = c("bio12","elevation","sand"),
+  predictors = c("bio12", "elevation", "sand"),
   predictors_f = c("eco"),
   partition = ".part",
   distribution = "ZAIG",
@@ -116,7 +116,7 @@ p_abund_pdp(
 # Especific variables and different resulotions
 p_abund_pdp(
   model = mglm,
-  predictors = c("bio12","sand"),
+  predictors = c("bio12", "sand"),
   training_data = some_sp,
   response_name = "Abundance"
 )
