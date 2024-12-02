@@ -210,7 +210,7 @@ family_selector <- function(data, response) {
     message("Response variable is discrete. Both continuous and discrete families will be tested.")
   } else {
     # discrete <- FALSE
-    message("Response variable is continuous and need to be rounded in order to test for discrete families.")
+    message("Response variable is continuous and need to be transformed to integer in order to test for discrete families.")
     families_bank <- families_bank %>%
       filter(discrete == 0)
   }
