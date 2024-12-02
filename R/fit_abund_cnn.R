@@ -143,7 +143,7 @@ fit_abund_cnn <-
     )
 
     # Get cropsize
-    crop_size <- cnn_get_crop_size(sample_size)
+    crop_size <- cnn_get_crop_size(sample_size = sample_size)
 
     # # ---- Formula ----
     # if (is.null(fit_formula)) {

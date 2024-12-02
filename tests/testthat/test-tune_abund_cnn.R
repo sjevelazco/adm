@@ -12,7 +12,7 @@ some_sp <-
 
 
 
-test_that("tune_abund_svm and fit_abund_svm", {
+test_that("tune_abund_cnn and fit_abund_cnn", {
   if (!torch::torch_is_installed()) {
     skip()
   }
