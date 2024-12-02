@@ -111,27 +111,27 @@ tune_abund_glm <-
       !all(metrics %in% c("corr_spear", "corr_pear", "mae", "inter", "slope", "pdisp"))) {
       stop("Metrics is needed to be defined in 'metric' argument")
     }
-    
+
     # making grid
     suitable_distributions <- family_selector(data, response)
-    
+
     grid_dict <- list(
-      poly = c(2,3),
-      inter_order = c(1,2),
+      poly = c(2, 3),
+      inter_order = c(1, 2),
       distribution = suitable_distributions$family_call
     )
-    
+
     # Check hyperparameters names
     nms_grid <- names(grid)
     nms_hypers <- names(grid_dict)
-    
+
     if (!all(nms_grid %in% nms_hypers)) {
       stop(
         paste(paste(nms_grid[!nms_grid %in% nms_hypers], collapse = ", "), " is not hyperparameters\n"),
         "Grid expected to be any combination between ", paste(nms_hypers, collapse = ", ")
       )
     }
-    
+
     if (is.null(grid)) {
       message("Grid not provided. Using the default one for Generalized Linear Models.")
       grid <- expand.grid(grid_dict)
@@ -142,10 +142,10 @@ tune_abund_glm <-
         "Adding default hyperparameter for: ",
         paste(names(grid_dict)[!names(grid_dict) %in% nms_grid], collapse = ", ")
       )
-      
+
       user_hyper <- names(grid)[which(names(grid) %in% names(grid_dict))]
       default_hyper <- names(grid_dict)[which(!names(grid_dict) %in% user_hyper)]
-      
+
       user_list <- grid_dict[default_hyper]
       for (i in user_hyper) {
         l <- grid[[i]] %>%
@@ -154,10 +154,10 @@ tune_abund_glm <-
         names(l) <- i
         user_list <- append(user_list, l)
       }
-      
+
       grid <- expand.grid(user_list)
     }
-    
+
     comb_id <- paste("comb_", 1:nrow(grid), sep = "")
     grid <- cbind(comb_id, grid)
     grid$distribution <- as.character(grid$distribution)
@@ -249,7 +249,7 @@ tune_abund_glm <-
         predict_part = predict_part,
         distribution = choosen_family,
         poly = choosen_poly,
-        inter_order = choosen_inter_order, 
+        inter_order = choosen_inter_order,
         verbose = verbose
       )
 
@@ -264,10 +264,10 @@ tune_abund_glm <-
     )
 
     final_list <- c(final_model, ranked_combinations)
-    
+
     # Standardize output list
     for (i in 2:length(final_list)) {
-      if (!class(final_list[[i]])[1] == "tbl_df"){
+      if (!class(final_list[[i]])[1] == "tbl_df") {
         final_list[[i]] <- dplyr::as_tibble(final_list[[i]])
       }
     }

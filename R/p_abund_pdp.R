@@ -45,20 +45,20 @@
 #' \dontrun{
 #' require(dplyr)
 #' require(terra)
-#' 
+#'
 #' # Load data
 #' envar <- system.file("external/envar.tif", package = "adm") %>%
 #'   rast()
-#'   
+#'
 #' data("sppabund")
 #' some_sp <- sppabund %>%
 #'   filter(species == "Species one")
-#' 
+#'
 #' # Fit some models
 #' mglm <- fit_abund_glm(
 #'   data = some_sp,
 #'   response = "ind_ha",
-#'   predictors = c("bio12","elevation","sand"),
+#'   predictors = c("bio12", "elevation", "sand"),
 #'   predictors_f = c("eco"),
 #'   partition = ".part",
 #'   distribution = "ZAIG",
@@ -66,9 +66,9 @@
 #'   inter_order = 0,
 #'   predict_part = TRUE
 #' )
-#' 
+#'
 #' # Partial Dependence Plots:
-#' 
+#'
 #' # In different resolutions
 #' p_abund_pdp(
 #'   model = mglm,
@@ -76,22 +76,22 @@
 #'   training_data = some_sp,
 #'   response_name = "Abundance"
 #' )
-#' 
+#'
 #' p_abund_pdp(
 #'   model = mglm,
 #'   resolution = 5,
 #'   training_data = some_sp,
 #'   response_name = "Abundance"
 #' )
-#' 
+#'
 #' # Especific variables and different resulotions
 #' p_abund_pdp(
 #'   model = mglm,
-#'   predictors = c("bio12","sand"),
+#'   predictors = c("bio12", "sand"),
 #'   training_data = some_sp,
 #'   response_name = "Abundance"
 #' )
-#' 
+#'
 #' # With residuals and rug plot
 #' p_abund_pdp(
 #'   model = mglm,
@@ -99,14 +99,14 @@
 #'   response_name = "Abundance",
 #'   resid = TRUE
 #' )
-#' 
+#'
 #' p_abund_pdp(
 #'   model = mglm,
 #'   training_data = some_sp,
 #'   response_name = "Abundance",
 #'   rug = TRUE
 #' )
-#' 
+#'
 #' p_abund_pdp(
 #'   model = mglm,
 #'   training_data = some_sp,
@@ -114,7 +114,7 @@
 #'   resid = TRUE,
 #'   rug = TRUE
 #' )
-#' 
+#'
 #' # Partial depence plot for training and projection condition found in a projection area
 #' p_abund_pdp(
 #'   model = mglm,
@@ -123,7 +123,7 @@
 #'   response_name = "Abundance",
 #'   rug = TRUE
 #' )
-#' 
+#'
 #' # Custumize colors and theme
 #' p_abund_pdp(
 #'   model = mglm,
@@ -171,7 +171,7 @@ p_abund_pdp <-
       stop("Variables not present in training data. Did you use the wrong dataset?")
     }
 
-    if (class(model)[1] %in% c("luz_module_fitted","xgb.Booster")) {
+    if (class(model)[1] %in% c("luz_module_fitted", "xgb.Booster")) {
       if (!is.null(training_data)) {
         v <- training_data[variables[1, 2:ncol(variables)] %>%
           as.vector() %>%
@@ -250,7 +250,7 @@ p_abund_pdp <-
 
           if (rug) {
             xn2 <- data.frame(crv[[2]])[, 1]
-            
+
             rug_df <- crv[[2]] %>% mutate(!!response_name := max(crv[[1]][response_name]))
             p[[i]] <- p[[i]] +
               ggplot2::geom_rug(
@@ -312,7 +312,7 @@ p_abund_pdp <-
 
           if (rug) {
             xn2 <- data.frame(crv[[2]])[, 1]
-            
+
             rug_df <- crv[[2]] %>% mutate(!!response_name := max(crv[[1]][response_name]))
             p[[i]] <- p[[i]] +
               ggplot2::geom_rug(
@@ -320,7 +320,7 @@ p_abund_pdp <-
                 ggplot2::aes(!!xn2, !!sym(response_name)),
                 sides = "b",
                 alpha = 0.5
-              ) 
+              )
           }
         } else {
           xn <- crv[[1]] %>% dplyr::pull(names(crv[[1]])[1])

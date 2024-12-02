@@ -83,7 +83,7 @@ some_sp$ind_ha \%>\% hist()
 # Here we balance number of absences
 some_sp <-
   balance_dataset(some_sp, response = "ind_ha", absence_ratio = 0.2)
-  
+
 # Create a grid
 gbm_grid <- expand.grid(
   interaction.depth = c(2, 4, 8, 16),

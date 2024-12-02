@@ -73,7 +73,7 @@ pre_tr_te <- function(data, p_names, h) {
 #'
 #' @noRd
 cnn_get_crop_size <-
-  function(sample_size){
+  function(sample_size) {
     if (!is.vector(sample_size)) {
       stop("Please, provide a vector containing the sample size c(width,height)")
     } else if (!(sample_size[[1]] == sample_size[[2]])) {
@@ -81,9 +81,9 @@ cnn_get_crop_size <-
     } else {
       crop_size <- floor(sample_size[[1]] / 2)
     }
-    
+
     return(crop_size)
-}
+  }
 
 #' Crop rasters around a point (Convolutional Neural Networks)
 #'
@@ -123,55 +123,56 @@ cnn_get_crop_size <-
 #' plot(sampl_r[[1]])
 #' points(some_sp[1, c("x", "y")], pch = 19)
 #' }
-croppin_hood <- function(occ, 
-                         x, 
-                         y, 
-                         raster, 
-                         size, 
-                         raster_padding = FALSE, 
+croppin_hood <- function(occ,
+                         x,
+                         y,
+                         raster,
+                         size,
+                         raster_padding = FALSE,
                          padding_method = NULL) {
-  if(raster_padding & is.null(padding_method)){
+  if (raster_padding & is.null(padding_method)) {
     stop("Padding method needed.")
   }
-  
+
   long <- as.numeric(occ[, x])
   lat <- as.numeric(occ[, y])
 
-  if(raster_padding){
-    raster <- extend(raster,c(size,size))
+  if (raster_padding) {
+    raster <- extend(raster, c(size, size))
   }
-  
+
   rst.col <- terra::colFromX(raster, long)
   rst.row <- terra::rowFromY(raster, lat)
-  
+
   x.max <- terra::xFromCol(raster, rst.col + size)
   x.min <- terra::xFromCol(raster, rst.col - size)
   y.max <- terra::yFromRow(raster, rst.row - size)
   y.min <- terra::yFromRow(raster, rst.row + size)
-  
+
   r <- terra::rast()
   terra::ext(r) <- c(x.min, x.max, y.min, y.max)
 
   cropped <- terra::crop(raster, r, snap = "out")
-  
-  if(raster_padding){
-    if(padding_method=="mean"){
-      padding_values <- terra::global(cropped,mean,na.rm=TRUE)
-    } else if (padding_method=="median"){
-      padding_values <- terra::global(cropped,median,na.rm=TRUE)
-    } else if (padding_method=="zero"){
+
+  if (raster_padding) {
+    if (padding_method == "mean") {
+      padding_values <- terra::global(cropped, mean, na.rm = TRUE)
+    } else if (padding_method == "median") {
+      padding_values <- terra::global(cropped, median, na.rm = TRUE)
+    } else if (padding_method == "zero") {
       padding_values <- data.frame(
-        value = rep(0,length(names(cropped))),
-        row.names = names(cropped))
+        value = rep(0, length(names(cropped))),
+        row.names = names(cropped)
+      )
     } else {
       stop("Invalid padding method.")
     }
-    
+
     for (i in 1:length(names(cropped))) {
-      cropped[[i]][is.na(cropped[[i]])] <- padding_values[i,]
+      cropped[[i]][is.na(cropped[[i]])] <- padding_values[i, ]
     }
   }
-  
+
   return(cropped)
 }
 

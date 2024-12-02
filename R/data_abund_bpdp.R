@@ -34,19 +34,19 @@
 #' \dontrun{
 #' require(dplyr)
 #' require(terra)
-#' 
+#'
 #' # Load data
 #' envar <- system.file("external/envar.tif", package = "adm") %>%
 #'   rast()
 #' data("sppabund")
 #' some_sp <- sppabund %>%
 #'   filter(species == "Species one")
-#' 
+#'
 #' # Fit some models
 #' mglm <- fit_abund_glm(
 #'   data = some_sp,
 #'   response = "ind_ha",
-#'   predictors = c("bio12","elevation","sand"),
+#'   predictors = c("bio12", "elevation", "sand"),
 #'   predictors_f = c("eco"),
 #'   partition = ".part",
 #'   distribution = "ZAIG",
@@ -54,18 +54,18 @@
 #'   inter_order = 0,
 #'   predict_part = TRUE
 #' )
-#' 
+#'
 #' # Prepare data for Bivariate Partial Dependence Plots
 #' bpdp_data <- data_abund_bpdp(
 #'   model = mglm,
-#'   predictors = c("bio12","sand"),
+#'   predictors = c("bio12", "sand"),
 #'   resolution = 25,
 #'   training_data = some_sp,
 #'   response_name = "Abundance",
 #'   projection_data = envar,
 #'   training_boundaries = "convexh"
 #' )
-#' 
+#'
 #' bpdp_data
 #' }
 data_abund_bpdp <-
@@ -79,10 +79,10 @@ data_abund_bpdp <-
            projection_data = NULL) {
     self <- Abundance_inverted <- NULL
 
-    if (!is.null(predictors) & length(predictors)<2){
+    if (!is.null(predictors) & length(predictors) < 2) {
       stop("Please provide at least two predictors.")
     }
-    
+
     # Extract training data
 
     if (class(model)[1] == "list") {
@@ -263,15 +263,15 @@ data_abund_bpdp <-
     #### xgb ####
     if (class(model)[1] == "xgb.Booster") {
       pred_matrix <- list(
-        data = stats::model.matrix(~ . - 1, data = suit_c[,model$feature_names])
+        data = stats::model.matrix(~ . - 1, data = suit_c[, model$feature_names])
       )
-      
+
       suit_c <-
         data.frame(suit_c[1:2],
-                   Abundance = suppressMessages(stats::predict(model, newdata = pred_matrix$data, type = "response"))
+          Abundance = suppressMessages(stats::predict(model, newdata = pred_matrix$data, type = "response"))
         )
     }
-    
+
     #### gbm ####
     if (class(model)[1] == "gbm") {
       suit_c <-
@@ -300,7 +300,7 @@ data_abund_bpdp <-
           stats::predict(model, suit_c, type = "response")
         ))
     }
-    
+
     #### svm ####
     if (class(model)[1] == "ksvm") {
       suit_c <-

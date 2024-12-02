@@ -100,10 +100,10 @@ many_archs <- generate_arch_list(
   number_of_features = 3,
   number_of_outputs = 1,
   n_layers = c(2, 3),
-  n_neurons = c(16,32),
+  n_neurons = c(16, 32),
   sample_size = c(11, 11),
   number_of_fc_layers = c(1), # fully connected layers
-  fc_layers_size = c(16), 
+  fc_layers_size = c(16),
   conv_layers_kernel = 3,
   conv_layers_stride = 1,
   conv_layers_padding = 0,
@@ -119,10 +119,10 @@ many_archs <- generate_arch_list(
 # Obs.: the grid is tested with every architecture, thus it can get very large.
 cnn_grid <- expand.grid(
   learning_rate = c(0.01, 0.005),
-  n_epochs = c(50,100),
+  n_epochs = c(50, 100),
   batch_size = c(32),
-  validation_patience = c(2,4),
-  fitting_patience = c(2,4)
+  validation_patience = c(2, 4),
+  fitting_patience = c(2, 4)
 )
 
 # Tune a cnn model
@@ -137,13 +137,13 @@ tuned_cnn <- tune_abund_cnn(
   rasters = system.file("external/envar.tif", package = "adm"),
   x = "x",
   y = "y",
-  sample_size = c(11,11),
+  sample_size = c(11, 11),
   architectures = many_archs,
   n_cores = 3
 )
 tuned_cnn
 
-# It is also possible to use a only one architecture 
+# It is also possible to use a only one architecture
 one_arch <- generate_cnn_architecture(
   number_of_features = 3,
   number_of_outputs = 1,
@@ -173,7 +173,7 @@ tuned_cnn_2 <- tune_abund_cnn(
   rasters = system.file("external/envar.tif", package = "adm"),
   x = "x",
   y = "y",
-  sample_size = c(11,11),
+  sample_size = c(11, 11),
   n_cores = 3
 )
 

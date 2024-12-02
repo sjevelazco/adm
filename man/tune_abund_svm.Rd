@@ -81,7 +81,7 @@ some_sp$ind_ha \%>\% hist()
 # Here we balance number of absences
 some_sp <-
   balance_dataset(some_sp, response = "ind_ha", absence_ratio = 0.2)
-  
+
 # Create a grid
 svm_grid <- expand.grid(
   sigma = "automatic",

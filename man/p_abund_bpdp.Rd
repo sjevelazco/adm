@@ -79,11 +79,11 @@ data("sppabund")
 some_sp <- sppabund \%>\%
   filter(species == "Species one")
 
-# Fit some models 
+# Fit some models
 mglm <- fit_abund_glm(
   data = some_sp,
   response = "ind_ha",
-  predictors = c("bio12","elevation","sand"),
+  predictors = c("bio12", "elevation", "sand"),
   predictors_f = c("eco"),
   partition = ".part",
   distribution = "ZAIG",
@@ -96,14 +96,14 @@ mglm <- fit_abund_glm(
 # In different resolutions
 p_abund_bpdp(
   model = mglm,
-  predictors = c("bio12","sand"),
+  predictors = c("bio12", "sand"),
   training_data = some_sp,
   resolution = 50
 )
 
 p_abund_bpdp(
   model = mglm,
-  predictors = c("bio12","sand"),
+  predictors = c("bio12", "sand"),
   training_data = some_sp,
   resolution = 25
 )
@@ -111,7 +111,7 @@ p_abund_bpdp(
 # With projection and training boundaries
 p_abund_bpdp(
   model = mglm,
-  predictors = c("bio12","elevation","sand"),
+  predictors = c("bio12", "elevation", "sand"),
   training_data = some_sp,
   projection_data = envar,
   training_boundaries = "rectangle"
@@ -119,7 +119,7 @@ p_abund_bpdp(
 
 p_abund_bpdp(
   model = mglm,
-  predictors = c("bio12","elevation","sand"), 
+  predictors = c("bio12", "elevation", "sand"),
   training_data = some_sp,
   projection_data = envar,
   training_boundaries = "convexh"
@@ -128,13 +128,15 @@ p_abund_bpdp(
 # Customize colors and theme
 p_abund_bpdp(
   model = mglm,
-  predictors = c("bio12","sand"),
+  predictors = c("bio12", "sand"),
   training_data = some_sp,
   projection_data = envar,
   training_boundaries = "convexh",
-  color_gradient = 
-    c("#122414","#183C26","#185437","#106D43","#0F874C",
-      "#2D9F54","#61B463","#8DC982","#B3E0A7","#D7F9D0"),
+  color_gradient =
+    c(
+      "#122414", "#183C26", "#185437", "#106D43", "#0F874C",
+      "#2D9F54", "#61B463", "#8DC982", "#B3E0A7", "#D7F9D0"
+    ),
   color_training_boundaries = "purple",
   theme = ggplot2::theme_dark()
 )

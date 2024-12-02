@@ -43,29 +43,29 @@
 #' @examples
 #' \dontrun{
 #' require(dplyr)
-#' 
+#'
 #' # Database with species abundance and x and y coordinates
 #' data("sppabund")
-#' 
+#'
 #' # Select data for a single species
 #' some_sp <- sppabund %>%
 #'   dplyr::filter(species == "Species one") %>%
 #'   dplyr::select(-.part2, -.part3)
-#'   
+#'
 #' # Explore response variables
 #' some_sp$ind_ha %>% range()
 #' some_sp$ind_ha %>% hist()
-#' 
+#'
 #' # Here we balance number of absences
 #' some_sp <-
 #'   balance_dataset(some_sp, response = "ind_ha", absence_ratio = 0.2)
-#' 
+#'
 #' # Generate some architectures
 #' many_archs <- generate_arch_list(
 #'   type = "dnn",
 #'   number_of_features = 3,
 #'   number_of_outputs = 1,
-#'   n_layers = c(2,3),
+#'   n_layers = c(2, 3),
 #'   n_neurons = c(6, 12, 16)
 #' ) %>% select_arch_list(
 #'   type = c("dnn"),
@@ -73,17 +73,17 @@
 #'   n_samples = 1,
 #'   min_max = TRUE
 #' )
-#' 
+#'
 #' # Create a grid
 #' # Obs.: the grid is tested with every architecture, thus it can get very large.
 #' dnn_grid <- expand.grid(
 #'   learning_rate = c(0.01, 0.005),
-#'   n_epochs = c(50,100),
+#'   n_epochs = c(50, 100),
 #'   batch_size = c(32),
-#'   validation_patience = c(2,4),
-#'   fitting_patience = c(2,4)
+#'   validation_patience = c(2, 4),
+#'   fitting_patience = c(2, 4)
 #' )
-#' 
+#'
 #' # Tune a DNN model
 #' tuned_dnn <- tune_abund_dnn(
 #'   data = some_sp,
@@ -96,10 +96,10 @@
 #'   architectures = many_archs,
 #'   n_cores = 3
 #' )
-#' 
+#'
 #' tuned_dnn
-#' 
-#' # It is also possible to use a only one architecture 
+#'
+#' # It is also possible to use a only one architecture
 #' one_arch <- generate_dnn_architecture(
 #'   number_of_features = 3,
 #'   number_of_outputs = 1,
@@ -107,7 +107,7 @@
 #'   hidden_layers_size = c(8, 16, 8),
 #'   batch_norm = TRUE
 #' )
-#' 
+#'
 #' tuned_dnn_2 <- tune_abund_dnn(
 #'   data = some_sp,
 #'   response = "ind_ha",
@@ -119,7 +119,7 @@
 #'   architectures = one_arch,
 #'   n_cores = 3
 #' )
-#' 
+#'
 #' tuned_dnn_2
 #' }
 tune_abund_dnn <-
@@ -140,14 +140,14 @@ tune_abund_dnn <-
     }
 
     # architectures
-    if (is.list(architectures)){
+    if (is.list(architectures)) {
       # check if it is from generate_arch_list or generate_dnn_architecture
-      if (all(names(architectures) %in% c("net","arch","arch_dict"))){
+      if (all(names(architectures) %in% c("net", "arch", "arch_dict"))) {
         # generated with generate_dnn_architecture
         arch_dict <- architectures$arch_dict
         arch_list <- list(architectures$net)
-        names(arch_list) <- paste0("arch-",arch_dict %>% names() %>% stringr::str_replace_all("[^0-9]", ""),"-1")
-      } else if (all(names(architectures) %in% c("arch_list","arch_dict","changes"))) {
+        names(arch_list) <- paste0("arch-", arch_dict %>% names() %>% stringr::str_replace_all("[^0-9]", ""), "-1")
+      } else if (all(names(architectures) %in% c("arch_list", "arch_dict", "changes"))) {
         # generated with generate_arch_list
         arch_list <- architectures$arch_list
         arch_dict <- architectures$arch_dict
@@ -158,8 +158,8 @@ tune_abund_dnn <-
       arch_list <- list("fit_intern" = NULL)
       arch_dict <- list("fit_intern" = NULL)
     }
-    
-    if (all(names(arch_list) != c("fit_intern"))){
+
+    if (all(names(arch_list) != c("fit_intern"))) {
       if (!all(sapply(arch_list, class) == c("neural_net", "nn_module", "nn_module_generator"))) {
         stop('Expected "neural_net", "nn_module", "nn_module_generator" objects in arch_list.
       Please, use generate_arch_list or generate_dnn_architecture outputs.')
@@ -171,30 +171,30 @@ tune_abund_dnn <-
     # making grid
     grid_dict <- list(
       learning_rate = c(0.01, 0.005),
-      n_epochs = c(100,200),
-      batch_size = c(16,32),
-      validation_patience = c(2,4),
-      fitting_patience = c(2,4)
+      n_epochs = c(100, 200),
+      batch_size = c(16, 32),
+      validation_patience = c(2, 4),
+      fitting_patience = c(2, 4)
     )
-    
+
     archs <- names(arch_list)
-    
+
     # Check hyperparameters names
     nms_grid <- names(grid)
     nms_hypers <- names(grid_dict)
-    
+
     if (!all(nms_grid %in% nms_hypers)) {
       stop(
         paste(paste(nms_grid[!nms_grid %in% nms_hypers], collapse = ", "), " is not hyperparameters\n"),
         "Grid expected to be any combination between ", paste(nms_hypers, collapse = ", ")
       )
     }
-    
+
     if (is.null(grid)) {
       message("Grid not provided. Using the default one for Support Vector Machines.")
-      
+
       grid_dict <- append(grid_dict, list(arch = archs))
-      
+
       grid <- expand.grid(grid_dict)
     } else if (all(nms_hypers %in% nms_grid)) {
       user_list <- list()
@@ -205,21 +205,21 @@ tune_abund_dnn <-
         names(l) <- i
         user_list <- append(user_list, l)
       }
-      
+
       user_list <- append(user_list, list(arch = archs))
-      
+
       grid <- expand.grid(user_list)
-      
+
       message("Using provided grid.")
     } else if (any(!nms_hypers %in% nms_grid)) {
       message(
         "Adding default hyperparameter for: ",
         paste(names(grid_dict)[!names(grid_dict) %in% nms_grid], collapse = ", ")
       )
-      
+
       user_hyper <- names(grid)[which(names(grid) %in% names(grid_dict))]
       default_hyper <- names(grid_dict)[which(!names(grid_dict) %in% user_hyper)]
-      
+
       user_list <- grid_dict[default_hyper]
       for (i in user_hyper) {
         l <- grid[[i]] %>%
@@ -228,15 +228,15 @@ tune_abund_dnn <-
         names(l) <- i
         user_list <- append(user_list, l)
       }
-      
+
       user_list <- append(user_list, list(arch = archs))
-      
+
       grid <- expand.grid(user_list)
     }
 
     comb_id <- paste("comb_", 1:nrow(grid), sep = "")
     grid <- cbind(comb_id, grid)
-    message(paste0("Testing ",nrow(grid)," combinations."))
+    message(paste0("Testing ", nrow(grid), " combinations."))
 
     # looping the grid
     message("Searching for optimal hyperparameters...")
@@ -261,7 +261,7 @@ tune_abund_dnn <-
           batch_size = grid[i, "batch_size"],
           custom_architecture = arch_list[[grid[i, "arch"]]],
           validation_patience = grid[i, "validation_patience"],
-          fitting_patience = grid[i, "fitting_patience"], 
+          fitting_patience = grid[i, "fitting_patience"],
           verbose = verbose
         )
       l <- list(cbind(grid[i, ], model$performance))

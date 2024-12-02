@@ -57,7 +57,7 @@
 #' # Here we balance number of absences
 #' some_sp <-
 #'   balance_dataset(some_sp, response = "ind_ha", absence_ratio = 0.2)
-#'   
+#'
 #' # Create a grid
 #' svm_grid <- expand.grid(
 #'   sigma = "automatic",
@@ -168,7 +168,7 @@ tune_abund_svm <-
           predict_part = predict_part,
           sigma = grid[[i, "sigma"]],
           kernel = grid[[i, "kernel"]],
-          C = grid[[i, "C"]], 
+          C = grid[[i, "C"]],
           verbose = verbose
         )
       l <- list(cbind(grid[i, ], model$performance))
@@ -209,10 +209,10 @@ tune_abund_svm <-
     )
 
     final_list <- c(final_model, ranked_combinations)
-    
+
     # Standardize output list
     for (i in 2:length(final_list)) {
-      if (!class(final_list[[i]])[1] == "tbl_df"){
+      if (!class(final_list[[i]])[1] == "tbl_df") {
         final_list[[i]] <- dplyr::as_tibble(final_list[[i]])
       }
     }

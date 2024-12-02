@@ -45,20 +45,20 @@
 #' \dontrun{
 #' require(dplyr)
 #' require(terra)
-#' 
+#'
 #' # Load  data
 #' envar <- system.file("external/envar.tif", package = "adm") %>%
 #'   rast()
-#'   
+#'
 #' data("sppabund")
 #' some_sp <- sppabund %>%
 #'   filter(species == "Species one")
-#' 
+#'
 #' # Fit some models
 #' mglm <- fit_abund_glm(
 #'   data = some_sp,
 #'   response = "ind_ha",
-#'   predictors = c("bio12","elevation","sand"),
+#'   predictors = c("bio12", "elevation", "sand"),
 #'   predictors_f = c("eco"),
 #'   partition = ".part",
 #'   distribution = "ZAIG",
@@ -66,7 +66,7 @@
 #'   inter_order = 0,
 #'   predict_part = TRUE
 #' )
-#' 
+#'
 #' # Prepare data for Partial Dependence Plots
 #' pdp_data <- data_abund_pdp(
 #'   model = mglm,
@@ -77,7 +77,7 @@
 #'   response_name = "Abundance",
 #'   projection_data = envar
 #' )
-#' 
+#'
 #' pdp_data
 #' }
 data_abund_pdp <-
@@ -90,8 +90,8 @@ data_abund_pdp <-
            response_name = NULL,
            projection_data = NULL) {
     self <- Abundance_inverted <- NULL
-    
-    if (length(predictors)>1){
+
+    if (length(predictors) > 1) {
       stop("Please provide only one predictor.")
     }
 
@@ -167,7 +167,7 @@ data_abund_pdp <-
     names(suit_c)[1] <- predictors
 
     # Predict model
-    
+
     #### cnn ####
     # if (class(model)[1] == "luz_module_fitted" & variables[["model"]] == "cnn") {
     #   create_dataset <- torch::dataset(
@@ -183,12 +183,12 @@ data_abund_pdp <-
     #       length(self$predictors)
     #     }
     #   )
-    #   
-    #   pred_names <- variables %>% 
+    #
+    #   pred_names <- variables %>%
     #     dplyr::select(-model,-response) %>%
-    #     t() %>% 
+    #     t() %>%
     #     as.vector()
-    #   
+    #
     #   crop_size <- cnn_get_crop_size(sample_size)
     #   pred_samples <- cnn_make_samples(
     #     data = pred_coord,
@@ -200,9 +200,9 @@ data_abund_pdp <-
     #     padding_method = NULL,
     #     size = crop_size
     #   )
-    #   
+    #
     #   pred_dataset <- create_dataset(pred_samples)
-    #   
+    #
     #   suit_c <-
     #     data.frame(suit_c[1],
     #                Abundance = suppressMessages(
@@ -215,8 +215,8 @@ data_abund_pdp <-
     #                )
     #     )
     # }
-    
-    #### dnn #### 
+
+    #### dnn ####
     if (class(model)[1] == "luz_module_fitted") {
       create_dataset <- torch::dataset(
         "dataset",
@@ -289,19 +289,19 @@ data_abund_pdp <-
     #### xgb ####
     if (class(model)[1] == "xgb.Booster") {
       pred_matrix <- list(
-        data = stats::model.matrix(~ . - 1, data = suit_c[,model$feature_names])
+        data = stats::model.matrix(~ . - 1, data = suit_c[, model$feature_names])
       )
-      
+
       suit_c <-
         data.frame(suit_c[1],
-                   Abundance = suppressMessages(stats::predict(model, newdata = pred_matrix$data, type = "response"))
+          Abundance = suppressMessages(stats::predict(model, newdata = pred_matrix$data, type = "response"))
         )
-      
+
       if (resid) {
         pred_matrix_r <- list(
-          data = stats::model.matrix(~ . - 1, data = x[,model$feature_names])
+          data = stats::model.matrix(~ . - 1, data = x[, model$feature_names])
         )
-        
+
         suit_r <-
           data.frame(x[predictors], Abundance = suppressMessages(stats::predict(model, newdata = pred_matrix_r$data, type = "response")))
         result <- list("pdpdata" = suit_c, "resid" = suit_r)
@@ -309,7 +309,7 @@ data_abund_pdp <-
         result <- list("pdpdata" = suit_c, "resid" = NA)
       }
     }
-    
+
     #### gbm ####
     if (class(model)[1] == "gbm") {
       suit_c <-

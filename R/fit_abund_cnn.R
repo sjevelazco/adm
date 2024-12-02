@@ -17,7 +17,7 @@
 #' @param batch_size numeric. A batch is a subset of the training set used in a single iteration of the training process. The size of each batch is referred to as the batch size. Default = 32
 #' @param custom_architecture a Torch nn_module_generator object. A neural network architecture to be used instead of the internal default one. Default NULL
 #' @param verbose logical. If FALSE, disables all console messages. Default TRUE
-#' @param validation_patience numerical. An integer indicating the number of epochs without loss improvement tolerated by the algorithm in the validation process. If the patience limit is exceeded, the training ends. Default 2  
+#' @param validation_patience numerical. An integer indicating the number of epochs without loss improvement tolerated by the algorithm in the validation process. If the patience limit is exceeded, the training ends. Default 2
 #' @param fitting_patience numerical. The same as validation_patience, but in the final model fitting process. Default 5
 #'
 #' @importFrom dplyr bind_rows select starts_with pull tibble as_tibble group_by summarise across bind_cols
@@ -144,7 +144,7 @@ fit_abund_cnn <-
 
     # Get cropsize
     crop_size <- cnn_get_crop_size(sample_size)
-    
+
     # # ---- Formula ----
     # if (is.null(fit_formula)) {
     #   formula1 <- stats::formula(paste(response, "~", paste(c(
@@ -276,8 +276,10 @@ fit_abund_cnn <-
           predictors = train_concatened_predictors,
           response = train_concatened_responses
         )
-        rm(train_concatened_predictors,
-           train_concatened_responses)
+        rm(
+          train_concatened_predictors,
+          train_concatened_responses
+        )
 
         train_dataloader <- create_dataset(train_data_list) %>%
           torch::dataloader(batch_size = batch_size, shuffle = TRUE)
@@ -437,10 +439,10 @@ fit_abund_cnn <-
       performance_part = eval_partial,
       predicted_part = part_pred
     )
-    
+
     # Standardize output list
     for (i in 2:length(data_list)) {
-      if (!class(data_list[[i]])[1] == "tbl_df"){
+      if (!class(data_list[[i]])[1] == "tbl_df") {
         data_list[[i]] <- dplyr::as_tibble(data_list[[i]])
       }
     }

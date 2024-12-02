@@ -26,15 +26,15 @@
 #' dnn_arch <- generate_dnn_architecture(
 #'   number_of_features = 8, # eight input variables
 #'   number_of_outputs = 1, # one output
-#'   number_of_hidden_layers = 5, # five layers between input and output 
+#'   number_of_hidden_layers = 5, # five layers between input and output
 #'   hidden_layers_size = c(8, 16, 32, 16, 8), # of this size, respectively
 #'   batch_norm = TRUE, # with batch normalization
 #'   dropout = 0, # without dropout
 #' )
-#' 
+#'
 #' dnn_arch$net() # a torch net
-#' dnn_arch$arch %>% cat # the torch code to create it 
-#' dnn_arch$arch_dict # and a quick description of its structure 
+#' dnn_arch$arch %>% cat() # the torch code to create it
+#' dnn_arch$arch_dict # and a quick description of its structure
 #' }
 generate_dnn_architecture <-
   function(number_of_features = 7,
@@ -133,11 +133,11 @@ generate_dnn_architecture <-
 
     # Creating arch_dict
     arch_dict <- as.matrix(hidden_layers_size) %>%
-      list
-    names(arch_dict) <- paste0(number_of_hidden_layers,"_layer_net")
-    row.names(arch_dict[[1]]) <- paste0("layer_",seq(1,number_of_hidden_layers))
-    
-    
+      list()
+    names(arch_dict) <- paste0(number_of_hidden_layers, "_layer_net")
+    row.names(arch_dict[[1]]) <- paste0("layer_", seq(1, number_of_hidden_layers))
+
+
     return_list <- list(net = net, arch = arch, arch_dict = arch_dict)
 
     return(return_list)

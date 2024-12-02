@@ -175,7 +175,7 @@ adm_predict <-
            predict_area = NULL,
            invert_transform = NULL,
            transform_negative = FALSE,
-           sample_size = c(11,11)) {
+           sample_size = c(11, 11)) {
     . <- model <- threshold <- thr_value <- self <- NULL
 
     # TODO write codes to predict CNN ANN adapt GLM and GAM to use gamlss
@@ -219,7 +219,7 @@ adm_predict <-
       m <- lapply(models, function(x) {
         x[[1]]
       })
-      
+
       m_detect <- lapply(models, function(x) {
         x[["predictors"]]
       })
@@ -251,7 +251,7 @@ adm_predict <-
 
     # if(chunk){
     cell <- terra::as.data.frame(pred, cells = TRUE, na.rm = TRUE)[, "cell"]
-    cell_coord <- terra::as.data.frame(pred, xy = TRUE, na.rm = TRUE)[, c("x","y")]
+    cell_coord <- terra::as.data.frame(pred, xy = TRUE, na.rm = TRUE)[, c("x", "y")]
     set <-
       c(
         seq(1, length(cell), length.out = nchunk) # length.out = nchunk
@@ -277,7 +277,7 @@ adm_predict <-
     # Write here the loop
     for (CH in seq_len((length(set) - 1))) {
       rowset <- set[CH]:(set[CH + 1] - 1)
-      pred_coord <- cell_coord[rowset,]
+      pred_coord <- cell_coord[rowset, ]
       rowset <- cell[rowset]
       pred_df <- pred[rowset]
       rownames(pred_df) <- rowset
@@ -296,29 +296,29 @@ adm_predict <-
         for (i in wm) {
           r <- pred[[!terra::is.factor(pred)]][[1]]
           r[!is.na(r)] <- NA
-          
+
           # Test factor levels TODO
           f_n2 <- m[[i]]$feature_names # training var names
           f_names <- which(sapply(pred_df, class) == "factor") %>% names()
-          
+
           if (length(f_names) > 0) {
             f_encoded <- stringr::str_detect(f_n2, stringr::str_c(f_names, collapse = "|"))
           } else {
             f_encoded <- FALSE
           }
-          
+
           if (any(f_encoded)) {
-            f_names <- c(f_n2[!f_encoded],f_names) 
+            f_names <- c(f_n2[!f_encoded], f_names)
           } else {
             f_names <- f_n2
           }
-          
+
           f_n <- which(sapply(pred_df[f_names], class) == "factor") %>% names()
           f <- lapply(f_n, function(x) {
             gsub(x, "", grep(x, f_n2, value = TRUE))
           })
           names(f) <- f_n
-          
+
           # TODO
           if (length(f) > 0) {
             for (ii in 1:length(f)) {
@@ -357,7 +357,7 @@ adm_predict <-
             pred_matrix <- list(
               data = stats::model.matrix(~ . - 1, data = pred_df[m[[i]]$feature_names])
             )
-            
+
             r[as.numeric(rownames(pred_df))] <-
               stats::predict(m[[i]], pred_matrix$data, type = "response")
           }
@@ -422,9 +422,9 @@ adm_predict <-
       wm <- which(clss == "luz_module_fitted")
       if (length(wm) > 0) {
         wm <- names(wm)
-        
+
         # create_dataset definition
-        if(m_detect[[wm]][["model"]] == "cnn") {
+        if (m_detect[[wm]][["model"]] == "cnn") {
           create_dataset <- torch::dataset(
             "dataset",
             initialize = function(data_list) {
@@ -438,26 +438,25 @@ adm_predict <-
               length(self$predictors)
             }
           )
-          
-          pred_names <- m_detect[[wm]] %>% 
-            dplyr::select(-model,-response) %>%
-            t() %>% 
+
+          pred_names <- m_detect[[wm]] %>%
+            dplyr::select(-model, -response) %>%
+            t() %>%
             as.vector()
-          
+
           crop_size <- cnn_get_crop_size(sample_size)
           pred_samples <- cnn_make_samples(
             data = pred_coord,
             x = "x",
             y = "y",
             response = NULL,
-            raster = terra::extend(pred[[pred_names]], c(crop_size,crop_size)),
+            raster = terra::extend(pred[[pred_names]], c(crop_size, crop_size)),
             raster_padding = FALSE,
             padding_method = NULL,
             size = crop_size
           )
-          
+
           pred_dataset <- create_dataset(pred_samples)
-          
         } else {
           create_dataset <- torch::dataset(
             "dataset",
@@ -472,7 +471,7 @@ adm_predict <-
               nrow(self$df)
             }
           )
-          
+
           pred_dataset <- create_dataset(pred_df)
         }
 
@@ -584,19 +583,19 @@ adm_predict <-
           # Test factor levels
           f_n2 <- m[[i]]@xmatrix %>% colnames() # training var names
           f_names <- which(sapply(pred_df, class) == "factor") %>% names()
-          
+
           if (length(f_names) > 0) {
             f_encoded <- stringr::str_detect(f_n2, stringr::str_c(f_names, collapse = "|"))
           } else {
             f_encoded <- FALSE
           }
-          
+
           if (any(f_encoded)) {
-            f_names <- c(f_n2[!f_encoded],f_names) 
+            f_names <- c(f_n2[!f_encoded], f_names)
           } else {
             f_names <- f_n2
           }
- 
+
           f_n <- which(sapply(pred_df[f_names], class) == "factor") %>% names()
           f <- lapply(f_n, function(x) {
             gsub(x, "", grep(x, f_n2, value = TRUE))
@@ -633,7 +632,7 @@ adm_predict <-
                 dplyr::mutate(dplyr::across(
                   .cols = names(f),
                   .fns = ~ droplevels(.)
-                )), type = "response")#[, 2]
+                )), type = "response") # [, 2]
             r[as.numeric(rownames(pred_df))] <- v
             rm(v)
           } else {
@@ -659,15 +658,15 @@ adm_predict <-
         "ksvm",
         "xgb.booster"
       ),
-      names = c("dnn", "cnn", "gam", "glm", "gbm", "net", "raf", "svm","xgb")
+      names = c("dnn", "cnn", "gam", "glm", "gbm", "net", "raf", "svm", "xgb")
     )
-    
+
     for (i in 1:length(names(clss))) {
-      if (m_detect[[names(clss)[[i]]]][["model"]]=="cnn") {
-        clss[[i]] <- paste0(clss[[i]],"_cnn")
+      if (m_detect[[names(clss)[[i]]]][["model"]] == "cnn") {
+        clss[[i]] <- paste0(clss[[i]], "_cnn")
       }
     }
-    
+
     names(model_c) <-
       dplyr::left_join(data.frame(alg = clss), df, by = "alg")[, 2]
     model_c <- mapply(function(x, n) {

@@ -43,7 +43,7 @@ test_that("test errors", {
     grid = grid_0,
     n_cores = 1
   ))
-  
+
   expect_error(tune_abund_svm(
     data = some_sp,
     response = "ind_ha",
@@ -51,7 +51,7 @@ test_that("test errors", {
     predictors_f = c("eco"),
     partition = ".part",
     predict_part = TRUE,
-    metrics = c("corr_pear","mae"),
+    metrics = c("corr_pear", "mae"),
     grid = expand.grid(
       mtryE = seq(from = 2, to = 3, by = 1),
       ntreeE = c(100, 500)
@@ -73,12 +73,10 @@ test_that("incomplete grid", {
       sigma = "automatic",
       C = c(0.5, 2)
       # kernel = c("rbfdot", "laplacedot")
-    )
-    ,
+    ),
     n_cores = 1,
     verbose = FALSE
   )
-  
+
   expect_true("kernel" %in% names(tuned_$optimal_combination))
-  
 })

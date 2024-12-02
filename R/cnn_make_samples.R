@@ -23,28 +23,28 @@
 #' \dontrun{
 #' require(dplyr)
 #' require(terra)
-#' 
+#'
 #' # Load data
 #' envar <- system.file("external/envar.tif", package = "adm") %>%
 #'   rast()
 #' data("sppabund")
 #' some_sp <- sppabund %>%
 #'   filter(species == "Species one")
-#' 
+#'
 #' cnn_samples <- cnn_make_samples(
 #'   data = some_sp,
 #'   x = "x", # x coordinates for each point
 #'   y = "y", # y coordinates for each point
 #'   response = "ind_ha",
-#'   raster = envar[[c("bio12","sand","elevation")]],
+#'   raster = envar[[c("bio12", "sand", "elevation")]],
 #'   size = 5 # how many pixels from point to border?
 #' )
-#' 
+#'
 #' length(cnn_samples$predictors) #  938 matrix sets
 #' dim(cnn_samples$predictors[[1]]) # three 11x11 channels
 #' cnn_samples$predictors[[1]] # representing predictor variables
 #' rast(cnn_samples$predictors[[1]]) %>% plot()
-#' 
+#'
 #' cnn_samples$response[[1]] # linked to a label
 #' }
 cnn_make_samples <- function(data,
@@ -67,7 +67,7 @@ cnn_make_samples <- function(data,
       padding_method = padding_method,
       size = size
     )
-    
+
     samples_nms <- names(pred_x)
     pred_x <- terra::as.array(pred_x)
     dimnames(pred_x)[[3]] <- samples_nms
@@ -78,26 +78,26 @@ cnn_make_samples <- function(data,
       pred_x[, , j] <- ary
     }
 
-    if (!is.null(response)){
+    if (!is.null(response)) {
       pred_y <- data[[i, response]]
-    } else if (is.null(response)){
+    } else if (is.null(response)) {
       pred_y <- "null"
     }
-    
+
     predictors <- append(predictors, list(pred_x))
     responses <- append(responses, pred_y)
   }
 
-  if (!is.null(response)){
+  if (!is.null(response)) {
     data_list <- list(
       "predictors" = predictors,
       "response" = responses
     )
-  } else if (is.null(response)){
+  } else if (is.null(response)) {
     data_list <- list(
       "predictors" = predictors
     )
   }
-  
+
   return(data_list)
 }

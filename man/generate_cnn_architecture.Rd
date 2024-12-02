@@ -77,12 +77,12 @@ cnn_arch <- generate_cnn_architecture(
   fc_layers_size = c(28), # with 28 neurons
   pooling = NULL, # without average pooling
   batch_norm = TRUE, # with batch normalization
-  dropout = 0 # and without dropout 
+  dropout = 0 # and without dropout
 )
 
 cnn_arch$net() # a torch net
-cnn_arch$arch \%>\% cat # the torch code to create it 
-cnn_arch$arch_dict # and a quick description of its structure 
+cnn_arch$arch \%>\% cat() # the torch code to create it
+cnn_arch$arch_dict # and a quick description of its structure
 }
 }
 \seealso{

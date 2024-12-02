@@ -73,7 +73,7 @@ data("sppabund")
 some_sp <- sppabund \%>\%
   dplyr::filter(species == "Species one") \%>\%
   dplyr::select(-.part2, -.part3)
-  
+
 # Explore response variables
 some_sp$ind_ha \%>\% range()
 some_sp$ind_ha \%>\% hist()
@@ -87,7 +87,7 @@ many_archs <- generate_arch_list(
   type = "dnn",
   number_of_features = 3,
   number_of_outputs = 1,
-  n_layers = c(2,3),
+  n_layers = c(2, 3),
   n_neurons = c(6, 12, 16)
 ) \%>\% select_arch_list(
   type = c("dnn"),
@@ -100,10 +100,10 @@ many_archs <- generate_arch_list(
 # Obs.: the grid is tested with every architecture, thus it can get very large.
 dnn_grid <- expand.grid(
   learning_rate = c(0.01, 0.005),
-  n_epochs = c(50,100),
+  n_epochs = c(50, 100),
   batch_size = c(32),
-  validation_patience = c(2,4),
-  fitting_patience = c(2,4)
+  validation_patience = c(2, 4),
+  fitting_patience = c(2, 4)
 )
 
 # Tune a DNN model
@@ -121,7 +121,7 @@ tuned_dnn <- tune_abund_dnn(
 
 tuned_dnn
 
-# It is also possible to use a only one architecture 
+# It is also possible to use a only one architecture
 one_arch <- generate_dnn_architecture(
   number_of_features = 3,
   number_of_outputs = 1,
