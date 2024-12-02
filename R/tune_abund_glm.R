@@ -171,6 +171,11 @@ tune_abund_glm <-
     progress <- function(n) utils::setTxtProgressBar(pb, n)
     opts <- list(progress = progress)
 
+    # families_bank
+    families_bank <-
+      system.file("external/families_bank.txt", package = "adm") %>%
+      utils::read.delim(., header = TRUE, quote = "\t")
+    
     hyper_combinations <- foreach::foreach(
       i = 1:nrow(grid),
       .options.snow = opts,
