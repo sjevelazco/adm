@@ -23,7 +23,7 @@
 #'
 #' @return A list with two tibbles "pdpdata" and "resid".
 #' \itemize{
-#' \item pspdata: has data to construct partial dependence surface plot, the first two column includes
+#' \item pdpdata: has data to construct partial dependence bivariate plot, the first two column includes
 #' values of the selected environmental variables, the third column the predicted suitability.
 #' \item training_boundaries: has data to plot boundaries of training data.
 #' }
@@ -309,11 +309,11 @@ data_abund_bpdp <-
         )
     }
 
-    result <- list("pspdata" = dplyr::as_tibble(suit_c), "training_boundaries" = chulld)
+    result <- list("pdpdata" = dplyr::as_tibble(suit_c), "training_boundaries" = chulld)
 
     if (!is.null(invert_transform)) {
-      result[["pspdata"]] <- result[["pspdata"]] %>% dplyr::mutate(
-        Abundance = adm_transform(result[["pspdata"]],
+      result[["pdpdata"]] <- result[["pdpdata"]] %>% dplyr::mutate(
+        Abundance = adm_transform(result[["pdpdata"]],
           "Abundance",
           invert_transform[["method"]],
           inverse = TRUE,
@@ -326,8 +326,8 @@ data_abund_bpdp <-
     }
 
     if (!is.null(response_name)) {
-      idx <- which(names(result[["pspdata"]]) == "Abundance")
-      names(result[["pspdata"]])[[idx]] <- response_name
+      idx <- which(names(result[["pdpdata"]]) == "Abundance")
+      names(result[["pdpdata"]])[[idx]] <- response_name
     }
 
     return(result)
