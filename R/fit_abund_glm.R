@@ -238,7 +238,6 @@ fit_abund_glm <-
       if (verbose) {
         message("Replica number: ", h, "/", np)
       }
-      # out <- pre_tr_te(data, p_names, h)
 
       folds <- data %>%
         dplyr::pull(p_names[h]) %>%
