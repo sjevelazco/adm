@@ -62,7 +62,8 @@
 #' svm_grid <- expand.grid(
 #'   sigma = "automatic",
 #'   C = c(0.5, 1, 2),
-#'   kernel = c("rbfdot", "laplacedot")
+#'   kernel = c("rbfdot", "laplacedot"),
+#'   stringsAsFactors = FALSE
 #' )
 #'
 #' # Tune a SVM model
@@ -118,7 +119,7 @@ tune_abund_svm <-
 
     if (is.null(grid)) {
       message("Grid not provided. Using the default one for Support Vector Machines.")
-      grid <- expand.grid(grid_dict)
+      grid <- expand.grid(grid_dict, stringsAsFactors = FALSE)
     } else if (all(nms_hypers %in% nms_grid)) {
       message("Using provided grid.")
     } else if (any(!nms_hypers %in% nms_grid)) {
@@ -139,7 +140,7 @@ tune_abund_svm <-
         user_list <- append(user_list, l)
       }
 
-      grid <- expand.grid(user_list)
+      grid <- expand.grid(user_list, stringsAsFactors = FALSE)
     }
 
     comb_id <- paste("comb_", 1:nrow(grid), sep = "")

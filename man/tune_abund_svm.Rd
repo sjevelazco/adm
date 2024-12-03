@@ -86,7 +86,8 @@ some_sp <-
 svm_grid <- expand.grid(
   sigma = "automatic",
   C = c(0.5, 1, 2),
-  kernel = c("rbfdot", "laplacedot")
+  kernel = c("rbfdot", "laplacedot"),
+  stringsAsFactors = FALSE
 )
 
 # Tune a SVM model

@@ -122,7 +122,8 @@ cnn_grid <- expand.grid(
   n_epochs = c(50, 100),
   batch_size = c(32),
   validation_patience = c(2, 4),
-  fitting_patience = c(2, 4)
+  fitting_patience = c(2, 4),
+  stringsAsFactors = FALSE
 )
 
 # Tune a cnn model

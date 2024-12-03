@@ -18,7 +18,7 @@ fit_abund_glm(
   distribution = NULL,
   poly = 0,
   inter_order = 0,
-  control_gamlss = gamlss.control(trace = FALSE),
+  control_gamlss = gamlss::gamlss.control(trace = FALSE),
   verbose = TRUE
 )
 }
