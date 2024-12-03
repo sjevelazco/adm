@@ -143,8 +143,14 @@ fit_abund_cnn <-
     )
 
     # Get cropsize
-    crop_size <- cnn_get_crop_size(sample_size = sample_size)
-
+    if (!is.vector(sample_size)) {
+      stop("Please, provide a vector containing the sample size c(width,height)")
+    } else if (!(sample_size[[1]] == sample_size[[2]])) {
+      stop("adm currently only accepts square samples.")
+    } else {
+      crop_size <- floor(sample_size[[1]] / 2)
+    }
+    
     # # ---- Formula ----
     # if (is.null(fit_formula)) {
     #   formula1 <- stats::formula(paste(response, "~", paste(c(
@@ -229,7 +235,6 @@ fit_abund_cnn <-
       if (verbose) {
         message("Replica number: ", h, "/", np)
       }
-      # out <- pre_tr_te(data, p_names, h)
 
       folds <- data %>%
         dplyr::pull(p_names[h]) %>%
