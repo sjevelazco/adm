@@ -57,7 +57,7 @@
 #'   predictors_f = c("eco"),
 #'   partition = ".part",
 #'   size = 32,
-#'   decay = 0.01,
+#'   decay = 0.1,
 #'   predict_part = TRUE
 #' )
 #'
