@@ -15,7 +15,7 @@
 #' used for restring prediction into only a given region. Default = NULL
 #' @param training_data data.frame or tibble. Data used to fit the models. It is necessary
 #' to predict GAM and GLM models. Default NULL
-#' @param invert_transform logical. Invert transformation of response variable. Useful for those cases that the response variable was transformed with one of the method in \code{\link{adm_transform}}. Default NULL
+#' @param invert_transform named vector. Invert transformation of response variable. Useful for those cases that the response variable was transformed with one of the method in \code{\link{adm_transform}}. Usage = c(method = "anymethod", a = "transformation term a", b = "transformation term b"). Default NULL
 #' @param transform_negative logical. If TRUE, all negative values in the prediction will be set to zero.
 #' default FALSE.
 #' @param sample_size numeric. A vector containing the dimensions, in pixels, of raster samples. See cnn_make_samples beforehand. Default c(11,11)
