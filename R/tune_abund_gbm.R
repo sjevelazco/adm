@@ -63,7 +63,8 @@
 #'   interaction.depth = c(2, 4, 8, 16),
 #'   n.trees = c(100, 500, 1000),
 #'   n.minobsinnode = c(2, 5, 8),
-#'   shrinkage = c(0.1, 0.5, 0.7)
+#'   shrinkage = c(0.1, 0.5, 0.7), 
+#'   stringsAsFactors = FALSE
 #' )
 #'
 #' tuned_gbm <- tune_abund_gbm(
@@ -120,7 +121,7 @@ tune_abund_gbm <-
 
     if (is.null(grid)) {
       message("Grid not provided. Using the default one for Generalized Boosted Regression.")
-      grid <- expand.grid(grid_dict)
+      grid <- expand.grid(grid_dict, stringsAsFactors = FALSE)
     } else if (all(nms_hypers %in% nms_grid)) {
       message("Using provided grid.")
     } else if (any(!nms_hypers %in% nms_grid)) {
@@ -141,7 +142,7 @@ tune_abund_gbm <-
         user_list <- append(user_list, l)
       }
 
-      grid <- expand.grid(user_list)
+      grid <- expand.grid(user_list, stringsAsFactors = FALSE)
     }
 
     comb_id <- paste("comb_", 1:nrow(grid), sep = "")

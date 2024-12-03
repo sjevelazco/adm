@@ -69,7 +69,8 @@
 #' glm_grid <- expand.grid(
 #'   poly = c(2, 3),
 #'   inter_order = c(1, 2),
-#'   distribution = suitable_distributions$family_call
+#'   distribution = suitable_distributions$family_call,
+#'   stringsAsFactors = FALSE
 #' )
 #'
 #' # Tune a GLM model
@@ -134,7 +135,7 @@ tune_abund_glm <-
 
     if (is.null(grid)) {
       message("Grid not provided. Using the default one for Generalized Linear Models.")
-      grid <- expand.grid(grid_dict)
+      grid <- expand.grid(grid_dict, stringsAsFactors = FALSE)
     } else if (all(nms_hypers %in% nms_grid)) {
       message("Using provided grid.")
     } else if (any(!nms_hypers %in% nms_grid)) {
@@ -155,7 +156,7 @@ tune_abund_glm <-
         user_list <- append(user_list, l)
       }
 
-      grid <- expand.grid(user_list)
+      grid <- expand.grid(user_list, stringsAsFactors = FALSE)
     }
 
     comb_id <- paste("comb_", 1:nrow(grid), sep = "")
@@ -203,20 +204,19 @@ tune_abund_glm <-
             )
           
           l <- list(cbind(grid[i, ], model$performance))
-          names(l) <- grid[i, "comb_id"]
-          l
-        },
-        error = function(err) {
-          print("error")
-          model <- list(performance = "error")
-        }
+          l[[1]]
+      },
+      error = function(err) {
+        NULL
+      }
       )
-      
     }
     parallel::stopCluster(cl)
+    
+    # Remove NULL values (i.e., models that not could be fitted)
+    hyper_combinations <- hyper_combinations[!sapply(hyper_combinations, is.null)]
 
-    hyper_combinations <- lapply(hyper_combinations, function(x) dplyr::bind_rows(x)) %>%
-      dplyr::bind_rows()
+    hyper_combinations <- dplyr::bind_rows(hyper_combinations)
 
     if ("performance" %in% names(hyper_combinations)) {
       hyper_combinations <- hyper_combinations %>%

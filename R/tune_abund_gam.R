@@ -61,7 +61,8 @@
 #' # Create a grid
 #' gam_grid <- expand.grid(
 #'   inter = "automatic",
-#'   distribution = suitable_distributions$family_call
+#'   distribution = suitable_distributions$family_call,
+#'   stringsAsFactors = FALSE
 #' )
 #' # Tune a GAM model
 #' tuned_gam <- tune_abund_gam(
@@ -104,7 +105,7 @@ tune_abund_gam <-
     }
 
     # making grid
-    suitable_distributions <- family_selector(data, response)
+    suppressMessages(suitable_distributions <- family_selector(data, response))
 
     grid_dict <- list(
       inter = "automatic",
@@ -124,7 +125,7 @@ tune_abund_gam <-
 
     if (is.null(grid)) {
       message("Grid not provided. Using the default one for Generalized Additive Models.")
-      grid <- expand.grid(grid_dict)
+      grid <- expand.grid(grid_dict, stringsAsFactors = FALSE)
     } else if (all(nms_hypers %in% nms_grid)) {
       message("Using provided grid.")
     } else if (any(!nms_hypers %in% nms_grid)) {
@@ -145,12 +146,13 @@ tune_abund_gam <-
         user_list <- append(user_list, l)
       }
 
-      grid <- expand.grid(user_list)
+      grid <- expand.grid(user_list, stringsAsFactors = FALSE)
     }
 
     comb_id <- paste("comb_", 1:nrow(grid), sep = "")
     grid <- cbind(comb_id, grid)
-
+    grid$distribution <- as.character(grid$distribution)
+    
     # looping the grid
     message("Searching for optimal hyperparameters...")
 
@@ -171,7 +173,7 @@ tune_abund_gam <-
       .export = c("fit_abund_gam", "adm_eval"),
       .packages = c("dplyr", "gamlss")
     ) %dopar% {
-      data_fam <- data
+      # data_fam <- data
       # if (grid[i, "discrete"] == 1) {
       #   data_fam[, response] <- round(data[, response])
       # }
@@ -180,7 +182,7 @@ tune_abund_gam <-
         {
           model <-
             fit_abund_gam(
-              data = data_fam,
+              data = data,
               response = response,
               predictors = predictors,
               predictors_f = predictors_f,
@@ -191,21 +193,21 @@ tune_abund_gam <-
               inter = grid[i, "inter"],
               verbose = verbose
             )
+          
+          l <- list(cbind(grid[i, ], model$performance))
+          l[[1]]
         },
         error = function(err) {
-          print("error")
-          model <- list(performance = "error")
+          NULL
         }
       )
-
-      l <- list(cbind(grid[i, c("comb_id", "distribution", "inter")], model[, "performance"]))
-      names(l) <- grid[i, "comb_id"]
-      l
     }
     parallel::stopCluster(cl)
-
-    hyper_combinations <- lapply(hyper_combinations, function(x) dplyr::bind_rows(x)) %>%
-      dplyr::bind_rows()
+    
+    # Remove NULL values (i.e., models that not could be fitted)
+    hyper_combinations <- hyper_combinations[!sapply(hyper_combinations, is.null)]
+    
+    hyper_combinations <- dplyr::bind_rows(hyper_combinations)
 
     if ("performance" %in% names(hyper_combinations)) {
       hyper_combinations <- hyper_combinations %>%
@@ -215,22 +217,15 @@ tune_abund_gam <-
     hyper_combinations <- hyper_combinations %>%
       stats::na.omit()
 
-    row.names(hyper_combinations) <- NULL
-
     ranked_combinations <- model_selection(hyper_combinations, metrics)
 
     # fit final model
-
     choosen_family <- ranked_combinations[[1]][1, "distribution"]
-    full_data <- data
-    if (families_bank[which(families_bank$distribution == choosen_family), "discrete"] == 1) {
-      full_data[, "ind_ha"] <- round(full_data[, "ind_ha"])
-    }
 
     message("\nFitting the best model...")
     final_model <-
       fit_abund_gam(
-        data = full_data,
+        data = data,
         response = response,
         predictors = predictors,
         predictors_f = predictors_f,

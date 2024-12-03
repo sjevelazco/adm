@@ -65,7 +65,8 @@
 #'   gamma = c(1, 5, 10),
 #'   colsample_bytree = c(0.5, 1),
 #'   min_child_weight = c(0.5, 1, 2),
-#'   subsample = c(0.5, 1)
+#'   subsample = c(0.5, 1), 
+#'   stringsAsFactors = FALSE
 #' )
 #' # Tune a XGB model
 #' tuned_xgb <- tune_abund_xgb(
@@ -134,7 +135,7 @@ tune_abund_xgb <-
 
     if (is.null(grid)) {
       message("Grid not provided. Using the default one for Extreme Gradient Boosting.")
-      grid <- expand.grid(grid_dict)
+      grid <- expand.grid(grid_dict, stringsAsFactors = FALSE)
     } else if (all(nms_hypers %in% nms_grid)) {
       message("Using provided grid.")
     } else if (any(!nms_hypers %in% nms_grid)) {
@@ -155,7 +156,7 @@ tune_abund_xgb <-
         user_list <- append(user_list, l)
       }
 
-      grid <- expand.grid(user_list)
+      grid <- expand.grid(user_list, stringsAsFactors = FALSE)
     }
 
     comb_id <- paste("comb_", 1:nrow(grid), sep = "")

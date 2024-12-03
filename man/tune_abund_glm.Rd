@@ -97,7 +97,8 @@ suitable_distributions
 glm_grid <- expand.grid(
   poly = c(2, 3),
   inter_order = c(1, 2),
-  distribution = suitable_distributions$family_call
+  distribution = suitable_distributions$family_call,
+  stringsAsFactors = FALSE
 )
 
 # Tune a GLM model

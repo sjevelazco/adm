@@ -147,7 +147,7 @@ data_abund_bpdp <-
         chulld <- NULL
       } else {
         chulld <- apply(x[predictors], 2, range)
-        chulld <- expand.grid(chulld[, 1], chulld[, 2])
+        chulld <- expand.grid(chulld[, 1], chulld[, 2], stringsAsFactors = FALSE)
         names(chulld) <- predictors
         chulld <- dplyr::as_tibble(chulld)
       }
@@ -200,7 +200,7 @@ data_abund_bpdp <-
       }
     }
 
-    rng <- expand.grid(rng1, rng2)
+    rng <- expand.grid(rng1, rng2, stringsAsFactors = FALSE)
     if (any(sapply(rng, is.factor))) {
       rng <- rng[sapply(rng, is.factor) + 1]
       names(rng) <- predictors[sapply(rng, is.factor) + 1]

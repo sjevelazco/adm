@@ -61,7 +61,8 @@
 #' # Create a grid
 #' net_grid <- expand.grid(
 #'   size = seq(from = 8, to = 32, by = 6),
-#'   decay = seq(from = 0, to = 0.4, by = 0.01)
+#'   decay = seq(from = 0, to = 0.4, by = 0.01), 
+#'   stringsAsFactors = FALSE
 #' )
 #'
 #' # Tune a NET model
@@ -117,7 +118,7 @@ tune_abund_net <-
 
     if (is.null(grid)) {
       message("Grid not provided. Using the default one for Shallow Neural Networks.")
-      grid <- expand.grid(grid_dict)
+      grid <- expand.grid(grid_dict, stringsAsFactors = FALSE)
     } else if (all(nms_hypers %in% nms_grid)) {
       message("Using provided grid.")
     } else if (any(!nms_hypers %in% nms_grid)) {
@@ -138,7 +139,7 @@ tune_abund_net <-
         user_list <- append(user_list, l)
       }
 
-      grid <- expand.grid(user_list)
+      grid <- expand.grid(user_list, stringsAsFactors = FALSE)
     }
 
     comb_id <- paste("comb_", 1:nrow(grid), sep = "")

@@ -81,7 +81,8 @@ some_sp <-
 # Create a grid
 raf_grid <- expand.grid(
   mtry = seq(from = 2, to = 3, by = 1),
-  ntree = seq(from = 500, to = 1000, by = 100)
+  ntree = seq(from = 500, to = 1000, by = 100),
+  stringsAsFactors = FALSE
 )
 
 # Tune a RAF model

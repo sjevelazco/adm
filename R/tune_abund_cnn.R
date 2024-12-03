@@ -91,7 +91,8 @@
 #'   n_epochs = c(50, 100),
 #'   batch_size = c(32),
 #'   validation_patience = c(2, 4),
-#'   fitting_patience = c(2, 4)
+#'   fitting_patience = c(2, 4),
+#'   stringsAsFactors = FALSE
 #' )
 #'
 #' # Tune a cnn model
@@ -229,7 +230,7 @@ tune_abund_cnn <-
 
       grid_dict <- append(grid_dict, list(arch = archs))
 
-      grid <- expand.grid(grid_dict)
+      grid <- expand.grid(grid_dict, stringsAsFactors = FALSE)
     } else if (all(nms_hypers %in% nms_grid)) {
       user_list <- list()
       for (i in nms_grid) {
@@ -242,7 +243,7 @@ tune_abund_cnn <-
 
       user_list <- append(user_list, list(arch = archs))
 
-      grid <- expand.grid(user_list)
+      grid <- expand.grid(user_list, stringsAsFactors = FALSE)
 
       message("Using provided grid.")
     } else if (any(!nms_hypers %in% nms_grid)) {
@@ -265,7 +266,7 @@ tune_abund_cnn <-
 
       user_list <- append(user_list, list(arch = archs))
 
-      grid <- expand.grid(user_list)
+      grid <- expand.grid(user_list, stringsAsFactors = FALSE)
     }
 
     comb_id <- paste("comb_", 1:nrow(grid), sep = "")

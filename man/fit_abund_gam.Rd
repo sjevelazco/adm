@@ -18,7 +18,7 @@ fit_abund_gam(
   distribution = NULL,
   inter = "automatic",
   verbose = TRUE,
-  control_gamlss = gamlss.control(trace = FALSE)
+  control_gamlss = gamlss::gamlss.control(trace = FALSE)
 )
 }
 \arguments{
