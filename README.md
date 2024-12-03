@@ -4,7 +4,7 @@
 
 ### Overview
 
-Abundance distribution models
+Abundance based distribution models
 
 ### Structure of adm
 
