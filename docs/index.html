@@ -46,22 +46,81 @@
 <div class="row">
   <main id="main" class="col-md-9">
 <div class="section level1">
-<div class="page-header"><h1 id="adm">adm<a class="anchor" aria-label="anchor" href="#adm"></a>
+<div class="page-header"><h1 id="adm---abundance-based-distribution-models">adm - Abundance-based distribution models<a class="anchor" aria-label="anchor" href="#adm---abundance-based-distribution-models"></a>
 </h1></div>
 <div class="section level3">
 <h3 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
 </h3>
-<p>Abundance distribution models</p>
+<p>This package aims to support the construction of Abundance-based distribution models, including data preparation, model fitting, prediction, and model exploration. The package offers several modeling approaches (i.e., algorithms), that can be fine-tuned and customized by users. Models can be predicted in geographic space and explored in terms of performance and response curves. Because modeling workflows in <strong><em>adm</em></strong> are constructed based on a combination of distinct functions and simple outputs, <strong><em>adm</em></strong> can be easily integrated into other packages.</p>
 </div>
 <div class="section level3">
 <h3 id="structure-of-adm">Structure of adm<a class="anchor" aria-label="anchor" href="#structure-of-adm"></a>
 </h3>
+<p><strong><em>adm</em></strong> functions are grouped in three categories: modeling, post-modeling, and miscellaneus tools</p>
 <p><a href="https://x.github.io/adm" class="external-link"><img src="reference/figures/adm.png" align="centre" height="450"></a></p>
+<div class="section level4">
+<h4 id="i-modeling">i) <strong>modeling</strong>
+<a class="anchor" aria-label="anchor" href="#i-modeling"></a>
+</h4>
+<p>Functions to tune, fit and validate models with nine different algorithms, with a suite of possible model-specific hyper-parametera</p>
+<p><strong><em>Fit and validate models without hyper-parameters tuning</em></strong></p>
+<p><a href="fit_abund_cnn.html"><code>fit_abund_cnn()</code></a>: Fit and validate Convolutional Neural Network Model</p>
+<p><a href="fit_abund_dnn.html"><code>fit_abund_dnn()</code></a>: Fit and validate Deep Neural Network model</p>
+<p><a href="fit_abund_gam.html"><code>fit_abund_gam()</code></a>: Fit and validate Generalized Additive Models</p>
+<p><a href="fit_abund_gbm.html"><code>fit_abund_gbm()</code></a>: Fit and validate Generalized Boosted Regression models</p>
+<p><a href="fit_abund_glm.html"><code>fit_abund_glm()</code></a>: Fit and validate Generalized Linear Models</p>
+<p><a href="fit_abund_net.html"><code>fit_abund_net()</code></a>: Fit and validate Artificial Neural Network models</p>
+<p><a href="fit_abund_raf.html"><code>fit_abund_raf()</code></a>: Fit and validate Random Forests models</p>
+<p><a href="fit_abund_svm.html"><code>fit_abund_svm()</code></a>: Fit and validate Support Vector Machine models</p>
+<p><a href="fit_abund_xgb.html"><code>fit_abund_xgb()</code></a>: Fit and validate Extreme Gradient Boosting models</p>
+<p><strong><em>Fit and validate models with hyper-parameters tuning</em></strong></p>
+<p><a href="tune_abund_cnn.html"><code>tune_abund_cnn()</code></a>: Fit and validate Convolutional Neural Network with exploration of hyper-parameters that optimize performance</p>
+<p><a href="tune_abund_dnn.html"><code>tune_abund_dnn()</code></a>: Fit and validate Deep Neural Network model with exploration of hyper-parameters that optimize performance</p>
+<p><a href="tune_abund_gam.html"><code>tune_abund_gam()</code></a>: Fit and validate Generalized Additive Models with exploration of hyper-parameters that optimize performance</p>
+<p><a href="tune_abund_gbm.html"><code>tune_abund_gbm()</code></a>: Fit and validate Generalized Boosted Regression models with exploration of hyper-parameters that optimize performance</p>
+<p><a href="tune_abund_glm.html"><code>tune_abund_glm()</code></a>: Fit and validate Generalized Linear Models with exploration of hyper-parameters that optimize performance</p>
+<p><a href="tune_abund_net.html"><code>tune_abund_net()</code></a>: Fit and validate Shallow Neural Networks models with exploration of hyper-parameters that optimize performance</p>
+<p><a href="tune_abund_raf.html"><code>tune_abund_raf()</code></a>: Fit and validate Random Forest models with exploration of hyper-parameters that optimize performance</p>
+<p><a href="tune_abund_svm.html"><code>tune_abund_svm()</code></a>: Fit and validate Support Vector Machine models with exploration of hyper-parameters that optimize performance</p>
+<p><a href="tune_abund_xgb.html"><code>tune_abund_xgb()</code></a>: Fit and validate Extreme Gradient Boosting models with exploration of hyper-parameters that optimize performance</p>
+<p>Modeling evalution</p>
+<p><a href="adm_eval.html"><code>adm_eval()</code></a>: Calculate different model performance metrics</p>
+</div>
+<div class="section level4">
+<h4 id="ii-post-modeling">ii) <strong>post-modeling</strong>
+<a class="anchor" aria-label="anchor" href="#ii-post-modeling"></a>
+</h4>
+<p>Functions to predict abundance across space and construct partial dependence plots to explore the relationships between abundance and environmental predictors</p>
+<p><a href="adm_predict.html"><code>adm_predict()</code></a>: Spatial predictions from individual and ensemble models</p>
+<p><a href="p_abund_bpdp.html"><code>p_abund_bpdp()</code></a>: Bivariate partial dependence plots for abundance-based distribution models</p>
+<p><a href="p_abund_pdp.html"><code>p_abund_pdp()</code></a>: Partial dependent plots for abundance-based distribution models</p>
+<p><a href="data_abund_bpdp.html"><code>data_abund_bpdp()</code></a>: Calculate data to construct bivariate partial dependence plots</p>
+<p><a href="data_abund_pdp.html"><code>data_abund_pdp()</code></a>: Calculate data to construct partial dependence plots</p>
+</div>
+<div class="section level4">
+<h4 id="iii-miscellaneous-tools">iii) <strong>miscellaneous tools</strong>
+<a class="anchor" aria-label="anchor" href="#iii-miscellaneous-tools"></a>
+</h4>
+<p>Extra functions to support the modeling workflow, including data handling, transformations, and hyper-parameters selection.</p>
+<p><a href="adm_extract.html"><code>adm_extract()</code></a>: Extract values from a spatial raster based on x and y coordinates</p>
+<p><a href="adm_summarize.html"><code>adm_summarize()</code></a>: Merge model performance tables</p>
+<p><a href="adm_transform.html"><code>adm_transform()</code></a>: Performs data transformation on a variable based on the specified method.</p>
+<p><a href="balance_dataset.html"><code>balance_dataset()</code></a>: Balance database at a given absence-presence ratio</p>
+<p><a href="cnn_make_samples.html"><code>cnn_make_samples()</code></a>: Creates sample data for Convolutional Neural Network</p>
+<p><a href="croppin_hood.html"><code>croppin_hood()</code></a>: Crop rasters around a point (for Convolutional Neural Networks)</p>
+<p><a href="family_selector.html"><code>family_selector()</code></a>: Select probability distributions for GAM and GLM</p>
+<p><a href="generate_arch_list.html"><code>generate_arch_list()</code></a>: Generate architecture list for Deep Neural Network and Convolutional Neural Network</p>
+<p><a href="generate_cnn_architecture.html"><code>generate_cnn_architecture()</code></a>: Generate architectures for Convolutional Neural Network</p>
+<p><a href="generate_dnn_architecture.html"><code>generate_dnn_architecture()</code></a>: Generate architectures for Deep Neural Network</p>
+<p><a href="model_selection.html"><code>model_selection()</code></a>: Best hyper-parameters selection</p>
+<p><a href="res_calculate.html"><code>res_calculate()</code></a>: Calculate the output resolution of a layer</p>
+<p><a href="select_arch_list.html"><code>select_arch_list()</code></a>: Select architectures for Convolutional Neural Network or Deep Neural Network</p>
+</div>
 </div>
 <div class="section level3">
 <h3 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h3>
-<p>You can install the development version of <strong>adm</strong> from <a href="https://github.com/x/adm" class="external-link">github</a></p>
+<p>You can install the development version of <strong><em>adm</em></strong> from <a href="https://github.com/x/adm" class="external-link">github</a></p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># For Windows and Mac OS operating systems</span></span>
 <span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"x/adm"</span><span class="op">)</span></span></code></pre></div>

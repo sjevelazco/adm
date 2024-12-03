@@ -159,7 +159,8 @@ distribution = families_hp$family_call. In case one or more hyperparameters are 
 <span class="r-in"><span><span class="va">glm_grid</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/expand.grid.html" class="external-link">expand.grid</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  poly <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">3</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>  inter_order <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  distribution <span class="op">=</span> <span class="va">suitable_distributions</span><span class="op">$</span><span class="va">family_call</span></span></span>
+<span class="r-in"><span>  distribution <span class="op">=</span> <span class="va">suitable_distributions</span><span class="op">$</span><span class="va">family_call</span>,</span></span>
+<span class="r-in"><span>  stringsAsFactors <span class="op">=</span> <span class="cn">FALSE</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Tune a GLM model</span></span></span>
