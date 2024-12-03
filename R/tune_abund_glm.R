@@ -113,11 +113,11 @@ tune_abund_glm <-
     }
 
     # making grid
-    suitable_distributions <- family_selector(data, response)
+    suppressMessages(suitable_distributions <- family_selector(data, response))
 
     grid_dict <- list(
-      poly = c(2, 3),
-      inter_order = c(1, 2),
+      poly = c(0, 2, 3),
+      inter_order = c(0, 1, 2),
       distribution = suitable_distributions$family_call
     )
 
@@ -182,7 +182,7 @@ tune_abund_glm <-
       .export = c("fit_abund_glm", "adm_eval"),
       .packages = c("dplyr")
     ) %dopar% {
-      model <- tryCatch(
+      tryCatch(
         {
           model <-
             fit_abund_glm(
@@ -201,16 +201,17 @@ tune_abund_glm <-
               inter_order = grid[i, "inter_order"],
               verbose = verbose
             )
+          
+          l <- list(cbind(grid[i, ], model$performance))
+          names(l) <- grid[i, "comb_id"]
+          l
         },
         error = function(err) {
           print("error")
           model <- list(performance = "error")
         }
       )
-
-      l <- list(cbind(grid[i, c("comb_id", "distribution", "poly", "inter_order")], model[, "performance"]))
-      names(l) <- grid[i, "comb_id"]
-      l
+      
     }
     parallel::stopCluster(cl)
 
@@ -235,10 +236,7 @@ tune_abund_glm <-
     choosen_poly <- ranked_combinations[[1]][1, "poly"]
     choosen_inter_order <- ranked_combinations[[1]][1, "inter_order"]
     full_data <- data
-    if (families_bank[which(families_bank$distribution == choosen_family), "discrete"] == 1) {
-      full_data[, "ind_ha"] <- round(full_data[, "ind_ha"])
-    }
-
+    
     message("\nFitting the best model...")
     final_model <-
       fit_abund_glm(
