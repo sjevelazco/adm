@@ -307,13 +307,22 @@ archs <- adm::select_arch_list(
   arch_list = archs,
   type = "dnn",
   method = "percentile", # sample by number of parameters percentiles
-  n_samples = 2, # at list two with each number of layers
+  n_samples = 2, # at least two with each number of layers
   min_max = TRUE # keep the more simple and the more complex networks
 )
 
 number_after <- archs$arch_list %>% length() # 52
 
 message("From ", number_before, " to ", number_after, " architectures.")
+```
+
+However, for the sake of brevity in this tutorial, we will manually reduce even more our architectures list to just a few:
+
+```{r reducing arch list}
+
+archs$arch_list <- archs$arch_list[seq(from = 1,to = 52, by = 5)]
+
+length(archs$arch_list)
 ```
 
 Now we can construct the grid with hyper-parameters combinations.
