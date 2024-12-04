@@ -35,7 +35,7 @@ data_abund_bpdp(
 \value{
 A list with two tibbles "pdpdata" and "resid".
 \itemize{
-\item pspdata: has data to construct partial dependence surface plot, the first two column includes
+\item pdpdata: has data to construct partial dependence bivariate plot, the first two column includes
 values of the selected environmental variables, the third column the predicted suitability.
 \item training_boundaries: has data to plot boundaries of training data.
 }
