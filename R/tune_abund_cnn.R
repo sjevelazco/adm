@@ -348,27 +348,29 @@ tune_abund_cnn <-
 
     # fit final model
     message("\nFitting the best model...")
-    final_model <-
-      fit_abund_cnn(
-        data = data,
-        response = response,
-        predictors = predictors,
-        predictors_f = predictors_f,
-        x = x,
-        y = y,
-        rasters = rasters,
-        sample_size = sample_size,
-        partition = partition,
-        predict_part = predict_part,
-        learning_rate = ranked_combinations[[1]][1, "learning_rate"],
-        n_epochs = ranked_combinations[[1]][1, "n_epochs"],
-        batch_size = ranked_combinations[[1]][1, "batch_size"],
-        custom_architecture = arch_list[[ranked_combinations[[1]][1, "arch"]]],
-        validation_patience = ranked_combinations[[1]][1, "validation_patience"],
-        fitting_patience = ranked_combinations[[1]][1, "fitting_patience"],
-        verbose = verbose
-      )
-
+    suppressMessages(
+      final_model <-
+        fit_abund_cnn(
+          data = data,
+          response = response,
+          predictors = predictors,
+          predictors_f = predictors_f,
+          x = x,
+          y = y,
+          rasters = rasters,
+          sample_size = sample_size,
+          partition = partition,
+          predict_part = predict_part,
+          learning_rate = ranked_combinations[[1]][1, "learning_rate"],
+          n_epochs = ranked_combinations[[1]][1, "n_epochs"],
+          batch_size = ranked_combinations[[1]][1, "batch_size"],
+          custom_architecture = arch_list[[ranked_combinations[[1]][1, "arch"]]],
+          validation_patience = ranked_combinations[[1]][1, "validation_patience"],
+          fitting_patience = ranked_combinations[[1]][1, "fitting_patience"],
+          verbose = verbose
+        )
+    )
+    
     arch_indexes <- stringr::str_extract_all(ranked_combinations[[1]][1, "arch"], "\\d+")
 
     message(

@@ -215,18 +215,20 @@ fit_abund_dnn <-
         test_dataloader <- torch::dataloader(test_set, batch_size = batch_size, shuffle = TRUE)
 
         set.seed(13)
-        fitted <- net %>%
-          luz::setup(
-            loss = torch::nn_l1_loss(),
-            optimizer = torch::optim_adam
-          ) %>%
-          luz::set_opt_hparams(lr = learning_rate) %>%
-          luz::fit(train_dataloader,
-            valid_data = test_dataloader,
-            epochs = n_epochs,
-            callbacks = luz::luz_callback_early_stopping(patience = validation_patience)
-          )
-
+        suppressMessages(
+          fitted <- net %>%
+            luz::setup(
+              loss = torch::nn_l1_loss(),
+              optimizer = torch::optim_adam
+            ) %>%
+            luz::set_opt_hparams(lr = learning_rate) %>%
+            luz::fit(train_dataloader,
+                     valid_data = test_dataloader,
+                     epochs = n_epochs,
+                     callbacks = luz::luz_callback_early_stopping(patience = validation_patience)
+            )
+        )
+        
         pred <- predict(fitted, test_set) %>% as.numeric()
 
         if (!(sum(is.na(pred)) == length(pred))) {
@@ -264,20 +266,22 @@ fit_abund_dnn <-
     df_dl <- torch::dataloader(df, batch_size = batch_size, shuffle = TRUE)
 
     set.seed(13)
-    full_fitted <- net %>%
-      luz::setup(
-        loss = torch::nn_l1_loss(),
-        optimizer = torch::optim_adam
-      ) %>%
-      luz::set_opt_hparams(lr = learning_rate) %>%
-      luz::fit(df_dl,
-        epochs = n_epochs,
-        callbacks = luz::luz_callback_early_stopping(
-          monitor = "train_loss",
-          patience = fitting_patience
+    suppressMessages(
+      full_fitted <- net %>%
+        luz::setup(
+          loss = torch::nn_l1_loss(),
+          optimizer = torch::optim_adam
+        ) %>%
+        luz::set_opt_hparams(lr = learning_rate) %>%
+        luz::fit(df_dl,
+                 epochs = n_epochs,
+                 callbacks = luz::luz_callback_early_stopping(
+                   monitor = "train_loss",
+                   patience = fitting_patience
+                 )
         )
-      )
-
+    )
+    
     # bind predicted evaluation
     eval_partial <- eval_partial_list %>%
       dplyr::bind_rows(.id = "replica") %>%
