@@ -25,3 +25,26 @@
 #' sppabund
 #' }
 "sppabund"
+
+#' A data set containing abundance of Cynophalla retusa.
+#'
+#' @description Cynophalla retusa (Griseb.) Cornejo & Iltis (Capparaceae) is a 
+#' shrub native to northeastern Argentina, Paraguay, Bolivia, 
+#' and central Brazil.
+#' 
+#' @format A tibble with 366 rows and 6 variables:
+#' \describe{
+#'   \item{species}{species names}
+#'   \item{ind_ha}{species abundance expressed as individuals per hectare}
+#'   \item{x}{longitude of species occurrences}
+#'   \item{y}{latitude of species occurrences}
+#'   \item{.part}{partition folds}
+#' }
+#' 
+#' @examples
+#' \dontrun{
+#' require(dplyr)
+#' data("cretusa_data")
+#' cretusa_data
+#' }
+"cretusa_data"
