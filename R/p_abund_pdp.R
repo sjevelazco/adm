@@ -251,7 +251,8 @@ p_abund_pdp <-
           if (rug) {
             xn2 <- data.frame(crv[[2]])[, 1]
 
-            rug_df <- crv[[2]] %>% dplyr::mutate(!!response_name := max(crv[[1]][response_name]))
+            rug_df <- crv[[2]]
+            rug_df[[response_name]] <- max(crv[[1]][response_name])
             p[[i]] <- p[[i]] +
               ggplot2::geom_rug(
                 data = rug_df,
@@ -313,7 +314,8 @@ p_abund_pdp <-
           if (rug) {
             xn2 <- data.frame(crv[[2]])[, 1]
 
-            rug_df <- crv[[2]] %>% dplyr::mutate(!!response_name := max(crv[[1]][response_name]))
+            rug_df <- crv[[2]]
+            rug_df[[response_name]] <- max(crv[[1]][response_name])
             p[[i]] <- p[[i]] +
               ggplot2::geom_rug(
                 data = rug_df,
