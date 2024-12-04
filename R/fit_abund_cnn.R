@@ -315,7 +315,7 @@ fit_abund_cnn <-
 
         # fit model
         set.seed(13)
-        # suppressMessages(
+        suppressMessages(
         model <- net %>%
           luz::setup(
             loss = torch::nn_l1_loss(),
@@ -327,7 +327,7 @@ fit_abund_cnn <-
             valid_data = test_dataloader,
             callbacks = luz::luz_callback_early_stopping(patience = validation_patience)
           )
-        # )
+        )
 
         pred <- predict(model, test_dataloader)
         pred <- pred$to(device = "cpu")
@@ -385,7 +385,7 @@ fit_abund_cnn <-
       torch::dataloader(batch_size = batch_size, shuffle = TRUE)
 
     set.seed(13)
-    # suppressMessages(
+    suppressMessages(
     full_model <- net %>%
       luz::setup(
         loss = torch::nn_l1_loss(),
@@ -399,7 +399,7 @@ fit_abund_cnn <-
           patience = fitting_patience
         )
       )
-    # )
+    )
 
     # bind predicted evaluation
     eval_partial <- eval_partial_list %>%

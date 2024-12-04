@@ -284,23 +284,25 @@ tune_abund_dnn <-
 
     # fit final model
     message("\nFitting the best model...")
-    final_model <-
-      fit_abund_dnn(
-        data = data,
-        response = response,
-        predictors = predictors,
-        predictors_f = predictors_f,
-        partition = partition,
-        predict_part = predict_part,
-        learning_rate = ranked_combinations[[1]][1, "learning_rate"],
-        n_epochs = ranked_combinations[[1]][1, "n_epochs"],
-        batch_size = ranked_combinations[[1]][1, "batch_size"],
-        custom_architecture = arch_list[[ranked_combinations[[1]][1, "arch"]]],
-        validation_patience = ranked_combinations[[1]][1, "validation_patience"],
-        fitting_patience = ranked_combinations[[1]][1, "fitting_patience"],
-        verbose = verbose
-      )
-
+    suppressMessages(
+      final_model <-
+        fit_abund_dnn(
+          data = data,
+          response = response,
+          predictors = predictors,
+          predictors_f = predictors_f,
+          partition = partition,
+          predict_part = predict_part,
+          learning_rate = ranked_combinations[[1]][1, "learning_rate"],
+          n_epochs = ranked_combinations[[1]][1, "n_epochs"],
+          batch_size = ranked_combinations[[1]][1, "batch_size"],
+          custom_architecture = arch_list[[ranked_combinations[[1]][1, "arch"]]],
+          validation_patience = ranked_combinations[[1]][1, "validation_patience"],
+          fitting_patience = ranked_combinations[[1]][1, "fitting_patience"],
+          verbose = verbose
+        )
+    )
+    
     arch_indexes <- stringr::str_extract_all(ranked_combinations[[1]][1, "arch"], "\\d+")
     n_layers <- arch_indexes[[1]][[1]]
     layer_index <- paste0(n_layers, "_layer_net")
