@@ -16,6 +16,7 @@ Imports:
     dplyr,
     foreach,
     gamlss,
+    gamlss.dist,
     gbm,
     ggplot2,
     patchwork,

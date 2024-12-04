@@ -26,6 +26,7 @@
 #'
 #' @importFrom dplyr mutate across left_join pull bind_rows filter select
 #' @importFrom gamlss predictAll
+#' @importFrom gamlss.dist NO
 #' @importFrom kernlab predict
 #' @importFrom stats median
 #' @importFrom stringr str_detect
