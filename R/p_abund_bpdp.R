@@ -138,9 +138,13 @@ p_abund_bpdp <-
            color_training_boundaries = "white",
            set_max = NULL,
            set_min = NULL,
-           theme = ggplot2::theme_classic()) {
+           theme = ggplot2::theme_classic(),
+           sample_size = NULL,
+           training_raster = NULL,
+           x_coord = NULL,
+           y_coord = NULL) {
     Abundance <- Type <- Value <- val <- sym <- NULL
-
+    
     if (!is.null(predictors) & length(predictors) < 2) {
       stop("Please provide at least two predictors.")
     }
@@ -156,6 +160,17 @@ p_abund_bpdp <-
       stop('Please, use tune_abund_ or fit_abund_ output list in "model" argument.')
     }
 
+    # Check if the required parameters for cnn
+    if (class(model)[1] == "luz_module_fitted" & variables[["model"]] == "cnn"){
+      if(is.null(sample_size)){
+        stop("sample_size is needed. Use the same as in tune_abund_cnn or fit_abund_cnn")
+      } else if (is.null(training_raster)){
+        stop("training_raster is needed. Use the same as in tune_abund_cnn or fit_abund_cnn")
+      } else if (is.null(x_coord)|is.null(y_coord)){
+        stop("x_coord and y_coord are needed. Use the x and y arguments of tune_abund_cnn or fit_abund_cnn")
+      }
+    }
+    
     if (!is.null(training_boundaries) & is.null(training_data)) {
       stop(
         "To plot bivariate partial dependence plot with training condition boundaries it is necessary to provide calibration data in 'training_data' argument"
@@ -242,7 +257,11 @@ p_abund_bpdp <-
           projection_data = projection_data,
           training_data = training_data,
           response_name = response_name,
-          invert_transform = invert_transform
+          invert_transform = invert_transform,
+          sample_size = sample_size,
+          training_raster = training_raster,
+          x_coord = x_coord,
+          y_coord = y_coord
         )
 
       # Coleta os valores de abund<U+00E2>ncia para calcular min e max

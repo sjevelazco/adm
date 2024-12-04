@@ -88,7 +88,11 @@ data_abund_pdp <-
            training_data = NULL,
            invert_transform = NULL,
            response_name = NULL,
-           projection_data = NULL) {
+           projection_data = NULL,
+           sample_size = NULL,
+           training_raster = NULL,
+           x_coord = NULL,
+           y_coord = NULL) {
     self <- Abundance_inverted <- NULL
 
     if (length(predictors) > 1) {
@@ -104,6 +108,17 @@ data_abund_pdp <-
     } else {
       stop('Please, use tune_abund_ or fit_abund_ output list in "model" argument.')
     }
+    
+    # Check if the required parameters for cnn
+    if (class(model)[1] == "luz_module_fitted" & variables[["model"]] == "cnn"){
+      if(is.null(sample_size)){
+        stop("sample_size is needed. Use the same as in tune_abund_cnn or fit_abund_cnn")
+      } else if (is.null(training_raster)){
+        stop("training_raster is needed. Use the same as in tune_abund_cnn or fit_abund_cnn")
+      } else if (is.null(x_coord)|is.null(y_coord)){
+        stop("x_coord and y_coord are needed. Use the x and y arguments of tune_abund_cnn or fit_abund_cnn")
+      }
+    }
 
     if (any(class(model)[1] == c("gamlss", "luz_module_fitted", "xgb.Booster"))) {
       if (is.null(training_data)) {
@@ -111,7 +126,11 @@ data_abund_pdp <-
           "For estimating partial plot data for Generalized Linear Models (GLM), Generalized Additive Models (GAM) and Deep Neural Network (DNN) it is necessary to provide calibration data in 'training_data' argument"
         )
       }
-      x <- training_data[, as.vector(variables[1, ])[2:ncol(variables)] %>% unlist()]
+      if (variables[["model"]]=="cnn"){
+        x <- training_data[, c(as.vector(variables[1, ])[2:ncol(variables)] %>% unlist(),x_coord,y_coord)]
+      } else {
+        x <- training_data[, as.vector(variables[1, ])[2:ncol(variables)] %>% unlist()]
+      }
     }
 
     if (any(class(model)[1] == c("nnet.formula", "randomForest.formula", "ksvm", "gbm"))) {
@@ -147,7 +166,6 @@ data_abund_pdp <-
       }
     }
 
-
     if (predictors %in% names(fact)) {
       rng <- sort(data.frame(unique(x[names(fact)]))[, predictors])
       suit_c <- suit_c %>% dplyr::select(-{{ predictors }})
@@ -165,59 +183,107 @@ data_abund_pdp <-
     suit_c <- data.frame(rng, suit_c)
     suit_c[predictors] <- NULL
     names(suit_c)[1] <- predictors
-
+    
+    # Make cnn samples
+    if (variables[["model"]] == "cnn"){
+      suit_c <- suit_c %>% 
+        dplyr::select(-all_of(x_coord),-all_of(y_coord))
+      
+      training_raster <- training_raster[[names(suit_c %>% dplyr::select(-variables[["response"]]))]]
+      
+      for(n in names(training_raster)){
+        if (n != predictors){
+          training_raster[[n]] <- suit_c[[n]] %>% unique()
+        } 
+      }
+      
+      randompoints <- terra::spatSample(training_raster,resolution,xy=T) %>%
+        dplyr::select(x,y) %>%
+        dplyr::bind_cols(suit_c)
+      
+      random_samples <- cnn_make_samples(
+        data = randompoints,
+        x = "x",
+        y = "y",
+        response = variables[["response"]],
+        size = cnn_get_crop_size(sample_size),
+        raster = training_raster,
+        raster_padding = TRUE,
+        padding_method = "zero"
+      )
+      
+      for (i in 1:length(random_samples$predictors)){
+        random_samples$predictors[[i]][,,predictors] <- suit_c[i,predictors]
+      }
+      
+      x_samples <- cnn_make_samples(
+        data = x,
+        x = x_coord,
+        y = y_coord,
+        response = variables[["response"]],
+        size = cnn_get_crop_size(sample_size),
+        raster = training_raster
+      )
+    }
+    
     # Predict model
 
     #### cnn ####
-    # if (class(model)[1] == "luz_module_fitted" & variables[["model"]] == "cnn") {
-    #   create_dataset <- torch::dataset(
-    #     "dataset",
-    #     initialize = function(data_list) {
-    #       self$predictors <- data_list$predictors
-    #     },
-    #     .getitem = function(index) {
-    #       x <- torchvision::transform_to_tensor(self$predictors[[index]])
-    #       list(x = x)
-    #     },
-    #     .length = function() {
-    #       length(self$predictors)
-    #     }
-    #   )
-    #
-    #   pred_names <- variables %>%
-    #     dplyr::select(-model,-response) %>%
-    #     t() %>%
-    #     as.vector()
-    #
-    #   crop_size <- cnn_get_crop_size(sample_size)
-    #   pred_samples <- cnn_make_samples(
-    #     data = pred_coord,
-    #     x = "x",
-    #     y = "y",
-    #     response = NULL,
-    #     raster = terra::extend(pred[[pred_names]], c(crop_size,crop_size)),
-    #     raster_padding = FALSE,
-    #     padding_method = NULL,
-    #     size = crop_size
-    #   )
-    #
-    #   pred_dataset <- create_dataset(pred_samples)
-    #
-    #   suit_c <-
-    #     data.frame(suit_c[1],
-    #                Abundance = suppressMessages(
-    #                  stats::predict(
-    #                    model,
-    #                    newdata = pred_dataset,
-    #                    type = "response"
-    #                  ) %>%
-    #                    as.numeric()
-    #                )
-    #     )
-    # }
+    if (class(model)[1] == "luz_module_fitted" & variables[["model"]] == "cnn") {
+      model$model$eval()
+      torch::torch_manual_seed(13)
+      
+      create_dataset <- torch::dataset(
+        "dataset",
+        initialize = function(data_list) {
+          self$predictors <- data_list$predictors
+        },
+        .getitem = function(index) {
+          x <- torchvision::transform_to_tensor(self$predictors[[index]])
+          list(x = x)
+        },
+        .length = function() {
+          length(self$predictors)
+        }
+      )
+
+      pred_dataset <- create_dataset(random_samples)
+      pred_dataset_x <- create_dataset(x_samples)
+      
+      suit_c <-
+        data.frame(suit_c[1],
+                   Abundance = suppressMessages(
+                     stats::predict(
+                       model,
+                       newdata = pred_dataset,
+                       type = "response"
+                     ) %>%
+                       as.numeric()
+                   )
+        )
+      if (resid) {
+        suit_r <-
+          data.frame(x[predictors],
+                     Abundance = suppressMessages(
+                       stats::predict(
+                         model,
+                         newdata = pred_dataset_x,
+                         type = "response"
+                       ) %>%
+                         as.numeric()
+                     )
+          )
+        result <- list("pdpdata" = suit_c, "resid" = suit_r)
+      } else {
+        result <- list("pdpdata" = suit_c, "resid" = NA)
+      }
+    }
 
     #### dnn ####
-    if (class(model)[1] == "luz_module_fitted") {
+    if (class(model)[1] == "luz_module_fitted" & variables[["model"]] == "dnn") {
+      model$model$eval()
+      torch::torch_manual_seed(13)
+      
       create_dataset <- torch::dataset(
         "dataset",
         initialize = function(df, response_variable = 0) {

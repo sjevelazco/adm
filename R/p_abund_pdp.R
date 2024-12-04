@@ -151,7 +151,11 @@ p_abund_pdp <-
            colorl = c("#462777", "#6DCC57"),
            colorp = "black",
            alpha = 0.2,
-           theme = ggplot2::theme_classic()) {
+           theme = ggplot2::theme_classic(),
+           sample_size = NULL,
+           training_raster = NULL,
+           x_coord = NULL,
+           y_coord = NULL) {
     Type <- Value <- val <- Abundance <- sym <- NULL
 
     if (class(model)[1] == "list") {
@@ -163,6 +167,17 @@ p_abund_pdp <-
       }
     } else {
       stop('Please, use tune_abund_ or fit_abund_ output list in "model" argument.')
+    }
+    
+    # Check if the required parameters for cnn
+    if (class(model)[1] == "luz_module_fitted" & variables[["model"]] == "cnn"){
+      if(is.null(sample_size)){
+        stop("sample_size is needed. Use the same as in tune_abund_cnn or fit_abund_cnn")
+      } else if (is.null(training_raster)){
+        stop("training_raster is needed. Use the same as in tune_abund_cnn or fit_abund_cnn")
+      } else if (is.null(x_coord)|is.null(y_coord)){
+        stop("x_coord and y_coord are needed. Use the x and y arguments of tune_abund_cnn or fit_abund_cnn")
+      }
     }
 
     if (!all(variables[1, 2:ncol(variables)] %>%
@@ -229,7 +244,11 @@ p_abund_pdp <-
             projection_data = NULL,
             training_data = training_data,
             invert_transform = invert_transform,
-            response_name = response_name
+            response_name = response_name,
+            sample_size = sample_size,
+            training_raster = training_raster,
+            x_coord = x_coord,
+            y_coord = y_coord
           )
 
         if (v[i] == "numeric") {
@@ -280,7 +299,11 @@ p_abund_pdp <-
             projection_data = projection_data[[c(names(v[i]))]],
             training_data = training_data,
             invert_transform = invert_transform,
-            response_name = response_name
+            response_name = response_name,
+            sample_size = sample_size,
+            training_raster = training_raster,
+            x_coord = x_coord,
+            y_coord = y_coord
           )
 
         if (v[i] == "numeric") {
