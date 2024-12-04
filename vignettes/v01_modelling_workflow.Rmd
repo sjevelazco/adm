@@ -26,7 +26,7 @@ In this vignette, users will learn how to support a modeling workflow with *adm*
 
 ## Installation
 
-```{r download package}
+```{r require package}
 require(adm)
 require(terra)
 require(dplyr)
