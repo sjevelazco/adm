@@ -3,8 +3,11 @@ title: "v01_modelling_workflow"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{v01_modelling_workflow}
-  %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options: 
+  markdown: 
+    wrap: sentence
 ---
 
 ```{r, include = FALSE}
@@ -21,12 +24,13 @@ library(knitr)
 
 ## Introduction
 
-Abundance-based Distribution Models (ADM) are promising approach to construct spatially explicit correlative models of species abundance. The *adm* package allow users to easily construct and validate those models, meeting researches specific needs.
+Abundance-based Distribution Models (ADM) are promising approach to construct spatially explicit correlative models of species abundance.
+The *adm* package allow users to easily construct and validate those models, meeting researches specific needs.
 In this vignette, users will learn how to support a modeling workflow with *adm*, from data preparation to model fitting and prediction.
 
 ## Installation
 
-```{r require package}
+```{r require package, message=FALSE, warnings=FALSE}
 require(adm)
 require(terra)
 require(dplyr)
@@ -34,22 +38,56 @@ require(dplyr)
 
 ## Preparaing data
 
-In this tutorial, we will model abundace of *Cynophalla retusa* (Griseb.) Cornejo & Iltis (Capparaceae), a dry biome shrub native to northeastern Argentina, Paraguay, Bolivia, and central Brazil. As predictor variables, we will use the first 7 PC (cumulative viarance > 90%) of a PCA performed with 35 climatic and edaphic variables. 
+In this tutorial, we will model abundace of *Cynophalla retusa* (Griseb.) Cornejo & Iltis (Capparaceae), a dry biome shrub native to northeastern Argentina, Paraguay, Bolivia, and central Brazil.
+As predictor variables, we will use the first 7 PC (cumulative viarance \> 90%) of a PCA performed with 35 climatic and edaphic variables.
 We can load all needed data with:
 
 ```{r load data}
-
-cretusa_predictors <- system.file("external/cretusa_predictors.tif", package = "adm")
-cretusa_predictors <- terra::rast(cretusa_predictors)
-
+# Load species abundance data
 data("cretusa_data")
 
+
+# Load raster with environmental variables
+cretusa_predictors <- system.file("external/cretusa_predictors.tif", package = "adm")
+cretusa_predictors <- terra::rast(cretusa_predictors)
 names(cretusa_predictors)
-dplyr::glimpse(cretusa_data)
+
+# Species training area
+sp_train_a <- system.file("external/cretusa_calib_area.gpkg", package = "adm")
+sp_train_a <- terra::vect(sp_train_a)
 ```
 
-In this dataset we have 366 georeferenced points for *C. retusa*. "ind_ha" column contains abundance measured in individuals per hectare. "x" and "y" are decimals for longitude and latitude, respectively. "pr_ab" is presence (1, ind_ha > 0) and absence (0, ind_ha = 0) information. ".part" are folds for a 3 fold spatial block partitioning on data, used for cross-validation.
-Now we need to extract environmental data from predictors raster. For that, we will use *adm_extract* and columns with x and y coordinates will be important.
+Let's explore these data
+
+```{r data}
+# Species data
+# ?cretusa_data
+cretusa_data # species dat
+```
+
+```{r Environmental predictors}
+# Environmental predictors
+names(cretusa_predictors)
+plot(cretusa_predictors)
+```
+
+```{r Training area}
+# Training area
+plot(sp_train_a)
+```
+
+```{r}
+plot(cretusa_predictors[[1]])
+plot(sp_train_a, add = TRUE)
+points(cretusa_data %>% dplyr::select(x, y), col = "red", pch = 20)
+```
+
+In `cretusa_data` we have 366 georeferenced points for *C. retusa*.
+"ind_ha" column contains abundance measured in individuals per hectare.
+"x" and "y" are decimals for longitude and latitude, respectively.
+".part" has folds of a spatial block partitioning used for cross-validation.
+Now we need to extract environmental data from predictors raster.
+For that, we will use *adm_extract*, and columns with x and y coordinates will be important.
 
 ```{r extracting environmental data}
 species_data <- adm_extract(
@@ -59,57 +97,67 @@ species_data <- adm_extract(
   env_layer = cretusa_predictors, # raster with environmental variables
   variables = NULL, # return data for all layers
   filter_na = TRUE
-  )
+)
 
-dplyr::glimpse(species_data)
+species_data
 ```
 
-Notice that the new dataframe have one column for each environmental variable (layers in raster). It is possible to extract data from specific layers using "variables" argument in *adm_extract*.
+Notice that the new dataframe have one column for each environmental variable (layers in raster).
+It is possible to extract data from specific layers using "variables" argument in *adm_extract*.
 To stabilize Deep Neural Networks training, we will transform response data using "zscore" method.
 
 ```{r response transformation}
 species_data <- adm_transform(
   data = species_data,
   variable = "ind_ha",
-  method = "zscore")
+  method = "zscore"
+)
 
-dplyr::glimpse(species_data)
+species_data %>% dplyr::select(ind_ha, ind_ha_zscore)
 ```
 
 It creates a new column called "ind_ha_zscore", which can be used as response variable.
 
 ## Tuning models
 
-With all set, we are good to proceed with ADM construction. In this tutorial, we will fine-tune, fit and validate Deep Neural Network (DNN), Generalized Linear Models (GLM) and Random Forest (RAF) models, using *tune_abund_* family functions.
+With all set, we are good to proceed with ADM construction.
+In this tutorial, we will fine-tune, fit and validate Deep Neural Network (DNN), Generalized Linear Models (GLM) and Random Forest (RAF) models, using *tune_abund\_* family functions.
 
 ### RAF
 
-Starting with RAF, the first thing we need to do is to determine values for hyperparameters to be tested. This could be done for all or just part of the hyperparameters. In this example, we will set values for all. This is done creating a grid which will guide the values exploration, what can be easily constructed with *expand.grid* base function:
+Starting with RAF, the first thing we need to do is to determine values for hyperparameters to be tested.
+This could be done for all or just part of the hyperparameters.
+In this example, we will set values for all.
+This is done creating a grid which will guide the values exploration, what can be easily constructed with *expand.grid* base function:
 
 ```{r RAF grid construction}
 raf_grid <- expand.grid(
-      mtry = seq(from=1, to=7, by=1),
-      ntree = seq(from=100, to=1000, by=100)
-    )
+  mtry = seq(from = 1, to = 7, by = 1),
+  ntree = seq(from = 100, to = 1000, by = 100)
+)
 head(raf_grid)
-nrow(raf_grid)
+nrow(raf_grid) # 70 combinations of these two hyper-paramenters
 ```
 
-For RAF, "mtry" determines the number of variables randomly sampled as candidates at each split. We setted it values to {1, 2, ..., 6, 7}. "ntree" determine the number of decision trees to grow. We set its values to {100, 200, ..., 900, 1000}. The grid combines every possible pair of values, totalizing 70 combinations (number of rows in "raf_grid").
+For RAF, "mtry" determines the number of variables randomly sampled as candidates at each split.
+We setted it values to {1, 2, ..., 6, 7}.
+"ntree" determine the number of decision trees to grow.
+We set its values to {100, 200, ..., 900, 1000}.
+The grid combines every possible pair of values, totalizing 70 combinations (number of rows in "raf_grid").
 Now we can use this grid with *tune_abund_raf* to tune and validate a RAF model:
 
 ```{r RAF tuning}
 mraf <- tune_abund_raf(
-      data = species_data,
-      response = "ind_ha",
-      predictors = c("PC1", "PC2", "PC3", "PC4", "PC5", "PC6", "PC7"),
-      partition = ".part",
-      predict_part = TRUE, # predictions for every partition will be returned
-      grid = raf_grid,
-      metrics = c("corr_pear","mae"), # metrics to select the best model
-      n_cores = 2, # number of cores to be used in parallel processing
-      verbose = FALSE
-    )
+  data = species_data,
+  response = "ind_ha",
+  predictors = c("PC1", "PC2", "PC3", "PC4", "PC5", "PC6", "PC7"),
+  partition = ".part",
+  predict_part = TRUE, # predictions for every partition will be returned
+  grid = raf_grid,
+  metrics = c("corr_pear", "mae"), # metrics to select the best model
+  n_cores = 4, # number of cores to be used in parallel processing
+  verbose = FALSE
+)
 ```
 
 The function returns a list with the following elements:
@@ -121,6 +169,7 @@ names(mraf)
 "model": a "randomForest" class object.
 
 ```{r raf model}
+class(mraf$model)
 mraf$model
 ```
 
@@ -145,7 +194,7 @@ mraf$performance_part
 "predicted_part": predictions for each partition.
 
 ```{r raf predicted_part}
-mraf$predicted_part %>% head
+mraf$predicted_part %>% head()
 ```
 
 "optimal_combination": the set of hyperparameters values considered the best given the metrics and its performance.
@@ -154,16 +203,19 @@ mraf$predicted_part %>% head
 mraf$optimal_combination %>% dplyr::glimpse()
 ```
 
-"all_combinations": performance for every hyperparameter combination.
+"all_combinations": performance for every hyper-parameter combination.
 
 ```{r raf all_combinations}
-mraf$all_combinations %>% head
+mraf$all_combinations %>% head()
 ```
 
 ### GLM
 
-To tune a GLM we perform basically the same steps to tune a RAF, paying attention to GLM singularities. First, we need to construct a grid, just like before. However, this time GLM needs a "distribution" hyperparameter that specifies the probability distribution family to be used.
-Choosing a distribution family needs attention and must be done wisely, but *adm* provides help via *family_selector* function. This function compares the response variable range to the *gamlss* compatible families:
+To tune a GLM we perform basically the same steps to tune a RAF, paying attention to GLM singularities.
+First, we need to construct a grid, just like before.
+However, GLM needs a "distribution" hyper-parameter that specifies the probability distribution family to be used.
+Choosing a distribution family needs attention and must be done wisely, but *adm* provides help via *family_selector* function.
+This function compares the response variable range to the *gamlss* compatible families:
 
 ```{r glm family_selector}
 suitable_families <- family_selector(
@@ -172,15 +224,34 @@ suitable_families <- family_selector(
 )
 ```
 
-The function returns a tibble with suitable families information. The column "family_call" can be directly used in a grid. In this example, we selected some of the suitable distribution to be used. Now, we can construct the grid:
+The function returns a tibble with suitable families information.
+The column "family_call" can be directly used in a grid.
+
+If you are interested in exploring the attributes of the families for GLM and GAM, you can use the *families_bank* database.
+For further details about family distributions see `?gamlss.dist::gamlss.family`.
+
+```{r glm family_attributes}
+fm <- system.file("external/families_bank.txt", package = "adm") %>%
+  utils::read.delim(., header = TRUE, quote = "\t") %>%
+  dplyr::as_tibble()
+fm
+```
+
+In this example, we selected some suitable distributions for use.
+Now, we can construct the grid:
 
 ```{r glm_grid}
 glm_grid <- list(
-  distribution = c("NO","NOF","RG","TF","ZAIG","LQNO","DEL","PIG",
-                   "WARING","YULE","ZALG","ZIP","BNB","DBURR12","ZIBNB","LO","PO"),
-  poly = c(1,2,3),
-  inter_order = c(0,1,2)) %>%
+  distribution = c(
+    "NO", "NOF", "RG", "TF", "ZAIG", "LQNO", "DEL",
+    "PIG", "WARING", "YULE", "ZALG", "ZIP", "BNB",
+    "DBURR12", "ZIBNB", "LO", "PO"
+  ),
+  poly = c(1, 2, 3),
+  inter_order = c(0, 1, 2)
+) %>%
   expand.grid()
+# Note that in `distribution` argument it is necessary use the acronyms of `family_call` column
 ```
 
 For GLM, "poly" refers to the polynomials used in model formula, and "inter_order" refers to the interaction order between the variables.
@@ -188,89 +259,102 @@ Tuning the GLM with the grid:
 
 ```{r glm tuning}
 mglm <- tune_abund_glm(
-      data = species_data,
-      response = "ind_ha",
-      predictors = c("PC1", "PC2", "PC3", "PC4", "PC5", "PC6", "PC7"),
-      predictors_f = NULL,
-      partition = ".part",
-      predict_part = TRUE,
-      grid = glm_grid,
-      metrics = c("corr_pear","mae"),
-      n_cores = 3,
-      verbose = FALSE
-    )
+  data = species_data,
+  response = "ind_ha",
+  predictors = c("PC1", "PC2", "PC3", "PC4", "PC5", "PC6", "PC7"),
+  predictors_f = NULL,
+  partition = ".part",
+  predict_part = TRUE,
+  grid = glm_grid,
+  metrics = c("corr_pear", "mae"),
+  n_cores = 4,
+  verbose = FALSE
+)
 ```
 
-The output is a list with basically the same elements as *tune_abund_raf*, so we don't need to go over it again. The only difference here is the "model", which is now a "gamlss" class object.
+The output is a list with basically the same elements as *tune_abund_raf*, so we don't need to go over it again.
+The only difference here is the "model", which is now is a "gamlss" class object.
 
-```{r}
+```{r glm}
+class(mglm$model)
 mglm$model
 ```
 
 ### DNN
 
-For DNN, in addition to a grid, the function *tune_abund_dnn* also needs a list of architectures to test, or a single one. For this purpose we will use *generate_arch_list* function. However, here things could get complicated. As DNN architecture aspects such the number and size of layers, batch normalization, and dropout are customizable in *adm*, many architectures could be generated at once, with all possible combinations between these parameters, resulting in very large lists. To filter this list, users have the option to use *select_arch_list* to reduce it, sampling the list using number of parameters as a net complexity measurement. This is highly recommended.
-Lets create and select some architectures for our tutorial:
+For DNN, in addition to a grid, the function *tune_abund_dnn* also needs a list of architectures to test, or a single one.
+We will use *generate_arch_list* function for this purpose, .
+However, here things could get complicated.
+As DNN architecture aspects such the number and size of layers, batch normalization, and dropout are customizable in *adm*, many architectures could be generated at once, with all possible combinations between these parameters, resulting in very large lists.
+To filter this list, users can use *select_arch_list* to reduce it, sampling the list using the number of parameters as a net complexity measurement.
+This is highly recommended.
+Let's create and select some architectures:
 
 ```{r dnn architectures}
 archs <- adm::generate_arch_list(
-      type = "dnn",
-      number_of_features = 7, # input/predictor variables
-      number_of_outputs = 1, # output/response variable
-      n_layers = c(2, 3, 4), # possible number of layers 
-      n_neurons = c(7, 14, 21), # possible number of neurons on each layer
-      batch_norm = TRUE, # batch normalization between layers
-      dropout = 0 # without training dropout
-      ) 
+  type = "dnn",
+  number_of_features = 7, # input/predictor variables
+  number_of_outputs = 1, # output/response variable
+  n_layers = c(2, 3, 4), # possible number of layers
+  n_neurons = c(7, 14, 21), # possible number of neurons on each layer
+  batch_norm = TRUE, # batch normalization between layers
+  dropout = 0 # without training dropout
+)
 
 number_before <- archs$arch_list %>% length() # 117
 
 archs <- adm::select_arch_list(
-        arch_list = archs,
-        type = "dnn",
-        method = "percentile", # sample by number of parameters percentiles
-        n_samples = 2, # at list two with each number of layers
-        min_max = TRUE # keep the more simple and the more complex networks
-        )
+  arch_list = archs,
+  type = "dnn",
+  method = "percentile", # sample by number of parameters percentiles
+  n_samples = 2, # at list two with each number of layers
+  min_max = TRUE # keep the more simple and the more complex networks
+)
 
 number_after <- archs$arch_list %>% length() # 52
 
-message("From ",number_before," to ",number_after," architectures.")
+message("From ", number_before, " to ", number_after, " architectures.")
 ```
 
-Now we can construct the grid. Note that all values combination will be tested with each architecture, so user needs to be careful with grid and architectures list size. 
+Now we can construct the grid with hyper-parameters combinations.
+Note that hyper-parameters values will be tested for each architecture.
+Therefore user needs to be careful with grid and architecture list sizes.
 
 ```{r dnn_grid}
 dnn_grid <- expand.grid(
-      batch_size = c(64),
-      validation_patience = c(5),
-      fitting_patience = c(5),
-      learning_rate = c(0.005, 0.001, 0.0005),
-      n_epochs = 200
-    )
+  batch_size = c(64),
+  validation_patience = c(5),
+  fitting_patience = c(5),
+  learning_rate = c(0.005, 0.001, 0.0005),
+  n_epochs = 200
+)
+head(dnn_grid)
+nrow(dnn_grid)
 ```
 
 Now we can use the architectures generated and the grid created within the *tune_abund_dnn* function:
 
 ```{r dnn_tuning}
 mdnn <- tune_abund_dnn(
-      data = species_data,
-      response = "ind_ha_zscore", # using the transformed response
-      predictors = c("PC1", "PC2", "PC3", "PC4", "PC5", "PC6", "PC7"),
-      predictors_f = NULL,
-      partition = ".part",
-      predict_part = TRUE,
-      grid = dnn_grid,
-      architectures = archs,
-      metrics = c("corr_pear","mae"),
-      n_cores = 5,
-      verbose = FALSE
-    )
+  data = species_data,
+  response = "ind_ha_zscore", # using the transformed response
+  predictors = c("PC1", "PC2", "PC3", "PC4", "PC5", "PC6", "PC7"),
+  predictors_f = NULL,
+  partition = ".part",
+  predict_part = TRUE,
+  grid = dnn_grid,
+  architectures = archs,
+  metrics = c("corr_pear", "mae"),
+  n_cores = 5,
+  verbose = FALSE
+)
 ```
 
-Again, the output is very similar as before, because they are standardize for all *tune_abund_* functions. Now, the "model" element is a "luz_module_fitted" from *torch* and *luz* packages.
+Again, the output is very similar as before, because they are standardize for all *tune_abund\_* functions.
+Now, the "model" element is a "luz_module_fitted" from *torch* and *luz* packages.
 
 ```{r mdnn model}
+class(mdnn$model)
 mdnn$model
 ```
 
@@ -279,69 +363,80 @@ mdnn$model
 In *adm* is possible to quick summarize several models evalutions in one dataframe, using *adm_summarize* function:
 
 ```{r}
-adm_summarize(list(mdnn,mraf,mglm))
+adm_summarize(list(mdnn, mraf, mglm))
 ```
 
 ## Predicting models
 
-With models fitted, we can make spatial predictions of it. The process is straightforward and use *adm_predict* function. It can make predictions for more than one model at once. For illustration purposes, we will make predictions for a calibration area delimited by a 200 km buffered minimum convex polygon around species presence points, but this process is optional. 
+Once we fitted models, we can make spatial predictions of them.
+The process is straightforward with the `adm_predict` function.
+It can make predictions for more than one model at once.
+For illustration purposes, we will make predictions for a calibration area delimited by a 100 km buffered minimum convex polygon around species presence points, but this process is optional.
 
 ```{r model predictions}
-
-sp_calib <- system.file("external/cretusa_calib_area.gpkg", package = "adm")
-sp_calib <- terra::vect(sp_calib)
+sp_train_a <- system.file("external/cretusa_calib_area.gpkg", package = "adm")
+sp_train_a <- terra::vect(sp_train_a)
 
 preds <- adm::adm_predict(
-      models = list(mraf,mglm),
-      pred = cretusa_predictors,
-      predict_area = sp_calib,
-      training_data = species_data,
-      transform_negative = TRUE # negative predictions will be considered 0
-    )
-
+  models = list(mraf, mglm),
+  pred = cretusa_predictors,
+  predict_area = sp_train_a,
+  training_data = species_data,
+  transform_negative = TRUE # negative predictions will be considered 0
+)
 ```
 
-To predict DNN, we need to pay attention to some detail. As we trained the DNN with tranformed response, if we want it to predict in the original scale, we need to use the "invert_transform" argument in *adm_predict*:
+To predict DNN, we need to pay attention to some detail.
+As we trained the DNN with tranformed response, if we want it to predict in the original scale, we need to use the "invert_transform" argument in *adm_predict*:
 
 ```{r dnn pred}
-
 pred_dnn <- adm::adm_predict(
-      models = mdnn,
-      pred = cretusa_predictors,
-      predict_area = sp_calib,
-      training_data = species_data,
-      transform_negative = TRUE,
-      invert_transform = c(method = "zscore",
-                           a = mean(species_data$ind_ha),
-                           b = sd(species_data$ind_ha))
-    )
+  models = mdnn,
+  pred = cretusa_predictors,
+  predict_area = sp_train_a,
+  training_data = species_data,
+  transform_negative = TRUE,
+  invert_transform = c(
+    method = "zscore",
+    a = mean(species_data$ind_ha),
+    b = sd(species_data$ind_ha)
+  )
+)
 ```
 
-Note: transformation terms varies among tranformation methods. To learn more about it, visit *adm_transform* documentation.
+Note: transformation terms varies among tranformation methods.
+To learn more about it, visit *adm_transform* documentation.
 Let's visualize the predictions:
 
 ```{r}
-par(mfrow=c(1,3))
+par(mfrow = c(1, 3))
 plot(pred_dnn$dnn, main = "DNN")
 plot(preds$raf, main = "RAF")
 plot(preds$glm, main = "GLM")
-par(mfrow=c(1,1))
+par(mfrow = c(1, 1))
 ```
 
 ## Exploring models
 
-Finally, we can also do some exploration on models. *adm* features Partial Dependence Plots, univariated (PDP) and bivariated (BPDP). To create PDP we use *p_abund_pdp*. This kind of plot illustrate how models' predictions are influenced by one predictor. It can provide very relevant information about residuals and model extrapolation:
+Finally, we can explore how a variable or a pair of variables affect the predicted values.
+*adm* features univariate and bivariate Partial Dependence Plots, PDP, and BPDP, respectively.
+To create PDP we use `p_abund_pdp`.
+PDP illustrates the marginal response of one predictor.
+It can provide very relevant information about residuals and model extrapolation:
 
 ```{r models pdp}
+# PDP for DNN model
 pdp_dnn <- p_abund_pdp(
   model = mdnn, # the output of tune_abund_ or fit_abund_
   predictors = c("PC1"),
   resolution = 100,
   resid = TRUE, # plot residuals
   training_data = species_data,
-  invert_transform = c(method = "zscore", # same as before
-                           a = mean(species_data$ind_ha),
-                           b = sd(species_data$ind_ha)),
+  invert_transform = c(
+    method = "zscore", # same as before
+    a = mean(species_data$ind_ha),
+    b = sd(species_data$ind_ha)
+  ),
   response_name = "ind/ha", # this argument is for aesthetic only, and determines the name of y axis
   projection_data = cretusa_predictors, # to visualize extrapolation
   rug = TRUE, # rug plot of the predictor
@@ -351,12 +446,23 @@ pdp_dnn <- p_abund_pdp(
   theme = ggplot2::theme_classic() # a ggplot2 theme
 )
 
-plot(pdp_dnn)
-```
+# PDP for GLM model
+pdp_glm <- p_abund_pdp(
+  model = mglm,
+  predictors = c("PC1"),
+  resolution = 100,
+  resid = TRUE,
+  training_data = species_data,
+  response_name = "ind/ha",
+  projection_data = cretusa_predictors,
+  rug = TRUE,
+  colorl = c("#462777", "#6DCC57"),
+  colorp = "black",
+  alpha = 0.2,
+  theme = ggplot2::theme_classic()
+)
 
-Let's create more of these for RAF and GLM:
-
-```{r pdp raf and glm}
+# PDP for RAF model
 pdp_raf <- p_abund_pdp(
   model = mraf,
   predictors = c("PC1"),
@@ -371,96 +477,86 @@ pdp_raf <- p_abund_pdp(
   alpha = 0.2,
   theme = ggplot2::theme_classic()
 )
-
-pdp_glm <- p_abund_pdp(
-  model = mglm,
-  predictors = c("PC1"),
-  resolution = 100,
-  resid = TRUE,
-  training_data = species_data,
-  response_name = "ind/ha",
-  projection_data = cretusa_predictors,
-  rug = TRUE,
-  colorl = c("#462777", "#6DCC57"), 
-  colorp = "black",
-  alpha = 0.2,
-  theme = ggplot2::theme_classic()
-)
 ```
 
-And putting it all together:
 
 ```{r all pdp}
-plot(pdp_dnn)
-plot(pdp_raf)
-plot(pdp_glm)
+pdp_dnn
+pdp_raf
+pdp_glm
 ```
 
-BPDP are very similar to PDP, but instead of one, it illustrate the marginal response of a pair of variables:
+BPDP are similar to PDP, but instead of one, it illustrates the marginal response of a pair of variables. 
+In this example we will use the first and seventh PC. Note that for `p_abund_pdp` and `p_abund_bpdp`, any subset of predictors can be used in the "predictors" argument. If "predictors" argument is NULL, functions plot all variables or variables pair combinations, respectively.
 
 ```{r bpdp dnn}
+# BPDP for DNN
 bpdp_dnn <- p_abund_bpdp(
   model = mdnn,
-  predictors = c("PC1","PC7"), # a pair of predictors
+  predictors = c("PC1", "PC7"), # a pair of predictors
   resolution = 100,
   training_data = species_data,
   projection_data = cretusa_predictors,
   training_boundaries = "convexh", # the shape in which the training boundaries are drawn. Outside of it, its extrapolations
-  invert_transform = c(method = "zscore", # same as before
-                           a = mean(species_data$ind_ha),
-                           b = sd(species_data$ind_ha)),
+  invert_transform = c(
+    method = "zscore", # same as before
+    a = mean(species_data$ind_ha),
+    b = sd(species_data$ind_ha)
+  ),
   response_name = "ind/ha",
-  color_gradient = c("#000004", "#1B0A40", "#4A0C69", "#781B6C", "#A42C5F", "#CD4345",
-    "#EC6824", "#FA990B", "#F7CF3D", "#FCFFA4"), # gradient for response variable
+  color_gradient = c(
+    "#000004", "#1B0A40", "#4A0C69", "#781B6C", "#A42C5F", "#CD4345",
+    "#EC6824", "#FA990B", "#F7CF3D", "#FCFFA4"
+  ), # gradient for response variable
   color_training_boundaries = "white",
   theme = ggplot2::theme_classic()
 )
 
-plot(bpdp_dnn)
-```
-
-Let's do the same for the other models:
-
-```{r bpdp raf and glm}
-bpdp_raf <- p_abund_bpdp(
-  model = mraf,
-  predictors = c("PC1","PC7"),
-  resolution = 100,
-  training_data = species_data,
-  projection_data = cretusa_predictors,
-  training_boundaries = "convexh",
-  response_name = "ind/ha",
-  color_gradient = c("#000004", "#1B0A40", "#4A0C69", "#781B6C", "#A42C5F", "#CD4345",
-    "#EC6824", "#FA990B", "#F7CF3D", "#FCFFA4"),
-  color_training_boundaries = "white",
-  theme = ggplot2::theme_classic()
-)
-
+# BPDP for GLM
 bpdp_glm <- p_abund_bpdp(
   model = mglm,
-  predictors = c("PC1","PC7"),
+  predictors = c("PC1", "PC7"),
   resolution = 100,
   training_data = species_data,
   projection_data = cretusa_predictors,
   training_boundaries = "convexh",
   response_name = "ind/ha",
-  color_gradient = c("#000004", "#1B0A40", "#4A0C69", "#781B6C", "#A42C5F", "#CD4345",
-    "#EC6824", "#FA990B", "#F7CF3D", "#FCFFA4"),
+  color_gradient = c(
+    "#000004", "#1B0A40", "#4A0C69", "#781B6C", "#A42C5F", "#CD4345",
+    "#EC6824", "#FA990B", "#F7CF3D", "#FCFFA4"
+  ),
+  color_training_boundaries = "white",
+  theme = ggplot2::theme_classic()
+)
+
+# BPDP for RAF
+bpdp_raf <- p_abund_bpdp(
+  model = mraf,
+  predictors = c("PC1", "PC7"),
+  resolution = 100,
+  training_data = species_data,
+  projection_data = cretusa_predictors,
+  training_boundaries = "convexh",
+  response_name = "ind/ha",
+  color_gradient = c(
+    "#000004", "#1B0A40", "#4A0C69", "#781B6C", "#A42C5F", "#CD4345",
+    "#EC6824", "#FA990B", "#F7CF3D", "#FCFFA4"
+  ),
   color_training_boundaries = "white",
   theme = ggplot2::theme_classic()
 )
 ```
 
-And put it all together:
+
 
 ```{r all bpdp}
-plot(bpdp_dnn)
-plot(bpdp_raf)
-plot(bpdp_glm)
+bpdp_dnn
+bpdp_raf
+bpdp_glm
 ```
 
-For both *p_abund_pdp* and *p_abund_bpdp*, any subset of predictors can be used in "predictors" argument. If it is NULL, the functions will use all of them to make several plots.
 
 ## Conclusions
 
-In this vignette we explored *adm* functionalities to support complete ADM workflows. The package features functions from model tuning, fitting and validation to model prediction and exploration. In addition, also features several utilities functions to handle data and models.
+In this vignette, we explored *adm* tools to support complete ADM workflows.
+The package features functions from model tuning, fitting, and validation to model prediction and exploration.
