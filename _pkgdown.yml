@@ -1,5 +1,27 @@
-url: ~
+destination: docs
+url: https://xx.github.io/adm
+
 template:
   bootstrap: 5
   bootswatch: minty
+  # google_site_verification: gcou8tqRTwNjZ_Mf1kbFgAzzUcY3OF-JB2sPRPTA56I
 
+# navbar setting
+navbar:
+  left:
+    - text: Home
+      icon: fa-home
+      href: index.html
+      aria-label: Home
+    - text: "Functions"
+      href: reference/index.html
+    - text: "Articles"
+      menu:
+      -  text: "1. Modling Workflow with adm"
+         href: articles/v01_modelling_workflow.html
+    - text: GitHub
+      href: https://xx.github.io/adm
+      aria-label: GitHub
+
+components:
+    home: ~
