@@ -28,10 +28,10 @@
 
 #' A data set containing abundance of Cynophalla retusa.
 #'
-#' @description Cynophalla retusa (Griseb.) Cornejo & Iltis (Capparaceae) is a 
-#' shrub native to northeastern Argentina, Paraguay, Bolivia, 
+#' @description Cynophalla retusa (Griseb.) Cornejo & Iltis (Capparaceae) is a
+#' shrub native to northeastern Argentina, Paraguay, Bolivia,
 #' and central Brazil.
-#' 
+#'
 #' @format A tibble with 366 rows and 6 variables:
 #' \describe{
 #'   \item{species}{species names}
@@ -40,7 +40,7 @@
 #'   \item{y}{latitude of species occurrences}
 #'   \item{.part}{partition folds}
 #' }
-#' 
+#'
 #' @examples
 #' \dontrun{
 #' require(dplyr)

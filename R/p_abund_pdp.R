@@ -168,14 +168,14 @@ p_abund_pdp <-
     } else {
       stop('Please, use tune_abund_ or fit_abund_ output list in "model" argument.')
     }
-    
+
     # Check if the required parameters for cnn
-    if (class(model)[1] == "luz_module_fitted" & variables[["model"]] == "cnn"){
-      if(is.null(sample_size)){
+    if (class(model)[1] == "luz_module_fitted" & variables[["model"]] == "cnn") {
+      if (is.null(sample_size)) {
         stop("sample_size is needed. Use the same as in tune_abund_cnn or fit_abund_cnn")
-      } else if (is.null(training_raster)){
+      } else if (is.null(training_raster)) {
         stop("training_raster is needed. Use the same as in tune_abund_cnn or fit_abund_cnn")
-      } else if (is.null(x_coord)|is.null(y_coord)){
+      } else if (is.null(x_coord) | is.null(y_coord)) {
         stop("x_coord and y_coord are needed. Use the x and y arguments of tune_abund_cnn or fit_abund_cnn")
       }
     }

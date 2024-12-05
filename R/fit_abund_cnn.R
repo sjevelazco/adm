@@ -150,7 +150,7 @@ fit_abund_cnn <-
     } else {
       crop_size <- floor(sample_size[[1]] / 2)
     }
-    
+
     # # ---- Formula ----
     # if (is.null(fit_formula)) {
     #   formula1 <- stats::formula(paste(response, "~", paste(c(
@@ -316,17 +316,17 @@ fit_abund_cnn <-
         # fit model
         set.seed(13)
         suppressMessages(
-        model <- net %>%
-          luz::setup(
-            loss = torch::nn_l1_loss(),
-            optimizer = torch::optim_adam
-          ) %>%
-          luz::set_opt_hparams(lr = learning_rate) %>%
-          luz::fit(train_dataloader,
-            epochs = n_epochs,
-            valid_data = test_dataloader,
-            callbacks = luz::luz_callback_early_stopping(patience = validation_patience)
-          )
+          model <- net %>%
+            luz::setup(
+              loss = torch::nn_l1_loss(),
+              optimizer = torch::optim_adam
+            ) %>%
+            luz::set_opt_hparams(lr = learning_rate) %>%
+            luz::fit(train_dataloader,
+              epochs = n_epochs,
+              valid_data = test_dataloader,
+              callbacks = luz::luz_callback_early_stopping(patience = validation_patience)
+            )
         )
 
         pred <- predict(model, test_dataloader)
@@ -386,19 +386,19 @@ fit_abund_cnn <-
 
     set.seed(13)
     suppressMessages(
-    full_model <- net %>%
-      luz::setup(
-        loss = torch::nn_l1_loss(),
-        optimizer = torch::optim_adam
-      ) %>%
-      luz::set_opt_hparams(lr = learning_rate) %>%
-      luz::fit(full_dataloader,
-        epochs = n_epochs,
-        callbacks = luz::luz_callback_early_stopping(
-          monitor = "train_loss",
-          patience = fitting_patience
+      full_model <- net %>%
+        luz::setup(
+          loss = torch::nn_l1_loss(),
+          optimizer = torch::optim_adam
+        ) %>%
+        luz::set_opt_hparams(lr = learning_rate) %>%
+        luz::fit(full_dataloader,
+          epochs = n_epochs,
+          callbacks = luz::luz_callback_early_stopping(
+            monitor = "train_loss",
+            patience = fitting_patience
+          )
         )
-      )
     )
 
     # bind predicted evaluation

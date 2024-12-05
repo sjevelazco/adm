@@ -89,7 +89,7 @@ xgb_grid <- expand.grid(
   gamma = c(1, 5, 10),
   colsample_bytree = c(0.5, 1),
   min_child_weight = c(0.5, 1, 2),
-  subsample = c(0.5, 1), 
+  subsample = c(0.5, 1),
   stringsAsFactors = FALSE
 )
 # Tune a XGB model

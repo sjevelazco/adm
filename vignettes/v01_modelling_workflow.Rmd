@@ -319,8 +319,7 @@ message("From ", number_before, " to ", number_after, " architectures.")
 However, for the sake of brevity in this tutorial, we will manually reduce even more our architectures list to just a few:
 
 ```{r reducing arch list}
-
-archs$arch_list <- archs$arch_list[seq(from = 1,to = 52, by = 5)]
+archs$arch_list <- archs$arch_list[seq(from = 1, to = 52, by = 5)]
 
 length(archs$arch_list)
 ```

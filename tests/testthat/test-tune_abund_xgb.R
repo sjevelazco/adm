@@ -28,7 +28,7 @@ test_that("tune_abund_xgb and fit_abund_xgb", {
     metrics = c("corr_pear", "mae"),
     grid = xgb_grid,
     objective = "reg:squarederror",
-    n_cores = 3
+    n_cores = 1
   )
   expect_equal(names(tuned_), c(
     "model", "predictors", "performance", "performance_part",
@@ -50,9 +50,9 @@ test_that("test errors", {
     # metrics = c("corr_pear", "mae"),
     grid = xgb_grid,
     objective = "reg:squarederror",
-    n_cores = 3
+    n_cores = 1
   ))
-  
+
   expect_error(tune_abund_xgb(
     data = some_sp,
     response = "ind_ha",
@@ -66,7 +66,7 @@ test_that("test errors", {
       ntreeE = c(100, 500)
     ),
     objective = "reg:squarederror",
-    n_cores = 3
+    n_cores = 1
   ))
 })
 
@@ -89,9 +89,8 @@ test_that("incomplete grid", {
       # subsample = c(0.5, 1)
     ),
     objective = "reg:squarederror",
-    n_cores = 3
+    n_cores = 1
   )
-  
+
   expect_true("subsample" %in% names(tuned_$optimal_combination))
 })
-

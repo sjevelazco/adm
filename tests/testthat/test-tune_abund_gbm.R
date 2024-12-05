@@ -23,7 +23,7 @@ test_that("tune_abund_gbm and fit_abund_gbm", {
     metrics = c("corr_pear", "mae"),
     grid = grid_0,
     distribution = "gaussian",
-    n_cores = 3
+    n_cores = 1
   )
 
   expect_equal(names(tuned_), c(

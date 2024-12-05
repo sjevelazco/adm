@@ -12,7 +12,11 @@ data_abund_bpdp(
   invert_transform = NULL,
   response_name = NULL,
   training_boundaries = NULL,
-  projection_data = NULL
+  projection_data = NULL,
+  sample_size = NULL,
+  training_raster = NULL,
+  x_coord = NULL,
+  y_coord = NULL
 )
 }
 \arguments{

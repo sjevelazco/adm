@@ -144,7 +144,7 @@ p_abund_bpdp <-
            x_coord = NULL,
            y_coord = NULL) {
     Abundance <- Type <- Value <- val <- sym <- NULL
-    
+
     if (!is.null(predictors) & length(predictors) < 2) {
       stop("Please provide at least two predictors.")
     }
@@ -161,16 +161,16 @@ p_abund_bpdp <-
     }
 
     # Check if the required parameters for cnn
-    if (class(model)[1] == "luz_module_fitted" & variables[["model"]] == "cnn"){
-      if(is.null(sample_size)){
+    if (class(model)[1] == "luz_module_fitted" & variables[["model"]] == "cnn") {
+      if (is.null(sample_size)) {
         stop("sample_size is needed. Use the same as in tune_abund_cnn or fit_abund_cnn")
-      } else if (is.null(training_raster)){
+      } else if (is.null(training_raster)) {
         stop("training_raster is needed. Use the same as in tune_abund_cnn or fit_abund_cnn")
-      } else if (is.null(x_coord)|is.null(y_coord)){
+      } else if (is.null(x_coord) | is.null(y_coord)) {
         stop("x_coord and y_coord are needed. Use the x and y arguments of tune_abund_cnn or fit_abund_cnn")
       }
     }
-    
+
     if (!is.null(training_boundaries) & is.null(training_data)) {
       stop(
         "To plot bivariate partial dependence plot with training condition boundaries it is necessary to provide calibration data in 'training_data' argument"
