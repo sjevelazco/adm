@@ -12,7 +12,7 @@ adm_predict(
   predict_area = NULL,
   invert_transform = NULL,
   transform_negative = FALSE,
-  sample_size = c(11, 11)
+  sample_size = NULL
 )
 }
 \arguments{

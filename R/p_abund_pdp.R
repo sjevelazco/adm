@@ -23,6 +23,10 @@
 #' @param theme ggplot2 theme. Default ggplot2::theme_classic()
 #' @param invert_transform logical. If TRUE, inverse transformation of response variable will be applied.
 #' @param response_name character. Name of the response variable. Default NULL
+#' @param sample_size vector. For CNN only. A vector containing the dimensions, in pixels, of raster samples. See cnn_make_samples beforehand. Default c(11,11)
+#' @param training_raster a terra SpatRaster object. For CNN only. A raster containing the predictor variables used in tune_abund_cnn or fit_abund_cnn.
+#' @param x_coord character. For CNN only. The name of the column containing longitude information for each observation.
+#' @param y_coord character. For CNN only. The name of the column containing latitude information for each observation.
 #'
 #' @details This function creates partial dependent plots to explore the marginal effect of
 #' predictors on modeled abundance. If projection_data is used, function will extract the minimum and
@@ -33,8 +37,9 @@
 #' used to train the model.
 #'
 #' @importFrom dplyr pull
-#' @importFrom ggplot2 ggplot aes scale_y_continuous labs geom_point geom_line geom_rug geom_col scale_color_manual geom_vline theme element_blank
+#' @importFrom ggplot2 ggplot aes labs geom_point geom_line geom_rug geom_col scale_color_manual geom_vline theme element_blank
 #' @importFrom patchwork wrap_plots plot_layout
+#' @importFrom stringr str_remove
 #'
 #' @seealso \code{\link{data_abund_pdp}}, \code{\link{data_abund_bpdp}}, \code{\link{p_abund_bpdp}}
 #'

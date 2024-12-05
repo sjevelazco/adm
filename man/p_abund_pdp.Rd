@@ -57,6 +57,14 @@ distinguishing conditions used in training and projection conditions
 \item{alpha}{numeric. Transparency of residuals. Default 0.2}
 
 \item{theme}{ggplot2 theme. Default ggplot2::theme_classic()}
+
+\item{sample_size}{vector. For CNN only. A vector containing the dimensions, in pixels, of raster samples. See cnn_make_samples beforehand. Default c(11,11)}
+
+\item{training_raster}{a terra SpatRaster object. For CNN only. A raster containing the predictor variables used in tune_abund_cnn or fit_abund_cnn.}
+
+\item{x_coord}{character. For CNN only. The name of the column containing longitude information for each observation.}
+
+\item{y_coord}{character. For CNN only. The name of the column containing latitude information for each observation.}
 }
 \value{
 A ggplot object

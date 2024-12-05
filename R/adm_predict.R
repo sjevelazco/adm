@@ -179,8 +179,6 @@ adm_predict <-
            sample_size = NULL) {
     . <- model <- threshold <- thr_value <- self <- response <- NULL
 
-    # TODO write codes to predict CNN ANN adapt GLM and GAM to use gamlss
-
     if (is.null(names(models))) {
       message("Predicting list of individual models")
       ensembles <- NULL

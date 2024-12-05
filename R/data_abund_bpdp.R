@@ -10,14 +10,19 @@
 #' @param projection_data SpatRaster. Raster layer with environmental variables used for model projection. Default NULL
 #' @param invert_transform logical. Invert transformation of response variable. Useful for those cases that the response variable was transformed with one of the method in \code{\link{adm_transform}}. Default NULL
 #' @param response_name character. Name of the response variable. Default NULL
+#' @param sample_size vector. For CNN only. A vector containing the dimensions, in pixels, of raster samples. See cnn_make_samples beforehand. Default c(11,11)
+#' @param training_raster a terra SpatRaster object. For CNN only. A raster containing the predictor variables used in tune_abund_cnn or fit_abund_cnn.
+#' @param x_coord character. For CNN only. The name of the column containing longitude information for each observation.
+#' @param y_coord character. For CNN only. The name of the column containing latitude information for each observation.
 #'
-#' @importFrom dplyr as_tibble select
+#' @importFrom dplyr as_tibble select all_of bind_cols mutate pull
 #' @importFrom gbm predict.gbm
 #' @importFrom grDevices chull
 #' @importFrom kernlab predict
-#' @importFrom stats na.omit
-#' @importFrom terra minmax
-#' @importFrom torch dataset torch_tensor
+#' @importFrom stats na.omit predict model.matrix
+#' @importFrom terra minmax spatSample
+#' @importFrom torch torch_manual_seed dataset torch_tensor
+#' @importFrom torchvision transform_to_tensor
 #'
 #' @seealso \code{\link{data_abund_pdp}}, \code{\link{p_abund_pdp}}, \code{\link{p_abund_bpdp}}
 #'
@@ -232,7 +237,7 @@ data_abund_bpdp <-
     # Make cnn samples
     if (variables[["model"]] == "cnn") {
       suit_c <- suit_c %>%
-        dplyr::select(-all_of(x_coord), -all_of(y_coord))
+        dplyr::select(-dplyr::all_of(x_coord), -dplyr::all_of(y_coord))
 
       training_raster <- training_raster[[names(suit_c %>% dplyr::select(-variables[["response"]]))]]
 

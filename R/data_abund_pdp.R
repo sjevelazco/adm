@@ -19,12 +19,18 @@
 #' \item Default NULL
 #' }
 #' @param response_name character. Name of the response variable. Default NULL
+#' @param sample_size vector. For CNN only. A vector containing the dimensions, in pixels, of raster samples. See cnn_make_samples beforehand. Default c(11,11)
+#' @param training_raster a terra SpatRaster object. For CNN only. A raster containing the predictor variables used in tune_abund_cnn or fit_abund_cnn.
+#' @param x_coord character. For CNN only. The name of the column containing longitude information for each observation.
+#' @param y_coord character. For CNN only. The name of the column containing latitude information for each observation.
 #'
-#' @importFrom dplyr select tibble
+#' @importFrom dplyr select all_of bind_cols tibble mutate pull
 #' @importFrom gbm predict.gbm
 #' @importFrom kernlab predict
-#' @importFrom stats na.omit
-#' @importFrom terra minmax
+#' @importFrom stats na.omit predict model.matrix
+#' @importFrom terra minmax spatSample
+#' @importFrom torch torch_manual_seed dataset torch_tensor
+#' @importFrom torchvision transform_to_tensor
 #'
 #' @return A list with two tibbles "pdpdata" and "resid".
 #' \itemize{
@@ -89,7 +95,7 @@ data_abund_pdp <-
            invert_transform = NULL,
            response_name = NULL,
            projection_data = NULL,
-           sample_size = NULL,
+           sample_size = c(11,11),
            training_raster = NULL,
            x_coord = NULL,
            y_coord = NULL) {
@@ -187,7 +193,7 @@ data_abund_pdp <-
     # Make cnn samples
     if (variables[["model"]] == "cnn") {
       suit_c <- suit_c %>%
-        dplyr::select(-all_of(x_coord), -all_of(y_coord))
+        dplyr::select(-dplyr::all_of(x_coord), -dplyr::all_of(y_coord))
 
       training_raster <- training_raster[[names(suit_c %>% dplyr::select(-variables[["response"]]))]]
 
