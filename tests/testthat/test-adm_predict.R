@@ -259,7 +259,9 @@ test_that("predic CNN", {
     m,
     envar,
     training_data = some_sp,
-    transform_negative = TRUE)
+    transform_negative = TRUE,
+    nchunk = 12,
+    sample_size = c(11,11))
   
   expect_equal(names(prd) , "cnn")
   expect_equal(class(prd) , "list")
