@@ -176,7 +176,7 @@ adm_predict <-
            predict_area = NULL,
            invert_transform = NULL,
            transform_negative = FALSE,
-           sample_size = c(11, 11)) {
+           sample_size = NULL) {
     . <- model <- threshold <- thr_value <- self <- response <- NULL
 
     # TODO write codes to predict CNN ANN adapt GLM and GAM to use gamlss
@@ -473,7 +473,12 @@ adm_predict <-
             }
           )
 
-          pred_dataset <- create_dataset(pred_df)
+          pred_names <- m_detect[[wm]] %>%
+            dplyr::select(-model, -response) %>%
+            t() %>%
+            as.vector()
+          
+          pred_dataset <- create_dataset(pred_df[,pred_names])
         }
 
         for (i in wm) {
