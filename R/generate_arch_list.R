@@ -16,7 +16,7 @@
 #' @param conv_layers_padding  numeric. Specifies the padding for the convolutional layers. Default 0.
 #' @param pooling numeric. Specifies 2D average pooling kernel size. Default NULL
 #' @param batch_norm logical. Specifies whether batch normalization is included in the architecture. Default TRUE.
-#' @param dropout numeric. Default 0.
+#' @param dropout Numeric. The probability (p) of randomly zeroing elements of the input tensor during training to prevent overfitting. Must be between 0 (no dropout) and 1 (all inputs zeroed). Default is 0 (no dropout).
 #'
 #' @importFrom dplyr rename
 #' @importFrom tidyr unnest_wider
@@ -105,8 +105,6 @@ generate_arch_list <-
            pooling = NULL,
            batch_norm = TRUE,
            dropout = 0) {
-    # TODO check documentation of this function
-
     Var1 <- Var2 <- NULL
 
     if (type == "dnn") {

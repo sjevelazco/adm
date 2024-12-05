@@ -12,7 +12,7 @@
 #' @param fc_layers_size vector. Specifies the size of the fully connected layers. Default 14.
 #' @param pooling numeric. Specifies 2D average pooling kernel size. Default NULL
 #' @param batch_norm logical. Specifies whether batch normalization is included in the architecture. Default TRUE.
-#' @param dropout numeric. Default 0.
+#' @param dropout Numeric. The probability (p) of randomly zeroing elements of the input tensor during training to prevent overfitting. Must be between 0 (no dropout) and 1 (all inputs zeroed). Default is 0 (no dropout).
 #' @param verbose logical. Specifies whether the architecture should be printed. Default FALSE.
 #'
 #' @importFrom torch nn_module nn_conv2d nn_linear nnf_relu torch_flatten torch_manual_seed
@@ -66,7 +66,6 @@ generate_cnn_architecture <-
            batch_norm = TRUE,
            dropout = 0,
            verbose = FALSE) {
-    # TODO check documentation of argument of this function dropout and pooling
     if (any(sample_size < (conv_layers_kernel + conv_layers_padding))) {
       stop("Sample dimension is too small for the choosen configuration.")
     }

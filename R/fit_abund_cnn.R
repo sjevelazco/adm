@@ -123,7 +123,6 @@ fit_abund_cnn <-
            fitting_patience = 5,
            custom_architecture = NULL,
            verbose = TRUE) {
-    # TODO check argument description validation_patience and fitting_patience
     . <- self <- corr_spear <- pdisp <- envar <- mae <- NULL
     # Variables
     if (!is.null(predictors_f)) {

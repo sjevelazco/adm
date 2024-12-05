@@ -159,7 +159,7 @@ data_abund_pdp <-
 
     # Control average factor level
     fact <- sapply(x, is.factor)
-    suit_c <- which(!fact) # TODO suit_c tem algo a ver com suitability?
+    suit_c <- which(!fact)
     fact <- which(fact)
     suit_c <- data.frame(t(apply(x[suit_c], 2, mean)))
     # suit_c <- data.frame((x[1, ])) For residuals

@@ -46,7 +46,7 @@ generate_cnn_architecture(
 
 \item{batch_norm}{logical. Specifies whether batch normalization is included in the architecture. Default TRUE.}
 
-\item{dropout}{numeric. Default 0.}
+\item{dropout}{Numeric. The probability (p) of randomly zeroing elements of the input tensor during training to prevent overfitting. Must be between 0 (no dropout) and 1 (all inputs zeroed). Default is 0 (no dropout).}
 
 \item{verbose}{logical. Specifies whether the architecture should be printed. Default FALSE.}
 }

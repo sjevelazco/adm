@@ -10,7 +10,12 @@
 #' @importFrom stats quantile
 #' @importFrom stringr str_extract_all
 #'
-#' @return A list with new architecture list, dictionary, and changes made.
+#' @return A list with:
+#' \itemize{
+#' \item arch_list: a list containing torch neural networks 
+#' \item arch_dict: a list of matrices describing the structure of those networks
+#' \item changes: a tibble with information about neural networks name changes, number of parameters and deepness
+#' } 
 #' @export
 #'
 #' @examples
@@ -43,13 +48,10 @@
 select_arch_list <-
   function(arch_list,
            type = c("dnn", "cnn"),
-           method = "percentile", # TODO
-           n_samples = 1, # TODO
-           min_max = TRUE # TODO
+           method = "percentile",
+           n_samples = 1,
+           min_max = TRUE
   ) {
-    # TODO check documentation of this function
-    # TODO write details about function returns
-
     parameters <- name <- combination <- old_name <- NULL
 
     architectures <- arch_list
@@ -101,7 +103,6 @@ select_arch_list <-
       ]
     }
 
-    # TODO - FAZ S<U+00D3> PERCENTIL
     percentile <- stats::quantile(net_size_df$parameters, probs = seq(0, 1, by = 0.1))
     net_size_df$percentile <-
       cut(net_size_df$parameters,
