@@ -19,7 +19,7 @@
 <li class="active nav-item"><a class="nav-link" href="../reference/index.html">Functions</a></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/v01_pre_modeling.html">1. Modling Workflow with adm</a></li>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/v01_modelling_workflow.html">1. Modling Workflow with adm</a></li>
   </ul></li>
 <li class="nav-item"><a class="nav-link" href="https://xx.github.io/adm" aria-label="GitHub">GitHub</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
@@ -51,7 +51,11 @@
 <span>  training_data <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  invert_transform <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  response_name <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  projection_data <span class="op">=</span> <span class="cn">NULL</span></span>
+<span>  projection_data <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  sample_size <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">11</span>, <span class="fl">11</span><span class="op">)</span>,</span>
+<span>  training_raster <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  x_coord <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  y_coord <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -98,6 +102,22 @@ to fit a model. Default NULL. Required for GLM, GAM, DNN, NET, RAF, SVM models</
 projection. When this argument is used, function will calculate partial dependence curves
 distinguishing conditions used in training and projection conditions
 (i.e., projection data present in projection area but not training). Default NULL</p></dd>
+
+
+<dt id="arg-sample-size">sample_size<a class="anchor" aria-label="anchor" href="#arg-sample-size"></a></dt>
+<dd><p>vector. For CNN only. A vector containing the dimensions, in pixels, of raster samples. See cnn_make_samples beforehand. Default c(11,11)</p></dd>
+
+
+<dt id="arg-training-raster">training_raster<a class="anchor" aria-label="anchor" href="#arg-training-raster"></a></dt>
+<dd><p>a terra SpatRaster object. For CNN only. A raster containing the predictor variables used in tune_abund_cnn or fit_abund_cnn.</p></dd>
+
+
+<dt id="arg-x-coord">x_coord<a class="anchor" aria-label="anchor" href="#arg-x-coord"></a></dt>
+<dd><p>character. For CNN only. The name of the column containing longitude information for each observation.</p></dd>
+
+
+<dt id="arg-y-coord">y_coord<a class="anchor" aria-label="anchor" href="#arg-y-coord"></a></dt>
+<dd><p>character. For CNN only. The name of the column containing latitude information for each observation.</p></dd>
 
 </dl></div>
     <div class="section level2">
