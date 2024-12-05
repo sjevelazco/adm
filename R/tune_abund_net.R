@@ -61,7 +61,7 @@
 #' # Create a grid
 #' net_grid <- expand.grid(
 #'   size = seq(from = 8, to = 32, by = 6),
-#'   decay = seq(from = 0, to = 0.4, by = 0.01), 
+#'   decay = seq(from = 0, to = 0.4, by = 0.01),
 #'   stringsAsFactors = FALSE
 #' )
 #'

@@ -18,8 +18,8 @@ A tibble with 366 rows and 6 variables:
 cretusa_data
 }
 \description{
-Cynophalla retusa (Griseb.) Cornejo & Iltis (Capparaceae) is a 
-shrub native to northeastern Argentina, Paraguay, Bolivia, 
+Cynophalla retusa (Griseb.) Cornejo & Iltis (Capparaceae) is a
+shrub native to northeastern Argentina, Paraguay, Bolivia,
 and central Brazil.
 }
 \examples{

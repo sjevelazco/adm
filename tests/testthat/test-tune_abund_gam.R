@@ -12,7 +12,7 @@ suitable_distributions <- family_selector(data = some_sp, response = "ind_ha")
 # Create a grid
 grid_0 <- expand.grid(
   inter = 1:4,
-  distribution = c("LO", "NO"), 
+  distribution = c("LO", "NO"),
   stringsAsFactors = FALSE
 )
 
@@ -31,10 +31,10 @@ test_that("tune_abund_gam", {
     predict_part = TRUE,
     metrics = c("corr_pear", "mae"),
     grid = grid_0,
-    n_cores = 3,
+    n_cores = 1,
     verbose = TRUE
   )
-  
+
   dim(tuned_$optimal_combination) %>% expect_equal(c(1, 16))
   expect_true(tuned_$performance$corr_spear_mean < 0.5)
 })
@@ -52,7 +52,7 @@ test_that("test errors", {
     grid = grid_0,
     n_cores = 1
   ))
-  
+
   expect_error(tune_abund_gam(
     data = some_sp,
     response = "ind_ha",
@@ -84,12 +84,12 @@ test_that("incomplete grid", {
     metrics = c("corr_pear", "mae"),
     grid = expand.grid(
       # inter = 1:4,
-      distribution = c("LO", "NO"), 
+      distribution = c("LO", "NO"),
       stringsAsFactors = FALSE
     ),
     n_cores = 3,
     verbose = TRUE
   )
-  
+
   expect_true("inter" %in% names(tuned_$optimal_combination))
 })

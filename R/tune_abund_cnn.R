@@ -308,7 +308,6 @@ tune_abund_cnn <-
     opts <- list(progress = progress)
 
     hyper_combinations <- foreach::foreach(i = 1:nrow(grid), .options.snow = opts, .export = c("fit_abund_cnn", "adm_eval", "cnn_make_samples", "croppin_hood"), .packages = c("dplyr")) %dopar% {
-      
       model <-
         fit_abund_cnn(
           data = data,
@@ -370,7 +369,7 @@ tune_abund_cnn <-
           verbose = verbose
         )
     )
-    
+
     arch_indexes <- stringr::str_extract_all(ranked_combinations[[1]][1, "arch"], "\\d+")
 
     message(

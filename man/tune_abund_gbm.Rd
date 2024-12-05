@@ -89,7 +89,7 @@ gbm_grid <- expand.grid(
   interaction.depth = c(2, 4, 8, 16),
   n.trees = c(100, 500, 1000),
   n.minobsinnode = c(2, 5, 8),
-  shrinkage = c(0.1, 0.5, 0.7), 
+  shrinkage = c(0.1, 0.5, 0.7),
   stringsAsFactors = FALSE
 )
 

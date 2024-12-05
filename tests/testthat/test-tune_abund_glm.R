@@ -11,10 +11,10 @@ suitable_distributions <- family_selector(data = some_sp, response = "ind_ha")
 
 # Create a grid
 grid_0 <- expand.grid(
- poly = c(2),
- inter_order = c(1),
- distribution = c("NO", "ZAGA"),
-   stringsAsFactors = FALSE
+  poly = c(2),
+  inter_order = c(1),
+  distribution = c("NO", "ZAGA"),
+  stringsAsFactors = FALSE
 )
 
 test_that("tune_abund_glm", {
@@ -28,7 +28,7 @@ test_that("tune_abund_glm", {
     predict_part = TRUE,
     metrics = c("corr_pear", "mae"),
     grid = grid_0,
-    n_cores = 3
+    n_cores = 1
   )
 
   dim(tuned_$optimal_combination) %>% expect_equal(c(1, 17))
@@ -74,7 +74,7 @@ test_that("incomplete grid", {
     partition = ".part",
     predict_part = TRUE,
     metrics = c("corr_pear", "mae"),
-    grid =  expand.grid(
+    grid = expand.grid(
       # poly = c(2),
       inter_order = c(1),
       distribution = c("NO", "ZAGA")

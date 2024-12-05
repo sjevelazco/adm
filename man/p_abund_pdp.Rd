@@ -17,7 +17,11 @@ p_abund_pdp(
   colorl = c("#462777", "#6DCC57"),
   colorp = "black",
   alpha = 0.2,
-  theme = ggplot2::theme_classic()
+  theme = ggplot2::theme_classic(),
+  sample_size = NULL,
+  training_raster = NULL,
+  x_coord = NULL,
+  y_coord = NULL
 )
 }
 \arguments{

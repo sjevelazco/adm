@@ -58,7 +58,7 @@ test_that("tune_abund_cnn and fit_abund_cnn", {
     y = "y",
     sample_size = c(11, 11),
     architectures = one_arch,
-    n_cores = 3,
+    n_cores = 1,
     verbose = FALSE
   )
   expect_equal(names(tuned_), c(
@@ -113,7 +113,7 @@ test_that("test errors", {
     y = "y",
     sample_size = c(11, 11),
     architectures = one_arch,
-    n_cores = 3,
+    n_cores = 1,
     verbose = FALSE
   ))
 
@@ -134,7 +134,7 @@ test_that("test errors", {
       y = "y",
       sample_size = c(11, 11),
       architectures = one_arch,
-      n_cores = 3,
+      n_cores = 1,
       verbose = FALSE
     )
   )
@@ -192,7 +192,7 @@ test_that("incomplete grid", {
     y = "y",
     sample_size = c(11, 11),
     architectures = one_arch,
-    n_cores = 3,
+    n_cores = 1,
     verbose = FALSE
   )
 

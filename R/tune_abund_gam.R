@@ -152,7 +152,7 @@ tune_abund_gam <-
     comb_id <- paste("comb_", 1:nrow(grid), sep = "")
     grid <- cbind(comb_id, grid)
     grid$distribution <- as.character(grid$distribution)
-    
+
     # looping the grid
     message("Searching for optimal hyperparameters...")
 
@@ -166,7 +166,7 @@ tune_abund_gam <-
     families_bank <-
       system.file("external/families_bank.txt", package = "adm") %>%
       utils::read.delim(., header = TRUE, quote = "\t")
-    
+
     hyper_combinations <- foreach::foreach(
       i = 1:nrow(grid),
       .options.snow = opts,
@@ -193,7 +193,7 @@ tune_abund_gam <-
               inter = grid[i, "inter"],
               verbose = verbose
             )
-          
+
           l <- list(cbind(grid[i, ], model$performance))
           l[[1]]
         },
@@ -203,10 +203,10 @@ tune_abund_gam <-
       )
     }
     parallel::stopCluster(cl)
-    
+
     # Remove NULL values (i.e., models that not could be fitted)
     hyper_combinations <- hyper_combinations[!sapply(hyper_combinations, is.null)]
-    
+
     hyper_combinations <- dplyr::bind_rows(hyper_combinations)
 
     if ("performance" %in% names(hyper_combinations)) {

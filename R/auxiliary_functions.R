@@ -41,16 +41,16 @@ adapt_df <- function(data, predictors, predictors_f, response, partition, xy = N
 #'
 #' @noRd
 cnn_get_crop_size <- function(sample_size) {
-    if (!is.vector(sample_size)) {
-      stop("Please, provide a vector containing the sample size c(width,height)")
-    } else if (!(sample_size[[1]] == sample_size[[2]])) {
-      stop("adm currently only accepts square samples.")
-    } else {
-      crop_size <- floor(sample_size[[1]] / 2)
-    }
-
-    return(crop_size)
+  if (!is.vector(sample_size)) {
+    stop("Please, provide a vector containing the sample size c(width,height)")
+  } else if (!(sample_size[[1]] == sample_size[[2]])) {
+    stop("adm currently only accepts square samples.")
+  } else {
+    crop_size <- floor(sample_size[[1]] / 2)
   }
+
+  return(crop_size)
+}
 
 #' Crop rasters around a point (Convolutional Neural Networks)
 #'

@@ -302,7 +302,7 @@ tune_abund_dnn <-
           verbose = verbose
         )
     )
-    
+
     arch_indexes <- stringr::str_extract_all(ranked_combinations[[1]][1, "arch"], "\\d+")
     n_layers <- arch_indexes[[1]][[1]]
     layer_index <- paste0(n_layers, "_layer_net")

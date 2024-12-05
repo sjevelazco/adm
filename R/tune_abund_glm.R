@@ -176,7 +176,7 @@ tune_abund_glm <-
     families_bank <-
       system.file("external/families_bank.txt", package = "adm") %>%
       utils::read.delim(., header = TRUE, quote = "\t")
-    
+
     hyper_combinations <- foreach::foreach(
       i = 1:nrow(grid),
       .options.snow = opts,
@@ -202,17 +202,17 @@ tune_abund_glm <-
               inter_order = grid[i, "inter_order"],
               verbose = verbose
             )
-          
+
           l <- list(cbind(grid[i, ], model$performance))
           l[[1]]
-      },
-      error = function(err) {
-        NULL
-      }
+        },
+        error = function(err) {
+          NULL
+        }
       )
     }
     parallel::stopCluster(cl)
-    
+
     # Remove NULL values (i.e., models that not could be fitted)
     hyper_combinations <- hyper_combinations[!sapply(hyper_combinations, is.null)]
 
@@ -236,7 +236,7 @@ tune_abund_glm <-
     choosen_poly <- ranked_combinations[[1]][1, "poly"]
     choosen_inter_order <- ranked_combinations[[1]][1, "inter_order"]
     full_data <- data
-    
+
     message("\nFitting the best model...")
     final_model <-
       fit_abund_glm(

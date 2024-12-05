@@ -223,12 +223,12 @@ fit_abund_dnn <-
             ) %>%
             luz::set_opt_hparams(lr = learning_rate) %>%
             luz::fit(train_dataloader,
-                     valid_data = test_dataloader,
-                     epochs = n_epochs,
-                     callbacks = luz::luz_callback_early_stopping(patience = validation_patience)
+              valid_data = test_dataloader,
+              epochs = n_epochs,
+              callbacks = luz::luz_callback_early_stopping(patience = validation_patience)
             )
         )
-        
+
         pred <- predict(fitted, test_set) %>% as.numeric()
 
         if (!(sum(is.na(pred)) == length(pred))) {
@@ -274,14 +274,14 @@ fit_abund_dnn <-
         ) %>%
         luz::set_opt_hparams(lr = learning_rate) %>%
         luz::fit(df_dl,
-                 epochs = n_epochs,
-                 callbacks = luz::luz_callback_early_stopping(
-                   monitor = "train_loss",
-                   patience = fitting_patience
-                 )
+          epochs = n_epochs,
+          callbacks = luz::luz_callback_early_stopping(
+            monitor = "train_loss",
+            patience = fitting_patience
+          )
         )
     )
-    
+
     # bind predicted evaluation
     eval_partial <- eval_partial_list %>%
       dplyr::bind_rows(.id = "replica") %>%

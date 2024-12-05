@@ -18,7 +18,11 @@ p_abund_bpdp(
   color_training_boundaries = "white",
   set_max = NULL,
   set_min = NULL,
-  theme = ggplot2::theme_classic()
+  theme = ggplot2::theme_classic(),
+  sample_size = NULL,
+  training_raster = NULL,
+  x_coord = NULL,
+  y_coord = NULL
 )
 }
 \arguments{
