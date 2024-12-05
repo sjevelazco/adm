@@ -27,7 +27,7 @@
 #' @importFrom dplyr select all_of bind_cols tibble mutate pull
 #' @importFrom gbm predict.gbm
 #' @importFrom kernlab predict
-#' @importFrom stats na.omit predict model.matrix
+#' @importFrom stats na.omit model.matrix
 #' @importFrom terra minmax spatSample
 #' @importFrom torch torch_manual_seed dataset torch_tensor
 #' @importFrom torchvision transform_to_tensor
