@@ -14,8 +14,8 @@ some_sp <- sppabund %>%
   dplyr::filter(species == "Species one") %>%
   dplyr::select(-.part2, -.part3)
 
-envar <- terra::crop(envar, terra::ext(as.matrix(some_sp[c("x", "y")])))
-plot(envar)
+# envar <- terra::crop(envar, terra::ext(as.matrix(some_sp[c("x", "y")])))
+# plot(envar)
 
 #### predict XGB ####
 test_that("predic XGB", {
