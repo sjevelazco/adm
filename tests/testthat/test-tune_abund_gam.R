@@ -87,7 +87,7 @@ test_that("incomplete grid", {
       distribution = c("LO", "NO"),
       stringsAsFactors = FALSE
     ),
-    n_cores = 3,
+    n_cores = 1,
     verbose = TRUE
   )
 

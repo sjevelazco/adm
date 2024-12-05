@@ -44,7 +44,7 @@ test_that("tune_abund_dnn and fit_abund_dnn", {
     metrics = c("corr_pear", "mae"),
     grid = dnn_grid,
     architectures = one_arch,
-    n_cores = 3, verbose = FALSE
+    n_cores = 1, verbose = FALSE
   )
   expect_equal(names(tuned_), c(
     "model", "predictors", "performance", "performance_part",
@@ -84,7 +84,7 @@ test_that("test errors", {
     # metrics = c("corr_pear", "mae"),
     grid = dnn_grid,
     architectures = one_arch,
-    n_cores = 3
+    n_cores = 1
   ))
 
   expect_error(tune_abund_dnn(
@@ -99,7 +99,7 @@ test_that("test errors", {
       ntreeE = c(100, 500)
     ),
     architectures = one_arch,
-    n_cores = 3
+    n_cores = 1
   ))
 })
 
@@ -136,7 +136,7 @@ test_that("test errors", {
 #     )
 #     ,
 #     architectures = one_arch,
-#     n_cores = 3
+#     n_cores = 1
 #   )
 #
 #   expect_true("n_epochs" %in% names(tuned_$optimal_combination))
