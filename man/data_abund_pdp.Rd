@@ -13,7 +13,7 @@ data_abund_pdp(
   invert_transform = NULL,
   response_name = NULL,
   projection_data = NULL,
-  sample_size = NULL,
+  sample_size = c(11, 11),
   training_raster = NULL,
   x_coord = NULL,
   y_coord = NULL
@@ -46,6 +46,14 @@ to fit a model. Default NULL. Required for GLM, GAM, DNN, NET, RAF, SVM models}
 projection. When this argument is used, function will calculate partial dependence curves
 distinguishing conditions used in training and projection conditions
 (i.e., projection data present in projection area but not training). Default NULL}
+
+\item{sample_size}{vector. For CNN only. A vector containing the dimensions, in pixels, of raster samples. See cnn_make_samples beforehand. Default c(11,11)}
+
+\item{training_raster}{a terra SpatRaster object. For CNN only. A raster containing the predictor variables used in tune_abund_cnn or fit_abund_cnn.}
+
+\item{x_coord}{character. For CNN only. The name of the column containing longitude information for each observation.}
+
+\item{y_coord}{character. For CNN only. The name of the column containing latitude information for each observation.}
 }
 \value{
 A list with two tibbles "pdpdata" and "resid".

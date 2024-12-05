@@ -35,6 +35,14 @@ data_abund_bpdp(
 \item{training_boundaries}{character. Plot training conditions boundaries based on training data (i.e., presences, presences and absences, etc). If training_boundaries = "convexh", function will delimit training environmental region based on a convex-hull. If training_boundaries = "rectangle", function will delimit training environmental region based on four straight lines. If used any methods it is necessary provide data in training_data argument. If NULL all predictors will be used. Default NULL.}
 
 \item{projection_data}{SpatRaster. Raster layer with environmental variables used for model projection. Default NULL}
+
+\item{sample_size}{vector. For CNN only. A vector containing the dimensions, in pixels, of raster samples. See cnn_make_samples beforehand. Default c(11,11)}
+
+\item{training_raster}{a terra SpatRaster object. For CNN only. A raster containing the predictor variables used in tune_abund_cnn or fit_abund_cnn.}
+
+\item{x_coord}{character. For CNN only. The name of the column containing longitude information for each observation.}
+
+\item{y_coord}{character. For CNN only. The name of the column containing latitude information for each observation.}
 }
 \value{
 A list with two tibbles "pdpdata" and "resid".
