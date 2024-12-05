@@ -24,7 +24,12 @@ select_arch_list(
 \item{min_max}{logical. If TRUE, include networks with minimal and maximal parameters.}
 }
 \value{
-A list with new architecture list, dictionary, and changes made.
+A list with:
+\itemize{
+\item arch_list: a list containing torch neural networks 
+\item arch_dict: a list of matrices describing the structure of those networks
+\item changes: a tibble with information about neural networks name changes, number of parameters and deepness
+}
 }
 \description{
 Select architectures for Convolutional Neural Network or Deep Neural Network
