@@ -421,6 +421,7 @@ adm_predict <-
       wm <- which(clss == "luz_module_fitted")
       if (length(wm) > 0) {
         wm <- names(wm)
+        torch::torch_manual_seed(13)
 
         # create_dataset definition
         if (m_detect[[wm]][["model"]] == "cnn") {
