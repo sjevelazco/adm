@@ -423,8 +423,6 @@ adm_predict <-
         wm <- names(wm)
         set.seed(13)
         torch::torch_manual_seed(13)
-        torch.generator <- torch::torch_generator()
-        torch.generator$set_current_seed(13L)
 
         # create_dataset definition
         if (m_detect[[wm]][["model"]] == "cnn") {
