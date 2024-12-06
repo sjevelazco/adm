@@ -210,10 +210,13 @@ fit_abund_dnn <-
         test_set <- data[data[, p_names[h]] == folds[j], c(predictors, response)] %>%
           create_dataset(response_variable = response)
 
-        train_dataloader <- torch::dataloader(train_set, batch_size = batch_size, shuffle = TRUE)
-        test_dataloader <- torch::dataloader(test_set, batch_size = batch_size, shuffle = TRUE)
+        train_dataloader <- torch::dataloader(train_set, batch_size = batch_size, shuffle = TRUE, num_workers = 0)
+        test_dataloader <- torch::dataloader(test_set, batch_size = batch_size, shuffle = TRUE, num_workers = 0)
 
         set.seed(13)
+        torch::torch_manual_seed(13)
+        torch.generator <- torch::torch_generator()
+        torch.generator$set_current_seed(13L)
         suppressMessages(
           fitted <- net %>%
             luz::setup(
@@ -262,9 +265,12 @@ fit_abund_dnn <-
 
     # fit final model with all data
     df <- create_dataset(data[, c(predictors, response)], response)
-    df_dl <- torch::dataloader(df, batch_size = batch_size, shuffle = TRUE)
+    df_dl <- torch::dataloader(df, batch_size = batch_size, shuffle = TRUE, num_workers = 0)
 
     set.seed(13)
+    torch::torch_manual_seed(13)
+    torch.generator <- torch::torch_generator()
+    torch.generator$set_current_seed(13L)
     suppressMessages(
       full_fitted <- net %>%
         luz::setup(
