@@ -421,7 +421,10 @@ adm_predict <-
       wm <- which(clss == "luz_module_fitted")
       if (length(wm) > 0) {
         wm <- names(wm)
+        set.seed(13)
         torch::torch_manual_seed(13)
+        torch.generator <- torch::torch_generator()
+        torch.generator$set_current_seed(13L)
 
         # create_dataset definition
         if (m_detect[[wm]][["model"]] == "cnn") {
@@ -484,7 +487,7 @@ adm_predict <-
           r <- pred[[!terra::is.factor(pred)]][[1]]
           r[!is.na(r)] <- NA
           r[as.numeric(rownames(pred_df))] <-
-            suppressMessages(stats::predict(m[[i]], pred_dataset) %>% as.numeric())
+            suppressMessages(stats::predict(m[[i]], pred_dataset, shuffle = TRUE) %>% as.numeric())
 
           model_c[[i]][rowset] <- r[rowset]
         }
