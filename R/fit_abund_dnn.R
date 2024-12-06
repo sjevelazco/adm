@@ -215,8 +215,6 @@ fit_abund_dnn <-
 
         set.seed(13)
         torch::torch_manual_seed(13)
-        torch.generator <- torch::torch_generator()
-        torch.generator$set_current_seed(13L)
         suppressMessages(
           fitted <- net %>%
             luz::setup(
@@ -269,8 +267,6 @@ fit_abund_dnn <-
 
     set.seed(13)
     torch::torch_manual_seed(13)
-    torch.generator <- torch::torch_generator()
-    torch.generator$set_current_seed(13L)
     suppressMessages(
       full_fitted <- net %>%
         luz::setup(
