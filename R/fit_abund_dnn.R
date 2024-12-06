@@ -95,6 +95,7 @@ fit_abund_dnn <-
            custom_architecture = NULL,
            verbose = TRUE) {
     . <- self <- model <- mae <- pdisp <- NULL
+    torch::torch_manual_seed(13)
     # Variables
     if (!is.null(predictors_f)) {
       variables <- dplyr::bind_rows(c(c = predictors, f = predictors_f))
