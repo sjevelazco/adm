@@ -353,7 +353,7 @@ mdnn <- tune_abund_dnn(
   grid = dnn_grid,
   architectures = archs,
   metrics = c("corr_pear", "mae"),
-  n_cores = 5,
+  n_cores = 10,
   verbose = FALSE
 )
 ```
@@ -398,7 +398,7 @@ To predict DNN, we need to pay attention to some detail.
 As we trained the DNN with tranformed response, if we want it to predict in the original scale, we need to use the "invert_transform" argument in *adm_predict*:
 
 ```{r dnn pred}
-pred_dnn <- adm::adm_predict(
+pred_dnn <- adm_predict(
   models = mdnn,
   pred = cretusa_predictors,
   predict_area = sp_train_a,
