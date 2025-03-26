@@ -95,7 +95,7 @@ data_abund_pdp <-
            invert_transform = NULL,
            response_name = NULL,
            projection_data = NULL,
-           sample_size = c(11,11),
+           sample_size = c(11, 11),
            training_raster = NULL,
            x_coord = NULL,
            y_coord = NULL) {

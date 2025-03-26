@@ -139,7 +139,7 @@ tune_abund_dnn <-
       !all(metrics %in% c("corr_spear", "corr_pear", "mae", "inter", "slope", "pdisp"))) {
       stop("Metrics is needed to be defined in 'metric' argument")
     }
-    
+
     torch::torch_manual_seed(13)
 
     # architectures

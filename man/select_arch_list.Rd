@@ -26,7 +26,7 @@ select_arch_list(
 \value{
 A list with:
 \itemize{
-\item arch_list: a list containing torch neural networks 
+\item arch_list: a list containing torch neural networks
 \item arch_dict: a list of matrices describing the structure of those networks
 \item changes: a tibble with information about neural networks name changes, number of parameters and deepness
 }

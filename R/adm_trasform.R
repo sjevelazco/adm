@@ -35,16 +35,16 @@
 #' \dontrun{
 #' require(dplyr)
 #' require(terra)
-#' 
+#'
 #' # Select data for a single species
 #' data("sppabund")
 #' some_sp <- sppabund %>%
 #'   dplyr::filter(species == "Species one") %>%
 #'   dplyr::select(species, ind_ha, x, y)
-#' 
+#'
 #' envar <- system.file("external/envar.tif", package = "adm")
 #' envar <- terra::rast(envar)[["bio12"]]
-#' 
+#'
 #' # Transform tabular data
 #' ## Transform abundance data to 0-1
 #' some_sp_2 <- adm_transform(
@@ -53,7 +53,7 @@
 #'   method = "01"
 #' )
 #' some_sp_2
-#' 
+#'
 #' ## Transform abundance data z-score
 #' some_sp_2 <- adm_transform(
 #'   data = some_sp,
@@ -61,7 +61,7 @@
 #'   method = "zscore"
 #' )
 #' some_sp_2
-#' 
+#'
 #' ## Transform abundance data log
 #' some_sp_2 <- adm_transform(
 #'   data = some_sp,
@@ -69,7 +69,7 @@
 #'   method = "log"
 #' )
 #' some_sp_2
-#' 
+#'
 #' ## Round abundance data
 #' some_sp_2 <- adm_transform(
 #'   data = some_sp,
@@ -77,36 +77,40 @@
 #'   method = "round"
 #' )
 #' some_sp_2
-#' 
+#'
 #' # Tranform raster data
 #' ## Transform to 0-1
 #' envar_2 <- adm_transform(
-#'   data = envar, 
-#'   variable = "bio12", 
-#'   method = "01")
+#'   data = envar,
+#'   variable = "bio12",
+#'   method = "01"
+#' )
 #' envar_2
-#' 
+#'
 #' ## Transform z-score
 #' envar_2 <- adm_transform(
-#'   data = envar, 
-#'   variable = "bio12", 
-#'   method = "zscore")
+#'   data = envar,
+#'   variable = "bio12",
+#'   method = "zscore"
+#' )
 #' envar_2
-#' 
+#'
 #' ## Transform log
 #' envar_2 <- adm_transform(
-#'   data = envar, 
-#'   variable = "bio12", 
-#'   method = "log")
+#'   data = envar,
+#'   variable = "bio12",
+#'   method = "log"
+#' )
 #' envar_2
-#' 
+#'
 #' ## Round
 #' envar_2 <- adm_transform(
-#'   data = envar, 
-#'   variable = "bio12", 
-#'   method = "round")
+#'   data = envar,
+#'   variable = "bio12",
+#'   method = "round"
+#' )
 #' envar_2
-#' 
+#'
 #' # Invert transformation
 #' ## Invert 01 tranformation
 #' some_sp_transformed <- adm_transform(
@@ -115,17 +119,19 @@
 #'   method = "01"
 #' )
 #' some_sp_transformed
-#' 
+#'
 #' some_sp_inverted <- adm_transform(
 #'   data = some_sp_transformed,
 #'   variable = "ind_ha_01",
 #'   method = "01",
 #'   inverse = TRUE,
-#'   t_terms = c(a = min(some_sp[["ind_ha"]]),
-#'               b = max(some_sp[["ind_ha"]]))
+#'   t_terms = c(
+#'     a = min(some_sp[["ind_ha"]]),
+#'     b = max(some_sp[["ind_ha"]])
+#'   )
 #' )
 #' some_sp_inverted
-#' 
+#'
 #' ## Invert z-score tranformation
 #' some_sp_transformed <- adm_transform(
 #'   data = some_sp,
@@ -133,17 +139,19 @@
 #'   method = "zscore"
 #' )
 #' some_sp_transformed
-#' 
+#'
 #' some_sp_inverted <- adm_transform(
 #'   data = some_sp_transformed,
 #'   variable = "ind_ha_zscore",
 #'   method = "zscore",
 #'   inverse = TRUE,
-#'   t_terms = c(a = mean(some_sp[["ind_ha"]]),
-#'               b = sd(some_sp[["ind_ha"]]))
+#'   t_terms = c(
+#'     a = mean(some_sp[["ind_ha"]]),
+#'     b = sd(some_sp[["ind_ha"]])
+#'   )
 #' )
 #' some_sp_inverted
-#' 
+#'
 #' ## Invert log and log1
 #' some_sp_transformed <- adm_transform(
 #'   data = some_sp,
@@ -151,7 +159,7 @@
 #'   method = "log"
 #' )
 #' some_sp_transformed
-#' 
+#'
 #' some_sp_inverted <- adm_transform(
 #'   data = some_sp_transformed,
 #'   variable = "ind_ha_log",
@@ -159,14 +167,14 @@
 #'   inverse = TRUE
 #' )
 #' some_sp_inverted
-#' 
+#'
 #' some_sp_transformed <- adm_transform(
 #'   data = some_sp,
 #'   variable = "ind_ha",
 #'   method = "log1"
 #' )
 #' some_sp_transformed
-#' 
+#'
 #' some_sp_inverted <- adm_transform(
 #'   data = some_sp_transformed,
 #'   variable = "ind_ha_log1",
@@ -174,22 +182,25 @@
 #'   inverse = TRUE
 #' )
 #' some_sp_inverted
-#' 
+#'
 #' ## To invert raster, is the same process
 #' ## Example:
 #' envar_transformed <- adm_transform(
-#'   data = envar, 
-#'   variable = "bio12", 
-#'   method = "01")
+#'   data = envar,
+#'   variable = "bio12",
+#'   method = "01"
+#' )
 #' envar_transformed
-#' 
+#'
 #' envar_inverted <- adm_transform(
-#'   data = envar_transformed, 
-#'   variable = "bio12_01", 
+#'   data = envar_transformed,
+#'   variable = "bio12_01",
 #'   method = "01",
 #'   inverse = TRUE,
-#'   t_terms = c(a = terra::global(envar, min, na.rm=T),
-#'               b = terra::global(envar, max, na.rm=T))
+#'   t_terms = c(
+#'     a = terra::global(envar, min, na.rm = T),
+#'     b = terra::global(envar, max, na.rm = T)
+#'   )
 #' )
 #' envar_inverted
 #' }

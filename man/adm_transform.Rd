@@ -88,30 +88,34 @@ some_sp_2
 # Tranform raster data
 ## Transform to 0-1
 envar_2 <- adm_transform(
-  data = envar, 
-  variable = "bio12", 
-  method = "01")
+  data = envar,
+  variable = "bio12",
+  method = "01"
+)
 envar_2
 
 ## Transform z-score
 envar_2 <- adm_transform(
-  data = envar, 
-  variable = "bio12", 
-  method = "zscore")
+  data = envar,
+  variable = "bio12",
+  method = "zscore"
+)
 envar_2
 
 ## Transform log
 envar_2 <- adm_transform(
-  data = envar, 
-  variable = "bio12", 
-  method = "log")
+  data = envar,
+  variable = "bio12",
+  method = "log"
+)
 envar_2
 
 ## Round
 envar_2 <- adm_transform(
-  data = envar, 
-  variable = "bio12", 
-  method = "round")
+  data = envar,
+  variable = "bio12",
+  method = "round"
+)
 envar_2
 
 # Invert transformation
@@ -128,8 +132,10 @@ some_sp_inverted <- adm_transform(
   variable = "ind_ha_01",
   method = "01",
   inverse = TRUE,
-  t_terms = c(a = min(some_sp[["ind_ha"]]),
-              b = max(some_sp[["ind_ha"]]))
+  t_terms = c(
+    a = min(some_sp[["ind_ha"]]),
+    b = max(some_sp[["ind_ha"]])
+  )
 )
 some_sp_inverted
 
@@ -146,8 +152,10 @@ some_sp_inverted <- adm_transform(
   variable = "ind_ha_zscore",
   method = "zscore",
   inverse = TRUE,
-  t_terms = c(a = mean(some_sp[["ind_ha"]]),
-              b = sd(some_sp[["ind_ha"]]))
+  t_terms = c(
+    a = mean(some_sp[["ind_ha"]]),
+    b = sd(some_sp[["ind_ha"]])
+  )
 )
 some_sp_inverted
 
@@ -185,18 +193,21 @@ some_sp_inverted
 ## To invert raster, is the same process
 ## Example:
 envar_transformed <- adm_transform(
-  data = envar, 
-  variable = "bio12", 
-  method = "01")
+  data = envar,
+  variable = "bio12",
+  method = "01"
+)
 envar_transformed
 
 envar_inverted <- adm_transform(
-  data = envar_transformed, 
-  variable = "bio12_01", 
+  data = envar_transformed,
+  variable = "bio12_01",
   method = "01",
   inverse = TRUE,
-  t_terms = c(a = terra::global(envar, min, na.rm=T),
-              b = terra::global(envar, max, na.rm=T))
+  t_terms = c(
+    a = terra::global(envar, min, na.rm = T),
+    b = terra::global(envar, max, na.rm = T)
+  )
 )
 envar_inverted
 }

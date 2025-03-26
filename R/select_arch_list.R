@@ -12,10 +12,10 @@
 #'
 #' @return A list with:
 #' \itemize{
-#' \item arch_list: a list containing torch neural networks 
+#' \item arch_list: a list containing torch neural networks
 #' \item arch_dict: a list of matrices describing the structure of those networks
 #' \item changes: a tibble with information about neural networks name changes, number of parameters and deepness
-#' } 
+#' }
 #' @export
 #'
 #' @examples
@@ -50,8 +50,7 @@ select_arch_list <-
            type = c("dnn", "cnn"),
            method = "percentile",
            n_samples = 1,
-           min_max = TRUE
-  ) {
+           min_max = TRUE) {
     parameters <- name <- combination <- old_name <- NULL
 
     architectures <- arch_list

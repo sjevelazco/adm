@@ -1,8 +1,8 @@
-##%######################################################%##
+## %######################################################%##
 #                                                          #
 ####                    Predict test                    ####
 #                                                          #
-##%######################################################%##
+## %######################################################%##
 require(dplyr)
 require(terra)
 envar <- system.file("external/envar.tif", package = "adm") %>%
@@ -23,7 +23,7 @@ test_that("predic XGB", {
   m <- fit_abund_xgb(
     data = some_sp,
     response = "ind_ha",
-    predictors = c("bio12","elevation","sand"),
+    predictors = c("bio12", "elevation", "sand"),
     # predictors_f = c("eco"),
     partition = ".part",
     nrounds = 200,
@@ -36,16 +36,17 @@ test_that("predic XGB", {
     objective = "reg:squarederror",
     predict_part = TRUE
   )
-  
+
   prd <- adm_predict(
     m,
     envar,
     training_data = some_sp,
-    transform_negative = TRUE)
-  
-  expect_equal(names(prd) , "xgb")
-  expect_equal(class(prd) , "list")
-  expect_equal(class(prd[[1]])[[1]] , "SpatRaster")
+    transform_negative = TRUE
+  )
+
+  expect_equal(names(prd), "xgb")
+  expect_equal(class(prd), "list")
+  expect_equal(class(prd[[1]])[[1]], "SpatRaster")
 })
 
 #### predict SVM ####
@@ -54,7 +55,7 @@ test_that("predic SVM", {
   m <- fit_abund_svm(
     data = some_sp,
     response = "ind_ha",
-    predictors = c("bio12","elevation","sand"),
+    predictors = c("bio12", "elevation", "sand"),
     predictors_f = c("eco"),
     partition = ".part",
     kernel = "rbfdot",
@@ -62,16 +63,17 @@ test_that("predic SVM", {
     C = 1,
     predict_part = TRUE
   )
-  
+
   prd <- adm_predict(
     m,
     envar,
     training_data = some_sp,
-    transform_negative = TRUE)
-  
-  expect_equal(names(prd) , "svm")
-  expect_equal(class(prd) , "list")
-  expect_equal(class(prd[[1]])[[1]] , "SpatRaster")
+    transform_negative = TRUE
+  )
+
+  expect_equal(names(prd), "svm")
+  expect_equal(class(prd), "list")
+  expect_equal(class(prd[[1]])[[1]], "SpatRaster")
 })
 
 #### predict NET ####
@@ -80,24 +82,25 @@ test_that("predic NET", {
   m <- fit_abund_net(
     data = some_sp,
     response = "ind_ha",
-    predictors = c("bio12","elevation","sand"),
+    predictors = c("bio12", "elevation", "sand"),
     predictors_f = c("eco"),
     partition = ".part",
     size = 32,
     decay = 0.01,
     predict_part = TRUE
   )
-  
-  
+
+
   prd <- adm_predict(
     m,
     envar,
     training_data = some_sp,
-    transform_negative = TRUE)
-  
-  expect_equal(names(prd) , "net")
-  expect_equal(class(prd) , "list")
-  expect_equal(class(prd[[1]])[[1]] , "SpatRaster")
+    transform_negative = TRUE
+  )
+
+  expect_equal(names(prd), "net")
+  expect_equal(class(prd), "list")
+  expect_equal(class(prd[[1]])[[1]], "SpatRaster")
 })
 
 #### predict GBM ####
@@ -106,7 +109,7 @@ test_that("predic GBM", {
   m <- fit_abund_gbm(
     data = some_sp,
     response = "ind_ha",
-    predictors = c("bio12","elevation","sand"),
+    predictors = c("bio12", "elevation", "sand"),
     predictors_f = c("eco"),
     partition = ".part",
     distribution = "gaussian",
@@ -116,16 +119,17 @@ test_that("predic GBM", {
     shrinkage = 0.1,
     predict_part = TRUE
   )
-  
+
   prd <- adm_predict(
     m,
     envar,
     training_data = some_sp,
-    transform_negative = TRUE)
-  
-  expect_equal(names(prd) , "gbm")
-  expect_equal(class(prd) , "list")
-  expect_equal(class(prd[[1]])[[1]] , "SpatRaster")
+    transform_negative = TRUE
+  )
+
+  expect_equal(names(prd), "gbm")
+  expect_equal(class(prd), "list")
+  expect_equal(class(prd[[1]])[[1]], "SpatRaster")
 })
 
 #### predict GLM ####
@@ -134,7 +138,7 @@ test_that("predic GLM", {
   m <- fit_abund_glm(
     data = some_sp,
     response = "ind_ha",
-    predictors = c("bio12","elevation","sand"),
+    predictors = c("bio12", "elevation", "sand"),
     predictors_f = NULL,
     partition = ".part",
     distribution = "NO",
@@ -142,16 +146,17 @@ test_that("predic GLM", {
     inter_order = 2,
     predict_part = TRUE
   )
-  
+
   prd <- adm_predict(
     m,
     envar,
     training_data = some_sp,
-    transform_negative = TRUE)
-  
-  expect_equal(names(prd) , "glm")
-  expect_equal(class(prd) , "list")
-  expect_equal(class(prd[[1]])[[1]] , "SpatRaster")
+    transform_negative = TRUE
+  )
+
+  expect_equal(names(prd), "glm")
+  expect_equal(class(prd), "list")
+  expect_equal(class(prd[[1]])[[1]], "SpatRaster")
 })
 
 #### predict GAM ####
@@ -160,24 +165,25 @@ test_that("predic GAM", {
   suppressWarnings(m <- fit_abund_gam(
     data = some_sp,
     response = "ind_ha",
-    predictors = c("bio12","elevation","sand"),
+    predictors = c("bio12", "elevation", "sand"),
     predictors_f = c("eco"),
     partition = ".part",
     distribution = "NO",
     inter = "automatic",
     predict_part = TRUE
   ))
-  
-  
+
+
   prd <- adm_predict(
     m,
     envar,
     training_data = some_sp,
-    transform_negative = TRUE)
-  
-  expect_equal(names(prd) , "gam")
-  expect_equal(class(prd) , "list")
-  expect_equal(class(prd[[1]])[[1]] , "SpatRaster")
+    transform_negative = TRUE
+  )
+
+  expect_equal(names(prd), "gam")
+  expect_equal(class(prd), "list")
+  expect_equal(class(prd[[1]])[[1]], "SpatRaster")
 })
 
 #### predict RAF ####
@@ -186,24 +192,25 @@ test_that("predic RAF", {
   m <- fit_abund_raf(
     data = some_sp,
     response = "ind_ha",
-    predictors = c("bio12","elevation","sand"),
+    predictors = c("bio12", "elevation", "sand"),
     predictors_f = c("eco"),
     partition = ".part",
     mtry = 3,
     ntree = 500,
     predict_part = TRUE
   )
-  
-  
+
+
   prd <- adm_predict(
     m,
     envar,
     training_data = some_sp,
-    transform_negative = TRUE)
-  
-  expect_equal(names(prd) , "raf")
-  expect_equal(class(prd) , "list")
-  expect_equal(class(prd[[1]])[[1]] , "SpatRaster")
+    transform_negative = TRUE
+  )
+
+  expect_equal(names(prd), "raf")
+  expect_equal(class(prd), "list")
+  expect_equal(class(prd[[1]])[[1]], "SpatRaster")
 })
 
 #### predict CNN ####
@@ -229,7 +236,7 @@ test_that("predic CNN", {
     dropout = 0,
     verbose = T
   )
-  
+
   if (!torch::torch_is_installed()) {
     skip()
   }
@@ -253,19 +260,20 @@ test_that("predic CNN", {
     verbose = TRUE,
     predict_part = TRUE
   )
-  
-  
+
+
   prd <- adm_predict(
     m,
     envar,
     training_data = some_sp,
     transform_negative = TRUE,
     nchunk = 12,
-    sample_size = c(11,11))
-  
-  expect_equal(names(prd) , "cnn")
-  expect_equal(class(prd) , "list")
-  expect_equal(class(prd[[1]])[[1]] , "SpatRaster")
+    sample_size = c(11, 11)
+  )
+
+  expect_equal(names(prd), "cnn")
+  expect_equal(class(prd), "list")
+  expect_equal(class(prd[[1]])[[1]], "SpatRaster")
 })
 
 #### predict DNN ####
@@ -282,7 +290,7 @@ test_that("predic DNN", {
     hidden_layers_size = c(8, 16, 8),
     batch_norm = TRUE
   )
-  
+
   if (!torch::torch_is_installed()) {
     skip()
   }
@@ -290,7 +298,7 @@ test_that("predic DNN", {
   m <- fit_abund_dnn(
     data = some_sp,
     response = "ind_ha",
-    predictors = c("bio12","elevation","sand"),
+    predictors = c("bio12", "elevation", "sand"),
     predictors_f = NULL,
     partition = ".part",
     learning_rate = 0.01,
@@ -302,14 +310,15 @@ test_that("predic DNN", {
     verbose = TRUE,
     predict_part = TRUE
   )
-  
+
   prd <- adm_predict(
     m,
     envar,
     training_data = some_sp,
-    transform_negative = TRUE)
-  
-  expect_equal(names(prd) , "dnn")
-  expect_equal(class(prd) , "list")
-  expect_equal(class(prd[[1]])[[1]] , "SpatRaster")
+    transform_negative = TRUE
+  )
+
+  expect_equal(names(prd), "dnn")
+  expect_equal(class(prd), "list")
+  expect_equal(class(prd[[1]])[[1]], "SpatRaster")
 })

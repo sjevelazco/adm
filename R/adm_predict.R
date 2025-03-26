@@ -477,8 +477,8 @@ adm_predict <-
             dplyr::select(-model, -response) %>%
             t() %>%
             as.vector()
-          
-          pred_dataset <- create_dataset(pred_df[,pred_names])
+
+          pred_dataset <- create_dataset(pred_df[, pred_names])
         }
 
         for (i in wm) {
