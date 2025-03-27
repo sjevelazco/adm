@@ -48,3 +48,54 @@
 #' cretusa_data
 #' }
 "cretusa_data"
+
+#' Raster with environmental data
+#'
+#' @description A raster with climatic (from Chelsa: chelsa-climate.org), edaphic (from SoilGrids: soilgrids.org), and ecoregion data (from WWF https://www.worldwildlife.org/publications/terrestrial-ecoregions-of-the-world).
+#'
+#' @format A raster in tif format with the following variables.
+#' \describe{
+#'   \item{bio1}{Annual mean temperature}
+#'   \item{bio12}{Annual precipitation}
+#'   \item{bio15}{Precipitation seasonality}
+#'   \item{bio3}{Isothermality}
+#'   \item{cfvo}{Volumetric fraction of coarse fragments}
+#'   \item{elevation}{Elevation}
+#'   \item{sand}{Soil sand content}
+#'   \item{eco}{Terrestrial ecoregion}
+#' }
+#'
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' require(terra)
+#' envar <- system.file("external/envar.tif", package = "adm")
+#' envar <- terra::rast(envar)
+#' plot(envar)
+#' }
+envar <- function() {
+  # x <- system.file("external/envar.tif", package = "adm")
+  # return(terra::rast(x))
+}
+
+#' Raster with Principal Component
+#'
+#' @description A raster with principal components derived by a principal component analysis based
+#' on climatic (from Chelsa: chelsa-climate.org) and edaphic (from SoilGrids: soilgrids.org) variables.
+#'
+#' @format A raster in tif format with the first principal components.
+#'
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' require(terra)
+#' envar <- system.file("external/cretusa_predictors.tif", package = "adm")
+#' envar <- terra::rast(envar)
+#' plot(envar)
+#' }
+cretusa_predictors <- function() {
+  # x <- system.file("external/cretusa_predictors.tif", package = "adm")
+  # return(terra::rast(x))
+}
