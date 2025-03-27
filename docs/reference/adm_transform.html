@@ -139,30 +139,34 @@ The new column's name is the original variable name followed by an underscore an
 <span class="r-in"><span><span class="co"># Tranform raster data</span></span></span>
 <span class="r-in"><span><span class="co">## Transform to 0-1</span></span></span>
 <span class="r-in"><span><span class="va">envar_2</span> <span class="op">&lt;-</span> <span class="fu">adm_transform</span><span class="op">(</span></span></span>
-<span class="r-in"><span>  data <span class="op">=</span> <span class="va">envar</span>, </span></span>
-<span class="r-in"><span>  variable <span class="op">=</span> <span class="st">"bio12"</span>, </span></span>
-<span class="r-in"><span>  method <span class="op">=</span> <span class="st">"01"</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  data <span class="op">=</span> <span class="va">envar</span>,</span></span>
+<span class="r-in"><span>  variable <span class="op">=</span> <span class="st">"bio12"</span>,</span></span>
+<span class="r-in"><span>  method <span class="op">=</span> <span class="st">"01"</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">envar_2</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Transform z-score</span></span></span>
 <span class="r-in"><span><span class="va">envar_2</span> <span class="op">&lt;-</span> <span class="fu">adm_transform</span><span class="op">(</span></span></span>
-<span class="r-in"><span>  data <span class="op">=</span> <span class="va">envar</span>, </span></span>
-<span class="r-in"><span>  variable <span class="op">=</span> <span class="st">"bio12"</span>, </span></span>
-<span class="r-in"><span>  method <span class="op">=</span> <span class="st">"zscore"</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  data <span class="op">=</span> <span class="va">envar</span>,</span></span>
+<span class="r-in"><span>  variable <span class="op">=</span> <span class="st">"bio12"</span>,</span></span>
+<span class="r-in"><span>  method <span class="op">=</span> <span class="st">"zscore"</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">envar_2</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Transform log</span></span></span>
 <span class="r-in"><span><span class="va">envar_2</span> <span class="op">&lt;-</span> <span class="fu">adm_transform</span><span class="op">(</span></span></span>
-<span class="r-in"><span>  data <span class="op">=</span> <span class="va">envar</span>, </span></span>
-<span class="r-in"><span>  variable <span class="op">=</span> <span class="st">"bio12"</span>, </span></span>
-<span class="r-in"><span>  method <span class="op">=</span> <span class="st">"log"</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  data <span class="op">=</span> <span class="va">envar</span>,</span></span>
+<span class="r-in"><span>  variable <span class="op">=</span> <span class="st">"bio12"</span>,</span></span>
+<span class="r-in"><span>  method <span class="op">=</span> <span class="st">"log"</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">envar_2</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Round</span></span></span>
 <span class="r-in"><span><span class="va">envar_2</span> <span class="op">&lt;-</span> <span class="fu">adm_transform</span><span class="op">(</span></span></span>
-<span class="r-in"><span>  data <span class="op">=</span> <span class="va">envar</span>, </span></span>
-<span class="r-in"><span>  variable <span class="op">=</span> <span class="st">"bio12"</span>, </span></span>
-<span class="r-in"><span>  method <span class="op">=</span> <span class="st">"round"</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  data <span class="op">=</span> <span class="va">envar</span>,</span></span>
+<span class="r-in"><span>  variable <span class="op">=</span> <span class="st">"bio12"</span>,</span></span>
+<span class="r-in"><span>  method <span class="op">=</span> <span class="st">"round"</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">envar_2</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Invert transformation</span></span></span>
@@ -179,8 +183,10 @@ The new column's name is the original variable name followed by an underscore an
 <span class="r-in"><span>  variable <span class="op">=</span> <span class="st">"ind_ha_01"</span>,</span></span>
 <span class="r-in"><span>  method <span class="op">=</span> <span class="st">"01"</span>,</span></span>
 <span class="r-in"><span>  inverse <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
-<span class="r-in"><span>  t_terms <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>a <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span><span class="va">some_sp</span><span class="op">[[</span><span class="st">"ind_ha"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>              b <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">some_sp</span><span class="op">[[</span><span class="st">"ind_ha"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  t_terms <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>    a <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span><span class="va">some_sp</span><span class="op">[[</span><span class="st">"ind_ha"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>    b <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">some_sp</span><span class="op">[[</span><span class="st">"ind_ha"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">some_sp_inverted</span></span></span>
 <span class="r-in"><span></span></span>
@@ -197,8 +203,10 @@ The new column's name is the original variable name followed by an underscore an
 <span class="r-in"><span>  variable <span class="op">=</span> <span class="st">"ind_ha_zscore"</span>,</span></span>
 <span class="r-in"><span>  method <span class="op">=</span> <span class="st">"zscore"</span>,</span></span>
 <span class="r-in"><span>  inverse <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
-<span class="r-in"><span>  t_terms <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>a <span class="op">=</span> <span class="fu"><a href="https://rspatial.github.io/terra/reference/summarize-generics.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">some_sp</span><span class="op">[[</span><span class="st">"ind_ha"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>              b <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/sd.html" class="external-link">sd</a></span><span class="op">(</span><span class="va">some_sp</span><span class="op">[[</span><span class="st">"ind_ha"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  t_terms <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>    a <span class="op">=</span> <span class="fu"><a href="https://rspatial.github.io/terra/reference/summarize-generics.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">some_sp</span><span class="op">[[</span><span class="st">"ind_ha"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>    b <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/sd.html" class="external-link">sd</a></span><span class="op">(</span><span class="va">some_sp</span><span class="op">[[</span><span class="st">"ind_ha"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">some_sp_inverted</span></span></span>
 <span class="r-in"><span></span></span>
@@ -236,18 +244,21 @@ The new column's name is the original variable name followed by an underscore an
 <span class="r-in"><span><span class="co">## To invert raster, is the same process</span></span></span>
 <span class="r-in"><span><span class="co">## Example:</span></span></span>
 <span class="r-in"><span><span class="va">envar_transformed</span> <span class="op">&lt;-</span> <span class="fu">adm_transform</span><span class="op">(</span></span></span>
-<span class="r-in"><span>  data <span class="op">=</span> <span class="va">envar</span>, </span></span>
-<span class="r-in"><span>  variable <span class="op">=</span> <span class="st">"bio12"</span>, </span></span>
-<span class="r-in"><span>  method <span class="op">=</span> <span class="st">"01"</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  data <span class="op">=</span> <span class="va">envar</span>,</span></span>
+<span class="r-in"><span>  variable <span class="op">=</span> <span class="st">"bio12"</span>,</span></span>
+<span class="r-in"><span>  method <span class="op">=</span> <span class="st">"01"</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">envar_transformed</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">envar_inverted</span> <span class="op">&lt;-</span> <span class="fu">adm_transform</span><span class="op">(</span></span></span>
-<span class="r-in"><span>  data <span class="op">=</span> <span class="va">envar_transformed</span>, </span></span>
-<span class="r-in"><span>  variable <span class="op">=</span> <span class="st">"bio12_01"</span>, </span></span>
+<span class="r-in"><span>  data <span class="op">=</span> <span class="va">envar_transformed</span>,</span></span>
+<span class="r-in"><span>  variable <span class="op">=</span> <span class="st">"bio12_01"</span>,</span></span>
 <span class="r-in"><span>  method <span class="op">=</span> <span class="st">"01"</span>,</span></span>
 <span class="r-in"><span>  inverse <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
-<span class="r-in"><span>  t_terms <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>a <span class="op">=</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/global.html" class="external-link">global</a></span><span class="op">(</span><span class="va">envar</span>, <span class="va">min</span>, na.rm<span class="op">=</span><span class="cn">T</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>              b <span class="op">=</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/global.html" class="external-link">global</a></span><span class="op">(</span><span class="va">envar</span>, <span class="va">max</span>, na.rm<span class="op">=</span><span class="cn">T</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  t_terms <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>    a <span class="op">=</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/global.html" class="external-link">global</a></span><span class="op">(</span><span class="va">envar</span>, <span class="va">min</span>, na.rm <span class="op">=</span> <span class="cn">T</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>    b <span class="op">=</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/global.html" class="external-link">global</a></span><span class="op">(</span><span class="va">envar</span>, <span class="va">max</span>, na.rm <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">envar_inverted</span></span></span>
 <span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>

@@ -3,7 +3,7 @@ pkgdown: 2.1.1
 pkgdown_sha: ~
 articles:
   v01_modelling_workflow: v01_modelling_workflow.html
-last_built: 2024-12-06T16:06Z
+last_built: 2025-03-27T00:46Z
 urls:
   reference: https://xx.github.io/adm/reference
   article: https://xx.github.io/adm/articles
