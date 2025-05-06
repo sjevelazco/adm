@@ -1,0 +1,44 @@
+---
+title: "Hyperparameter tuning in abm"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{v00_hyperparameter_tuning}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options: 
+  markdown: 
+    wrap: sentence
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r dependencies, include=FALSE}
+library(knitr)
+# devtools::install_github('sjevelazco/adm')
+```
+
+### Introduction
+
+Using multiple algorithms and performing hyperparameters tuning is crucial for diversifying species abundance modeling.
+*adm* facilitates modeling, hyperparameter tuning, and validation of nine algorithms.
+Functions with the *tune_abund* prefix allow users to perform model tuning by using an array of model-specific hyperparameters.
+In *adm*, tuning is performed using a grid-search approach, i.e., by evaluating model performance under an array of possible hyperparameter combinations.
+To implement this approach, the user provides a data frame with hyperparameters as columns and the hyperparameter values to be tested as rows.
+
+| Abbreviation | Taxonomic database                                        |
+|--------------|-----------------------------------------------------------|
+| col          | Catalogue of Life                                         |
+| fb           | FishBase                                                  |
+| itis         | Integrated Taxonomic Information System                   |
+| iucn         | International Union for Conservation of Nature's Red List |
+| gbif         | Global Biodiversity Information Facility                  |
+| ncbi         | National Center for Biotechnology Information             |
+| ott          | OpenTree Taxonomy                                         |
+| tpl          | The Plant List                                            |
+| slb          | SeaLifeBase                                               |
+| wd           | Wikidata                                                  |
