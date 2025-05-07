@@ -31,7 +31,6 @@ To do this, the user provides a simple data frame with hyperparameters as column
 
 In this vignette, we show how to construct and use the grid and give details on the hyperparameters that can be tuned for each algorithm.
 
-
 ### Which hyperparameters can I tune?
 
 *adm* features nine algorithms, each with its own set of hyperparameters.
@@ -40,47 +39,45 @@ The tuning process is done with a grid-search approach.
 The grid is a data frame with hyperparameters as columns and the hyperparameter values to be tested as rows.
 See below the list of algorithms and their hyperparameters.
 
-+---------------------------------------------+-------------------------+
-| Algorithm                                   | Hyperparameters         |
-+=============================================+=========================+
-| Shallow Neural Networks (\_net)             | -   size                |
-|                                             | -   decay               |
-+---------------------------------------------+-------------------------+
-| Convolutional Neural Networks (\_cnn)       | -   learning_rate       |
-|                                             | -   n_epochs            |
-| Deep Neural Networks (\_dnn)\*              | -   batch_size          |
-|                                             | -   validation_patience |
-|                                             | -   fitting_patience    |
-+---------------------------------------------+-------------------------+
-| Extreme Gradient Boosting (\_xgb)           | -   nrounds             |
-|                                             | -   max_depth           |
-|                                             | -   eta                 |
-|                                             | -   gamma               |
-|                                             | -   colsample_bytree    |
-|                                             | -   min_child_weight    |
-|                                             | -   subsample           |
-|                                             | -   objective           |
-+---------------------------------------------+-------------------------+
-| Generalized Additive Models (\_gam)         | -   inter               |
-+---------------------------------------------+-------------------------+
-| Generalized Linear Models (\_glm)           | -   inter               |
-|                                             | -   poly                |
-|                                             | -   inter_order         |
-+---------------------------------------------+-------------------------+
-| Generalized Boosted Regression (\_gbm)      | -   n.trees             |
-|                                             | -   interaction.depth   |
-|                                             | -   n.minobsinnode      |
-|                                             | -   shrinkage           |
-+---------------------------------------------+-------------------------+
-| Random Forests (\_raf)                      | -   mtry                |
-|                                             | -   ntree               |
-+---------------------------------------------+-------------------------+
-| Support Vector Machines (\_svm)             | -   kernel              |
-|                                             | -   sigma               |
-|                                             | -   C                   |
-+---------------------------------------------+-------------------------+
-
-
++----------------------------------------+-------------------------+
+| Algorithm                              | Hyperparameters         |
++========================================+=========================+
+| Shallow Neural Networks (\_net)        | -   size                |
+|                                        | -   decay               |
++----------------------------------------+-------------------------+
+| Convolutional Neural Networks (\_cnn)  | -   learning_rate       |
+|                                        | -   n_epochs            |
+| Deep Neural Networks (\_dnn)\*         | -   batch_size          |
+|                                        | -   validation_patience |
+|                                        | -   fitting_patience    |
++----------------------------------------+-------------------------+
+| Extreme Gradient Boosting (\_xgb)      | -   nrounds             |
+|                                        | -   max_depth           |
+|                                        | -   eta                 |
+|                                        | -   gamma               |
+|                                        | -   colsample_bytree    |
+|                                        | -   min_child_weight    |
+|                                        | -   subsample           |
+|                                        | -   objective           |
++----------------------------------------+-------------------------+
+| Generalized Additive Models (\_gam)    | -   inter               |
++----------------------------------------+-------------------------+
+| Generalized Linear Models (\_glm)      | -   inter               |
+|                                        | -   poly                |
+|                                        | -   inter_order         |
++----------------------------------------+-------------------------+
+| Generalized Boosted Regression (\_gbm) | -   n.trees             |
+|                                        | -   interaction.depth   |
+|                                        | -   n.minobsinnode      |
+|                                        | -   shrinkage           |
++----------------------------------------+-------------------------+
+| Random Forests (\_raf)                 | -   mtry                |
+|                                        | -   ntree               |
++----------------------------------------+-------------------------+
+| Support Vector Machines (\_svm)        | -   kernel              |
+|                                        | -   sigma               |
+|                                        | -   C                   |
++----------------------------------------+-------------------------+
 
 ### What values the hyperparameters of my ADM can take?
 
@@ -173,22 +170,23 @@ Users can tune the following hyperparameters for the Generalized Additive Models
 
 #### Generalized Boosted Regression
 
-- *n.trees*: The total number of trees to fit.
-Can take any positive integer greater or equal 1.
+-   *n.trees*: The total number of trees to fit.
+    Can take any positive integer greater or equal 1.
 
-- *interaction.depth*: The maximum depth of each tree.
-Can take any positive integer greater or equal 1.
-Values too high can lead to overfitting.
+-   *interaction.depth*: The maximum depth of each tree.
+    Can take any positive integer greater or equal 1.
+    Values too high can lead to overfitting.
 
-- *n.minobsinnode*: The minimum number of observations in the terminal nodes of the trees.
-Can take any positive integer greater or equal 1.
-Values too low or too high can lead to overfitting.
+-   *n.minobsinnode*: The minimum number of observations in the terminal nodes of the trees.
+    Can take any positive integer greater or equal 1.
+    Values too low or too high can lead to overfitting.
 
-- *shrinkage*: The learning rate of the algorithm.
-Can take values between 0 and 1.
-Values too high can lead to overshooting the minimum and diverging.
+-   *shrinkage*: The learning rate of the algorithm.
+    Can take values between 0 and 1.
+    Values too high can lead to overshooting the minimum and diverging.
 
 #### Random Forests
+
 Users can tune the following hyperparameters for the Random Forest algorithm:
 
 -   *mtry*: Number of variables randomly sampled as candidates at each split.
@@ -201,21 +199,22 @@ Users can tune the following hyperparameters for the Random Forest algorithm:
     Values too low can lead to underfitting.
 
 #### Support Vector Machines
+
 Users can tune the following hyperparameters for the Support Vector Machines algorithm:
 
-- *kernel*: A string defining the kernel used in the algorithm.
-It can take any of the values described in the *kernlab* package.
+-   *kernel*: A string defining the kernel used in the algorithm.
+    It can take any of the values described in the *kernlab* package.
 
-- *sigma*: Either "automatic" (recommended) or the inverse kernel width for the Radial Basis kernel function "rbfdot" and the Laplacian kernel "laplacedot".
+-   *sigma*: Either "automatic" (recommended) or the inverse kernel width for the Radial Basis kernel function "rbfdot" and the Laplacian kernel "laplacedot".
 
-- *C*: Cost of constraints violation.
-It can take any positive integer greater or equal 0.
-Values too high can lead to overfitting.
+-   *C*: Cost of constraints violation.
+    It can take any positive integer greater or equal 0.
+    Values too high can lead to overfitting.
 
+### How do I use the tuning functions with the grid? (Tuning example)
 
-### How do I use the tuning functions with the grid? (Tuning example) 
-
-Tuning models with *adm* is straightforward. It only requires the user to provide a grid with hyperparameters and values to be tested.
+Tuning models with *adm* is straightforward.
+It only requires the user to provide a grid with hyperparameters and values to be tested.
 To construct the hyperparameter grid, we can use the *expand.grid* and *list* function in a straightforward way, passing one vector of values for each hyperparameter.
 Below is an example with Random Forest hyperparameters, but the same approach can be used for all algorithms:
 
@@ -257,4 +256,7 @@ raf_adm <- adm::tune_abund_raf(
 
 ### Conclusion
 
-Tuning in *adm* is easy. Different algorithms have distinct hyperparameters, and the user can choose which ones to tune and the values to test. In any case, is important to be aware of hyperparameters limits and ranges, as well as the number of combinations that can be generated, and their meaning. Consulting *adm* and its dependencies documentation is a good practice to understand the algorithms and their hyperparameters.
+Tuning in *adm* is easy.
+Different algorithms have distinct hyperparameters, and the user can choose which ones to tune and the values to test.
+In any case, is important to be aware of hyperparameters limits and ranges, as well as the number of combinations that can be generated, and their meaning.
+Consulting *adm* and its dependencies documentation is a good practice to understand the algorithms and their hyperparameters.

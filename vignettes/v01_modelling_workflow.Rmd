@@ -267,7 +267,7 @@ mglm <- tune_abund_glm(
   predict_part = TRUE,
   grid = glm_grid,
   metrics = c("corr_pear", "mae"),
-  n_cores = 4,
+  n_cores = 1,
   verbose = FALSE
 )
 ```
