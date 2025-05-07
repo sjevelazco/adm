@@ -1,9 +1,10 @@
 pandoc: '3.2'
-pkgdown: 2.1.1
+pkgdown: 2.1.2
 pkgdown_sha: ~
 articles:
+  v00_hyperparameter_tuning: v00_hyperparameter_tuning.html
   v01_modelling_workflow: v01_modelling_workflow.html
-last_built: 2025-03-27T00:46Z
+last_built: 2025-05-07T15:04Z
 urls:
   reference: https://xx.github.io/adm/reference
   article: https://xx.github.io/adm/articles
