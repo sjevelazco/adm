@@ -1,5 +1,5 @@
 ---
-title: "v01_modelling_workflow"
+title: "1. Modeling workflow with adm"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{v01_modelling_workflow}

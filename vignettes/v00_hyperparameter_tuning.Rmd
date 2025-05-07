@@ -1,5 +1,5 @@
 ---
-title: "Hyperparameter tuning in adm"
+title: "0. Hyperparameter tuning with adm"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{v00_hyperparameter_tuning}
@@ -39,45 +39,45 @@ The tuning process is done with a grid-search approach.
 The grid is a data frame with hyperparameters as columns and the hyperparameter values to be tested as rows.
 See below the list of algorithms and their hyperparameters.
 
-+----------------------------------------+-------------------------+
-| Algorithm                              | Hyperparameters         |
-+========================================+=========================+
-| Shallow Neural Networks (\_net)        | -   size                |
-|                                        | -   decay               |
-+----------------------------------------+-------------------------+
-| Convolutional Neural Networks (\_cnn)  | -   learning_rate       |
-|                                        | -   n_epochs            |
-| Deep Neural Networks (\_dnn)\*         | -   batch_size          |
-|                                        | -   validation_patience |
-|                                        | -   fitting_patience    |
-+----------------------------------------+-------------------------+
-| Extreme Gradient Boosting (\_xgb)      | -   nrounds             |
-|                                        | -   max_depth           |
-|                                        | -   eta                 |
-|                                        | -   gamma               |
-|                                        | -   colsample_bytree    |
-|                                        | -   min_child_weight    |
-|                                        | -   subsample           |
-|                                        | -   objective           |
-+----------------------------------------+-------------------------+
-| Generalized Additive Models (\_gam)    | -   inter               |
-+----------------------------------------+-------------------------+
-| Generalized Linear Models (\_glm)      | -   inter               |
-|                                        | -   poly                |
-|                                        | -   inter_order         |
-+----------------------------------------+-------------------------+
-| Generalized Boosted Regression (\_gbm) | -   n.trees             |
-|                                        | -   interaction.depth   |
-|                                        | -   n.minobsinnode      |
-|                                        | -   shrinkage           |
-+----------------------------------------+-------------------------+
-| Random Forests (\_raf)                 | -   mtry                |
-|                                        | -   ntree               |
-+----------------------------------------+-------------------------+
-| Support Vector Machines (\_svm)        | -   kernel              |
-|                                        | -   sigma               |
-|                                        | -   C                   |
-+----------------------------------------+-------------------------+
++--------------------------------------------+-------------------------+
+| Algorithm                                  | Hyperparameters         |
++============================================+=========================+
+| Shallow Neural Networks (\_net)            | -   size                |
+|                                            | -   decay               |
++--------------------------------------------+-------------------------+
+| Convolutional Neural Networks (\_cnn)      | -   learning_rate       |
+|                                            | -   n_epochs            |
+| Deep Neural Networks (\_dnn)\*             | -   batch_size          |
+|                                            | -   validation_patience |
+|                                            | -   fitting_patience    |
++--------------------------------------------+-------------------------+
+| Extreme Gradient Boosting (\_xgb)          | -   nrounds             |
+|                                            | -   max_depth           |
+|                                            | -   eta                 |
+|                                            | -   gamma               |
+|                                            | -   colsample_bytree    |
+|                                            | -   min_child_weight    |
+|                                            | -   subsample           |
+|                                            | -   objective           |
++--------------------------------------------+-------------------------+
+| Generalized Additive Models (\_gam)        | -   inter               |
++--------------------------------------------+-------------------------+
+| Generalized Linear Models (\_glm)          | -   inter               |
+|                                            | -   poly                |
+|                                            | -   inter_order         |
++--------------------------------------------+-------------------------+
+| Generalized Boosted Regression (\_gbm)     | -   n.trees             |
+|                                            | -   interaction.depth   |
+|                                            | -   n.minobsinnode      |
+|                                            | -   shrinkage           |
++--------------------------------------------+-------------------------+
+| Random Forests (\_raf)                     | -   mtry                |
+|                                            | -   ntree               |
++--------------------------------------------+-------------------------+
+| Support Vector Machines (\_svm)            | -   kernel              |
+|                                            | -   sigma               |
+|                                            | -   C                   |
++--------------------------------------------+-------------------------+
 
 ### What values the hyperparameters of my ADM can take?
 
