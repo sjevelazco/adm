@@ -487,15 +487,16 @@ pdp_raf <- p_abund_pdp(
 )
 ```
 
-
 ```{r all pdp}
 pdp_dnn
 pdp_raf
 pdp_glm
 ```
 
-BPDP are similar to PDP, but instead of one, it illustrates the marginal response of a pair of variables. 
-In this example we will use the first and seventh PC. Note that for `p_abund_pdp` and `p_abund_bpdp`, any subset of predictors can be used in the "predictors" argument. If "predictors" argument is NULL, functions plot all variables or variables pair combinations, respectively.
+BPDP are similar to PDP, but instead of one, it illustrates the marginal response of a pair of variables.
+In this example we will use the first and seventh PC.
+Note that for `p_abund_pdp` and `p_abund_bpdp`, any subset of predictors can be used in the "predictors" argument.
+If "predictors" argument is NULL, functions plot all variables or variables pair combinations, respectively.
 
 ```{r bpdp dnn}
 # BPDP for DNN
@@ -555,14 +556,11 @@ bpdp_raf <- p_abund_bpdp(
 )
 ```
 
-
-
 ```{r all bpdp}
 bpdp_dnn
 bpdp_raf
 bpdp_glm
 ```
-
 
 ## Conclusions
 

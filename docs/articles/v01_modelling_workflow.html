@@ -5,48 +5,64 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="description" content="adm">
 <title>v01_modelling_workflow • adm</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
-<link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="v01_modelling_workflow">
+<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
+<!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="v01_modelling_workflow">
+<meta property="og:description" content="adm">
+<!-- mathjax --><script src="file:///usr/share/javascript/mathjax/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
+<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+<![endif]-->
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
+    
 
-
-    <nav class="navbar navbar-expand-lg fixed-top bg-primary" data-bs-theme="dark" aria-label="Site navigation"><div class="container">
-
+    <nav class="navbar fixed-top navbar-dark navbar-expand-lg bg-primary"><div class="container">
+    
     <a class="navbar-brand me-2" href="../index.html">adm</a>
 
     <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.2</small>
 
-
+    
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
-<li class="nav-item"><a class="nav-link" href="../index.html" aria-label="Home"><span class="fa fa-home"></span> Home</a></li>
-<li class="nav-item"><a class="nav-link" href="../reference/index.html">Functions</a></li>
-<li class="active nav-item dropdown">
-  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="../articles/v01_modelling_workflow.html">1. Modling Workflow with adm</a></li>
-  </ul>
+<li class="nav-item">
+  <a class="nav-link" href="../index.html" aria-label="Home">
+    <span class="fa fa-home"></span>
+     
+    Home
+  </a>
 </li>
-<li class="nav-item"><a class="nav-link" href="https://xx.github.io/adm" aria-label="GitHub">GitHub</a></li>
+<li class="nav-item">
+  <a class="nav-link" href="../reference/index.html">Functions</a>
+</li>
+<li class="active nav-item dropdown">
+  <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
+  <div class="dropdown-menu" aria-labelledby="dropdown-articles">
+    <a class="dropdown-item" href="../articles/v00_hyperparameter_tuning.html">0. Hyperparameter tuning with adm</a>
+    <a class="dropdown-item" href="../articles/v01_modelling_workflow.html">1. Modeling workflow with adm</a>
+  </div>
+</li>
+<li class="nav-item">
+  <a class="nav-link" href="https://xx.github.io/adm" aria-label="GitHub">GitHub</a>
+</li>
       </ul>
-<ul class="navbar-nav">
-<li class="nav-item"><form class="form-inline" role="search">
- <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json">
-</form></li>
-      </ul>
+<form class="form-inline my-2 my-lg-0" role="search">
+        <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off">
+</form>
+
+      <ul class="navbar-nav"></ul>
 </div>
 
-
+    
   </div>
 </nav><div class="container template-article">
 
@@ -55,11 +71,10 @@
 
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-
-      <h1>v01_modelling_workflow</h1>
+      <img src="" class="logo" alt=""><h1>v01_modelling_workflow</h1>
             
       
-
+      
       <div class="d-none name"><code>v01_modelling_workflow.Rmd</code></div>
     </div>
 
@@ -81,9 +96,7 @@ data preparation to model fitting and prediction.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="va">adm</span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="va"><a href="https://rspatial.org/" class="external-link">terra</a></span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning: package 'terra' was built under R version 4.4.2</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning: package 'dplyr' was built under R version 4.4.2</span></span></code></pre></div>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="preparaing-data">Preparaing data<a class="anchor" aria-label="anchor" href="#preparaing-data"></a>
@@ -553,7 +566,7 @@ within the <em>tune_abund_dnn</em> function:</p>
 <span>  grid <span class="op">=</span> <span class="va">dnn_grid</span>,</span>
 <span>  architectures <span class="op">=</span> <span class="va">archs</span>,</span>
 <span>  metrics <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"corr_pear"</span>, <span class="st">"mae"</span><span class="op">)</span>,</span>
-<span>  n_cores <span class="op">=</span> <span class="fl">5</span>,</span>
+<span>  n_cores <span class="op">=</span> <span class="fl">10</span>,</span>
 <span>  verbose <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt; Using provided architectures.</span></span>
@@ -568,7 +581,7 @@ within the <em>tune_abund_dnn</em> function:</p>
 <span><span class="co">#&gt;  n_epochs = 200</span></span>
 <span><span class="co">#&gt;  patience = 5 and 5</span></span>
 <span><span class="co">#&gt;  batch_size = 64</span></span>
-<span><span class="co">#&gt;  arch = 3 layers with 21-&gt;21-&gt;7 neurons</span></span></code></pre></div>
+<span><span class="co">#&gt;  arch = 4 layers with 21-&gt;7-&gt;21-&gt;14 neurons</span></span></code></pre></div>
 <p>Again, the output is very similar as before, because they are
 standardize for all <em>tune_abund_</em> functions. Now, the “model”
 element is a “luz_module_fitted” from <em>torch</em> and <em>luz</em>
@@ -579,26 +592,28 @@ packages.</p>
 <span><span class="va">mdnn</span><span class="op">$</span><span class="va">model</span></span>
 <span><span class="co">#&gt; A `luz_module_fitted`</span></span>
 <span><span class="co">#&gt; ── Time ────────────────────────────────────────────────────────────────────────</span></span>
-<span><span class="co">#&gt; • Total time: 2s</span></span>
-<span><span class="co">#&gt; • Avg time per training epoch: 85ms</span></span>
+<span><span class="co">#&gt; • Total time: 4.9s</span></span>
+<span><span class="co">#&gt; • Avg time per training epoch: 193ms</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; ── Results ─────────────────────────────────────────────────────────────────────</span></span>
 <span><span class="co">#&gt; Metrics observed in the last epoch.</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; <span style="color: #0000BB;">ℹ</span> Training:</span></span>
-<span><span class="co">#&gt; loss: 0.4487</span></span>
+<span><span class="co">#&gt; loss: 0.4708</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; ── Model ───────────────────────────────────────────────────────────────────────</span></span>
-<span><span class="co">#&gt; An `nn_module` containing 890 parameters.</span></span>
+<span><span class="co">#&gt; An `nn_module` containing 939 parameters.</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; ── Modules ─────────────────────────────────────────────────────────────────────</span></span>
 <span><span class="co">#&gt; • linear1: &lt;nn_linear&gt; #168 parameters</span></span>
-<span><span class="co">#&gt; • linear2: &lt;nn_linear&gt; #462 parameters</span></span>
-<span><span class="co">#&gt; • linear3: &lt;nn_linear&gt; #154 parameters</span></span>
-<span><span class="co">#&gt; • output: &lt;nn_linear&gt; #8 parameters</span></span>
+<span><span class="co">#&gt; • linear2: &lt;nn_linear&gt; #154 parameters</span></span>
+<span><span class="co">#&gt; • linear3: &lt;nn_linear&gt; #168 parameters</span></span>
+<span><span class="co">#&gt; • linear4: &lt;nn_linear&gt; #308 parameters</span></span>
+<span><span class="co">#&gt; • output: &lt;nn_linear&gt; #15 parameters</span></span>
 <span><span class="co">#&gt; • bn1: &lt;nn_batch_norm1d&gt; #42 parameters</span></span>
-<span><span class="co">#&gt; • bn2: &lt;nn_batch_norm1d&gt; #42 parameters</span></span>
-<span><span class="co">#&gt; • bn3: &lt;nn_batch_norm1d&gt; #14 parameters</span></span></code></pre></div>
+<span><span class="co">#&gt; • bn2: &lt;nn_batch_norm1d&gt; #14 parameters</span></span>
+<span><span class="co">#&gt; • bn3: &lt;nn_batch_norm1d&gt; #42 parameters</span></span>
+<span><span class="co">#&gt; • bn4: &lt;nn_batch_norm1d&gt; #28 parameters</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="summarizing-results">Summarizing results<a class="anchor" aria-label="anchor" href="#summarizing-results"></a>
@@ -610,9 +625,9 @@ evalutions in one dataframe, using <em>adm_summarize</em> function:</p>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 3 × 14</span></span></span>
 <span><span class="co">#&gt;   model_ID model mae_mean mae_sd corr_spear_mean corr_spear_sd corr_pear_mean</span></span>
 <span><span class="co">#&gt;      <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>           <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>        1 dnn      0.529  0.183           0.487        0.058<span style="text-decoration: underline;">2</span>          0.406</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>        2 raf      7.75   1.98            0.408        0.184           0.365</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>        3 glm      7.59   2.17            0.492        0.162           0.427</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>        1 dnn      0.544  0.174           0.416         0.129          0.393</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>        2 raf      7.75   1.98            0.408         0.184          0.365</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>        3 glm      7.59   2.17            0.492         0.162          0.427</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 7 more variables: corr_pear_sd &lt;dbl&gt;, inter_mean &lt;dbl&gt;, inter_sd &lt;dbl&gt;,</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;">#   slope_mean &lt;dbl&gt;, slope_sd &lt;dbl&gt;, pdisp_mean &lt;dbl&gt;, pdisp_sd &lt;dbl&gt;</span></span></span></code></pre></div>
 </div>
@@ -643,7 +658,7 @@ trained the DNN with tranformed response, if we want it to predict in
 the original scale, we need to use the “invert_transform” argument in
 <em>adm_predict</em>:</p>
 <div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">pred_dnn</span> <span class="op">&lt;-</span> <span class="fu">adm</span><span class="fu">::</span><span class="fu"><a href="../reference/adm_predict.html">adm_predict</a></span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="va">pred_dnn</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/adm_predict.html">adm_predict</a></span><span class="op">(</span></span>
 <span>  models <span class="op">=</span> <span class="va">mdnn</span>,</span>
 <span>  pred <span class="op">=</span> <span class="va">cretusa_predictors</span>,</span>
 <span>  predict_area <span class="op">=</span> <span class="va">sp_train_a</span>,</span>
@@ -818,26 +833,28 @@ all variables or variables pair combinations, respectively.</p>
 ADM workflows. The package features functions from model tuning,
 fitting, and validation to model prediction and exploration.</p>
 </div>
-  </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
+  </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside>
 </div>
 
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by x x, x x.</p>
+  <p></p>
+<p>Developed by x x, x x.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
     </footer>
 </div>
 
+  
 
-
-
+  
 
   </body>
 </html>
