@@ -5,49 +5,64 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Hyperparameter tuning in abm • adm</title>
+<meta name="description" content="adm">
+<title>Hyperparameter tuning in adm • adm</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
-<link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Hyperparameter tuning in abm">
+<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
+<!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Hyperparameter tuning in adm">
+<meta property="og:description" content="adm">
+<!-- mathjax --><script src="file:///usr/share/javascript/mathjax/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
+<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+<![endif]-->
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
+    
 
-
-    <nav class="navbar navbar-expand-lg fixed-top bg-primary" data-bs-theme="dark" aria-label="Site navigation"><div class="container">
-
+    <nav class="navbar fixed-top navbar-dark navbar-expand-lg bg-primary"><div class="container">
+    
     <a class="navbar-brand me-2" href="../index.html">adm</a>
 
     <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.2</small>
 
-
+    
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
-<li class="nav-item"><a class="nav-link" href="../index.html" aria-label="Home"><span class="fa fa-home"></span> Home</a></li>
-<li class="nav-item"><a class="nav-link" href="../reference/index.html">Functions</a></li>
-<li class="active nav-item dropdown">
-  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="../articles/v00_hyperparameter_tuning.html">0. Hyperparameter tuning with adm</a></li>
-    <li><a class="dropdown-item" href="../articles/v01_modelling_workflow.html">1. Modeling workflow with adm</a></li>
-  </ul>
+<li class="nav-item">
+  <a class="nav-link" href="../index.html" aria-label="Home">
+    <span class="fa fa-home"></span>
+     
+    Home
+  </a>
 </li>
-<li class="nav-item"><a class="nav-link" href="https://xx.github.io/adm" aria-label="GitHub">GitHub</a></li>
+<li class="nav-item">
+  <a class="nav-link" href="../reference/index.html">Functions</a>
+</li>
+<li class="active nav-item dropdown">
+  <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
+  <div class="dropdown-menu" aria-labelledby="dropdown-articles">
+    <a class="dropdown-item" href="../articles/v00_hyperparameter_tuning.html">0. Hyperparameter tuning with adm</a>
+    <a class="dropdown-item" href="../articles/v01_modelling_workflow.html">1. Modeling workflow with adm</a>
+  </div>
+</li>
+<li class="nav-item">
+  <a class="nav-link" href="https://xx.github.io/adm" aria-label="GitHub">GitHub</a>
+</li>
       </ul>
-<ul class="navbar-nav">
-<li class="nav-item"><form class="form-inline" role="search">
- <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json">
-</form></li>
-      </ul>
+<form class="form-inline my-2 my-lg-0" role="search">
+        <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off">
+</form>
+
+      <ul class="navbar-nav"></ul>
 </div>
 
-
+    
   </div>
 </nav><div class="container template-article">
 
@@ -56,11 +71,10 @@
 
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-
-      <h1>Hyperparameter tuning in abm</h1>
+      <img src="" class="logo" alt=""><h1>Hyperparameter tuning in adm</h1>
             
       
-
+      
       <div class="d-none name"><code>v00_hyperparameter_tuning.Rmd</code></div>
     </div>
 
@@ -70,87 +84,372 @@
 <h3 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h3>
 <p>Using multiple algorithms and performing hyperparameters tuning is
-crucial for diversifying species abundance modeling. <em>adm</em>
-facilitates modeling, hyperparameter tuning, and validation of nine
-algorithms. Functions with the <em>tune_abund</em> prefix allow users to
-perform model tuning by using an array of model-specific
-hyperparameters. In <em>adm</em>, tuning is performed using a
-grid-search approach, i.e., by evaluating model performance under an
-array of possible hyperparameter combinations. To implement this
-approach, the user provides a data frame with hyperparameters as columns
-and the hyperparameter values to be tested as rows.</p>
+crucial for diversifying species abundance modeling. Functions with the
+<em>tune_abund</em> prefix allow users to easily perform model tuning
+for different algorithms. The tuning is performed using a grid-search
+approach, i.e., by evaluating model performance under many
+hyperparameter combinations. To do this, the user provides a simple data
+frame with hyperparameters as columns and the hyperparameter values to
+be tested as rows.</p>
+<p>In this vignette, we show how to construct and use the grid and give
+details on the hyperparameters that can be tuned for each algorithm.</p>
+</div>
+<div class="section level3">
+<h3 id="which-hyperparameters-can-i-tune">Which hyperparameters can I tune?<a class="anchor" aria-label="anchor" href="#which-hyperparameters-can-i-tune"></a>
+</h3>
+<p><em>adm</em> features nine algorithms, each with its own set of
+hyperparameters. The user can choose which hyperparameters to tune and
+the values to test for each one. The tuning process is done with a
+grid-search approach. The grid is a data frame with hyperparameters as
+columns and the hyperparameter values to be tested as rows. See below
+the list of algorithms and their hyperparameters.</p>
 <table class="table">
 <colgroup>
-<col width="19%">
-<col width="80%">
+<col width="63%">
+<col width="36%">
 </colgroup>
 <thead><tr class="header">
-<th>Abbreviation</th>
-<th>Taxonomic database</th>
+<th>Algorithm</th>
+<th>Hyperparameters</th>
 </tr></thead>
 <tbody>
 <tr class="odd">
-<td>col</td>
-<td>Catalogue of Life</td>
+<td>Shallow Neural Networks (_net)</td>
+<td><ul>
+<li>size</li>
+<li>decay</li>
+</ul></td>
 </tr>
 <tr class="even">
-<td>fb</td>
-<td>FishBase</td>
+<td>
+<p>Convolutional Neural Networks (_cnn)</p>
+<p>Deep Neural Networks (_dnn)*</p>
+</td>
+<td><ul>
+<li>learning_rate</li>
+<li>n_epochs</li>
+<li>batch_size</li>
+<li>validation_patience</li>
+<li>fitting_patience</li>
+</ul></td>
 </tr>
 <tr class="odd">
-<td>itis</td>
-<td>Integrated Taxonomic Information System</td>
+<td>Extreme Gradient Boosting (_xgb)</td>
+<td><ul>
+<li>nrounds</li>
+<li>max_depth</li>
+<li>eta</li>
+<li>gamma</li>
+<li>colsample_bytree</li>
+<li>min_child_weight</li>
+<li>subsample</li>
+<li>objective</li>
+</ul></td>
 </tr>
 <tr class="even">
-<td>iucn</td>
-<td>International Union for Conservation of Nature’s Red List</td>
+<td>Generalized Additive Models (_gam)</td>
+<td><ul>
+<li>inter</li>
+</ul></td>
 </tr>
 <tr class="odd">
-<td>gbif</td>
-<td>Global Biodiversity Information Facility</td>
+<td>Generalized Linear Models (_glm)</td>
+<td><ul>
+<li>inter</li>
+<li>poly</li>
+<li>inter_order</li>
+</ul></td>
 </tr>
 <tr class="even">
-<td>ncbi</td>
-<td>National Center for Biotechnology Information</td>
+<td>Generalized Boosted Regression (_gbm)</td>
+<td><ul>
+<li>n.trees</li>
+<li>interaction.depth</li>
+<li>n.minobsinnode</li>
+<li>shrinkage</li>
+</ul></td>
 </tr>
 <tr class="odd">
-<td>ott</td>
-<td>OpenTree Taxonomy</td>
+<td>Random Forests (_raf)</td>
+<td><ul>
+<li>mtry</li>
+<li>ntree</li>
+</ul></td>
 </tr>
 <tr class="even">
-<td>tpl</td>
-<td>The Plant List</td>
-</tr>
-<tr class="odd">
-<td>slb</td>
-<td>SeaLifeBase</td>
-</tr>
-<tr class="even">
-<td>wd</td>
-<td>Wikidata</td>
+<td>Support Vector Machines (_svm)</td>
+<td><ul>
+<li>kernel</li>
+<li>sigma</li>
+<li>C</li>
+</ul></td>
 </tr>
 </tbody>
 </table>
 </div>
-  </main>
+<div class="section level3">
+<h3 id="what-values-the-hyperparameters-of-my-adm-can-take">What values the hyperparameters of my ADM can take?<a class="anchor" aria-label="anchor" href="#what-values-the-hyperparameters-of-my-adm-can-take"></a>
+</h3>
+<div class="section level4">
+<h4 id="shallow-neural-networks">Shallow Neural Networks<a class="anchor" aria-label="anchor" href="#shallow-neural-networks"></a>
+</h4>
+<p>Users can tune the following hyperparameters for the Shallow Neural
+Network algorithm:</p>
+<ul>
+<li><p><em>size</em>: Number of units in the hidden layer. In theory,
+can take any positive integer greater or equal 1. In practice, it is
+limited by the hardware. Values too high can lead to memory issues,
+crashes and overfitting. Values too low can lead to
+underfitting.</p></li>
+<li><p><em>decay</em>: Weight decay parameter. It can take values
+between 0 and 1. Values too high can lead to underfitting. Values too
+low can lead to overfitting.</p></li>
+</ul>
+</div>
+<div class="section level4">
+<h4 id="deep-neural-networks-and-convolutional-neural-networks">Deep Neural Networks and Convolutional Neural Networks<a class="anchor" aria-label="anchor" href="#deep-neural-networks-and-convolutional-neural-networks"></a>
+</h4>
+<p>Users can tune the following hyperparameters for the Deep and
+Convolutional Neural Networks algorithm:</p>
+<ul>
+<li><p><em>learning_rate</em>: The size of the gradient step taken
+during the optimization process. It can take values between 0 and 1.
+Values too high can lead to overshooting the minimum and diverging.
+Values too low can lead to slow convergence.</p></li>
+<li><p><em>n_epochs</em>: Maximum number of epochs to train the model.
+It can take any positive integer greater or equal 1. Values too high can
+lead to overfitting. Values too low can lead to underfitting.</p></li>
+<li><p><em>batch_size</em>: Size of the mini-batch used during the
+optimization process. It can take any positive integer greater or equal
+1 and lower than the number of samples.</p></li>
+<li><p><em>validation_patience</em>: Number of epochs with no
+improvement after which training will be stopped during validation loop.
+It can take any positive integer greater or equal 1. If the value is
+equal or higher than the number of epochs, the training will not
+stop.</p></li>
+<li><p><em>fitting_patience</em>: Number of epochs with no improvement
+after which training will be stopped during the final model fit. It can
+take any positive integer greater or equal 1. If the value is equal or
+higher than the number of epochs, the training will not stop.</p></li>
+</ul>
+<p>Other hyperparameters like number of hidden layers and neurons in
+each layer are set with the functions <em>generate_arch_list</em>,
+<em>generate_dnn_architecture</em> and
+<em>generate_cnn_architecture</em> (see in “Tuning example” section
+below).</p>
+</div>
+<div class="section level4">
+<h4 id="extreme-gradient-boosting">Extreme Gradient Boosting<a class="anchor" aria-label="anchor" href="#extreme-gradient-boosting"></a>
+</h4>
+<p>Users can tune the following hyperparameters for the Extreme Gradient
+Boosting algorithm:</p>
+<ul>
+<li><p><em>nrounds</em>: Max number of boosting iterations. Can take any
+positive integer greater or equal 1. Values too high can lead to
+overfitting. Values too low can lead to underfitting.</p></li>
+<li><p><em>max_depth</em>: The maximum depth of each tree. Can take any
+positive integer greater or equal 1.</p></li>
+<li><p><em>eta</em>: The learning rate of the algorithm. It can take
+values between 0 and 1. Values too high can lead to overshooting the
+minimum and diverging. Values too low can lead to slow
+convergence.</p></li>
+<li><p><em>gamma</em>: Minimum loss reduction required to make a further
+partition on a leaf - node of the tree. The range depends on the loss
+(objective) chosen.</p></li>
+<li><p><em>colsample_bytree</em>: Subsample ratio of columns when
+constructing each tree. It can take values between 1 and the number of
+predictors (columns)</p></li>
+<li><p><em>min_child_weight</em>: Minimum sum of instance weight needed
+in a child. Can take any non-negative value.</p></li>
+<li><p><em>subsample</em>: Subsample ratio of the training instance. Can
+take values between 0 and 1.</p></li>
+</ul>
+</div>
+<div class="section level4">
+<h4 id="generalized-additive-models">Generalized Additive Models<a class="anchor" aria-label="anchor" href="#generalized-additive-models"></a>
+</h4>
+<p>Users can tune the following hyperparameters for the Generalized
+Additive Models algorithm:</p>
+<ul>
+<li>
+<em>inter</em>: Number of knots in x-axis. It can take any positive
+integer greater or equal 1.</li>
+</ul>
+</div>
+<div class="section level4">
+<h4 id="generalized-linear-models">Generalized Linear Models<a class="anchor" aria-label="anchor" href="#generalized-linear-models"></a>
+</h4>
+<p>Users can tune the following hyperparameters for the Generalized
+Additive Models algorithm:</p>
+<ul>
+<li><p><em>poly</em>: Polynomials degree for those continuous variables
+(i.e. used in predictors argument). It can take any positive integer
+greater or equal to 2</p></li>
+<li><p><em>inter_order</em>: The interaction order between explanatory
+variables. It can take any positive integer greater or equal 1.</p></li>
+</ul>
+</div>
+<div class="section level4">
+<h4 id="generalized-boosted-regression">Generalized Boosted Regression<a class="anchor" aria-label="anchor" href="#generalized-boosted-regression"></a>
+</h4>
+<ul>
+<li><p><em>n.trees</em>: The total number of trees to fit. Can take any
+positive integer greater or equal 1.</p></li>
+<li><p><em>interaction.depth</em>: The maximum depth of each tree. Can
+take any positive integer greater or equal 1. Values too high can lead
+to overfitting.</p></li>
+<li><p><em>n.minobsinnode</em>: The minimum number of observations in
+the terminal nodes of the trees. Can take any positive integer greater
+or equal 1. Values too low or too high can lead to overfitting.</p></li>
+<li><p><em>shrinkage</em>: The learning rate of the algorithm. Can take
+values between 0 and 1. Values too high can lead to overshooting the
+minimum and diverging.</p></li>
+</ul>
+</div>
+<div class="section level4">
+<h4 id="random-forests">Random Forests<a class="anchor" aria-label="anchor" href="#random-forests"></a>
+</h4>
+<p>Users can tune the following hyperparameters for the Random Forest
+algorithm:</p>
+<ul>
+<li><p><em>mtry</em>: Number of variables randomly sampled as candidates
+at each split. It can take values between 1 and the number of predictor
+variables in the dataset.</p></li>
+<li><p><em>ntree</em>: Number of trees to grow. In theory, can take any
+positive integer greater or equal 1. In practice, it is limited by the
+hardware. Values too high can lead to memory issues and crashes. Values
+too low can lead to underfitting.</p></li>
+</ul>
+</div>
+<div class="section level4">
+<h4 id="support-vector-machines">Support Vector Machines<a class="anchor" aria-label="anchor" href="#support-vector-machines"></a>
+</h4>
+<p>Users can tune the following hyperparameters for the Support Vector
+Machines algorithm:</p>
+<ul>
+<li><p><em>kernel</em>: A string defining the kernel used in the
+algorithm. It can take any of the values described in the
+<em>kernlab</em> package.</p></li>
+<li><p><em>sigma</em>: Either “automatic” (recommended) or the inverse
+kernel width for the Radial Basis kernel function “rbfdot” and the
+Laplacian kernel “laplacedot”.</p></li>
+<li><p><em>C</em>: Cost of constraints violation. It can take any
+positive integer greater or equal 0. Values too high can lead to
+overfitting.</p></li>
+</ul>
+</div>
+</div>
+<div class="section level3">
+<h3 id="how-do-i-use-the-tuning-functions-with-the-grid-tuning-example">How do I use the tuning functions with the grid? (Tuning
+example)<a class="anchor" aria-label="anchor" href="#how-do-i-use-the-tuning-functions-with-the-grid-tuning-example"></a>
+</h3>
+<p>Tuning models with <em>adm</em> is straightforward. It only requires
+the user to provide a grid with hyperparameters and values to be tested.
+To construct the hyperparameter grid, we can use the
+<em>expand.grid</em> and <em>list</em> function in a straightforward
+way, passing one vector of values for each hyperparameter. Below is an
+example with Random Forest hyperparameters, but the same approach can be
+used for all algorithms:</p>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Put each value of the hyperparameter in a vector, those in a list, and use expand.grid</span></span>
+<span><span class="va">raf_grid</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/expand.grid.html" class="external-link">expand.grid</a></span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>    mtry <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">3</span><span class="op">)</span>,</span>
+<span>    ntree <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">100</span>, <span class="fl">200</span>, <span class="fl">300</span>, <span class="fl">400</span>, <span class="fl">500</span><span class="op">)</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">raf_grid</span><span class="op">)</span></span>
+<span><span class="co">#&gt;   mtry ntree</span></span>
+<span><span class="co">#&gt; 1    1   100</span></span>
+<span><span class="co">#&gt; 2    2   100</span></span>
+<span><span class="co">#&gt; 3    3   100</span></span>
+<span><span class="co">#&gt; 4    1   200</span></span>
+<span><span class="co">#&gt; 5    2   200</span></span>
+<span><span class="co">#&gt; 6    3   200</span></span></code></pre></div>
+<p>This create a data.frame with 25 rows and 2 columns, where each row
+is a combination of the hyperparameters. This object can be passed to
+the <em>tune_abund</em> functions as the <em>grid</em> argument (see how
+below). Any grid created this way will have the same number of rows as
+the product of the number of values for each hyperparameter, e.g., if we
+have 3 values for <em>mtry</em> and 4 values for <em>ntree</em>, the
+grid will have 3 x 4 = 12 rows. Each row is a combination of the
+hyperparameters values.</p>
+<p>To use the grid, we can pass it to the <em>tune_abund</em> function
+as the <em>grid</em> argument:</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">adm</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Registered S3 method overwritten by 'bit':</span></span>
+<span><span class="co">#&gt;   method   from  </span></span>
+<span><span class="co">#&gt;   print.ri gamlss</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Attaching package: 'dplyr'</span></span>
+<span><span class="co">#&gt; The following objects are masked from 'package:stats':</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;     filter, lag</span></span>
+<span><span class="co">#&gt; The following objects are masked from 'package:base':</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;     intersect, setdiff, setequal, union</span></span>
+<span></span>
+<span><span class="co"># Load some data</span></span>
+<span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu">adm</span><span class="fu">::</span><span class="va"><a href="../reference/sppabund.html">sppabund</a></span></span>
+<span><span class="va">df</span> <span class="op">&lt;-</span> <span class="va">df</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">species</span> <span class="op">==</span> <span class="st">"Species one"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">raf_adm</span> <span class="op">&lt;-</span> <span class="fu">adm</span><span class="fu">::</span><span class="fu"><a href="../reference/tune_abund_raf.html">tune_abund_raf</a></span><span class="op">(</span> </span>
+<span>  data <span class="op">=</span> <span class="va">df</span>, </span>
+<span>  response <span class="op">=</span> <span class="st">"ind_ha"</span>, </span>
+<span>  metric <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mae"</span><span class="op">)</span>,</span>
+<span>  predictors <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"bio1"</span>, <span class="st">"bio12"</span>, <span class="st">"bio15"</span><span class="op">)</span>, </span>
+<span>  partition <span class="op">=</span> <span class="st">".part1"</span>, </span>
+<span>  grid <span class="op">=</span> <span class="va">raf_grid</span> <span class="co"># pass the grid here</span></span>
+<span><span class="op">)</span></span>
+<span><span class="co">#&gt; Using provided grid.</span></span>
+<span><span class="co">#&gt; Searching for optimal hyperparameters...</span></span>
+<span><span class="co">#&gt;   |                                                                              |                                                                      |   0%  |                                                                              |=====                                                                 |   7%  |                                                                              |=========                                                             |  13%  |                                                                              |==============                                                        |  20%  |                                                                              |===================                                                   |  27%  |                                                                              |=======================                                               |  33%  |                                                                              |============================                                          |  40%  |                                                                              |=================================                                     |  47%  |                                                                              |=====================================                                 |  53%  |                                                                              |==========================================                            |  60%  |                                                                              |===============================================                       |  67%  |                                                                              |===================================================                   |  73%  |                                                                              |========================================================              |  80%  |                                                                              |=============================================================         |  87%  |                                                                              |=================================================================     |  93%  |                                                                              |======================================================================| 100%</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Fitting the best model...</span></span>
+<span><span class="co">#&gt; Formula used for model fitting:</span></span>
+<span><span class="co">#&gt; ind_ha ~ bio1 + bio12 + bio15</span></span>
+<span><span class="co">#&gt; Replica number: 1/1</span></span>
+<span><span class="co">#&gt; -- Partition number 1/3</span></span>
+<span><span class="co">#&gt; -- Partition number 2/3</span></span>
+<span><span class="co">#&gt; -- Partition number 3/3</span></span>
+<span><span class="co">#&gt; The best model was achieved with: </span></span>
+<span><span class="co">#&gt;  mtry = 1 and ntree = 500</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="conclusion">Conclusion<a class="anchor" aria-label="anchor" href="#conclusion"></a>
+</h3>
+<p>Tuning in <em>adm</em> is easy. Different algorithms have distinct
+hyperparameters, and the user can choose which ones to tune and the
+values to test. In any case, is important to be aware of hyperparameters
+limits and ranges, as well as the number of combinations that can be
+generated, and their meaning. Consulting <em>adm</em> and its
+dependencies documentation is a good practice to understand the
+algorithms and their hyperparameters.</p>
+</div>
+  </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
+    </nav></aside>
 </div>
 
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by x x, x x.</p>
+  <p></p>
+<p>Developed by x x, x x.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.2.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
     </footer>
 </div>
 
+  
 
-
-
+  
 
   </body>
 </html>
