@@ -21,7 +21,8 @@
 #' @importFrom dplyr bind_rows
 #' @importFrom foreach foreach %dopar%
 #' @importFrom parallel makeCluster stopCluster
-#' @importFrom stringr str_extract_all
+#' @importFrom stringr str_replace_all str_extract_all
+#' @importFrom torch torch_manual_seed
 #'
 #' @return
 #'
@@ -245,12 +246,13 @@ tune_abund_dnn <-
     message("Searching for optimal hyperparameters...")
 
     cl <- parallel::makeCluster(n_cores)
-    doSNOW::registerDoSNOW(cl)
-    pb <- utils::txtProgressBar(max = nrow(grid), style = 3)
-    progress <- function(n) utils::setTxtProgressBar(pb, n)
-    opts <- list(progress = progress)
+    doParallel::registerDoParallel(cl)
+    # doSNOW::registerDoSNOW(cl)
+    # pb <- utils::txtProgressBar(max = nrow(grid), style = 3)
+    # progress <- function(n) utils::setTxtProgressBar(pb, n)
+    # opts <- list(progress = progress)
 
-    hyper_combinations <- foreach::foreach(i = 1:nrow(grid), .options.snow = opts, .export = c("fit_abund_dnn", "adm_eval", "adapt_df"), .packages = c("dplyr", "torch")) %dopar% {
+    hyper_combinations <- foreach::foreach(i = 1:nrow(grid), .export = c("fit_abund_dnn", "adm_eval", "adapt_df"), .packages = c("dplyr", "torch")) %dopar% {
       model <-
         fit_abund_dnn(
           data = data,

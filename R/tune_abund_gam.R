@@ -16,12 +16,12 @@
 #' @param n_cores numeric. Number of cores used in parallel processing.
 #' @param verbose logical. If FALSE, disables all console messages. Default TRUE
 #'
-#' @importFrom doSNOW registerDoSNOW
-#' @importFrom dplyr bind_rows left_join select
-#' @importFrom foreach foreach
+#' @importFrom doParallel registerDoParallel
+#' @importFrom dplyr bind_rows select as_tibble
+#' @importFrom foreach foreach %dopar%
 #' @importFrom parallel makeCluster stopCluster
 #' @importFrom stats na.omit
-#' @importFrom utils read.delim txtProgressBar setTxtProgressBar
+#' @importFrom utils read.delim
 #'
 #' @return
 #'
@@ -157,10 +157,11 @@ tune_abund_gam <-
     message("Searching for optimal hyperparameters...")
 
     cl <- parallel::makeCluster(n_cores)
-    doSNOW::registerDoSNOW(cl)
-    pb <- utils::txtProgressBar(max = nrow(grid), style = 3)
-    progress <- function(n) utils::setTxtProgressBar(pb, n)
-    opts <- list(progress = progress)
+    doParallel::registerDoParallel(cl)
+    # doSNOW::registerDoSNOW(cl)
+    # pb <- utils::txtProgressBar(max = nrow(grid), style = 3)
+    # progress <- function(n) utils::setTxtProgressBar(pb, n)
+    # opts <- list(progress = progress)
 
     # families_bank
     families_bank <-
@@ -169,7 +170,6 @@ tune_abund_gam <-
 
     hyper_combinations <- foreach::foreach(
       i = 1:nrow(grid),
-      .options.snow = opts,
       .export = c("fit_abund_gam", "adm_eval"),
       .packages = c("dplyr", "gamlss")
     ) %dopar% {
