@@ -22,11 +22,10 @@
 #' @param n_cores numeric. Number of cores used in parallel processing.
 #' @param verbose logical. If FALSE, disables all console messages. Default TRUE
 #'
-#' @importFrom doSNOW registerDoSNOW
-#' @importFrom dplyr bind_rows
-#' @importFrom foreach foreach
+#' @importFrom doParallel registerDoParallel
+#' @importFrom dplyr bind_rows as_tibble
+#' @importFrom foreach foreach %dopar%
 #' @importFrom parallel makeCluster stopCluster
-#' @importFrom utils txtProgressBar setTxtProgressBar
 #'
 #' @return
 #' A list object with:
@@ -166,12 +165,13 @@ tune_abund_xgb <-
     message("Searching for optimal hyperparameters...")
 
     cl <- parallel::makeCluster(n_cores)
-    doSNOW::registerDoSNOW(cl)
-    pb <- utils::txtProgressBar(max = nrow(grid), style = 3)
-    progress <- function(n) utils::setTxtProgressBar(pb, n)
-    opts <- list(progress = progress)
+    doParallel::registerDoParallel(cl)
+    # doSNOW::registerDoSNOW(cl)
+    # pb <- utils::txtProgressBar(max = nrow(grid), style = 3)
+    # progress <- function(n) utils::setTxtProgressBar(pb, n)
+    # opts <- list(progress = progress)
 
-    hyper_combinations <- foreach::foreach(i = 1:nrow(grid), .options.snow = opts, .export = c("fit_abund_xgb", "adm_eval"), .packages = c("dplyr")) %dopar% {
+    hyper_combinations <- foreach::foreach(i = 1:nrow(grid), .export = c("fit_abund_xgb", "adm_eval"), .packages = c("dplyr")) %dopar% {
       model <-
         fit_abund_xgb(
           data = data,

@@ -12,7 +12,6 @@ Maintainer: xx <x@gmail.com>
 Depends: R (>= 3.5.0)
 Imports: 
     doParallel,
-    doSNOW,
     dplyr,
     foreach,
     gamlss,
