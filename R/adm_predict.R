@@ -77,7 +77,7 @@
 #' # m1$failed
 #' #
 #' # m1 <- gamlss(ind_ha ~ pb(elevation) + pb(sand) + pb(bio3) + pb(bio12), family=NO, data=some_sp)
-#' # choosen_dist <- gamlss::chooseDist(m1, parallel="snow", ncpus=4, type="realAll")
+#' # choosen_dist <- gamlss::chooseDist(m1, parallel="multicore", ncpus=4, type="realAll")
 #'
 #' mgam <- fit_abund_gam(
 #'   data = some_sp,

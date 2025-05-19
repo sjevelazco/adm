@@ -1,11 +1,10 @@
-pandoc: '3.2'
-pkgdown: 2.0.7
+pandoc: '3.4'
+pkgdown: 2.1.2
 pkgdown_sha: ~
 articles:
   v00_hyperparameter_tuning: v00_hyperparameter_tuning.html
   v01_modelling_workflow: v01_modelling_workflow.html
-last_built: 2025-05-07T23:58Z
+last_built: 2025-05-19T14:33Z
 urls:
-  reference: https://xx.github.io/adm/reference
-  article: https://xx.github.io/adm/articles
-
+  reference: https://sjevelazco.github.io/adm/reference
+  article: https://sjevelazco.github.io/adm/articles

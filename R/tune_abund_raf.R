@@ -146,10 +146,10 @@ tune_abund_raf <-
 
     cl <- parallel::makeCluster(n_cores)
     doParallel::registerDoParallel(cl)
-    #doSNOW::registerDoSNOW(cl)
-    #pb <- utils::txtProgressBar(max = nrow(grid), style = 3)
-    #progress <- function(n) utils::setTxtProgressBar(pb, n)
-    #opts <- list(progress = progress)
+    # doSNOW::registerDoSNOW(cl)
+    # pb <- utils::txtProgressBar(max = nrow(grid), style = 3)
+    # progress <- function(n) utils::setTxtProgressBar(pb, n)
+    # opts <- list(progress = progress)
 
     hyper_combinations <- foreach::foreach(i = 1:nrow(grid), .export = c("fit_abund_raf", "adm_eval"), .packages = c("dplyr")) %dopar% {
       model <-

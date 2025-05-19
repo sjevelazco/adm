@@ -1,5 +1,5 @@
 destination: docs
-url: https://xx.github.io/adm
+url: https://sjevelazco.github.io/adm
 
 template:
   bootstrap: 5
@@ -22,7 +22,7 @@ navbar:
       -  text: "1. Modeling workflow with adm"
          href: articles/v01_modelling_workflow.html
     - text: GitHub
-      href: https://xx.github.io/adm
+      href: https://sjevelazco.github.io/adm
       aria-label: GitHub
 
 components:
