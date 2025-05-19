@@ -110,5 +110,5 @@ You can install the development version of ***adm*** from [github](https://githu
 
 ``` r
 # For Windows and Mac OS operating systems
-remotes::install_github("x/adm")
+remotes::install_github("sjevelazco/adm")
 ```
