@@ -1,13 +1,13 @@
 Package: adm
 Type: Package
-Title: Tools for Constructing, Predicting, and Post-Processing Abundance-based Distribution Models
+Title: Tools for Constructing, Predicting, and Post-Processing Abundance-based Species Distribution Models
 Version: 0.0.2
-Authors@R: c(person(given = "x", family = "x", role = c("aut"),
-           email = "x@gmail.com",
-           comment = c(ORCID = "0000-0000-0000-0000")), 
-           person(given = "x", family = "x", role = c("aut", "cre"),
-           email = "x@gmail.com",
-           comment = c(ORCID = "0000-0000-0000-0000")))
+Authors@R: c(person(given = "Admir Cesar", family = "de Oliveira Junior", role = c("aut"),
+           email = "admircjunior@gmail.com",
+           comment = c(ORCID = "0000-0002-1946-0475")), 
+           person(given = "Santigo José Elías", family = "Velazco", role = c("aut", "cre"),
+           email = "sjevelazco@gmail.com",
+           comment = c(ORCID = "0000-0002-7527-0967")))
 Maintainer: xx <x@gmail.com>
 Depends: R (>= 3.5.0)
 Imports: 
@@ -30,7 +30,7 @@ Imports:
     torchvision,
     utils,
     xgboost
-Description: Assist in the construction of abundance-based distribution model workflow
+Description: Assist in the construction of abundance-based species distribution model workflow
     by incorporating comprehensive tools for data preparation, model fitting, 
     prediction, and exploration.
 License: GPL (>= 3)
