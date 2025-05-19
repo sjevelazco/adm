@@ -106,7 +106,7 @@ Extra functions to support the modeling workflow, including data handling, trans
 
 ### Installation
 
-You can install the development version of ***adm*** from [github](https://github.com/x/adm)
+You can install the development version of ***adm*** from [github](https://github.com/sjevelazco/adm)
 
 ``` r
 # For Windows and Mac OS operating systems
