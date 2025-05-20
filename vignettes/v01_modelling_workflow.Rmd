@@ -155,7 +155,7 @@ mraf <- tune_abund_raf(
   predict_part = TRUE, # predictions for every partition will be returned
   grid = raf_grid,
   metrics = c("corr_pear", "mae"), # metrics to select the best model
-  n_cores = 4, # number of cores to be used in parallel processing
+  n_cores = 2, # number of cores to be used in parallel processing
   verbose = FALSE
 )
 ```
@@ -267,7 +267,7 @@ mglm <- tune_abund_glm(
   predict_part = TRUE,
   grid = glm_grid,
   metrics = c("corr_pear", "mae"),
-  n_cores = 4,
+  n_cores = 2,
   verbose = FALSE
 )
 ```
@@ -353,7 +353,7 @@ mdnn <- tune_abund_dnn(
   grid = dnn_grid,
   architectures = archs,
   metrics = c("corr_pear", "mae"),
-  n_cores = 10,
+  n_cores = 2,
   verbose = FALSE
 )
 ```
