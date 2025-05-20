@@ -10,7 +10,8 @@ This package aims to support the construction of Abundance-based species distrib
 
 ***adm*** functions are grouped in three categories: modeling, post-modeling, and miscellaneous tools
 
-<a href='https://sjevelazco.github.io/adm'><img src="man/figures/adm.png" align="centre" height="450"/></a>
+<a href='https://sjevelazco.github.io/adm'><img src="https://raw.githubusercontent.com/sjevelazco/adm/main/man/figures/adm.png" align="centre" height="450"/></a>
+
 
 #### i) **modeling**
 
