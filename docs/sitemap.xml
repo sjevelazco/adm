@@ -1,147 +1,51 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://xx.github.io/adm/404.html</loc>
-  </url>
-  <url>
-    <loc>https://xx.github.io/adm/articles/index.html</loc>
-  </url>
-  <url>
-    <loc>https://xx.github.io/adm/articles/v00_hyperparameter_tuning.html</loc>
-  </url>
-  <url>
-    <loc>https://xx.github.io/adm/articles/v01_modelling_workflow.html</loc>
-  </url>
-  <url>
-    <loc>https://xx.github.io/adm/authors.html</loc>
-  </url>
-  <url>
-    <loc>https://xx.github.io/adm/index.html</loc>
-  </url>
-  <url>
-    <loc>https://xx.github.io/adm/reference/adm_eval.html</loc>
-  </url>
-  <url>
-    <loc>https://xx.github.io/adm/reference/adm_extract.html</loc>
-  </url>
-  <url>
-    <loc>https://xx.github.io/adm/reference/adm_predict.html</loc>
-  </url>
-  <url>
-    <loc>https://xx.github.io/adm/reference/adm_summarize.html</loc>
-  </url>
-  <url>
-    <loc>https://xx.github.io/adm/reference/adm_transform.html</loc>
-  </url>
-  <url>
-    <loc>https://xx.github.io/adm/reference/balance_dataset.html</loc>
-  </url>
-  <url>
-    <loc>https://xx.github.io/adm/reference/cnn_make_samples.html</loc>
-  </url>
-  <url>
-    <loc>https://xx.github.io/adm/reference/cretusa_data.html</loc>
-  </url>
-  <url>
-    <loc>https://xx.github.io/adm/reference/cretusa_predictors.html</loc>
-  </url>
-  <url>
-    <loc>https://xx.github.io/adm/reference/croppin_hood.html</loc>
-  </url>
-  <url>
-    <loc>https://xx.github.io/adm/reference/data_abund_bpdp.html</loc>
-  </url>
-  <url>
-    <loc>https://xx.github.io/adm/reference/data_abund_pdp.html</loc>
-  </url>
-  <url>
-    <loc>https://xx.github.io/adm/reference/envar.html</loc>
-  </url>
-  <url>
-    <loc>https://xx.github.io/adm/reference/family_selector.html</loc>
-  </url>
-  <url>
-    <loc>https://xx.github.io/adm/reference/fit_abund_cnn.html</loc>
-  </url>
-  <url>
-    <loc>https://xx.github.io/adm/reference/fit_abund_dnn.html</loc>
-  </url>
-  <url>
-    <loc>https://xx.github.io/adm/reference/fit_abund_gam.html</loc>
-  </url>
-  <url>
-    <loc>https://xx.github.io/adm/reference/fit_abund_gbm.html</loc>
-  </url>
-  <url>
-    <loc>https://xx.github.io/adm/reference/fit_abund_glm.html</loc>
-  </url>
-  <url>
-    <loc>https://xx.github.io/adm/reference/fit_abund_net.html</loc>
-  </url>
-  <url>
-    <loc>https://xx.github.io/adm/reference/fit_abund_raf.html</loc>
-  </url>
-  <url>
-    <loc>https://xx.github.io/adm/reference/fit_abund_svm.html</loc>
-  </url>
-  <url>
-    <loc>https://xx.github.io/adm/reference/fit_abund_xgb.html</loc>
-  </url>
-  <url>
-    <loc>https://xx.github.io/adm/reference/generate_arch_list.html</loc>
-  </url>
-  <url>
-    <loc>https://xx.github.io/adm/reference/generate_cnn_architecture.html</loc>
-  </url>
-  <url>
-    <loc>https://xx.github.io/adm/reference/generate_dnn_architecture.html</loc>
-  </url>
-  <url>
-    <loc>https://xx.github.io/adm/reference/index.html</loc>
-  </url>
-  <url>
-    <loc>https://xx.github.io/adm/reference/model_selection.html</loc>
-  </url>
-  <url>
-    <loc>https://xx.github.io/adm/reference/p_abund_bpdp.html</loc>
-  </url>
-  <url>
-    <loc>https://xx.github.io/adm/reference/p_abund_pdp.html</loc>
-  </url>
-  <url>
-    <loc>https://xx.github.io/adm/reference/res_calculate.html</loc>
-  </url>
-  <url>
-    <loc>https://xx.github.io/adm/reference/select_arch_list.html</loc>
-  </url>
-  <url>
-    <loc>https://xx.github.io/adm/reference/sppabund.html</loc>
-  </url>
-  <url>
-    <loc>https://xx.github.io/adm/reference/tune_abund_cnn.html</loc>
-  </url>
-  <url>
-    <loc>https://xx.github.io/adm/reference/tune_abund_dnn.html</loc>
-  </url>
-  <url>
-    <loc>https://xx.github.io/adm/reference/tune_abund_gam.html</loc>
-  </url>
-  <url>
-    <loc>https://xx.github.io/adm/reference/tune_abund_gbm.html</loc>
-  </url>
-  <url>
-    <loc>https://xx.github.io/adm/reference/tune_abund_glm.html</loc>
-  </url>
-  <url>
-    <loc>https://xx.github.io/adm/reference/tune_abund_net.html</loc>
-  </url>
-  <url>
-    <loc>https://xx.github.io/adm/reference/tune_abund_raf.html</loc>
-  </url>
-  <url>
-    <loc>https://xx.github.io/adm/reference/tune_abund_svm.html</loc>
-  </url>
-  <url>
-    <loc>https://xx.github.io/adm/reference/tune_abund_xgb.html</loc>
-  </url>
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>https://sjevelazco.github.io/adm/404.html</loc></url>
+<url><loc>https://sjevelazco.github.io/adm/articles/index.html</loc></url>
+<url><loc>https://sjevelazco.github.io/adm/articles/v00_hyperparameter_tuning.html</loc></url>
+<url><loc>https://sjevelazco.github.io/adm/articles/v01_modelling_workflow.html</loc></url>
+<url><loc>https://sjevelazco.github.io/adm/authors.html</loc></url>
+<url><loc>https://sjevelazco.github.io/adm/index.html</loc></url>
+<url><loc>https://sjevelazco.github.io/adm/reference/adm_eval.html</loc></url>
+<url><loc>https://sjevelazco.github.io/adm/reference/adm_extract.html</loc></url>
+<url><loc>https://sjevelazco.github.io/adm/reference/adm_predict.html</loc></url>
+<url><loc>https://sjevelazco.github.io/adm/reference/adm_summarize.html</loc></url>
+<url><loc>https://sjevelazco.github.io/adm/reference/adm_transform.html</loc></url>
+<url><loc>https://sjevelazco.github.io/adm/reference/balance_dataset.html</loc></url>
+<url><loc>https://sjevelazco.github.io/adm/reference/cnn_make_samples.html</loc></url>
+<url><loc>https://sjevelazco.github.io/adm/reference/cretusa_data.html</loc></url>
+<url><loc>https://sjevelazco.github.io/adm/reference/cretusa_predictors.html</loc></url>
+<url><loc>https://sjevelazco.github.io/adm/reference/croppin_hood.html</loc></url>
+<url><loc>https://sjevelazco.github.io/adm/reference/data_abund_bpdp.html</loc></url>
+<url><loc>https://sjevelazco.github.io/adm/reference/data_abund_pdp.html</loc></url>
+<url><loc>https://sjevelazco.github.io/adm/reference/envar.html</loc></url>
+<url><loc>https://sjevelazco.github.io/adm/reference/family_selector.html</loc></url>
+<url><loc>https://sjevelazco.github.io/adm/reference/fit_abund_cnn.html</loc></url>
+<url><loc>https://sjevelazco.github.io/adm/reference/fit_abund_dnn.html</loc></url>
+<url><loc>https://sjevelazco.github.io/adm/reference/fit_abund_gam.html</loc></url>
+<url><loc>https://sjevelazco.github.io/adm/reference/fit_abund_gbm.html</loc></url>
+<url><loc>https://sjevelazco.github.io/adm/reference/fit_abund_glm.html</loc></url>
+<url><loc>https://sjevelazco.github.io/adm/reference/fit_abund_net.html</loc></url>
+<url><loc>https://sjevelazco.github.io/adm/reference/fit_abund_raf.html</loc></url>
+<url><loc>https://sjevelazco.github.io/adm/reference/fit_abund_svm.html</loc></url>
+<url><loc>https://sjevelazco.github.io/adm/reference/fit_abund_xgb.html</loc></url>
+<url><loc>https://sjevelazco.github.io/adm/reference/generate_arch_list.html</loc></url>
+<url><loc>https://sjevelazco.github.io/adm/reference/generate_cnn_architecture.html</loc></url>
+<url><loc>https://sjevelazco.github.io/adm/reference/generate_dnn_architecture.html</loc></url>
+<url><loc>https://sjevelazco.github.io/adm/reference/index.html</loc></url>
+<url><loc>https://sjevelazco.github.io/adm/reference/model_selection.html</loc></url>
+<url><loc>https://sjevelazco.github.io/adm/reference/p_abund_bpdp.html</loc></url>
+<url><loc>https://sjevelazco.github.io/adm/reference/p_abund_pdp.html</loc></url>
+<url><loc>https://sjevelazco.github.io/adm/reference/res_calculate.html</loc></url>
+<url><loc>https://sjevelazco.github.io/adm/reference/select_arch_list.html</loc></url>
+<url><loc>https://sjevelazco.github.io/adm/reference/sppabund.html</loc></url>
+<url><loc>https://sjevelazco.github.io/adm/reference/tune_abund_cnn.html</loc></url>
+<url><loc>https://sjevelazco.github.io/adm/reference/tune_abund_dnn.html</loc></url>
+<url><loc>https://sjevelazco.github.io/adm/reference/tune_abund_gam.html</loc></url>
+<url><loc>https://sjevelazco.github.io/adm/reference/tune_abund_gbm.html</loc></url>
+<url><loc>https://sjevelazco.github.io/adm/reference/tune_abund_glm.html</loc></url>
+<url><loc>https://sjevelazco.github.io/adm/reference/tune_abund_net.html</loc></url>
+<url><loc>https://sjevelazco.github.io/adm/reference/tune_abund_raf.html</loc></url>
+<url><loc>https://sjevelazco.github.io/adm/reference/tune_abund_svm.html</loc></url>
+<url><loc>https://sjevelazco.github.io/adm/reference/tune_abund_xgb.html</loc></url>
 </urlset>
+
