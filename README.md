@@ -112,3 +112,11 @@ You can install the development version of ***adm*** from [github](https://githu
 # For Windows and Mac OS operating systems
 remotes::install_github("sjevelazco/adm")
 ```
+
+### Package website
+
+See the package website (<https://sjevelazco.github.io/flexsdm/>) for functions explanation and vignettes.
+
+### Package citation
+
+Oliveira Junior A.C., Velazco S.J.E. (2025). adm: an R package for constructing abundance-based species distribution models. Methods in Ecology and Evolution, x(x) x–xx. <https://doi.org/>
