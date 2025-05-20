@@ -10,7 +10,7 @@ This package aims to support the construction of Abundance-based species distrib
 
 ***adm*** functions are grouped in three categories: modeling, post-modeling, and miscellaneous tools
 
-<a href='https://x.github.io/adm'><img src="man/figures/adm.png" align="centre" height="450"/></a>
+<a href='https://sjevelazco.github.io/adm'><img src="man/figures/adm.png" align="centre" height="450"/></a>
 
 #### i) **modeling**
 
@@ -115,7 +115,7 @@ remotes::install_github("sjevelazco/adm")
 
 ### Package website
 
-See the package website (<https://sjevelazco.github.io/flexsdm/>) for functions explanation and vignettes.
+See the package website (<https://sjevelazco.github.io/adm/>) for functions explanation and vignettes.
 
 ### Package citation
 
