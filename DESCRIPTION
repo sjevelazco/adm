@@ -5,7 +5,7 @@ Version: 0.0.2
 Authors@R: c(person(given = "Admir Cesar", family = "de Oliveira Junior", role = c("aut", "cre"),
            email = "admircjunior@gmail.com",
            comment = c(ORCID = "0000-0002-1946-0475")), 
-           person(given = "Santigo José Elías", family = "Velazco", role = c("aut"),
+           person(given = "Santiago José Elías", family = "Velazco", role = c("aut"),
            email = "sjevelazco@gmail.com",
            comment = c(ORCID = "0000-0002-7527-0967")))
 Maintainer: Admir Cesar de Oliveira Junior  <admircjunior@gmail.com>
