@@ -1,8 +1,10 @@
 comment: false
 
-codecov: 
- token: 91f619c5-d1ff-4e86-9a1b-a1c5dd4591a8
-
+- name: Upload coverage to Codecov
+  uses: codecov/codecov-action@v4
+  env:
+    CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+    
 coverage:
   status:
     patch:
