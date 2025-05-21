@@ -253,7 +253,7 @@ tune and validate a RAF model:</p>
 <span>  predict_part <span class="op">=</span> <span class="cn">TRUE</span>, <span class="co"># predictions for every partition will be returned</span></span>
 <span>  grid <span class="op">=</span> <span class="va">raf_grid</span>,</span>
 <span>  metrics <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"corr_pear"</span>, <span class="st">"mae"</span><span class="op">)</span>, <span class="co"># metrics to select the best model</span></span>
-<span>  n_cores <span class="op">=</span> <span class="fl">4</span>, <span class="co"># number of cores to be used in parallel processing</span></span>
+<span>  n_cores <span class="op">=</span> <span class="fl">2</span>, <span class="co"># number of cores to be used in parallel processing</span></span>
 <span>  verbose <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt; Using provided grid.</span></span>
@@ -432,7 +432,7 @@ Tuning the GLM with the grid:</p>
 <span>  predict_part <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  grid <span class="op">=</span> <span class="va">glm_grid</span>,</span>
 <span>  metrics <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"corr_pear"</span>, <span class="st">"mae"</span><span class="op">)</span>,</span>
-<span>  n_cores <span class="op">=</span> <span class="fl">4</span>,</span>
+<span>  n_cores <span class="op">=</span> <span class="fl">2</span>,</span>
 <span>  verbose <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt; Using provided grid.</span></span>
@@ -551,7 +551,7 @@ within the <em>tune_abund_dnn</em> function:</p>
 <span>  grid <span class="op">=</span> <span class="va">dnn_grid</span>,</span>
 <span>  architectures <span class="op">=</span> <span class="va">archs</span>,</span>
 <span>  metrics <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"corr_pear"</span>, <span class="st">"mae"</span><span class="op">)</span>,</span>
-<span>  n_cores <span class="op">=</span> <span class="fl">10</span>,</span>
+<span>  n_cores <span class="op">=</span> <span class="fl">2</span>,</span>
 <span>  verbose <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt; Using provided architectures.</span></span>
@@ -576,8 +576,8 @@ packages.</p>
 <span><span class="va">mdnn</span><span class="op">$</span><span class="va">model</span></span>
 <span><span class="co">#&gt; A `luz_module_fitted`</span></span>
 <span><span class="co">#&gt; ── Time ────────────────────────────────────────────────────────────────────────</span></span>
-<span><span class="co">#&gt; • Total time: 8.5s</span></span>
-<span><span class="co">#&gt; • Avg time per training epoch: 351ms</span></span>
+<span><span class="co">#&gt; • Total time: 9.1s</span></span>
+<span><span class="co">#&gt; • Avg time per training epoch: 375ms</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; ── Results ─────────────────────────────────────────────────────────────────────</span></span>
 <span><span class="co">#&gt; Metrics observed in the last epoch.</span></span>
@@ -822,7 +822,7 @@ fitting, and validation to model prediction and exploration.</p>
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Admir Cesar de Oliveira Junior, Santigo José Elías Velazco.</p>
+  <p>Developed by Admir Cesar de Oliveira Junior, Santiago José Elías Velazco.</p>
 </div>
 
 <div class="pkgdown-footer-right">

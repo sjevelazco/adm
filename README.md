@@ -1,6 +1,8 @@
+# adm - Abundance-based species distribution models <img src="man/figures/adm_logo.svg" align="right" style="height:168px;"/>
+
 [![License](https://img.shields.io/badge/license-GPL%20%28%3E=%203%29-lightgrey.svg?style=flat)](http://www.gnu.org/licenses/gpl-3.0.html) [![codecov](https://codecov.io/gh/sjevelazco/adm/graph/badge.svg?token=cKRmbNhn0A)](https://codecov.io/gh/sjevelazco/adm) [![](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
 
-# adm - Abundance-based species distribution models
+------------------------------------------------------------------------
 
 ### Overview
 
@@ -11,7 +13,6 @@ This package aims to support the construction of Abundance-based species distrib
 ***adm*** functions are grouped in three categories: modeling, post-modeling, and miscellaneous tools
 
 <a href='https://sjevelazco.github.io/adm'><img src="https://raw.githubusercontent.com/sjevelazco/adm/main/man/figures/adm.png" align="centre" height="450"/></a>
-
 
 #### i) **modeling**
 
