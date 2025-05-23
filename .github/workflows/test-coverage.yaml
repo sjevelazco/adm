@@ -6,6 +6,7 @@ on:
 
 name: test-coverage
 
+          
 jobs:
   test-coverage:
     runs-on: windows-latest
@@ -27,3 +28,9 @@ jobs:
       - name: Test coverage
         run: covr::codecov(quiet = FALSE)
         shell: Rscript {0}
+
+name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+
