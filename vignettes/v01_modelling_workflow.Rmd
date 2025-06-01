@@ -36,6 +36,9 @@ require(terra)
 require(dplyr)
 ```
 
+```{r install_torch, include=FALSE}
+torch::install_torch()
+```
 ## Preparaing data
 
 In this tutorial, we will model abundace of *Cynophalla retusa* (Griseb.) Cornejo & Iltis (Capparaceae), a dry biome shrub native to northeastern Argentina, Paraguay, Bolivia, and central Brazil.
