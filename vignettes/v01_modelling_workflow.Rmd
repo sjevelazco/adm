@@ -36,9 +36,6 @@ require(terra)
 require(dplyr)
 ```
 
-```{r install_torch, include=FALSE}
-torch::install_torch()
-```
 ## Preparaing data
 
 In this tutorial, we will model abundace of *Cynophalla retusa* (Griseb.) Cornejo & Iltis (Capparaceae), a dry biome shrub native to northeastern Argentina, Paraguay, Bolivia, and central Brazil.
@@ -293,7 +290,7 @@ To filter this list, users can use *select_arch_list* to reduce it, sampling the
 This is highly recommended.
 Let's create and select some architectures:
 
-```{r dnn architectures}
+```{r dnn architectures, eval = FALSE}
 archs <- adm::generate_arch_list(
   type = "dnn",
   number_of_features = 7, # input/predictor variables
@@ -303,7 +300,13 @@ archs <- adm::generate_arch_list(
   batch_norm = TRUE, # batch normalization between layers
   dropout = 0 # without training dropout
 )
+```
 
+```{r, include=FALSE}
+archs <- readRDS(system.file("external/v1_archs.rds", package = "adm"))
+```
+
+```{r}
 number_before <- archs$arch_list %>% length() # 117
 
 archs <- adm::select_arch_list(
