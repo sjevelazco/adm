@@ -290,7 +290,7 @@ To filter this list, users can use *select_arch_list* to reduce it, sampling the
 This is highly recommended.
 Let's create and select some architectures:
 
-```{r dnn architectures}
+```{r dnn architectures, eval = FALSE}
 archs <- adm::generate_arch_list(
   type = "dnn",
   number_of_features = 7, # input/predictor variables
@@ -312,8 +312,9 @@ archs <- adm::select_arch_list(
 )
 
 number_after <- archs$arch_list %>% length() # 52
-
-message("From ", number_before, " to ", number_after, " architectures.")
+```
+```{r, include=FALSE}
+archs <- readRDS(system.file("external/v1_archs.rds", package = "adm"))
 ```
 
 However, for the sake of brevity in this tutorial, we will manually reduce even more our architectures list to just a few:
