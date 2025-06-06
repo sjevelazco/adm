@@ -67,6 +67,14 @@ jobs:
           remotes::install_cran(c("rcmdcheck", "curl"))
         shell: Rscript {0}
 
+      - name: Install torch backend
+        run: |
+          if (!requireNamespace("torch", quietly = TRUE)) {
+            install.packages("torch")
+          }
+          torch::install_torch(reinstall = TRUE)
+        shell: Rscript {0}
+
       - name: Session info
         run: |
           options(width = 100)
