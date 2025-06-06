@@ -300,13 +300,7 @@ archs <- adm::generate_arch_list(
   batch_norm = TRUE, # batch normalization between layers
   dropout = 0 # without training dropout
 )
-```
 
-```{r, include=FALSE}
-archs <- readRDS(system.file("external/v1_archs.rds", package = "adm"))
-```
-
-```{r}
 number_before <- archs$arch_list %>% length() # 117
 
 archs <- adm::select_arch_list(
@@ -318,8 +312,9 @@ archs <- adm::select_arch_list(
 )
 
 number_after <- archs$arch_list %>% length() # 52
-
-message("From ", number_before, " to ", number_after, " architectures.")
+```
+```{r, include=FALSE}
+archs <- readRDS(system.file("external/v1_archs.rds", package = "adm"))
 ```
 
 However, for the sake of brevity in this tutorial, we will manually reduce even more our architectures list to just a few:
