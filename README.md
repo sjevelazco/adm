@@ -121,4 +121,4 @@ See the package website (<https://sjevelazco.github.io/adm/>) for functions expl
 
 ### Package citation
 
-Oliveira Junior A.C., Velazco S.J.E. (2025). adm: an R package for constructing abundance-based species distribution models. Methods in Ecology and Evolution, x(x) x–xx. <https://doi.org/10.1111/2041-210X70074>
+de Oliveira Junior A.C., Velazco S.J.E. (2025). adm: an R package for constructing abundance-based species distribution models. *Methods in Ecology and Evolution*. <https://doi.org/10.1111/2041-210X70074>
