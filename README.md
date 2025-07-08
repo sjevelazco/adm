@@ -1,6 +1,6 @@
 # adm - Abundance-based species distribution models <img src="man/figures/adm_logo.svg" align="right" style="height:168px;"/>
 
-[![License](https://img.shields.io/badge/license-GPL%20%28%3E=%203%29-lightgrey.svg?style=flat)](http://www.gnu.org/licenses/gpl-3.0.html) [![R-CMD-check](https://github.com/sjevelazco/adm/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/sjevelazco/adm/actions/workflows/R-CMD-check.yaml) [![codecov](https://codecov.io/gh/sjevelazco/adm/graph/badge.svg?token=cKRmbNhn0A)](https://codecov.io/gh/sjevelazco/adm) [![](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
+[![License](https://img.shields.io/badge/license-GPL%20%28%3E=%203%29-lightgrey.svg?style=flat)](http://www.gnu.org/licenses/gpl-3.0.html) [![R-CMD-check](https://github.com/sjevelazco/adm/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/sjevelazco/adm/actions/workflows/R-CMD-check.yaml) [![codecov](https://codecov.io/gh/sjevelazco/adm/graph/badge.svg?token=cKRmbNhn0A)](https://codecov.io/gh/sjevelazco/adm) [![](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active) [![DOI](https://img.shields.io/badge/DOI-10.1111%2F2041--210X.70074-blue)](https://doi.org/10.1111/2041-210X.70074)
 
 ------------------------------------------------------------------------
 
@@ -121,4 +121,4 @@ See the package website (<https://sjevelazco.github.io/adm/>) for functions expl
 
 ### Package citation
 
-de Oliveira Junior A.C., Velazco S.J.E. (2025). adm: an R package for constructing abundance-based species distribution models. *Methods in Ecology and Evolution*. <https://doi.org/10.1111/2041-210X70074>
+de Oliveira Junior A.C., Velazco S.J.E. (2025). adm: an R package for constructing abundance-based species distribution models. *Methods in Ecology and Evolution*. <https://doi.org/10.1111/2041-210X.70074>
