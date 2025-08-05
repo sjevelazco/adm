@@ -183,6 +183,7 @@ data_abund_pdp <-
         # Range extrapolation
         rng <- terra::minmax(projection_data[[predictors]])
         rng <- seq(rng[1], rng[2], length.out = resolution)
+        rng <- c(rng, range(x[, predictors])) %>% sort() # add training range 
       }
     }
 

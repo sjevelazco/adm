@@ -207,6 +207,7 @@ p_abund_bpdp <-
           stringr::str_remove("\\)")
       } else if (variables[["model"]] == "glm") {
         v <- attr(model$mu.terms, "dataClasses")[-1]
+        v <- v[!grepl("[I(]", names(v))]
       }
     }
 
