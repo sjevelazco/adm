@@ -93,7 +93,7 @@ some_sp <-
 # expect_equal(names(pdp_data), c("pdpdata", "resid"))
 # expect_equal(length(pdp_data$pdpdata), 3)
 # expect_equal(ncol(pdp_data$resid), 2)
-# expect_equal(nrow(pdp_data$pdpdata), 25)
+# expect_equal(nrow(pdp_data$pdpdata), 27)
 # })
 
 test_that("data_abund_bpdp for dnn", {
@@ -156,7 +156,7 @@ test_that("data_abund_bpdp for dnn", {
   expect_equal(names(pdp_data), c("pdpdata", "resid"))
   expect_equal(length(pdp_data$pdpdata), 3)
   expect_equal(ncol(pdp_data$resid), 2)
-  expect_equal(nrow(pdp_data$pdpdata), 25)
+  expect_equal(nrow(pdp_data$pdpdata), 27)
 })
 
 test_that("data_abund_bpdp for gam", {
@@ -202,7 +202,7 @@ test_that("data_abund_bpdp for gam", {
   expect_equal(names(pdp_data), c("pdpdata", "resid"))
   expect_equal(length(pdp_data$pdpdata), 3)
   expect_equal(ncol(pdp_data$resid), 2)
-  expect_equal(nrow(pdp_data$pdpdata), 25)
+  expect_equal(nrow(pdp_data$pdpdata), 27)
 })
 
 test_that("data_abund_bpdp for glm", {
@@ -247,7 +247,7 @@ test_that("data_abund_bpdp for glm", {
   expect_equal(names(pdp_data), c("pdpdata", "resid"))
   expect_equal(length(pdp_data$pdpdata), 3)
   expect_equal(ncol(pdp_data$resid), 2)
-  expect_equal(nrow(pdp_data$pdpdata), 25)
+  expect_equal(nrow(pdp_data$pdpdata), 27)
 })
 
 test_that("data_abund_bpdp for gbm", {
@@ -294,7 +294,7 @@ test_that("data_abund_bpdp for gbm", {
   expect_equal(names(pdp_data), c("pdpdata", "resid"))
   expect_equal(length(pdp_data$pdpdata), 3)
   expect_equal(ncol(pdp_data$resid), 2)
-  expect_equal(nrow(pdp_data$pdpdata), 25)
+  expect_equal(nrow(pdp_data$pdpdata), 27)
 })
 
 test_that("data_abund_bpdp for net", {
@@ -338,7 +338,7 @@ test_that("data_abund_bpdp for net", {
   expect_equal(names(pdp_data), c("pdpdata", "resid"))
   expect_equal(length(pdp_data$pdpdata), 3)
   expect_equal(ncol(pdp_data$resid), 2)
-  expect_equal(nrow(pdp_data$pdpdata), 25)
+  expect_equal(nrow(pdp_data$pdpdata), 27)
 })
 
 test_that("data_abund_bpdp for raf", {
@@ -382,7 +382,7 @@ test_that("data_abund_bpdp for raf", {
   expect_equal(names(pdp_data), c("pdpdata", "resid"))
   expect_equal(length(pdp_data$pdpdata), 3)
   expect_equal(ncol(pdp_data$resid), 2)
-  expect_equal(nrow(pdp_data$pdpdata), 25)
+  expect_equal(nrow(pdp_data$pdpdata), 27)
 })
 
 test_that("data_abund_bpdp for svm", {
@@ -427,7 +427,7 @@ test_that("data_abund_bpdp for svm", {
   expect_equal(names(pdp_data), c("pdpdata", "resid"))
   expect_equal(length(pdp_data$pdpdata), 3)
   expect_equal(ncol(pdp_data$resid), 2)
-  expect_equal(nrow(pdp_data$pdpdata), 25)
+  expect_equal(nrow(pdp_data$pdpdata), 27)
 })
 
 test_that("data_abund_bpdp for xgb", {
@@ -477,7 +477,7 @@ test_that("data_abund_bpdp for xgb", {
   expect_equal(names(pdp_data), c("pdpdata", "resid"))
   expect_equal(length(pdp_data$pdpdata), 3)
   expect_equal(ncol(pdp_data$resid), 2)
-  expect_equal(nrow(pdp_data$pdpdata), 25)
+  expect_equal(nrow(pdp_data$pdpdata), 27)
 })
 
 
