@@ -7,12 +7,16 @@
 #' @param partition character. Column name with training and validation partition groups.
 #' @param predict_part logical. Save predicted abundance for testing data. Default = FALSE
 #' @param learning_rate numeric. The size of the step taken during the optimization process. Default = 0.01
+#' @param weight_decay numeric. The regularization strength: 0 means no penalty, while higher values (e.g. 0.01) apply stronger shrinkage to the weights during training. Default is 0
+#' @param optimizer a torch_optimizer_generator. The optimizer to be used in model fitting. Default is torch::optim_adamw.
+#' @param loss_function a torch nn_loss. The loss function to be used in model fitting. Default is torch::nn_l1_loss.
 #' @param n_epochs numeric. Max number of times the learning algorithm will work through the training set. Default = 10
 #' @param batch_size numeric. A batch is a subset of the training set used in a single iteration of the training process. The size of each batch is referred to as the batch size. Default = 32
 #' @param custom_architecture a Torch nn_module_generator object or a generate_dnn_architecture output. A neural network architecture to be used instead of the internal default one. Default NULL
 #' @param verbose logical. If FALSE, disables all console messages. Default TRUE
 #' @param validation_patience numerical. An integer indicating the number of epochs without loss improvement tolerated by the algorithm in the validation process. If the patience limit is exceeded, the training ends. Default 2
 #' @param fitting_patience numerical. The same as validation_patience, but in the final model fitting process. Default 5
+#' @param learning_monitor logical. If TRUE, the function will return a tibble containing loss values over training epochs. It is useful to create learning/convergence plots. 
 #'
 #' @importFrom dplyr bind_rows bind_cols pull tibble as_tibble group_by summarise across
 #' @importFrom luz setup set_opt_hparams fit
@@ -88,12 +92,16 @@ fit_abund_dnn <-
            partition,
            predict_part = FALSE,
            learning_rate = 0.01,
+           weight_decay = 0,
            n_epochs = 10,
            batch_size = 32,
            validation_patience = 2,
            fitting_patience = 5,
+           optimizer = torch::optim_adamw,
+           loss_function = torch::nn_l1_loss,
            custom_architecture = NULL,
-           verbose = TRUE) {
+           verbose = TRUE,
+           learning_monitor = FALSE) {
     . <- self <- model <- mae <- pdisp <- NULL
     torch::torch_manual_seed(13)
     # Variables
@@ -116,24 +124,6 @@ fit_abund_dnn <-
       response = response,
       partition = partition
     )
-
-    # # ---- Formula ----
-    # if (is.null(fit_formula)) {
-    #   formula1 <- stats::formula(paste(response, "~", paste(c(
-    #     predictors,
-    #     predictors_f
-    #   ), collapse = " + ")))
-    # } else {
-    #   formula1 <- fit_formula
-    # }
-
-    # if (verbose) {
-    #   message(
-    #     "Formula used for model fitting:\n",
-    #     Reduce(paste, deparse(formula1)) %>% gsub(paste("  ", "   ", collapse = "|"), " ", .),
-    #     "\n"
-    #   )
-    # }
 
     # create_dataset definition
     create_dataset <- torch::dataset(
@@ -200,6 +190,12 @@ fit_abund_dnn <-
       pred_test <- list()
       part_pred <- list()
 
+      if (learning_monitor){
+        monitor <- list()
+      } else {
+        monitor <- NULL
+      }
+      
       for (j in 1:length(folds)) {
         if (verbose) {
           message("-- Partition number ", j, "/", length(folds))
@@ -215,20 +211,40 @@ fit_abund_dnn <-
 
         set.seed(13)
         torch::torch_manual_seed(13)
+
         suppressMessages(
           fitted <- net %>%
             luz::setup(
-              loss = torch::nn_l1_loss(),
-              optimizer = torch::optim_adam
+              loss = loss_function(),
+              optimizer = optimizer
             ) %>%
-            luz::set_opt_hparams(lr = learning_rate) %>%
+            luz::set_opt_hparams(
+              lr = learning_rate,
+              weight_decay = weight_decay
+              ) %>%
             luz::fit(train_dataloader,
               valid_data = test_dataloader,
               epochs = n_epochs,
               callbacks = luz::luz_callback_early_stopping(patience = validation_patience)
             )
         )
-
+        
+        if(learning_monitor){
+          train_loss <- fitted$records$metrics$train %>% unlist()
+          names(train_loss) <- 1:length(train_loss)
+          
+          valid_loss <- fitted$records$metrics$valid %>% unlist()
+          names(valid_loss) <- 1:length(valid_loss)
+          
+          fold_monitor <- list(
+            train = train_loss,
+            valid = valid_loss
+          )
+          
+          monitor[[j]] <- fold_monitor
+          names(monitor)[[j]] <- paste0("fold-",j)
+        }
+        
         pred <- predict(fitted, test_set) %>% as.numeric()
 
         if (!(sum(is.na(pred)) == length(pred))) {
@@ -270,10 +286,13 @@ fit_abund_dnn <-
     suppressMessages(
       full_fitted <- net %>%
         luz::setup(
-          loss = torch::nn_l1_loss(),
-          optimizer = torch::optim_adam
+          loss = loss_function(),
+          optimizer = optimizer
         ) %>%
-        luz::set_opt_hparams(lr = learning_rate) %>%
+        luz::set_opt_hparams(
+          lr = learning_rate,
+          weight_decay = weight_decay
+        ) %>%
         luz::fit(df_dl,
           epochs = n_epochs,
           callbacks = luz::luz_callback_early_stopping(
@@ -282,6 +301,30 @@ fit_abund_dnn <-
           )
         )
     )
+    
+    if(learning_monitor){
+      train_loss <- full_fitted$records$metrics$train %>% unlist
+      names(train_loss) <- 1:length(train_loss)
+      
+      fold_list <- list(
+        train = train_loss
+      )
+      
+      monitor[[length(monitor)+1]] <- fold_list
+      
+      names(monitor)[[length(monitor)]] <- "final_model"
+      
+      monitor <- lapply(names(monitor), function(m){
+        m_df <- dplyr::as_tibble(monitor[[m]])
+        m_df$fitted <- m
+        m_df
+      }) %>% dplyr::bind_rows()
+      
+      monitor <- monitor %>%
+        dplyr::group_by(fitted) %>%
+        dplyr::mutate(epoch = dplyr::row_number()) %>%
+        dplyr::ungroup()
+    }
 
     # bind predicted evaluation
     eval_partial <- eval_partial_list %>%
@@ -324,7 +367,8 @@ fit_abund_dnn <-
       predictors = variables,
       performance = eval_final,
       performance_part = eval_partial,
-      predicted_part = part_pred
+      predicted_part = part_pred,
+      monitor = monitor
     )
 
     # Standardize output list

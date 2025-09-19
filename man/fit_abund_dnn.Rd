@@ -12,12 +12,16 @@ fit_abund_dnn(
   partition,
   predict_part = FALSE,
   learning_rate = 0.01,
+  weight_decay = 0,
   n_epochs = 10,
   batch_size = 32,
   validation_patience = 2,
   fitting_patience = 5,
+  optimizer = torch::optim_adamw,
+  loss_function = torch::nn_l1_loss,
   custom_architecture = NULL,
-  verbose = TRUE
+  verbose = TRUE,
+  learning_monitor = FALSE
 )
 }
 \arguments{
@@ -35,6 +39,8 @@ fit_abund_dnn(
 
 \item{learning_rate}{numeric. The size of the step taken during the optimization process. Default = 0.01}
 
+\item{weight_decay}{numeric. The regularization strength: 0 means no penalty, while higher values (e.g. 0.01) apply stronger shrinkage to the weights during training. Default is 0}
+
 \item{n_epochs}{numeric. Max number of times the learning algorithm will work through the training set. Default = 10}
 
 \item{batch_size}{numeric. A batch is a subset of the training set used in a single iteration of the training process. The size of each batch is referred to as the batch size. Default = 32}
@@ -43,9 +49,15 @@ fit_abund_dnn(
 
 \item{fitting_patience}{numerical. The same as validation_patience, but in the final model fitting process. Default 5}
 
+\item{optimizer}{a torch_optimizer_generator. The optimizer to be used in model fitting. Default is torch::optim_adamw.}
+
+\item{loss_function}{a torch nn_loss. The loss function to be used in model fitting. Default is torch::nn_l1_loss.}
+
 \item{custom_architecture}{a Torch nn_module_generator object or a generate_dnn_architecture output. A neural network architecture to be used instead of the internal default one. Default NULL}
 
 \item{verbose}{logical. If FALSE, disables all console messages. Default TRUE}
+
+\item{learning_monitor}{logical. If TRUE, the function will return a tibble containing loss values over training epochs. It is useful to create learning/convergence plots.}
 }
 \value{
 A list object with:
