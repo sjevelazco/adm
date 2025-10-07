@@ -308,6 +308,7 @@ tune_abund_cnn <-
     # progress <- function(n) utils::setTxtProgressBar(pb, n)
     # opts <- list(progress = progress)
 
+    on.exit({tryCatch({parallel::stopCluster(cl)}, error = function(e){})}, add = T)
     hyper_combinations <- foreach::foreach(i = 1:nrow(grid), .export = c("fit_abund_cnn", "adm_eval", "cnn_make_samples", "croppin_hood"), .packages = c("dplyr")) %dopar% {
       model <-
         fit_abund_cnn(

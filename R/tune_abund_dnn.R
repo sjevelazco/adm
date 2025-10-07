@@ -252,6 +252,7 @@ tune_abund_dnn <-
     # progress <- function(n) utils::setTxtProgressBar(pb, n)
     # opts <- list(progress = progress)
 
+    on.exit({tryCatch({parallel::stopCluster(cl)}, error = function(e){})}, add = T)
     hyper_combinations <- foreach::foreach(i = 1:nrow(grid), .export = c("fit_abund_dnn", "adm_eval", "adapt_df"), .packages = c("dplyr", "torch")) %dopar% {
       model <-
         fit_abund_dnn(

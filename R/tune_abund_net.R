@@ -154,6 +154,7 @@ tune_abund_net <-
     # progress <- function(n) utils::setTxtProgressBar(pb, n)
     # opts <- list(progress = progress)
 
+    on.exit({tryCatch({parallel::stopCluster(cl)}, error = function(e){})}, add = T)
     hyper_combinations <- foreach::foreach(i = 1:nrow(grid), .export = c("fit_abund_net", "adm_eval", "adapt_df"), .packages = c("dplyr")) %dopar% {
       model <-
         fit_abund_net(
