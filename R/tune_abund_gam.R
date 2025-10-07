@@ -168,6 +168,7 @@ tune_abund_gam <-
       system.file("external/families_bank.txt", package = "adm") %>%
       utils::read.delim(., header = TRUE, quote = "\t")
 
+    on.exit({tryCatch({parallel::stopCluster(cl)}, error = function(e){})}, add = T)
     hyper_combinations <- foreach::foreach(
       i = 1:nrow(grid),
       .export = c("fit_abund_gam", "adm_eval"),
