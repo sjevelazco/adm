@@ -117,13 +117,17 @@ fit_abund_cnn <-
            partition,
            predict_part = FALSE,
            learning_rate = 0.01,
+           weight_decay = 0,
            n_epochs = 10,
            batch_size = 32,
            validation_patience = 2,
            fitting_patience = 5,
+           optimizer = torch::optim_adamw,
+           loss_function = torch::nn_l1_loss,
            custom_architecture = NULL,
            verbose = TRUE) {
     . <- self <- corr_spear <- pdisp <- envar <- mae <- NULL
+    browser()
     # Variables
     if (!is.null(predictors_f)) {
       variables <- dplyr::bind_rows(c(c = predictors, f = predictors_f))
@@ -317,10 +321,13 @@ fit_abund_cnn <-
         suppressMessages(
           model <- net %>%
             luz::setup(
-              loss = torch::nn_l1_loss(),
-              optimizer = torch::optim_adam
+              loss = loss_function(),
+              optimizer = optimizer
             ) %>%
-            luz::set_opt_hparams(lr = learning_rate) %>%
+            luz::set_opt_hparams(
+              lr = learning_rate,
+              weight_decay = weight_decay
+              ) %>%
             luz::fit(train_dataloader,
               epochs = n_epochs,
               valid_data = test_dataloader,
@@ -387,10 +394,13 @@ fit_abund_cnn <-
     suppressMessages(
       full_model <- net %>%
         luz::setup(
-          loss = torch::nn_l1_loss(),
-          optimizer = torch::optim_adam
+          loss = loss_function(),
+          optimizer = optimizer
         ) %>%
-        luz::set_opt_hparams(lr = learning_rate) %>%
+        luz::set_opt_hparams(
+          lr = learning_rate,
+          weight_decay = weight_decay
+          ) %>%
         luz::fit(full_dataloader,
           epochs = n_epochs,
           callbacks = luz::luz_callback_early_stopping(
