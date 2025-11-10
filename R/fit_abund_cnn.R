@@ -112,7 +112,7 @@ fit_abund_cnn <-
            predictors_f = NULL,
            x,
            y,
-           rasters,
+           rasters = NULL,
            sample_size,
            partition,
            predict_part = FALSE,
@@ -125,9 +125,9 @@ fit_abund_cnn <-
            optimizer = torch::optim_adamw,
            loss_function = torch::nn_l1_loss,
            custom_architecture = NULL,
+           samples_list = NULL,
            verbose = TRUE) {
     . <- self <- corr_spear <- pdisp <- envar <- mae <- NULL
-    browser()
     # Variables
     if (!is.null(predictors_f)) {
       variables <- dplyr::bind_rows(c(c = predictors, f = predictors_f))
@@ -191,14 +191,23 @@ fit_abund_cnn <-
     )
 
     # loading rasters
-    if (class(rasters) %in% "character") {
-      rasters <- terra::rast(rasters)
-      rasters <- rasters[[c(predictors, predictors_f)]]
-    } else if (class(rasters) %in% "SpatRaster") {
-      rasters <- rasters[[c(predictors, predictors_f)]]
-    } else {
-      stop("Please, provide a SpatRaster object or a path to the raster file.")
+    if(!is.null(rasters)){
+      if (class(rasters) %in% "character") {
+        rasters <- terra::rast(rasters)
+        rasters <- rasters[[c(predictors, predictors_f)]]
+      } else if (class(rasters) %in% "SpatRaster") {
+        rasters <- rasters[[c(predictors, predictors_f)]]
+      } else {
+        stop("Please, provide a SpatRaster object or a path to the raster file.")
+      }
+      
+      if(!is.null(samples_list)){
+        message("samples_list provided. Rasters will be ignored.")
+        rasters <- NULL
+      }
     }
+
+    
 
     # architecture setup
     torch::torch_manual_seed(13)
@@ -238,23 +247,34 @@ fit_abund_cnn <-
       if (verbose) {
         message("Replica number: ", h, "/", np)
       }
-
+      
       folds <- data %>%
         dplyr::pull(p_names[h]) %>%
         unique() %>%
         sort()
-
-      samples_list <- list()
-      for (fold in folds) {
-        fold_mtx <- data[data[, p_names[h]] == fold, c(x, y, response)] %>%
-          cnn_make_samples(x, y, response, rasters, size = crop_size) %>%
-          list()
-
-        names(fold_mtx) <- fold
-
-        samples_list <- append(samples_list, fold_mtx)
+      
+      if(is.null(samples_list)){
+        samples_list <- get_partition_samples(data,x,y,response,folds,p_names[h],rasters,crop_size) 
+      } else if (is.list(samples_list)) {
+        message("Using provided samples list")
       }
-      rm(fold_mtx)
+      
+      # folds <- data %>%
+      #   dplyr::pull(p_names[h]) %>%
+      #   unique() %>%
+      #   sort()
+      # 
+      # samples_list <- list()
+      # for (fold in folds) {
+      #   fold_mtx <- data[data[, p_names[h]] == fold, c(x, y, response)] %>%
+      #     cnn_make_samples(x, y, response, rasters, size = crop_size) %>%
+      #     list()
+      # 
+      #   names(fold_mtx) <- fold
+      # 
+      #   samples_list <- append(samples_list, fold_mtx)
+      # }
+      # rm(fold_mtx)
 
       eval_partial <- list()
       pred_test <- list()

@@ -265,3 +265,33 @@ res_calculate <-
 
     return(out_res)
   }
+
+#' Construct CNN samples list to use with tune_abund_cnn and fit_abund_cnn
+#'
+#' @param data 
+#' @param x 
+#' @param y 
+#' @param response 
+#' @param folds 
+#' @param partition 
+#' @param rasters 
+#' @param crop_size 
+#'
+#' @returns a list of arrays
+#' @export
+#'
+#' @examples #TODO
+get_partition_samples <- function(data,x,y,response,folds,partition,rasters,crop_size){
+  samples_list <- list()
+  for (fold in folds) {
+    fold_mtx <- data[data[, partition] == fold, c(x, y, response)] %>%
+      cnn_make_samples(x, y, response, rasters, size = crop_size) %>%
+      list()
+    
+    names(fold_mtx) <- fold
+    
+    samples_list <- append(samples_list, fold_mtx)
+  }
+  
+  return(samples_list)
+}

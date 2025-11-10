@@ -156,7 +156,8 @@ tune_abund_cnn <-
            predictors_f = NULL,
            x,
            y,
-           rasters,
+           rasters = NULL,
+           samples_list = NULL,
            sample_size,
            partition,
            predict_part = FALSE,
@@ -170,6 +171,10 @@ tune_abund_cnn <-
       stop("Metrics is needed to be defined in 'metric' argument")
     }
 
+    if(is.null(rasters) && is.null(samples_list)){
+      stop("Provide either rasters or samples_list.")
+    }
+    
     # architectures
     if (is.list(architectures)) {
       # check if it is from generate_arch_list or generate_cnn_architecture
