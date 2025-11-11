@@ -153,7 +153,6 @@ fit_abund_cnn <-
     } else {
       crop_size <- floor(sample_size[[1]] / 2)
     }
-
     # # ---- Formula ----
     # if (is.null(fit_formula)) {
     #   formula1 <- stats::formula(paste(response, "~", paste(c(
@@ -206,7 +205,6 @@ fit_abund_cnn <-
         rasters <- NULL
       }
     }
-
     
 
     # architecture setup
@@ -235,7 +233,6 @@ fit_abund_cnn <-
         verbose = FALSE
       )$net
     }
-
     # Fit models
     np <- ncol(data %>% dplyr::select(dplyr::starts_with(partition)))
     p_names <- names(data %>% dplyr::select(dplyr::starts_with(partition)))
@@ -258,7 +255,6 @@ fit_abund_cnn <-
       } else if (is.list(samples_list)) {
         message("Using provided samples list")
       }
-      
       # folds <- data %>%
       #   dplyr::pull(p_names[h]) %>%
       #   unique() %>%
