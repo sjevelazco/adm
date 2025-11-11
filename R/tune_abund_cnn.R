@@ -204,9 +204,9 @@ tune_abund_cnn <-
       }
     }
 
-    if (!class(rasters) %in% "character") {
-      stop("Please, provide a path to the raster file.")
-    }
+    # if (!class(rasters) %in% "character") {
+    #   stop("Please, provide a path to the raster file.")
+    # }
 
     # making grid
     grid_dict <- list(
