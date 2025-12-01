@@ -156,7 +156,8 @@ tune_abund_cnn <-
            predictors_f = NULL,
            x,
            y,
-           rasters,
+           rasters = NULL,
+           samples_list = NULL,
            sample_size,
            partition,
            predict_part = FALSE,
@@ -170,6 +171,10 @@ tune_abund_cnn <-
       stop("Metrics is needed to be defined in 'metric' argument")
     }
 
+    if(is.null(rasters) && is.null(samples_list)){
+      stop("Provide either rasters or samples_list.")
+    }
+    
     # architectures
     if (is.list(architectures)) {
       # check if it is from generate_arch_list or generate_cnn_architecture
@@ -199,13 +204,14 @@ tune_abund_cnn <-
       }
     }
 
-    if (!class(rasters) %in% "character") {
-      stop("Please, provide a path to the raster file.")
-    }
+    # if (!class(rasters) %in% "character") {
+    #   stop("Please, provide a path to the raster file.")
+    # }
 
     # making grid
     grid_dict <- list(
       learning_rate = c(0.01, 0.005),
+      weight_decay = c(0, 1e-4, 1e-2),
       n_epochs = c(100, 200),
       batch_size = c(16, 32),
       validation_patience = c(2, 4),
@@ -319,6 +325,7 @@ tune_abund_cnn <-
           x = x,
           y = y,
           rasters = rasters,
+          samples_list = samples_list,
           sample_size = sample_size,
           partition = partition,
           predict_part = predict_part,
@@ -328,6 +335,7 @@ tune_abund_cnn <-
           custom_architecture = arch_list[[grid[i, "arch"]]],
           validation_patience = grid[i, "validation_patience"],
           fitting_patience = grid[i, "fitting_patience"],
+          weight_decay = grid[i, "weight_decay"],
           verbose = verbose
         )
       l <- list(cbind(grid[i, ], model$performance))
@@ -359,6 +367,7 @@ tune_abund_cnn <-
           x = x,
           y = y,
           rasters = rasters,
+          samples_list = samples_list,
           sample_size = sample_size,
           partition = partition,
           predict_part = predict_part,
@@ -368,6 +377,7 @@ tune_abund_cnn <-
           custom_architecture = arch_list[[ranked_combinations[[1]][1, "arch"]]],
           validation_patience = ranked_combinations[[1]][1, "validation_patience"],
           fitting_patience = ranked_combinations[[1]][1, "fitting_patience"],
+          weight_decay = ranked_combinations[[1]][1, "weight_decay"],
           verbose = verbose
         )
     )

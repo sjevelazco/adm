@@ -48,7 +48,8 @@ test_that("tune_abund_dnn and fit_abund_dnn", {
   )
   expect_equal(names(tuned_), c(
     "model", "predictors", "performance", "performance_part",
-    "predicted_part", "optimal_combination", "all_combinations", "selected_arch"
+    "predicted_part", "optimal_combination", "all_combinations", "selected_arch",
+    "monitor"
   ))
   expect_equal(class(tuned_$model)[1], "luz_module_fitted")
 })

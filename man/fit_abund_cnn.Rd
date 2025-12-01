@@ -11,16 +11,20 @@ fit_abund_cnn(
   predictors_f = NULL,
   x,
   y,
-  rasters,
+  rasters = NULL,
   sample_size,
   partition,
   predict_part = FALSE,
   learning_rate = 0.01,
+  weight_decay = 0,
   n_epochs = 10,
   batch_size = 32,
   validation_patience = 2,
   fitting_patience = 5,
+  optimizer = torch::optim_adamw,
+  loss_function = torch::nn_l1_loss,
   custom_architecture = NULL,
+  samples_list = NULL,
   verbose = TRUE
 )
 }

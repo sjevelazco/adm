@@ -112,16 +112,20 @@ fit_abund_cnn <-
            predictors_f = NULL,
            x,
            y,
-           rasters,
+           rasters = NULL,
            sample_size,
            partition,
            predict_part = FALSE,
            learning_rate = 0.01,
+           weight_decay = 0,
            n_epochs = 10,
            batch_size = 32,
            validation_patience = 2,
            fitting_patience = 5,
+           optimizer = torch::optim_adamw,
+           loss_function = torch::nn_l1_loss,
            custom_architecture = NULL,
+           samples_list = NULL,
            verbose = TRUE) {
     . <- self <- corr_spear <- pdisp <- envar <- mae <- NULL
     # Variables
@@ -149,7 +153,6 @@ fit_abund_cnn <-
     } else {
       crop_size <- floor(sample_size[[1]] / 2)
     }
-
     # # ---- Formula ----
     # if (is.null(fit_formula)) {
     #   formula1 <- stats::formula(paste(response, "~", paste(c(
@@ -187,14 +190,22 @@ fit_abund_cnn <-
     )
 
     # loading rasters
-    if (class(rasters) %in% "character") {
-      rasters <- terra::rast(rasters)
-      rasters <- rasters[[c(predictors, predictors_f)]]
-    } else if (class(rasters) %in% "SpatRaster") {
-      rasters <- rasters[[c(predictors, predictors_f)]]
-    } else {
-      stop("Please, provide a SpatRaster object or a path to the raster file.")
+    if(!is.null(rasters)){
+      if (class(rasters) %in% "character") {
+        rasters <- terra::rast(rasters)
+        rasters <- rasters[[c(predictors, predictors_f)]]
+      } else if (class(rasters) %in% "SpatRaster") {
+        rasters <- rasters[[c(predictors, predictors_f)]]
+      } else {
+        stop("Please, provide a SpatRaster object or a path to the raster file.")
+      }
+      
+      if(!is.null(samples_list)){
+        message("samples_list provided. Rasters will be ignored.")
+        rasters <- NULL
+      }
     }
+    
 
     # architecture setup
     torch::torch_manual_seed(13)
@@ -222,7 +233,6 @@ fit_abund_cnn <-
         verbose = FALSE
       )$net
     }
-
     # Fit models
     np <- ncol(data %>% dplyr::select(dplyr::starts_with(partition)))
     p_names <- names(data %>% dplyr::select(dplyr::starts_with(partition)))
@@ -234,23 +244,33 @@ fit_abund_cnn <-
       if (verbose) {
         message("Replica number: ", h, "/", np)
       }
-
+      
       folds <- data %>%
         dplyr::pull(p_names[h]) %>%
         unique() %>%
         sort()
-
-      samples_list <- list()
-      for (fold in folds) {
-        fold_mtx <- data[data[, p_names[h]] == fold, c(x, y, response)] %>%
-          cnn_make_samples(x, y, response, rasters, size = crop_size) %>%
-          list()
-
-        names(fold_mtx) <- fold
-
-        samples_list <- append(samples_list, fold_mtx)
+      
+      if(is.null(samples_list)){
+        samples_list <- get_partition_samples(data,x,y,response,folds,p_names[h],rasters,crop_size) 
+      } else if (is.list(samples_list)) {
+        message("Using provided samples list")
       }
-      rm(fold_mtx)
+      # folds <- data %>%
+      #   dplyr::pull(p_names[h]) %>%
+      #   unique() %>%
+      #   sort()
+      # 
+      # samples_list <- list()
+      # for (fold in folds) {
+      #   fold_mtx <- data[data[, p_names[h]] == fold, c(x, y, response)] %>%
+      #     cnn_make_samples(x, y, response, rasters, size = crop_size) %>%
+      #     list()
+      # 
+      #   names(fold_mtx) <- fold
+      # 
+      #   samples_list <- append(samples_list, fold_mtx)
+      # }
+      # rm(fold_mtx)
 
       eval_partial <- list()
       pred_test <- list()
@@ -317,10 +337,13 @@ fit_abund_cnn <-
         suppressMessages(
           model <- net %>%
             luz::setup(
-              loss = torch::nn_l1_loss(),
-              optimizer = torch::optim_adam
+              loss = loss_function(),
+              optimizer = optimizer
             ) %>%
-            luz::set_opt_hparams(lr = learning_rate) %>%
+            luz::set_opt_hparams(
+              lr = learning_rate,
+              weight_decay = weight_decay
+              ) %>%
             luz::fit(train_dataloader,
               epochs = n_epochs,
               valid_data = test_dataloader,
@@ -387,10 +410,13 @@ fit_abund_cnn <-
     suppressMessages(
       full_model <- net %>%
         luz::setup(
-          loss = torch::nn_l1_loss(),
-          optimizer = torch::optim_adam
+          loss = loss_function(),
+          optimizer = optimizer
         ) %>%
-        luz::set_opt_hparams(lr = learning_rate) %>%
+        luz::set_opt_hparams(
+          lr = learning_rate,
+          weight_decay = weight_decay
+          ) %>%
         luz::fit(full_dataloader,
           epochs = n_epochs,
           callbacks = luz::luz_callback_early_stopping(
