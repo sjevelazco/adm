@@ -176,30 +176,24 @@ adm_predict <-
            predict_area = NULL,
            invert_transform = NULL,
            transform_negative = FALSE,
-           sample_size = NULL) {
+           sample_size = NULL,
+           pred_quantile = 0.5) {
     . <- model <- threshold <- thr_value <- self <- response <- NULL
-
-    if (is.null(names(models))) {
-      message("Predicting list of individual models")
-      ensembles <- NULL
-      esm <- NULL
-    } else if (all(names(models) %in% c("models", "thr_metric", "predictors", "performance"))) {
-      message("Predicting ensembles")
-      ensembles <- models
-      models <- NULL
-      esm <- NULL
-    } else if (all(names(models) %in% c("esm_model", "predictors", "performance"))) {
-      message("Predicting ensemble of small models")
-      esm <- models
-      models <- NULL
-      ensembles <- NULL
-    } else {
-      message("Predicting individual models")
-      models <- list(models)
-      ensembles <- NULL
-      esm <- NULL
+    
+    if(!check_models_validity(models)[[1]] %>% as.logical()) {
+      stop("Models argument is invalid.")
     }
-
+    
+    switch (check_models_validity(models)[[2]],
+            "list_of_models" = {
+              message("Predicting a list of models")
+              },
+            "individual_models" = {
+              message("Predicting an individual model")
+              models <- list(models)
+              }
+    )
+    
     #### Prepare datasets ####
     # Crop and mask projection area
     if (!is.null(predict_area)) {
@@ -211,27 +205,27 @@ adm_predict <-
         terra::crop(., predict_area) %>%
         terra::mask(., predict_area)
     }
-
+    
     #### Model predictions
     if (!is.null(models)) {
       # Prepare model list
       m <- lapply(models, function(x) {
         x[[1]]
       })
-
+      
       m_detect <- lapply(models, function(x) {
         x[["predictors"]]
       })
-
+      
       names(m) <- names(m_detect) <- paste0("m_", 1:length(m))
-
+      
       # Extract model names object
       clss <- sapply(m, function(x) {
         class(x)[1]
       }) %>%
         tolower() %>%
         gsub(".formula", "", .)
-
+      
       if (any(lapply(models, function(x) {
         class(x[[1]])[1]
       }) %>% unlist() == "gamlss")) {
@@ -241,47 +235,47 @@ adm_predict <-
         gamlss_classes <- lapply(models[indx], function(x) {
           x$predictors$model
         }) %>% unlist()
-
+        
         clss[indx] <- paste0(clss[indx], "_", gamlss_classes)
       }
     }
-
+    
     # Transform raster to data.frame
-
+    
     # if(chunk){
     cell <- terra::as.data.frame(pred, cells = TRUE, na.rm = TRUE)[, "cell"]
     cell_coord <- terra::as.data.frame(pred, xy = TRUE, na.rm = TRUE)[, c("x", "y")]
-    set <-
-      c(
-        seq(1, length(cell), length.out = nchunk) # length.out = nchunk
-        %>% round(),
-        length(cell) + 1
-      )
+    
+    set <- seq(
+      from = 1,
+      to = length(cell)+1,
+      length.out = nchunk+1
+    ) |> round()
+    
     # } #else {
     #   pred_df <-
     #   terra::as.data.frame(pred, cells = FALSE, na.rm = TRUE)
     # }
-
+    
     r <- pred[[!terra::is.factor(pred)]][[1]]
     r[!is.na(r)] <- NA
-
+    
     # Create list for storing raster for current condition
     model_c <- as.list(names(m))
     names(model_c) <- names(m)
-
+    
     for (i in seq_along(model_c)) {
       model_c[[i]] <- r
     }
-
-    # Write here the loop
+    
+    # Prediction loop
     for (CH in seq_len((length(set) - 1))) {
       rowset <- set[CH]:(set[CH + 1] - 1)
       pred_coord <- cell_coord[rowset, ]
       rowset <- cell[rowset]
       pred_df <- pred[rowset]
       rownames(pred_df) <- rowset
-
-
+      
       ## %######################################################%##
       #                                                          #
       ####          Prediction for different models           ####
@@ -295,29 +289,29 @@ adm_predict <-
         for (i in wm) {
           r <- pred[[!terra::is.factor(pred)]][[1]]
           r[!is.na(r)] <- NA
-
+          
           # Test factor levels TODO
           f_n2 <- m[[i]]$feature_names # training var names
           f_names <- which(sapply(pred_df, class) == "factor") %>% names()
-
+          
           if (length(f_names) > 0) {
             f_encoded <- stringr::str_detect(f_n2, stringr::str_c(f_names, collapse = "|"))
           } else {
             f_encoded <- FALSE
           }
-
+          
           if (any(f_encoded)) {
             f_names <- c(f_n2[!f_encoded], f_names)
           } else {
             f_names <- f_n2
           }
-
+          
           f_n <- which(sapply(pred_df[f_names], class) == "factor") %>% names()
           f <- lapply(f_n, function(x) {
             gsub(x, "", grep(x, f_n2, value = TRUE))
           })
           names(f) <- f_n
-
+          
           # TODO
           if (length(f) > 0) {
             for (ii in 1:length(f)) {
@@ -354,16 +348,16 @@ adm_predict <-
             # rm(v)
           } else {
             pred_matrix <- list(
-              data = stats::model.matrix(~ . - 1, data = pred_df[m[[i]]$feature_names])
+              data = stats::model.matrix(~ . - 1, data = pred_df[get_predictor_names(m_detect, i)])
             )
-
+            
             r[as.numeric(rownames(pred_df))] <-
               stats::predict(m[[i]], pred_matrix$data, type = "response")
           }
           model_c[[i]][rowset] <- r[rowset]
         }
       }
-
+      
       #### ann models ####
       wm <- which(clss == "nnet")
       if (length(wm) > 0) {
@@ -371,10 +365,10 @@ adm_predict <-
         for (i in wm) {
           r <- pred[[!terra::is.factor(pred)]][[1]]
           r[!is.na(r)] <- NA
-
+          
           # Test factor levels
           f <- (m[[i]]$xlevels)
-
+          
           if (length(f) > 0) {
             for (ii in 1:length(f)) {
               vf <- f[[ii]] %>%
@@ -397,7 +391,7 @@ adm_predict <-
           } else {
             vfilter <- 0
           }
-
+          
           if (sum(vfilter) > 0) {
             v <- rep(0, nrow(pred_df))
             v[!vfilter] <-
@@ -408,7 +402,7 @@ adm_predict <-
             r[as.numeric(rownames(pred_df))] <-
               stats::predict(m[[i]], pred_df, type = "raw")
           }
-
+          
           if (length(f) > 0) {
             na_mask <- (sum(is.na(pred)) > 1)
             r[(na_mask + is.na(r)) == 1] <- 0
@@ -416,14 +410,14 @@ adm_predict <-
           model_c[[i]][rowset] <- r[rowset]
         }
       }
-
+      
       #### dnn and cnn models ####
       wm <- which(clss == "luz_module_fitted")
       if (length(wm) > 0) {
         wm <- names(wm)
         set.seed(13)
         torch::torch_manual_seed(13)
-
+        
         # create_dataset definition
         if (m_detect[[wm]][["model"]] == "cnn") {
           create_dataset <- torch::dataset(
@@ -439,12 +433,12 @@ adm_predict <-
               length(self$predictors)
             }
           )
-
+          
           pred_names <- m_detect[[wm]] %>%
             dplyr::select(-model, -response) %>%
             t() %>%
             as.vector()
-
+          
           crop_size <- cnn_get_crop_size(sample_size = sample_size)
           pred_samples <- cnn_make_samples(
             data = pred_coord,
@@ -456,7 +450,7 @@ adm_predict <-
             padding_method = NULL,
             size = crop_size
           )
-
+          
           pred_dataset <- create_dataset(pred_samples)
         } else {
           create_dataset <- torch::dataset(
@@ -472,39 +466,55 @@ adm_predict <-
               nrow(self$df)
             }
           )
-
+          
           pred_names <- m_detect[[wm]] %>%
             dplyr::select(-model, -response) %>%
             t() %>%
             as.vector()
-
+          
           pred_dataset <- create_dataset(pred_df[, pred_names])
         }
-
+        
         for (i in wm) {
           r <- pred[[!terra::is.factor(pred)]][[1]]
           r[!is.na(r)] <- NA
           r[as.numeric(rownames(pred_df))] <-
             suppressMessages(stats::predict(m[[i]], pred_dataset, shuffle = TRUE) %>% as.numeric())
-
+          
           model_c[[i]][rowset] <- r[rowset]
         }
       }
-
+      
       #### gam and glm ####
       wm <- clss[stringr::str_detect(clss, "gamlss")]
       if (length(wm) > 0) {
         wm <- names(wm)
         for (i in wm) {
+          
+          vfilter <- filter_safe_levels(m_detect[[i]], pred_df, training_data)[[2]]
+          
+          v <- rep(NA, nrow(pred_df))
+          
           r <- pred[[!terra::is.factor(pred)]][[1]]
           r[!is.na(r)] <- NA
-          r[as.numeric(rownames(pred_df))] <-
-            suppressMessages(stats::predict(m[[i]], newdata = pred_df, data = training_data, type = "response"))
-
+          
+          v[vfilter] <- 
+            suppressMessages(
+              stats::predict(
+                m[[i]], 
+                newdata = pred_df[vfilter, get_predictor_names(m_detect, i)], 
+                data = training_data, 
+                type = "response"
+              )
+            )
+          
+          r[as.numeric(rownames(pred_df))] <- v
+          rm(v)
+          
           model_c[[i]][rowset] <- r[rowset]
         }
       }
-
+      
       #### gbm models ####
       wm <- which(clss == "gbm")
       if (length(wm) > 0) {
@@ -514,20 +524,20 @@ adm_predict <-
           r[!is.na(r)] <- NA
           r[as.numeric(rownames(pred_df))] <-
             suppressMessages(stats::predict(m[[i]], pred_df, type = "response"))
-
+          
           model_c[[i]][rowset] <- r[rowset]
         }
       }
-
-
-      #### randomforest class ####
-      wm <- which(clss == "randomforest")
+      
+      
+      #### quantregforest class ####
+      wm <- which(clss == "quantregforest")
       if (length(wm) > 0) {
         wm <- names(wm)
         for (i in wm) {
           r <- pred[[!terra::is.factor(pred)]][[1]]
           r[!is.na(r)] <- NA
-
+          
           # Test factor levels
           f <-
             m[[i]]$forest$xlevels[sapply(m[[i]]$forest$xlevels, function(x) {
@@ -555,29 +565,70 @@ adm_predict <-
           } else {
             vfilter <- 0
           }
-
-
+          
+          
           if (sum(vfilter) > 0) {
             v <- rep(0, nrow(pred_df))
             v[!vfilter] <-
               suppressMessages(stats::predict(m[[i]], pred_df[!vfilter, ] %>%
-                dplyr::mutate(dplyr::across(
-                  .cols = names(f),
-                  .fns = ~ droplevels(.)
-                )),
-              type = "response"
+                                                dplyr::mutate(dplyr::across(
+                                                  .cols = names(f),
+                                                  .fns = ~ factor(.x, levels = m[[i]]$forest$xlevels[[cur_column()]])
+                                                )),
+                                              type = "response",
+                                              what = pred_quantile
               ))
             r[as.numeric(rownames(pred_df))] <- v
             rm(v)
           } else {
+            if(length(f) > 0) {
+              pred_df <- pred_df %>%
+                dplyr::mutate(dplyr::across(
+                  .cols = names(f),
+                  .fns = ~ factor(.x, levels = m[[i]]$forest$xlevels[[cur_column()]])
+                ))
+            }
+            
             r[as.numeric(rownames(pred_df))] <-
-              suppressMessages(stats::predict(m[[i]], pred_df, type = "response"))
+              suppressMessages(stats::predict(m[[i]], pred_df, type = "response", what = pred_quantile))
           }
-
+          
           model_c[[i]][rowset] <- r[rowset]
         }
       }
-
+      
+      
+      #### randomforest class ####
+      wm <- which(clss == "randomforest")
+      if (length(wm) > 0) {
+        wm <- names(wm)
+        for (i in wm) {
+          
+          pred_df <- filter_safe_levels(m_detect[[i]], pred_df, training_data)[[1]]
+          vfilter <- filter_safe_levels(m_detect[[i]], pred_df, training_data)[[2]]
+          
+          v <- rep(NA, nrow(pred_df))
+          
+          r <- pred[[!terra::is.factor(pred)]][[1]]
+          r[!is.na(r)] <- NA
+          
+          v[vfilter] <- 
+            suppressMessages(
+              stats::predict(
+                m[[i]], 
+                newdata = pred_df[vfilter, get_predictor_names(m_detect, i)], 
+                data = training_data, 
+                type = "response"
+              )
+            )
+          
+          r[as.numeric(rownames(pred_df))] <- v
+          rm(v)
+          
+          model_c[[i]][rowset] <- r[rowset]
+        }
+      }
+      
       #### ksvmj class ####
       wm <- which(clss == "ksvm")
       if (length(wm) > 0) {
@@ -662,9 +713,10 @@ adm_predict <-
         "nnet",
         "randomforest",
         "ksvm",
-        "xgb.booster"
+        "xgb.booster",
+        "quantregForest"
       ),
-      names = c("dnn", "cnn", "gam", "glm", "gbm", "net", "raf", "svm", "xgb")
+      names = c("dnn", "cnn", "gam", "glm", "gbm", "net", "raf", "svm", "xgb","qrf")
     )
 
     for (i in 1:length(names(clss))) {

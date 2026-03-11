@@ -232,7 +232,6 @@ tune_abund_glm <-
     ranked_combinations <- model_selection(hyper_combinations, metrics)
 
     # fit final model
-
     choosen_family <- ranked_combinations[[1]][1, "distribution"]
     choosen_poly <- ranked_combinations[[1]][1, "poly"]
     choosen_inter_order <- ranked_combinations[[1]][1, "inter_order"]

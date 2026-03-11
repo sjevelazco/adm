@@ -40,7 +40,12 @@
 #' table(some_sp_2$ind_ha > 0)
 #' }
 balance_dataset <-
-  function(data, response, absence_ratio) {
+  function(data, response, absence_ratio, na.rm = TRUE) {
+    if(na.rm){
+      data <- data %>%
+        filter(!is.na(.data[[response]]))
+    }
+    
     n_presences <- (data[[response]] > 0) %>% sum()
     n_absence <- n_presences * absence_ratio
 

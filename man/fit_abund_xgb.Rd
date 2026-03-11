@@ -10,15 +10,18 @@ fit_abund_xgb(
   predictors,
   predictors_f = NULL,
   partition,
+  hold_out_set = NULL,
+  hold_out_evaluation = FALSE,
   predict_part = FALSE,
-  nrounds = 100,
+  nrounds = 1000,
   max_depth = 5,
-  eta = 0.1,
-  gamma = 1,
+  learning_rate = 0.1,
+  min_split_loss = 1,
   colsample_bytree = 1,
   min_child_weight = 1,
   subsample = 0.5,
   objective = "reg:squarederror",
+  early_stopping = list(cv_strategy = 10, fm_strategy = "mean"),
   verbose = TRUE
 )
 }
@@ -33,15 +36,21 @@ fit_abund_xgb(
 
 \item{partition}{character. Column name with training and validation partition groups.}
 
+\item{hold_out_set}{tibble or data.frame. A hold-out dataset used for evaluation 
+and early stopping. This data is never used during the training phase.}
+
+\item{hold_out_evaluation}{logical. If \code{TRUE}, performance metrics will 
+also be calculated for the \code{hold_out_set}.}
+
 \item{predict_part}{logical. Save predicted abundance for testing data. Default = FALSE.}
 
 \item{nrounds}{integer. Max number of boosting iterations. Default is 100.}
 
 \item{max_depth}{integer. The maximum depth of each tree. Default 5}
 
-\item{eta}{numeric. The learning rate of the algorithm. Default 0.1}
+\item{learning_rate}{numeric. The learning rate of the algorithm. Default 0.1}
 
-\item{gamma}{numeric. Minimum loss reduction required to make a further partition on a leaf node of the tree. Default is 1.}
+\item{min_split_loss}{numeric. Minimum loss reduction required to make a further partition on a leaf node of the tree. Default is 1.}
 
 \item{colsample_bytree}{numeric. Subsample ratio of columns when constructing each tree. Default is 1.}
 
@@ -50,6 +59,23 @@ fit_abund_xgb(
 \item{subsample}{numeric. Subsample ratio of the training instance. Default is 0.5.}
 
 \item{objective}{character. The learning task and the corresponding learning objective. Default is "reg:squarederror", regression with squared loss.}
+
+\item{early_stopping}{A list containing two elements:
+\itemize{
+  \item \code{cv_strategy}: Numerical. Specifies the number of rounds without 
+  improvement before training stops during the cross-validation stage.
+  \item \code{fm_strategy}: A vector defining the strategy for the final model:
+  \itemize{
+    \item \code{c("hold_out", n)}: Stops training after \code{n} rounds without 
+    improvement, using the \code{hold_out_set} as the evaluation set.
+    \item \code{c("mean")}: Trains the final model using the average number 
+    of rounds reached across all cross-validation folds.
+    \item \code{c("median")}: Uses the median number of rounds from the 
+    cross-validation stage.
+    \item \code{c("max")}: Uses the maximum number of rounds reached in any fold.
+    \item \code{c("min")}: Uses the minimum number of rounds reached in any fold.
+  }
+}}
 
 \item{verbose}{logical. If FALSE, disables all console messages. Default TRUE.}
 }
@@ -96,8 +122,8 @@ mxgb <- fit_abund_xgb(
   partition = ".part",
   nrounds = 200,
   max_depth = 5,
-  eta = 0.1,
-  gamma = 1,
+  learning_rate = 0.1,
+  min_split_loss = 1,
   colsample_bytree = 0.7,
   min_child_weight = 2,
   subsample = 0.3,

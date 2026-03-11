@@ -12,7 +12,8 @@ adm_predict(
   predict_area = NULL,
   invert_transform = NULL,
   transform_negative = FALSE,
-  sample_size = NULL
+  sample_size = NULL,
+  pred_quantile = 0.5
 )
 }
 \arguments{

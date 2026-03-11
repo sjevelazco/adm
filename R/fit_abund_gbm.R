@@ -150,6 +150,7 @@ fit_abund_gbm <-
         test_set <- data[data[, p_names[h]] == folds[j], ]
 
         set.seed(13)
+        
         model <- gbm::gbm(
           formula = formula1,
           data = train_set,
@@ -160,7 +161,7 @@ fit_abund_gbm <-
           shrinkage = shrinkage,
           bag.fraction = 0.9
         )
-
+      
         pred <- gbm::predict.gbm(model, test_set, type = "response")
         observed <- dplyr::pull(test_set, response)
         eval_partial[[j]] <- dplyr::tibble(
@@ -188,7 +189,6 @@ fit_abund_gbm <-
         part_pred_list[[h]] <- part_pred
       }
     }
-
 
     # fit final model with all data
     set.seed(13)

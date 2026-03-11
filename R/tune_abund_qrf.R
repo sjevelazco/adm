@@ -1,4 +1,4 @@
-#' Fit and validate Generalized Boosted Regression models with exploration of hyper-parameters that optimize performance
+#' Fit and validate Random Forest models with exploration of hyper-parameters that optimize performance
 #'
 #' @param data tibble or data.frame. Database with response, predictors, and partition values
 #' @param response character. Column name with species abundance.
@@ -7,12 +7,9 @@
 #' @param fit_formula formula. A formula object with response and predictor variables (e.g. formula(abund ~ temp + precipt + sand + landform)). Note that the variables used here must be consistent with those used in response, predictors, and predictors_f arguments. Default NULL
 #' @param partition character. Column name with training and validation partition groups.
 #' @param predict_part logical. Save predicted abundance for testing data. Default = FALSE
-#' @param grid tibble or data.frame. A dataframe with "n.trees", "interaction.depth", "n.minobsinnode" and "shrinkage" as columns and its values as rows. If no grid is provided, function will create a default grid combining the next hyperparameters:
-#' n.trees = c(100, 200, 300),
-#' interaction.depth = c(1, 2, 3),
-#' n.minobsinnode = c(5, 10, 15),
-#' shrinkage = seq(0.001, 0.1, by = 0.05). In case one or more hyperparameters are provided, the function will complete the grid with the default values.
-#' @param distribution character. A string specifying the distribution to be used. See gbm::gbm documentation for details.
+#' @param grid tibble or data.frame. A dataframe with "mtry" and "ntree" as columns and its values combinations as rows. If no grid is provided, function will create a default grid combining the next hyperparameters:
+#' mtry = seq(2, length(predictors), by = 1), ntree = seq(500, 1000, by = 100).
+#' In case one or more hyperparameters are provided, the function will complete the grid with the default values.
 #' @param metrics character. Vector with one or more metrics from c("corr_spear","corr_pear","mae","pdisp","inter","slope").
 #' @param n_cores numeric. Number of cores used in parallel processing.
 #' @param verbose logical. If FALSE, disables all console messages. Default TRUE
@@ -26,15 +23,15 @@
 #'
 #' A list object with:
 #' \itemize{
-#' \item model: A "gbm" object from gbm package. This object can be used to predicting.
+#' \item model: A "randomForest" class object from randomForest package. This object can be used for predicting.
 #' \item predictors: A tibble with quantitative (c column names) and qualitative (f column names) variables use for modeling.
 #' \item performance: A tibble with selected model's performance metrics calculated in adm_eval.
 #' \item performance_part: A tibble with performance metrics for each test partition.
 #' \item predicted_part: A tibble with predicted abundance for each test partition.
 #' \item optimal_combination: A tibble with the selected hyperparameter combination and its performance.
 #' \item all_combinations: A tibble with all hyperparameters combinations and its performance.
-#' \item selected_arch: A numeric vector describing the selected architecture layers.
 #' }
+#'
 #' @export
 #'
 #' @examples
@@ -46,7 +43,7 @@
 #'
 #' # Select data for a single species
 #' some_sp <- sppabund %>%
-#'   dplyr::filter(species == "Species one") %>%
+#'   dplyr::filter(species == "Species two") %>%
 #'   dplyr::select(-.part2, -.part3)
 #'
 #' # Explore response variables
@@ -58,15 +55,14 @@
 #'   balance_dataset(some_sp, response = "ind_ha", absence_ratio = 0.2)
 #'
 #' # Create a grid
-#' gbm_grid <- expand.grid(
-#'   interaction.depth = c(2, 4, 8, 16),
-#'   n.trees = c(100, 500, 1000),
-#'   n.minobsinnode = c(2, 5, 8),
-#'   shrinkage = c(0.1, 0.5, 0.7),
+#' raf_grid <- expand.grid(
+#'   mtry = seq(from = 2, to = 3, by = 1),
+#'   ntree = seq(from = 500, to = 1000, by = 100),
 #'   stringsAsFactors = FALSE
 #' )
 #'
-#' tuned_gbm <- tune_abund_gbm(
+#' # Tune a RAF model
+#' tuned_raf <- tune_abund_raf(
 #'   data = some_sp,
 #'   response = "ind_ha",
 #'   predictors = c("bio12", "elevation", "sand"),
@@ -74,14 +70,13 @@
 #'   partition = ".part",
 #'   predict_part = TRUE,
 #'   metrics = c("corr_pear", "mae"),
-#'   grid = gbm_grid,
-#'   distribution = "gaussian",
+#'   grid = raf_grid,
 #'   n_cores = 3
 #' )
 #'
-#' tuned_gbm
+#' tuned_raf
 #' }
-tune_abund_gbm <-
+tune_abund_qrf <-
   function(data,
            response,
            predictors,
@@ -89,78 +84,50 @@ tune_abund_gbm <-
            fit_formula = NULL,
            partition,
            predict_part = FALSE,
+           framework = "quantregForest",
+           train_quantiles = c(0.5),
+           eval_quantile = 0.5,
            grid = NULL,
-           distribution,
            metrics = NULL,
            n_cores = 1,
            verbose = TRUE) {
-    if (is.null(metrics) |
-      !all(metrics %in% c("corr_spear", "corr_pear", "mae", "inter", "slope", "pdisp"))) {
-      stop("Metrics is needed to be defined in 'metric' argument")
-    }
+    i <- NULL
     
-    # making grid
+    check_metrics(metrics)
+    
+    # making default grid
     grid_dict <- list(
-      n.trees = c(100, 200, 300),
-      interaction.depth = c(1, 2, 3),
-      n.minobsinnode = c(5, 10, 15),
-      shrinkage = seq(0.001, 0.1, by = 0.05)
+      mtry = seq(
+        from = 1, 
+        to = switch (framework,
+          "grf" = {length(c(predictors))},
+          "quantregForest" = {length(c(predictors, predictors_f))}
+        ), 
+        by = 1),
+      ntree = seq(from = 500, to = 2000, by = 100),
+      nodesize = c(1, 2, 5, 10, 20)
     )
-
+    
     # Check hyperparameters names
-    nms_grid <- names(grid)
-    nms_hypers <- names(grid_dict)
-
-    if (!all(nms_grid %in% nms_hypers)) {
-      stop(
-        paste(paste(nms_grid[!nms_grid %in% nms_hypers], collapse = ", "), " is not hyperparameters\n"),
-        "Grid expected to be any combination between ", paste(nms_hypers, collapse = ", ")
-      )
-    }
-
-    if (is.null(grid)) {
-      message("Grid not provided. Using the default one for Generalized Boosted Regression.")
-      grid <- expand.grid(grid_dict, stringsAsFactors = FALSE)
-    } else if (all(nms_hypers %in% nms_grid)) {
-      message("Using provided grid.")
-    } else if (any(!nms_hypers %in% nms_grid)) {
-      message(
-        "Adding default hyperparameter for: ",
-        paste(names(grid_dict)[!names(grid_dict) %in% nms_grid], collapse = ", ")
-      )
-
-      user_hyper <- names(grid)[which(names(grid) %in% names(grid_dict))]
-      default_hyper <- names(grid_dict)[which(!names(grid_dict) %in% user_hyper)]
-
-      user_list <- grid_dict[default_hyper]
-      for (i in user_hyper) {
-        l <- grid[[i]] %>%
-          unique() %>%
-          list()
-        names(l) <- i
-        user_list <- append(user_list, l)
-      }
-
-      grid <- expand.grid(user_list, stringsAsFactors = FALSE)
-    }
-
+    grid <- build_search_grid(grid, grid_dict)
+    
     comb_id <- paste("comb_", 1:nrow(grid), sep = "")
     grid <- cbind(comb_id, grid)
-
+    
     # looping the grid
     message("Searching for optimal hyperparameters...")
-
+    
     cl <- parallel::makeCluster(n_cores)
     doParallel::registerDoParallel(cl)
     # doSNOW::registerDoSNOW(cl)
     # pb <- utils::txtProgressBar(max = nrow(grid), style = 3)
     # progress <- function(n) utils::setTxtProgressBar(pb, n)
     # opts <- list(progress = progress)
-
+    
     on.exit({tryCatch({parallel::stopCluster(cl)}, error = function(e){})}, add = T)
-    hyper_combinations <- foreach::foreach(i = 1:nrow(grid), .export = c("fit_abund_gbm", "adm_eval"), .packages = c("dplyr")) %dopar% {
+    hyper_combinations <- foreach::foreach(i = 1:nrow(grid), .export = c("fit_abund_qrf", "adm_eval"), .packages = c("dplyr","adm")) %dopar% {
       model <-
-        fit_abund_gbm(
+        fit_abund_qrf(
           data = data,
           response = response,
           predictors = predictors,
@@ -168,11 +135,12 @@ tune_abund_gbm <-
           fit_formula = fit_formula,
           partition = partition,
           predict_part = predict_part,
-          distribution = distribution,
-          n.trees = grid[i, "n.trees"],
-          interaction.depth = grid[i, "interaction.depth"],
-          n.minobsinnode = grid[i, "n.minobsinnode"],
-          shrinkage = grid[i, "shrinkage"],
+          framework = framework,
+          train_quantiles = train_quantiles,
+          eval_quantile = eval_quantile,
+          mtry = grid[i, "mtry"],
+          ntree = grid[i, "ntree"],
+          nodesize = grid[i, "nodesize"],
           verbose = verbose
         )
       l <- list(cbind(grid[i, ], model$performance))
@@ -180,16 +148,16 @@ tune_abund_gbm <-
       l
     }
     parallel::stopCluster(cl)
-
+    
     hyper_combinations <- lapply(hyper_combinations, function(x) dplyr::bind_rows(x)) %>%
       dplyr::bind_rows()
-
+    
     ranked_combinations <- model_selection(hyper_combinations, metrics)
-
+    
     # fit final model
     message("\nFitting the best model...")
     final_model <-
-      fit_abund_gbm(
+      fit_abund_qrf(
         data = data,
         response = response,
         predictors = predictors,
@@ -197,33 +165,16 @@ tune_abund_gbm <-
         fit_formula = fit_formula,
         partition = partition,
         predict_part = predict_part,
-        distribution = distribution,
-        n.trees = ranked_combinations[[1]][1, "n.trees"],
-        interaction.depth = ranked_combinations[[1]][1, "interaction.depth"],
-        n.minobsinnode = ranked_combinations[[1]][1, "n.minobsinnode"],
-        shrinkage = ranked_combinations[[1]][1, "shrinkage"],
+        framework = framework,
+        train_quantiles = train_quantiles,
+        eval_quantile = eval_quantile,
+        mtry = ranked_combinations[[1]][[1, "mtry"]],
+        ntree = ranked_combinations[[1]][[1, "ntree"]],
+        nodesize = ranked_combinations[[1]][[1, "nodesize"]],
         verbose = verbose
       )
-
-    message(
-      "The best model was achieved with: \n n.trees = ",
-      ranked_combinations[[1]][1, "n.trees"],
-      ", interaction.depth = ",
-      ranked_combinations[[1]][1, "interaction.depth"],
-      ", n.minobsinnode = ",
-      ranked_combinations[[1]][1, "n.minobsinnode"],
-      " and shrinkage = ",
-      ranked_combinations[[1]][1, "shrinkage"]
-    )
-
+    
     final_list <- c(final_model, ranked_combinations)
-
-    # Standardize output list
-    for (i in 2:length(final_list)) {
-      if (!class(final_list[[i]])[1] == "tbl_df") {
-        final_list[[i]] <- dplyr::as_tibble(final_list[[i]])
-      }
-    }
-
+    
     return(final_list)
   }
