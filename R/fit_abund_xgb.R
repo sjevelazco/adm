@@ -101,7 +101,7 @@ fit_abund_xgb <-
            predictors_f = NULL,
            partition,
            hold_out_set = NULL,
-           hold_out_evaluation = FALSE,
+           #hold_out_evaluation = FALSE,
            predict_part = FALSE,
            nrounds = 1000,
            max_depth = 5,
@@ -117,9 +117,10 @@ fit_abund_xgb <-
 
     if (!is.null(predictors_f)) {
       warning("Categorical variables aren't available for XGB and will be ignored.")
-      predictors_f <- NULL
     }
+    predictors_f <- NULL
 
+    browser()
     # Adequate database
     data <- adapt_df(
       data = data,
@@ -129,48 +130,20 @@ fit_abund_xgb <-
       partition = partition
     )
     
-    if (!is.null(hold_out_set)){
-      hold_out_set$mock_part <- NA
-      hold_out_set <- adapt_df(
-        data = hold_out_set,
-        predictors = predictors,
-        predictors_f = predictors_f,
-        response = response,
-        partition = "mock_part"
-      ) %>% select(-mock_part)
-    }
-
-    # Variables
-    if (!is.null(predictors_f)) {
-      variables <- dplyr::bind_rows(c(c = predictors, f = predictors_f))
-    } else {
-      variables <- dplyr::bind_rows(c(c = predictors))
-    }
+    # Adequate hold-out set
+    hold_out_set <- check_adapt_holdout_set(
+      hold_out_set, 
+      predictors,
+      predictors_f,
+      response
+    )
+    hold_out_evaluation <- !is.null(hold_out_set)
     
-    if (is.null(early_stopping)){
-      early_stopping <- list(
-        cv_strategy = nrounds,
-        fm_strategy = "none"
-      )
-    }
-
-    # # ---- Formula ----
-    # if (is.null(fit_formula)) {
-    #   formula1 <- stats::formula(paste(response, "~", paste(c(
-    #     predictors,
-    #     predictors_f
-    #   ), collapse = " + ")))
-    # } else {
-    #   formula1 <- fit_formula
-    # }
-
-    # if (verbose) {
-    #   message(
-    #     "Formula used for model fitting:\n",
-    #     Reduce(paste, deparse(formula1)) %>% gsub(paste("  ", "   ", collapse = "|"), " ", .),
-    #     "\n"
-    #   )
-    # }
+    # Variables
+    variables <- get_variables(predictors, predictors_f)
+    
+    # Formula
+    # formula1 <- infer_formula(fit_formula, response, predictors, predictors_f, verbose)
 
     # Define parameters
     params <- list(
@@ -203,8 +176,10 @@ fit_abund_xgb <-
         sort()
 
       eval_partial <- list()
+      eval_partial_ho <- list()
       pred_test <- list()
       part_pred <- list()
+      part_pred_ho <- list()
 
       for (j in 1:length(folds)) {
         if (verbose) {
@@ -228,16 +203,6 @@ fit_abund_xgb <-
           target = data[, response]
         )
         
-        # sp_train <- list(
-        #   data = stats::model.matrix(~ . - 1, data = train_set[, c(predictors, predictors_f)]),
-        #   target = train_set[, response]
-        # )
-        # 
-        # sp_test <- list(
-        #   data = stats::model.matrix(~ . - 1, data = test_set[, c(predictors, predictors_f)]),
-        #   target = test_set[, response]
-        # )
-
         # convert to DMatrix and make xgboost happy
         dtrain <- xgboost::xgb.DMatrix(data = training_data$data[train_set,], label = training_data$target[train_set])
         dtest  <- xgboost::xgb.DMatrix(data = training_data$data[test_set,], label = training_data$target[test_set])
@@ -276,6 +241,7 @@ fit_abund_xgb <-
         pred <-
           suppressMessages(stats::predict(model, training_data$data[test_set,], type = "response"))
         observed <- training_data$target[test_set]
+        
         eval_partial[[j]] <- dplyr::tibble(
           model = "xgb",
           adm_eval(obs = observed, pred = pred)
@@ -283,6 +249,12 @@ fit_abund_xgb <-
 
         if (predict_part) {
           part_pred[[j]] <- data.frame(partition = folds[j], observed, predicted = pred)
+        }
+        
+        if(hold_out_evaluation){
+          pred_ho <-
+            suppressMessages(stats::predict(model, as.matrix(hold_out_set[,predictors]), type = "response"))
+          observed_ho <- hold_out_set[,response]
         }
       }
 

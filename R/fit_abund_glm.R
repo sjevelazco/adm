@@ -140,7 +140,7 @@ fit_abund_glm <-
            verbose = TRUE) {
     . <- mae <- pdisp <- NULL
     if (is.null(distribution)) {
-      stop("'distribution' argument was not used, a distribution must be specifyied")
+      stop("'distribution' argument is required.")
     }
 
     # Adequate database
@@ -152,13 +152,8 @@ fit_abund_glm <-
       partition = partition
     )
 
-
     # Variables
-    if (!is.null(predictors_f)) {
-      variables <- dplyr::bind_rows(c(c = predictors, f = predictors_f))
-    } else {
-      variables <- dplyr::bind_rows(c(c = predictors))
-    }
+    variables <- get_variables(predictors, predictors_f)
 
 
     # Formula
@@ -310,50 +305,25 @@ fit_abund_glm <-
       trace = FALSE
     )
 
-    # bind predicted evaluation
-    eval_partial <- eval_partial_list %>%
-      dplyr::bind_rows(.id = "replica") %>%
-      dplyr::as_tibble()
-
-    # bind predicted partition
-    if (predict_part) {
-      part_pred <- part_pred_list %>%
-        dplyr::bind_rows(.id = "replica")
-    } else {
-      part_pred <- NULL
-    }
-
-    # Summarize performance
-    eval_final <- eval_partial %>%
-      dplyr::group_by(model) %>%
-      dplyr::summarise(dplyr::across(mae:pdisp, list(
-        mean = mean,
-        sd = stats::sd
-      )), .groups = "drop")
-
-    variables <- dplyr::bind_cols(
-      data.frame(
-        model = "glm",
-        response = response
-      ),
-      variables
-    ) %>% as_tibble()
-
-    # Final object
-    data_list <- list(
-      model = full_model,
-      predictors = variables,
-      performance = eval_final,
-      performance_part = eval_partial,
-      predicted_part = part_pred
+    # Construct the standard final list to be returned
+    data_list <- wrap_final_list(
+      "glm",
+      full_model, 
+      variables, 
+      response, 
+      eval_partial_list, 
+      predict_part, 
+      part_pred_list,
+      get_metadata(
+        "glm", 
+        list(
+          formula = formula1,
+          sigma.formula = sigma_formula,
+          nu.formula = nu_formula,
+          tau.formula = tau_formula
+        )
+      )
     )
-
-    # Standardize output list
-    for (i in 2:length(data_list)) {
-      if (!class(data_list[[i]])[1] == "tbl_df") {
-        data_list[[i]] <- dplyr::as_tibble(data_list[[i]])
-      }
-    }
 
     return(data_list)
   }

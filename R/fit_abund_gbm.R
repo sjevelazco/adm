@@ -85,14 +85,6 @@ fit_abund_gbm <-
            verbose = TRUE) {
     . <- mae <- pdisp <- NULL
 
-    # Variables
-    if (!is.null(predictors_f)) {
-      variables <- dplyr::bind_rows(c(c = predictors, f = predictors_f))
-    } else {
-      variables <- dplyr::bind_rows(c(c = predictors))
-    }
-
-
     # Adequate database
     data <- adapt_df(
       data = data,
@@ -102,25 +94,12 @@ fit_abund_gbm <-
       partition = partition
     )
 
-
-    # ---- Formula ----
-    if (is.null(fit_formula)) {
-      formula1 <- stats::formula(paste(response, "~", paste(c(
-        predictors,
-        predictors_f
-      ), collapse = " + ")))
-    } else {
-      formula1 <- fit_formula
-    }
-
-    if (verbose) {
-      message(
-        "Formula used for model fitting:\n",
-        Reduce(paste, deparse(formula1)) %>% gsub(paste("  ", "   ", collapse = "|"), " ", .),
-        "\n"
-      )
-    }
-
+    # Variables
+    variables <- get_variables(predictors, predictors_f)
+    
+    # Formula
+    formula1 <- infer_formula(fit_formula, response, predictors, predictors_f, verbose)
+    
     # Fit models
     np <- ncol(data %>% dplyr::select(dplyr::starts_with(partition)))
     p_names <- names(data %>% dplyr::select(dplyr::starts_with(partition)))
@@ -203,51 +182,23 @@ fit_abund_gbm <-
       bag.fraction = 0.9
     )
 
-
-    # bind predicted evaluation
-    eval_partial <- eval_partial_list %>%
-      dplyr::bind_rows(.id = "replica") %>%
-      dplyr::as_tibble()
-
-    # bind predicted partition
-    if (predict_part) {
-      part_pred <- part_pred_list %>%
-        dplyr::bind_rows(.id = "replica")
-    } else {
-      part_pred <- NULL
-    }
-
-    # Summarize performance
-    eval_final <- eval_partial %>%
-      dplyr::group_by(model) %>%
-      dplyr::summarise(dplyr::across(mae:pdisp, list(
-        mean = mean,
-        sd = stats::sd
-      )), .groups = "drop")
-
-    variables <- dplyr::bind_cols(
-      data.frame(
-        model = "gbm",
-        response = response
-      ),
-      variables
-    ) %>% as_tibble()
-
-    # Final object
-    data_list <- list(
-      model = full_model,
-      predictors = variables,
-      performance = eval_final,
-      performance_part = eval_partial,
-      predicted_part = part_pred
+    # Construct the standard final list to be returned
+    data_list <- wrap_final_list(
+      "gbm",
+      full_model, 
+      variables, 
+      response, 
+      eval_partial_list, 
+      predict_part, 
+      part_pred_list,
+      get_metadata(
+        "gbm", 
+        list(
+          formula = formula1,
+          bag.fraction = 0.9
+        )
+      )
     )
-
-    # Standardize output list
-    for (i in 2:length(data_list)) {
-      if (!class(data_list[[i]])[1] == "tbl_df") {
-        data_list[[i]] <- dplyr::as_tibble(data_list[[i]])
-      }
-    }
 
     return(data_list)
   }

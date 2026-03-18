@@ -326,3 +326,44 @@ filter_safe_levels <- function(m_detect, pred_df, training_data) {
     is_valid
   ))
 }
+
+check_adapt_holdout_set <- function(
+    hold_out_set,
+    predictors,
+    predictors_f,
+    response) {
+  if (!is.null(hold_out_set)) {
+    hold_out_set$mock_part <- NA
+    hold_out_set <- adapt_df(
+      data = hold_out_set,
+      predictors = predictors,
+      predictors_f = predictors_f,
+      response = response,
+      partition = "mock_part"
+    ) %>% select(-mock_part)
+  }
+
+  return(hold_out_set)
+}
+
+init_training_lists <- function(scopus){
+  switch (scopus,
+    "outer" = {
+      list(
+        part_pred_list = list(),
+        part_pred_ho_list = list(),
+        eval_partial_list = list(),
+        eval_partial_ho_list = list()
+      )
+    },
+    "inner" = {
+      list(
+        eval_partial = list(),
+        eval_partial_ho = list(),
+        pred_test = list(),
+        part_pred = list(),
+        part_pred_ho = list()
+      )
+    }
+  )
+}

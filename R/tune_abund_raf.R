@@ -90,10 +90,8 @@ tune_abund_raf <-
            verbose = TRUE) {
     i <- NULL
 
-    if (is.null(metrics) |
-      !all(metrics %in% c("corr_spear", "corr_pear", "mae", "inter", "slope", "pdisp"))) {
-      stop("Metrics is needed to be defined in 'metric' argument")
-    }
+    # Check metrics
+    check_metrics(metrics)
 
     # making grid
     grid_dict <- list(
@@ -102,41 +100,7 @@ tune_abund_raf <-
     )
 
     # Check hyperparameters names
-    nms_grid <- names(grid)
-    nms_hypers <- names(grid_dict)
-
-    if (!all(nms_grid %in% nms_hypers)) {
-      stop(
-        paste(paste(nms_grid[!nms_grid %in% nms_hypers], collapse = ", "), " is not hyperparameters\n"),
-        "Grid expected to be any combination between ", paste(nms_hypers, collapse = ", ")
-      )
-    }
-
-    if (is.null(grid)) {
-      message("Grid not provided. Using the default one for Random Forests.")
-      grid <- expand.grid(grid_dict, stringsAsFactors = FALSE)
-    } else if (all(nms_hypers %in% nms_grid)) {
-      message("Using provided grid.")
-    } else if (any(!nms_hypers %in% nms_grid)) {
-      message(
-        "Adding default hyperparameter for: ",
-        paste(names(grid_dict)[!names(grid_dict) %in% nms_grid], collapse = ", ")
-      )
-
-      user_hyper <- names(grid)[which(names(grid) %in% names(grid_dict))]
-      default_hyper <- names(grid_dict)[which(!names(grid_dict) %in% user_hyper)]
-
-      user_list <- grid_dict[default_hyper]
-      for (i in user_hyper) {
-        l <- grid[[i]] %>%
-          unique() %>%
-          list()
-        names(l) <- i
-        user_list <- append(user_list, l)
-      }
-
-      grid <- expand.grid(user_list, stringsAsFactors = FALSE)
-    }
+    grid <- build_search_grid(grid, grid_dict)
 
     comb_id <- paste("comb_", 1:nrow(grid), sep = "")
     grid <- cbind(comb_id, grid)
@@ -203,11 +167,11 @@ tune_abund_raf <-
     final_list <- c(final_model, ranked_combinations)
 
     # Standardize output list
-    for (i in 2:length(final_list)) {
-      if (!class(final_list[[i]])[1] == "tbl_df") {
-        final_list[[i]] <- dplyr::as_tibble(final_list[[i]])
-      }
-    }
+    # for (i in 2:length(final_list)) {
+    #   if (!class(final_list[[i]])[1] == "tbl_df") {
+    #     final_list[[i]] <- dplyr::as_tibble(final_list[[i]])
+    #   }
+    # }
 
     return(final_list)
   }

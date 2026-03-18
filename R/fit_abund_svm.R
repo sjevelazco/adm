@@ -190,6 +190,7 @@ fit_abund_svm <-
       get_metadata(
         "svm", 
         list(
+          formula = formula1,
           type = "eps-svr"
         )
       )
