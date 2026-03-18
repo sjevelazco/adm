@@ -120,7 +120,7 @@ fit_abund_xgb <-
     }
     predictors_f <- NULL
 
-    browser()
+    
     # Adequate database
     data <- adapt_df(
       data = data,
@@ -162,9 +162,11 @@ fit_abund_xgb <-
     np <- ncol(data %>% dplyr::select(dplyr::starts_with(partition)))
     p_names <- names(data %>% dplyr::select(dplyr::starts_with(partition)))
 
-    part_pred_list <- list()
-    eval_partial_list <- list()
+    #part_pred_list <- list()
+    #eval_partial_list <- list()
 
+    replica_training_lists <- init_training_lists("replica")
+    
     for (h in 1:np) {
       if (verbose) {
         message("Replica number: ", h, "/", np)
@@ -175,11 +177,13 @@ fit_abund_xgb <-
         unique() %>%
         sort()
 
-      eval_partial <- list()
-      eval_partial_ho <- list()
-      pred_test <- list()
-      part_pred <- list()
-      part_pred_ho <- list()
+      fold_training_lists <- init_training_lists("fold") 
+      
+      # eval_partial <- list()
+      # eval_partial_ho <- list()
+      # pred_test <- list()
+      # part_pred <- list()
+      # part_pred_ho <- list()
 
       for (j in 1:length(folds)) {
         if (verbose) {
@@ -242,36 +246,30 @@ fit_abund_xgb <-
           suppressMessages(stats::predict(model, training_data$data[test_set,], type = "response"))
         observed <- training_data$target[test_set]
         
-        eval_partial[[j]] <- dplyr::tibble(
-          model = "xgb",
-          adm_eval(obs = observed, pred = pred)
-        )
-
-        if (predict_part) {
-          part_pred[[j]] <- data.frame(partition = folds[j], observed, predicted = pred)
-        }
-        
         if(hold_out_evaluation){
           pred_ho <-
             suppressMessages(stats::predict(model, as.matrix(hold_out_set[,predictors]), type = "response"))
           observed_ho <- hold_out_set[,response]
+        } else {
+          pred_ho <- observed_ho <- NULL
         }
+        
+        fold_training_lists <- fold_perf_register(
+          "xgb", folds, j,
+          fold_training_lists,
+          predict_part,
+          hold_out_evaluation,
+          pred, pred_ho,
+          observed, observed_ho
+        )
       }
 
+      
       # Create final database with parameter performance
-      names(eval_partial) <- 1:length(folds)
-      eval_partial <-
-        eval_partial[sapply(eval_partial, function(x) !is.null(dim(x)))] %>%
-        dplyr::bind_rows(., .id = "partition")
-      eval_partial_list[[h]] <- eval_partial
+      replica_training_lists <- replica_perf_register(
+        replica_training_lists, fold_training_lists,
+        folds, h, predict_part, hold_out_evaluation)
 
-      if (predict_part) {
-        names(part_pred) <- 1:length(folds)
-        part_pred <-
-          part_pred[sapply(part_pred, function(x) !is.null(dim(x)))] %>%
-          dplyr::bind_rows(., .id = "partition")
-        part_pred_list[[h]] <- part_pred
-      }
     }
 
     # fit final model with all data
@@ -320,65 +318,34 @@ fit_abund_xgb <-
       verbose = 0
     )
     
-    # bind predicted evaluation
-    eval_partial <- eval_partial_list %>%
-      dplyr::bind_rows(.id = "replica") %>%
-      dplyr::as_tibble()
-
-    # bind predicted partition
-    if (predict_part) {
-      part_pred <- part_pred_list %>%
-        dplyr::bind_rows(.id = "replica")
-    } else {
-      part_pred <- NULL
-    }
-
     # evaluate full model with hold-out set
     if(hold_out_evaluation){
       pred <-
         suppressMessages(stats::predict(full_model, hold_out_set[,c(predictors,predictors_f)], type = "response"))
       observed <- hold_out_set[,response]
       
-      eval_partial <- eval_partial %>%
-        bind_rows(
-          dplyr::tibble(
-            model = "xgb_ho",
-            adm_eval(obs = observed, pred = pred)
-          )
-        )
+      hold_out_perf <- adm_eval(obs = observed, pred = pred)
+    } else {
+      hold_out_perf <- NULL
     }
     
-    # Summarize performance
-    eval_final <- eval_partial %>%
-      dplyr::group_by(model) %>%
-      dplyr::summarise(dplyr::across(mae:pdisp, list(
-        mean = mean,
-        sd = stats::sd
-      )), .groups = "drop")
-
-    variables <- dplyr::bind_cols(
-      data.frame(
-        model = "xgb",
-        response = response
-      ),
-      variables
-    ) %>% as_tibble()
-
-    # Final object
-    data_list <- list(
-      model = full_model,
-      predictors = variables,
-      performance = eval_final,
-      performance_part = eval_partial,
-      predicted_part = part_pred
+    data_list <- wrap_final_list(
+      "xgb", 
+      full_model, 
+      variables, 
+      response, 
+      replica_training_lists, 
+      hold_out_evaluation, 
+      hold_out_perf, 
+      predict_part, 
+      get_metadata(
+        "xgb", 
+        list(
+          evals = fm_evals,
+          early_stopping_rounds = fm_early_stopping
+        )
+      )
     )
-
-    # Standardize output list
-    for (i in 2:length(data_list)) {
-      if (!class(data_list[[i]])[1] == "tbl_df") {
-        data_list[[i]] <- dplyr::as_tibble(data_list[[i]])
-      }
-    }
 
     return(data_list)
   }

@@ -90,18 +90,34 @@ infer_formula <- function(fit_formula, response, predictors, predictors_f, verbo
 #' wrap_final_list
 #'
 #' @noRd
-wrap_final_list <- function(algo, full_model, variables, response, eval_partial_list, predict_part, part_pred_list, metadata){
+#wrap_final_list <- function(algo, full_model, variables, response, eval_partial_list, predict_part, part_pred_list, metadata){
+wrap_final_list <- function(algo, full_model, variables, response, replica_training_lists, hold_out_evaluation, hold_out_perf, predict_part, metadata){
   # bind predicted evaluation
-  eval_partial <- eval_partial_list %>%
+  eval_partial <- replica_training_lists$eval_partial_list %>%
     dplyr::bind_rows(.id = "replica") %>%
     dplyr::as_tibble()
   
+  if (hold_out_evaluation) {
+    eval_partial_ho <- replica_training_lists$eval_partial_list_ho %>%
+      dplyr::bind_rows(.id = "replica") %>%
+      dplyr::as_tibble()
+  } else {
+    eval_partial_ho <- NULL
+  }
+  
   # bind predicted partition
   if (predict_part) {
-    part_pred <- part_pred_list %>%
+    part_pred <- replica_training_lists$part_pred_list %>%
       dplyr::bind_rows(.id = "replica")
+    if (hold_out_evaluation) {
+      part_pred_ho <- replica_training_lists$part_pred_list_ho %>%
+        dplyr::bind_rows(.id = "replica")
+    } else {
+      part_pred_ho <- NULL
+    }
   } else {
     part_pred <- NULL
+    part_pred_ho <- NULL
   }
   
   # Summarize performance
@@ -111,6 +127,19 @@ wrap_final_list <- function(algo, full_model, variables, response, eval_partial_
       mean = mean,
       sd = stats::sd
     )), .groups = "drop")
+  
+  if (hold_out_evaluation) {
+    eval_final <- bind_rows(
+      eval_final,
+      eval_partial_ho %>%
+        mutate(model = paste0(model, "_ho")) %>%
+        dplyr::group_by(model) %>%
+        dplyr::summarise(dplyr::across(mae:pdisp, list(
+          mean = mean,
+          sd = stats::sd
+        )), .groups = "drop")
+    )
+  }
   
   variables <- dplyr::bind_cols(
     data.frame(
@@ -126,8 +155,13 @@ wrap_final_list <- function(algo, full_model, variables, response, eval_partial_
     predictors = variables,
     performance = eval_final,
     performance_part = eval_partial,
-    predicted_part = part_pred
+    performance_part_hold_out = eval_partial_ho,
+    predicted_part = part_pred,
+    predicted_part_hold_out = part_pred_ho
   )
+  
+  # Clean final list
+  data_list <- Filter(Negate(is.null), data_list)
   
   # Standardize output list
   for (i in 2:length(data_list)) {
@@ -348,7 +382,7 @@ check_adapt_holdout_set <- function(
 
 init_training_lists <- function(scopus){
   switch (scopus,
-    "outer" = {
+    "replica" = {
       list(
         part_pred_list = list(),
         part_pred_ho_list = list(),
@@ -356,7 +390,7 @@ init_training_lists <- function(scopus){
         eval_partial_ho_list = list()
       )
     },
-    "inner" = {
+    "fold" = {
       list(
         eval_partial = list(),
         eval_partial_ho = list(),
@@ -366,4 +400,104 @@ init_training_lists <- function(scopus){
       )
     }
   )
+}
+
+#' fold_perf_register
+#'
+#' @param model 
+#' @param folds 
+#' @param j 
+#' @param fold_training_lists 
+#' @param predict_part 
+#' @param hold_out_evaluation 
+#' @param pred 
+#' @param pred_ho 
+#' @param observed 
+#' @param observed_ho 
+#'
+#' @noRd
+fold_perf_register <- function(
+    model, folds, j,
+    fold_training_lists,
+    predict_part,
+    hold_out_evaluation,
+    pred, pred_ho,
+    observed, observed_ho) {
+  
+  fold_training_lists$eval_partial[[j]] <- dplyr::tibble(
+    model = model,
+    adm_eval(obs = observed, pred = pred)
+  )
+  
+  if (predict_part) {
+    fold_training_lists$part_pred[[j]] <- data.frame(partition = folds[j], observed, predicted = pred)
+  }
+  
+  if(hold_out_evaluation){
+    fold_training_lists$eval_partial_ho[[j]] <- dplyr::tibble(
+      model = model,
+      adm_eval(obs = observed_ho, pred = pred_ho)
+    )
+  }
+  
+  if(all(predict_part, hold_out_evaluation)){
+    fold_training_lists$part_pred_ho[[j]] <- data.frame(partition = folds[j], observed_ho, predicted = pred_ho)
+  }
+  
+  fold_training_lists
+}
+
+#' replica_perf_register
+#'
+#' @param replica_training_lists 
+#' @param fold_training_lists 
+#' @param folds 
+#' @param h 
+#' @param predict_part 
+#' @param hold_out_evaluation 
+#' 
+#' @noRd
+replica_perf_register <- function(
+    replica_training_lists, 
+    fold_training_lists,
+    folds, 
+    h, 
+    predict_part, 
+    hold_out_evaluation){
+  
+  names(fold_training_lists$eval_partial) <- 1:length(folds)
+  
+  fold_training_lists$eval_partial <-
+    fold_training_lists$eval_partial[sapply(fold_training_lists$eval_partial, function(x) !is.null(dim(x)))] %>%
+    dplyr::bind_rows(., .id = "partition")
+  
+  replica_training_lists$eval_partial_list[[h]] <- fold_training_lists$eval_partial
+  
+  if (predict_part) {
+    names(fold_training_lists$part_pred) <- 1:length(folds)
+    fold_training_lists$part_pred <-
+      fold_training_lists$part_pred[sapply(fold_training_lists$part_pred, function(x) !is.null(dim(x)))] %>%
+      dplyr::bind_rows(., .id = "partition")
+    replica_training_lists$part_pred_list[[h]] <- fold_training_lists$part_pred
+  }
+  
+  if(hold_out_evaluation){
+    names(fold_training_lists$eval_partial_ho) <- 1:length(folds)
+    
+    fold_training_lists$eval_partial_ho <-
+      fold_training_lists$eval_partial_ho[sapply(fold_training_lists$eval_partial_ho, function(x) !is.null(dim(x)))] %>%
+      dplyr::bind_rows(., .id = "partition")
+    
+    replica_training_lists$eval_partial_list_ho[[h]] <- fold_training_lists$eval_partial_ho
+  }
+  
+  if(all(hold_out_evaluation, predict_part)){
+    names(fold_training_lists$part_pred_ho) <- 1:length(folds)
+    fold_training_lists$part_pred_ho <-
+      fold_training_lists$part_pred_ho[sapply(fold_training_lists$part_pred_ho, function(x) !is.null(dim(x)))] %>%
+      dplyr::bind_rows(., .id = "partition")
+    replica_training_lists$part_pred_list_ho[[h]] <- fold_training_lists$part_pred_ho
+  }
+  
+  return(replica_training_lists)
 }
