@@ -9,6 +9,7 @@ adm_uncertainty(
   training_data,
   response,
   projection_data,
+  partition = ".part",
   iteration = 50,
   n_cores = 1,
   ...
@@ -22,6 +23,8 @@ adm_uncertainty(
 \item{response}{character. Column name of the response variable.}
 
 \item{projection_data}{A SpatRaster object with the environmental layers for projection.}
+
+\item{partition}{character. Column name prefix with training and validation partition groups. Default ".part".}
 
 \item{iteration}{numeric. The number of bootstrap iterations. Default 50.}
 

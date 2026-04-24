@@ -6,6 +6,7 @@
 #' @param predictors_f character. Vector with the column names of qualitative predictor variables (i.e. ordinal or nominal variables type). Usage predictors_f = c("landform")
 #' @param fit_formula formula. A formula object with response and predictor variables (e.g. formula(abund ~ temp + precipt + sand + landform)). Note that the variables used here must be consistent with those used in response, predictors, and predictors_f arguments. Default NULL
 #' @param partition character. Column name with training and validation partition groups.
+#' If partition = NULL, the model will be validated with the same data used for fitting.
 #' @param predict_part logical. Save predicted abundance for testing data. Default is FALSE.
 #' @param mtry numeric. Number of variables randomly sampled as candidates at each split. Default (length(c(predictors, predictors_f))/3)
 #' @param ntree numeric. Number of trees to grow. This should not be set to too small a number, to ensure that every input row gets predicted at least a few times. Default 500
@@ -76,7 +77,7 @@ fit_abund_raf <-
            predictors,
            predictors_f = NULL,
            fit_formula = NULL,
-           partition,
+           partition = NULL,
            hold_out_set = NULL,
            predict_part = FALSE,
            mtry = length(c(predictors, predictors_f)) / 3,
@@ -109,6 +110,23 @@ fit_abund_raf <-
     formula1 <- infer_formula(fit_formula, response, predictors, predictors_f, verbose)
 
     # Fit models
+    if (is.null(partition) || !any(nzchar(partition, keepNA = FALSE))) {
+              set.seed(13)
+    suppressWarnings(
+      mod <- randomForest::randomForest(
+          formula1,
+          data = data,
+          mtry = mtry,
+          ntree = ntree,
+          importance = FALSE
+        ))
+
+    result <- list(
+      model = mod
+    )
+    return(result)
+  } else {
+      
     np <- ncol(data %>% dplyr::select(dplyr::starts_with(partition)))
     p_names <- names(data %>% dplyr::select(dplyr::starts_with(partition)))
 
@@ -218,3 +236,4 @@ fit_abund_raf <-
 
     return(data_list)
   }
+ }

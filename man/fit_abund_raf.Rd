@@ -10,7 +10,7 @@ fit_abund_raf(
   predictors,
   predictors_f = NULL,
   fit_formula = NULL,
-  partition,
+  partition = NULL,
   hold_out_set = NULL,
   predict_part = FALSE,
   mtry = length(c(predictors, predictors_f))/3,
@@ -29,7 +29,8 @@ fit_abund_raf(
 
 \item{fit_formula}{formula. A formula object with response and predictor variables (e.g. formula(abund ~ temp + precipt + sand + landform)). Note that the variables used here must be consistent with those used in response, predictors, and predictors_f arguments. Default NULL}
 
-\item{partition}{character. Column name with training and validation partition groups.}
+\item{partition}{character. Column name with training and validation partition groups.
+If partition = NULL, the model will be validated with the same data used for fitting.}
 
 \item{predict_part}{logical. Save predicted abundance for testing data. Default is FALSE.}
 

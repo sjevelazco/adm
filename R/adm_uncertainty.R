@@ -8,6 +8,7 @@
 #' @param training_data A data.frame or tibble with abundance data and predictors.
 #' @param response character. Column name of the response variable.
 #' @param projection_data A SpatRaster object with the environmental layers for projection.
+#' @param partition character. Column name prefix with training and validation partition groups. Default ".part".
 #' @param iteration numeric. The number of bootstrap iterations. Default 50.
 #' @param n_cores numeric. The number of cores to use for parallel processing. Default 1.
 #' @param ... Additional arguments passed to refitting functions or \code{\link{adm_predict}} 
@@ -61,6 +62,7 @@ adm_uncertainty <- function(
   training_data,
   response,
   projection_data,
+  partition = ".part",
   iteration = 50,
   n_cores = 1,
   ...
@@ -69,7 +71,11 @@ adm_uncertainty <- function(
   clss <- models$predictors$model
 
   # Prepare training dataset (remove partition columns)
-  training_data_clean <- training_data %>% dplyr::select(-dplyr::starts_with(".part"))
+  if (!is.null(partition) && any(nzchar(partition, keepNA = FALSE))) {
+    training_data_clean <- training_data %>% dplyr::select(-dplyr::starts_with(partition))
+  } else {
+    training_data_clean <- training_data
+  }
 
   # Predictor names
   pr_c <- models$predictors %>%
@@ -91,7 +97,7 @@ adm_uncertainty <- function(
   # Refitting and prediction loop
   r_list <- foreach::foreach(
     ii = 1:iteration,
-    .packages = c("adm", "dplyr", "terra"),
+    .packages = c("dplyr", "terra"),
     .errorhandling = "pass"
   ) %dopar% {
     set.seed(ii)
