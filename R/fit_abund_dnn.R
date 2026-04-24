@@ -16,7 +16,7 @@
 #' @param verbose logical. If FALSE, disables all console messages. Default TRUE
 #' @param validation_patience numerical. An integer indicating the number of epochs without loss improvement tolerated by the algorithm in the validation process. If the patience limit is exceeded, the training ends. Default 2
 #' @param fitting_patience numerical. The same as validation_patience, but in the final model fitting process. Default 5
-#' @param learning_monitor logical. If TRUE, the function will return a tibble containing loss values over training epochs. It is useful to create learning/convergence plots. 
+#' @param learning_monitor logical. If TRUE, the function will return a tibble containing loss values over training epochs. It is useful to create learning/convergence plots.
 #'
 #' @importFrom dplyr bind_rows bind_cols pull tibble as_tibble group_by summarise across
 #' @importFrom luz setup set_opt_hparams fit
@@ -125,10 +125,10 @@ fit_abund_dnn <-
       response = response,
       partition = partition
     )
-    
+
     # Adequate hold-out set
     hold_out_set <- check_adapt_holdout_set(
-      hold_out_set, 
+      hold_out_set,
       predictors,
       predictors_f,
       response
@@ -200,12 +200,12 @@ fit_abund_dnn <-
       # pred_test <- list()
       # part_pred <- list()
 
-      if (learning_monitor){
+      if (learning_monitor) {
         monitor <- list()
       } else {
         monitor <- NULL
       }
-      
+
       for (j in 1:length(folds)) {
         if (verbose) {
           message("-- Partition number ", j, "/", length(folds))
@@ -231,30 +231,30 @@ fit_abund_dnn <-
             luz::set_opt_hparams(
               lr = learning_rate,
               weight_decay = weight_decay
-              ) %>%
+            ) %>%
             luz::fit(train_dataloader,
               valid_data = test_dataloader,
               epochs = n_epochs,
               callbacks = luz::luz_callback_early_stopping(patience = validation_patience)
             )
         )
-        
-        if(learning_monitor){
+
+        if (learning_monitor) {
           train_loss <- fitted$records$metrics$train %>% unlist()
           names(train_loss) <- 1:length(train_loss)
-          
+
           valid_loss <- fitted$records$metrics$valid %>% unlist()
           names(valid_loss) <- 1:length(valid_loss)
-          
+
           fold_monitor <- list(
             train = train_loss,
             valid = valid_loss
           )
-          
+
           monitor[[j]] <- fold_monitor
-          names(monitor)[[j]] <- paste0("fold-",j)
+          names(monitor)[[j]] <- paste0("fold-", j)
         }
-        
+
         pred <- predict(fitted, test_set) %>% as.numeric()
 
         if (!(sum(is.na(pred)) == length(pred))) {
@@ -262,14 +262,14 @@ fit_abund_dnn <-
           observed <- test_set$response_variable %>% as.numeric()
         }
 
-        if(hold_out_evaluation){
+        if (hold_out_evaluation) {
           pred_ho <-
-            suppressMessages(stats::predict(model, newdata = hold_out_set[,c(predictors,predictors_f)], type = "response"))
-          observed_ho <- hold_out_set[,response]
+            suppressMessages(stats::predict(model, newdata = hold_out_set[, c(predictors, predictors_f)], type = "response"))
+          observed_ho <- hold_out_set[, response]
         } else {
           pred_ho <- observed_ho <- NULL
         }
-        
+
         fold_training_lists <- fold_perf_register(
           "dnn", folds, j,
           fold_training_lists,
@@ -283,7 +283,8 @@ fit_abund_dnn <-
       # Create final database with parameter performance
       replica_training_lists <- replica_perf_register(
         replica_training_lists, fold_training_lists,
-        folds, h, predict_part, hold_out_evaluation)
+        folds, h, predict_part, hold_out_evaluation
+      )
     }
 
     # fit final model with all data
@@ -310,37 +311,37 @@ fit_abund_dnn <-
           )
         )
     )
-    
-    if(learning_monitor){
-      train_loss <- full_model$records$metrics$train %>% unlist
+
+    if (learning_monitor) {
+      train_loss <- full_model$records$metrics$train %>% unlist()
       names(train_loss) <- 1:length(train_loss)
-      
+
       fold_list <- list(
         train = train_loss
       )
-      
-      monitor[[length(monitor)+1]] <- fold_list
-      
+
+      monitor[[length(monitor) + 1]] <- fold_list
+
       names(monitor)[[length(monitor)]] <- "final_model"
-      
-      monitor <- lapply(names(monitor), function(m){
+
+      monitor <- lapply(names(monitor), function(m) {
         m_df <- dplyr::as_tibble(monitor[[m]])
         m_df$fitted <- m
         m_df
       }) %>% dplyr::bind_rows()
-      
+
       monitor <- monitor %>%
         dplyr::group_by(fitted) %>%
         dplyr::mutate(epoch = dplyr::row_number()) %>%
         dplyr::ungroup()
     }
-    
+
     # evaluate full model with hold-out set
-    if(hold_out_evaluation){
+    if (hold_out_evaluation) {
       pred <-
-        suppressMessages(predict(full_model, newdata = hold_out_set[,c(predictors,predictors_f)], type = "response"))
-      observed <- hold_out_set[,response]
-      
+        suppressMessages(predict(full_model, newdata = hold_out_set[, c(predictors, predictors_f)], type = "response"))
+      observed <- hold_out_set[, response]
+
       hold_out_perf <- adm_eval(obs = observed, pred = pred)
     } else {
       hold_out_perf <- NULL
@@ -348,15 +349,15 @@ fit_abund_dnn <-
     # Construct the standard final list to be returned
     data_list <- wrap_final_list(
       "dnn",
-      full_model, 
-      variables, 
-      response, 
-      replica_training_lists, 
-      hold_out_evaluation, 
-      hold_out_perf, 
-      predict_part, 
+      full_model,
+      variables,
+      response,
+      replica_training_lists,
+      hold_out_evaluation,
+      hold_out_perf,
+      predict_part,
       get_metadata(
-        "dnn", 
+        "dnn",
         list(
           lr = learning_rate,
           weight_decay = weight_decay,
@@ -365,6 +366,6 @@ fit_abund_dnn <-
         )
       )
     )
-    
+
     return(data_list)
   }

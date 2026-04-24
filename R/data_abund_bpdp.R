@@ -354,7 +354,7 @@ data_abund_bpdp <-
       pred_matrix <- list(
         data = stats::model.matrix(~ . - 1, data = suit_c[, as.vector(unlist(variables)[3:length(variables)])])
       )
-      
+
       suit_c <-
         data.frame(suit_c[1:2],
           Abundance = suppressMessages(stats::predict(model, newdata = pred_matrix$data, type = "response"))

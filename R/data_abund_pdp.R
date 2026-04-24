@@ -183,7 +183,7 @@ data_abund_pdp <-
         # Range extrapolation
         rng <- terra::minmax(projection_data[[predictors]])
         rng <- seq(rng[1], rng[2], length.out = resolution)
-        rng <- c(rng, range(x[, predictors])) %>% sort() # add training range 
+        rng <- c(rng, range(x[, predictors])) %>% sort() # add training range
       }
     }
 
@@ -370,7 +370,7 @@ data_abund_pdp <-
 
       if (resid) {
         pred_matrix_r <- list(
-          data = stats::model.matrix(~ . - 1, data = x[,  as.vector(unlist(variables)[3:length(variables)])])
+          data = stats::model.matrix(~ . - 1, data = x[, as.vector(unlist(variables)[3:length(variables)])])
         )
 
         suit_r <-

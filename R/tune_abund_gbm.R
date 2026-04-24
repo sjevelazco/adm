@@ -96,7 +96,7 @@ tune_abund_gbm <-
            verbose = TRUE) {
     # Check metrics
     check_metrics(metrics)
-    
+
     # making grid
     grid_dict <- list(
       n.trees = c(100, 200, 300),
@@ -121,7 +121,17 @@ tune_abund_gbm <-
     # progress <- function(n) utils::setTxtProgressBar(pb, n)
     # opts <- list(progress = progress)
 
-    on.exit({tryCatch({parallel::stopCluster(cl)}, error = function(e){})}, add = T)
+    on.exit(
+      {
+        tryCatch(
+          {
+            parallel::stopCluster(cl)
+          },
+          error = function(e) {}
+        )
+      },
+      add = T
+    )
     hyper_combinations <- foreach::foreach(i = 1:nrow(grid), .export = c("fit_abund_gbm", "adm_eval"), .packages = c("dplyr")) %dopar% {
       model <-
         fit_abund_gbm(

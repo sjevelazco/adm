@@ -91,6 +91,6 @@ test_that("test errors", {
 #     objective = "reg:squarederror",
 #     n_cores = 1
 #   )
-# 
+#
 #   expect_true("subsample" %in% names(tuned_$optimal_combination))
 # })

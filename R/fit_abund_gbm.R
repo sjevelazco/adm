@@ -94,10 +94,10 @@ fit_abund_gbm <-
       predictors_f = predictors_f,
       partition = partition
     )
-    
+
     # Adequate hold-out set
     hold_out_set <- check_adapt_holdout_set(
-      hold_out_set, 
+      hold_out_set,
       predictors,
       predictors_f,
       response
@@ -106,17 +106,17 @@ fit_abund_gbm <-
 
     # Variables
     variables <- get_variables(predictors, predictors_f)
-    
+
     # Formula
     formula1 <- infer_formula(fit_formula, response, predictors, predictors_f, verbose)
-    
+
     # Fit models
     np <- ncol(data %>% dplyr::select(dplyr::starts_with(partition)))
     p_names <- names(data %>% dplyr::select(dplyr::starts_with(partition)))
 
     # part_pred_list <- list()
     # eval_partial_list <- list()
-    
+
     replica_training_lists <- init_training_lists("replica")
 
     for (h in 1:np) {
@@ -129,8 +129,8 @@ fit_abund_gbm <-
         unique() %>%
         sort()
 
-      fold_training_lists <- init_training_lists("fold") 
-      
+      fold_training_lists <- init_training_lists("fold")
+
       # eval_partial <- list()
       # pred_test <- list()
       # part_pred <- list()
@@ -143,7 +143,7 @@ fit_abund_gbm <-
         test_set <- data[data[, p_names[h]] == folds[j], ]
 
         set.seed(13)
-        
+
         model <- gbm::gbm(
           formula = formula1,
           data = train_set,
@@ -154,18 +154,18 @@ fit_abund_gbm <-
           shrinkage = shrinkage,
           bag.fraction = 0.9
         )
-      
+
         pred <- gbm::predict.gbm(model, test_set, type = "response")
         observed <- dplyr::pull(test_set, response)
-        
-        if(hold_out_evaluation){
+
+        if (hold_out_evaluation) {
           pred_ho <-
-            suppressMessages(gbm::predict.gbm(model, hold_out_set[,c(predictors,predictors_f)], type = "response"))
-          observed_ho <- hold_out_set[,response]
+            suppressMessages(gbm::predict.gbm(model, hold_out_set[, c(predictors, predictors_f)], type = "response"))
+          observed_ho <- hold_out_set[, response]
         } else {
           pred_ho <- observed_ho <- NULL
         }
-        
+
         fold_training_lists <- fold_perf_register(
           "gbm", folds, j,
           fold_training_lists,
@@ -179,7 +179,8 @@ fit_abund_gbm <-
       # Create final database with parameter performance
       replica_training_lists <- replica_perf_register(
         replica_training_lists, fold_training_lists,
-        folds, h, predict_part, hold_out_evaluation)
+        folds, h, predict_part, hold_out_evaluation
+      )
     }
 
     # fit final model with all data
@@ -194,13 +195,13 @@ fit_abund_gbm <-
       shrinkage = shrinkage,
       bag.fraction = 0.9
     )
-    
+
     # evaluate full model with hold-out set
-    if(hold_out_evaluation){
+    if (hold_out_evaluation) {
       pred <-
-        suppressMessages(gbm::predict.gbm(full_model, hold_out_set[,c(predictors,predictors_f)], type = "response"))
-      observed <- hold_out_set[,response]
-      
+        suppressMessages(gbm::predict.gbm(full_model, hold_out_set[, c(predictors, predictors_f)], type = "response"))
+      observed <- hold_out_set[, response]
+
       hold_out_perf <- adm_eval(obs = observed, pred = pred)
     } else {
       hold_out_perf <- NULL
@@ -209,15 +210,15 @@ fit_abund_gbm <-
     # Construct the standard final list to be returned
     data_list <- wrap_final_list(
       "gbm",
-      full_model, 
-      variables, 
-      response, 
-      replica_training_lists, 
-      hold_out_evaluation, 
-      hold_out_perf, 
-      predict_part, 
+      full_model,
+      variables,
+      response,
+      replica_training_lists,
+      hold_out_evaluation,
+      hold_out_perf,
+      predict_part,
       get_metadata(
-        "gbm", 
+        "gbm",
         list(
           formula = formula1,
           bag.fraction = 0.9

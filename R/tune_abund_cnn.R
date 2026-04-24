@@ -171,10 +171,10 @@ tune_abund_cnn <-
       stop("Metrics is needed to be defined in 'metric' argument")
     }
 
-    if(is.null(rasters) && is.null(samples_list)){
+    if (is.null(rasters) && is.null(samples_list)) {
       stop("Provide either rasters or samples_list.")
     }
-    
+
     # architectures
     if (is.list(architectures)) {
       # check if it is from generate_arch_list or generate_cnn_architecture
@@ -314,7 +314,17 @@ tune_abund_cnn <-
     # progress <- function(n) utils::setTxtProgressBar(pb, n)
     # opts <- list(progress = progress)
 
-    on.exit({tryCatch({parallel::stopCluster(cl)}, error = function(e){})}, add = T)
+    on.exit(
+      {
+        tryCatch(
+          {
+            parallel::stopCluster(cl)
+          },
+          error = function(e) {}
+        )
+      },
+      add = T
+    )
     hyper_combinations <- foreach::foreach(i = 1:nrow(grid), .export = c("fit_abund_cnn", "adm_eval", "cnn_make_samples", "croppin_hood"), .packages = c("dplyr")) %dopar% {
       model <-
         fit_abund_cnn(

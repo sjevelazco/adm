@@ -96,144 +96,145 @@ fit_abund_raf <-
 
     # Adequate hold-out set
     hold_out_set <- check_adapt_holdout_set(
-      hold_out_set, 
+      hold_out_set,
       predictors,
       predictors_f,
       response
     )
     hold_out_evaluation <- !is.null(hold_out_set)
-    
+
     # Variables
     variables <- get_variables(predictors, predictors_f)
-    
+
     # Formula
     formula1 <- infer_formula(fit_formula, response, predictors, predictors_f, verbose)
 
     # Fit models
     if (is.null(partition) || !any(nzchar(partition, keepNA = FALSE))) {
-              set.seed(13)
-    suppressWarnings(
-      mod <- randomForest::randomForest(
+      set.seed(13)
+      suppressWarnings(
+        mod <- randomForest::randomForest(
           formula1,
           data = data,
           mtry = mtry,
           ntree = ntree,
           importance = FALSE
-        ))
-
-    result <- list(
-      model = mod
-    )
-    return(result)
-  } else {
-      
-    np <- ncol(data %>% dplyr::select(dplyr::starts_with(partition)))
-    p_names <- names(data %>% dplyr::select(dplyr::starts_with(partition)))
-
-    # part_pred_list <- list()
-    # eval_partial_list <- list()
-    
-    replica_training_lists <- init_training_lists("replica")
-
-    for (h in 1:np) {
-      if (verbose) {
-        message("Replica number: ", h, "/", np)
-      }
-
-      folds <- data %>%
-        dplyr::pull(p_names[h]) %>%
-        unique() %>%
-        sort()
-
-      fold_training_lists <- init_training_lists("fold") 
-      
-      # eval_partial <- list()
-      # pred_test <- list()
-      # part_pred <- list()
-
-      for (j in 1:length(folds)) {
-        if (verbose) {
-          message("-- Partition number ", j, "/", length(folds))
-        }
-        train_set <- data[data[, p_names[h]] != folds[j], ]
-        test_set <- data[data[, p_names[h]] == folds[j], ]
-
-        set.seed(13)
-        model <- randomForest::randomForest(
-          formula1,
-          data = train_set,
-          mtry = mtry,
-          ntree = ntree,
-          importance = FALSE
-        )
-        
-        pred <- suppressMessages(stats::predict(model, test_set, type = "response"))
-        observed <- dplyr::pull(test_set, response)
-        
-        if(hold_out_evaluation){
-          pred_ho <-
-            suppressMessages(stats::predict(model, newdata = hold_out_set[,c(predictors,predictors_f)], type = "response"))
-          observed_ho <- hold_out_set[,response]
-        } else {
-          pred_ho <- observed_ho <- NULL
-        }
-        
-        fold_training_lists <- fold_perf_register(
-          "raf", folds, j,
-          fold_training_lists,
-          predict_part,
-          hold_out_evaluation,
-          pred, pred_ho,
-          observed, observed_ho
-        )
-      }
-
-      # Create final database with parameter performance
-      replica_training_lists <- replica_perf_register(
-        replica_training_lists, fold_training_lists,
-        folds, h, predict_part, hold_out_evaluation)
-    }
-
-    # fit final model with all data
-    set.seed(13)
-    full_model <- randomForest::randomForest(
-      formula1,
-      data = data,
-      mtry = mtry,
-      ntree = ntree,
-      importance = FALSE
-    )
-    
-    # evaluate full model with hold-out set
-    if(hold_out_evaluation){
-      pred <-
-        suppressMessages(predict(full_model, newdata = hold_out_set[,c(predictors,predictors_f)], type = "response"))
-      observed <- hold_out_set[,response]
-      
-      hold_out_perf <- adm_eval(obs = observed, pred = pred)
-    } else {
-      hold_out_perf <- NULL
-    }
-
-    # Construct the standard final list to be returned
-    data_list <- wrap_final_list(
-      "raf",
-      full_model, 
-      variables, 
-      response, 
-      replica_training_lists, 
-      hold_out_evaluation, 
-      hold_out_perf, 
-      predict_part, 
-      get_metadata(
-        "raf", 
-        list(
-          formula = formula1,
-          importance = FALSE
         )
       )
-    )
 
-    return(data_list)
+      result <- list(
+        model = mod
+      )
+      return(result)
+    } else {
+      np <- ncol(data %>% dplyr::select(dplyr::starts_with(partition)))
+      p_names <- names(data %>% dplyr::select(dplyr::starts_with(partition)))
+
+      # part_pred_list <- list()
+      # eval_partial_list <- list()
+
+      replica_training_lists <- init_training_lists("replica")
+
+      for (h in 1:np) {
+        if (verbose) {
+          message("Replica number: ", h, "/", np)
+        }
+
+        folds <- data %>%
+          dplyr::pull(p_names[h]) %>%
+          unique() %>%
+          sort()
+
+        fold_training_lists <- init_training_lists("fold")
+
+        # eval_partial <- list()
+        # pred_test <- list()
+        # part_pred <- list()
+
+        for (j in 1:length(folds)) {
+          if (verbose) {
+            message("-- Partition number ", j, "/", length(folds))
+          }
+          train_set <- data[data[, p_names[h]] != folds[j], ]
+          test_set <- data[data[, p_names[h]] == folds[j], ]
+
+          set.seed(13)
+          model <- randomForest::randomForest(
+            formula1,
+            data = train_set,
+            mtry = mtry,
+            ntree = ntree,
+            importance = FALSE
+          )
+
+          pred <- suppressMessages(stats::predict(model, test_set, type = "response"))
+          observed <- dplyr::pull(test_set, response)
+
+          if (hold_out_evaluation) {
+            pred_ho <-
+              suppressMessages(stats::predict(model, newdata = hold_out_set[, c(predictors, predictors_f)], type = "response"))
+            observed_ho <- hold_out_set[, response]
+          } else {
+            pred_ho <- observed_ho <- NULL
+          }
+
+          fold_training_lists <- fold_perf_register(
+            "raf", folds, j,
+            fold_training_lists,
+            predict_part,
+            hold_out_evaluation,
+            pred, pred_ho,
+            observed, observed_ho
+          )
+        }
+
+        # Create final database with parameter performance
+        replica_training_lists <- replica_perf_register(
+          replica_training_lists, fold_training_lists,
+          folds, h, predict_part, hold_out_evaluation
+        )
+      }
+
+      # fit final model with all data
+      set.seed(13)
+      full_model <- randomForest::randomForest(
+        formula1,
+        data = data,
+        mtry = mtry,
+        ntree = ntree,
+        importance = FALSE
+      )
+
+      # evaluate full model with hold-out set
+      if (hold_out_evaluation) {
+        pred <-
+          suppressMessages(predict(full_model, newdata = hold_out_set[, c(predictors, predictors_f)], type = "response"))
+        observed <- hold_out_set[, response]
+
+        hold_out_perf <- adm_eval(obs = observed, pred = pred)
+      } else {
+        hold_out_perf <- NULL
+      }
+
+      # Construct the standard final list to be returned
+      data_list <- wrap_final_list(
+        "raf",
+        full_model,
+        variables,
+        response,
+        replica_training_lists,
+        hold_out_evaluation,
+        hold_out_perf,
+        predict_part,
+        get_metadata(
+          "raf",
+          list(
+            formula = formula1,
+            importance = FALSE
+          )
+        )
+      )
+
+      return(data_list)
+    }
   }
- }

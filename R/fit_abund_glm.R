@@ -152,10 +152,10 @@ fit_abund_glm <-
       predictors_f = predictors_f,
       partition = partition
     )
-    
+
     # Adequate hold-out set
     hold_out_set <- check_adapt_holdout_set(
-      hold_out_set, 
+      hold_out_set,
       predictors,
       predictors_f,
       response
@@ -237,9 +237,9 @@ fit_abund_glm <-
 
     # part_pred_list <- list()
     # eval_partial_list <- list()
-    
+
     replica_training_lists <- init_training_lists("replica")
-    
+
     family <- distribution
 
     for (h in 1:np) {
@@ -252,8 +252,8 @@ fit_abund_glm <-
         unique() %>%
         sort()
 
-      fold_training_lists <- init_training_lists("fold") 
-      
+      fold_training_lists <- init_training_lists("fold")
+
       # eval_partial <- list()
       # pred_test <- list()
       # part_pred <- list()
@@ -280,15 +280,15 @@ fit_abund_glm <-
 
         pred <- predict(model, newdata = test_set, data = train_set, type = "response")
         observed <- dplyr::pull(test_set, response)
-        
-        if(hold_out_evaluation){
+
+        if (hold_out_evaluation) {
           pred_ho <-
-            suppressMessages(stats::predict(model, newdata = hold_out_set[,c(predictors,predictors_f)], type = "response"))
-          observed_ho <- hold_out_set[,response]
+            suppressMessages(stats::predict(model, newdata = hold_out_set[, c(predictors, predictors_f)], type = "response"))
+          observed_ho <- hold_out_set[, response]
         } else {
           pred_ho <- observed_ho <- NULL
         }
-        
+
         fold_training_lists <- fold_perf_register(
           "glm", folds, j,
           fold_training_lists,
@@ -302,7 +302,8 @@ fit_abund_glm <-
       # Create final database with parameter performance
       replica_training_lists <- replica_perf_register(
         replica_training_lists, fold_training_lists,
-        folds, h, predict_part, hold_out_evaluation)
+        folds, h, predict_part, hold_out_evaluation
+      )
     }
 
 
@@ -318,13 +319,13 @@ fit_abund_glm <-
       control = control_gamlss,
       trace = FALSE
     )
-    
+
     # evaluate full model with hold-out set
-    if(hold_out_evaluation){
+    if (hold_out_evaluation) {
       pred <-
-        suppressMessages(predict(full_model, newdata = hold_out_set[,c(predictors,predictors_f)], type = "response"))
-      observed <- hold_out_set[,response]
-      
+        suppressMessages(predict(full_model, newdata = hold_out_set[, c(predictors, predictors_f)], type = "response"))
+      observed <- hold_out_set[, response]
+
       hold_out_perf <- adm_eval(obs = observed, pred = pred)
     } else {
       hold_out_perf <- NULL
@@ -333,15 +334,15 @@ fit_abund_glm <-
     # Construct the standard final list to be returned
     data_list <- wrap_final_list(
       "glm",
-      full_model, 
-      variables, 
-      response, 
-      replica_training_lists, 
-      hold_out_evaluation, 
-      hold_out_perf, 
-      predict_part, 
+      full_model,
+      variables,
+      response,
+      replica_training_lists,
+      hold_out_evaluation,
+      hold_out_perf,
+      predict_part,
       get_metadata(
-        "glm", 
+        "glm",
         list(
           formula = formula1,
           sigma.formula = sigma_formula,

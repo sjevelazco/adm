@@ -6,9 +6,9 @@
 #' @param predictors_f character. Vector with the column names of qualitative predictor variables (i.e. ordinal or nominal variables type). Usage predictors_f = c("landform")
 #' @param partition character. Column name with training and validation partition groups.
 #' @param predict_part logical. Save predicted abundance for testing data. Default = FALSE.
-#' @param hold_out_set tibble or data.frame. A hold-out dataset used for evaluation 
+#' @param hold_out_set tibble or data.frame. A hold-out dataset used for evaluation
 #' and early stopping. This data is never used during the training phase.
-#' @param hold_out_evaluation logical. If \code{TRUE}, performance metrics will 
+#' @param hold_out_evaluation logical. If \code{TRUE}, performance metrics will
 #' also be calculated for the \code{hold_out_set}.
 #' @param nrounds integer. Max number of boosting iterations. Default is 100.
 #' @param max_depth integer. The maximum depth of each tree. Default 5
@@ -20,15 +20,15 @@
 #' @param objective character. The learning task and the corresponding learning objective. Default is "reg:squarederror", regression with squared loss.
 #' @param early_stopping A list containing two elements:
 #' \itemize{
-#'   \item \code{cv_strategy}: Numerical. Specifies the number of rounds without 
+#'   \item \code{cv_strategy}: Numerical. Specifies the number of rounds without
 #'   improvement before training stops during the cross-validation stage.
 #'   \item \code{fm_strategy}: A vector defining the strategy for the final model:
 #'   \itemize{
-#'     \item \code{c("hold_out", n)}: Stops training after \code{n} rounds without 
+#'     \item \code{c("hold_out", n)}: Stops training after \code{n} rounds without
 #'     improvement, using the \code{hold_out_set} as the evaluation set.
-#'     \item \code{c("mean")}: Trains the final model using the average number 
+#'     \item \code{c("mean")}: Trains the final model using the average number
 #'     of rounds reached across all cross-validation folds.
-#'     \item \code{c("median")}: Uses the median number of rounds from the 
+#'     \item \code{c("median")}: Uses the median number of rounds from the
 #'     cross-validation stage.
 #'     \item \code{c("max")}: Uses the maximum number of rounds reached in any fold.
 #'     \item \code{c("min")}: Uses the minimum number of rounds reached in any fold.
@@ -101,7 +101,7 @@ fit_abund_xgb <-
            predictors_f = NULL,
            partition,
            hold_out_set = NULL,
-           #hold_out_evaluation = FALSE,
+           # hold_out_evaluation = FALSE,
            predict_part = FALSE,
            nrounds = 1000,
            max_depth = 5,
@@ -120,7 +120,7 @@ fit_abund_xgb <-
     }
     predictors_f <- NULL
 
-    
+
     # Adequate database
     data <- adapt_df(
       data = data,
@@ -129,19 +129,19 @@ fit_abund_xgb <-
       response = response,
       partition = partition
     )
-    
+
     # Adequate hold-out set
     hold_out_set <- check_adapt_holdout_set(
-      hold_out_set, 
+      hold_out_set,
       predictors,
       predictors_f,
       response
     )
     hold_out_evaluation <- !is.null(hold_out_set)
-    
+
     # Variables
     variables <- get_variables(predictors, predictors_f)
-    
+
     # Formula
     # formula1 <- infer_formula(fit_formula, response, predictors, predictors_f, verbose)
 
@@ -158,15 +158,15 @@ fit_abund_xgb <-
 
     # Fit models
     train_observer <- observer_init()
-    
+
     np <- ncol(data %>% dplyr::select(dplyr::starts_with(partition)))
     p_names <- names(data %>% dplyr::select(dplyr::starts_with(partition)))
 
-    #part_pred_list <- list()
-    #eval_partial_list <- list()
+    # part_pred_list <- list()
+    # eval_partial_list <- list()
 
     replica_training_lists <- init_training_lists("replica")
-    
+
     for (h in 1:np) {
       if (verbose) {
         message("Replica number: ", h, "/", np)
@@ -177,8 +177,8 @@ fit_abund_xgb <-
         unique() %>%
         sort()
 
-      fold_training_lists <- init_training_lists("fold") 
-      
+      fold_training_lists <- init_training_lists("fold")
+
       # eval_partial <- list()
       # eval_partial_ho <- list()
       # pred_test <- list()
@@ -190,35 +190,35 @@ fit_abund_xgb <-
           message("-- Partition number ", j, "/", length(folds))
         }
 
-        # Obs.: To enable early stopping in xgboost, we must pass the entire 
-        # dataset and specify which rows belong to the evaluation set. 
+        # Obs.: To enable early stopping in xgboost, we must pass the entire
+        # dataset and specify which rows belong to the evaluation set.
         # These rows are ignored by the algorithm during training.
-        
+
         train_set <- data[data[, p_names[h]] != folds[j], ] %>%
-          row.names() %>% 
+          row.names() %>%
           as.numeric()
-        
+
         test_set <- data[data[, p_names[h]] == folds[j], ] %>%
-          row.names() %>% 
+          row.names() %>%
           as.numeric()
 
         training_data <- list(
           data = stats::model.matrix(~ . - 1, data = data[, c(predictors, predictors_f)]),
           target = data[, response]
         )
-        
+
         # convert to DMatrix and make xgboost happy
-        dtrain <- xgboost::xgb.DMatrix(data = training_data$data[train_set,], label = training_data$target[train_set])
-        dtest  <- xgboost::xgb.DMatrix(data = training_data$data[test_set,], label = training_data$target[test_set])
-        
+        dtrain <- xgboost::xgb.DMatrix(data = training_data$data[train_set, ], label = training_data$target[train_set])
+        dtest <- xgboost::xgb.DMatrix(data = training_data$data[test_set, ], label = training_data$target[test_set])
+
         # to monitore training
         watchlist <- list(train = dtrain, eval = dtest)
-        
+
         model <- xgboost::xgb.train(
           params = list(
             objective = objective,
             max_depth = max_depth,
-            learning_rate = learning_rate, 
+            learning_rate = learning_rate,
             min_child_weight = min_child_weight,
             subsample = subsample,
             colsample_bytree = colsample_bytree,
@@ -231,29 +231,29 @@ fit_abund_xgb <-
           early_stopping_rounds = early_stopping$cv_strategy,
           verbose = 0
         )
-        
+
         to_observer <- c(
           attributes(model)$early_stop$best_iteration
         )
-        names(to_observer) <- paste0(p_names[h],"_",folds[j])
+        names(to_observer) <- paste0(p_names[h], "_", folds[j])
         train_observer <- observer_register(
           train_observer,
-          what="early_stop",
-          how=to_observer
-        ) 
-        
+          what = "early_stop",
+          how = to_observer
+        )
+
         pred <-
-          suppressMessages(stats::predict(model, training_data$data[test_set,], type = "response"))
+          suppressMessages(stats::predict(model, training_data$data[test_set, ], type = "response"))
         observed <- training_data$target[test_set]
-        
-        if(hold_out_evaluation){
+
+        if (hold_out_evaluation) {
           pred_ho <-
-            suppressMessages(stats::predict(model, as.matrix(hold_out_set[,predictors]), type = "response"))
-          observed_ho <- hold_out_set[,response]
+            suppressMessages(stats::predict(model, as.matrix(hold_out_set[, predictors]), type = "response"))
+          observed_ho <- hold_out_set[, response]
         } else {
           pred_ho <- observed_ho <- NULL
         }
-        
+
         fold_training_lists <- fold_perf_register(
           "xgb", folds, j,
           fold_training_lists,
@@ -263,12 +263,12 @@ fit_abund_xgb <-
           observed, observed_ho
         )
       }
-      
+
       # Create final database with parameter performance
       replica_training_lists <- replica_perf_register(
         replica_training_lists, fold_training_lists,
-        folds, h, predict_part, hold_out_evaluation)
-
+        folds, h, predict_part, hold_out_evaluation
+      )
     }
 
     # fit final model with all data
@@ -276,17 +276,17 @@ fit_abund_xgb <-
       data = stats::model.matrix(~ . - 1, data = data[, c(predictors, predictors_f)]),
       target = data[, response]
     )
-    
+
     dfull <- xgboost::xgb.DMatrix(data = full_train$data, label = full_train$target)
 
-    if(!is.null(hold_out_set) & early_stopping$fm_strategy[[1]] == "hold_out") {
+    if (!is.null(hold_out_set) & early_stopping$fm_strategy[[1]] == "hold_out") {
       hold_out <- list(
         data = stats::model.matrix(~ . - 1, data = hold_out_set[, c(predictors, predictors_f)]),
         target = hold_out_set[, response]
       )
-      
+
       hold_out <- xgboost::xgb.DMatrix(data = hold_out$data, label = hold_out$target)
-      
+
       fm_evals <- list(train = dfull, eval = hold_out)
       fm_early_stopping <- early_stopping$fm_strategy[[2]]
     } else if (early_stopping$fm_strategy[[1]] != "hold_out") {
@@ -295,13 +295,13 @@ fit_abund_xgb <-
     } else {
       stop("Invalid final model early stopping strategy.")
     }
-    
+
     full_model <- xgboost::xgb.train(
       data = dfull,
       params = list(
         objective = objective,
         max_depth = max_depth,
-        learning_rate = learning_rate, 
+        learning_rate = learning_rate,
         min_child_weight = min_child_weight,
         subsample = subsample,
         colsample_bytree = colsample_bytree,
@@ -309,36 +309,37 @@ fit_abund_xgb <-
         seed = 13
       ),
       nrounds = ifelse(
-        early_stopping$fm_strategy[[1]] == "hold_out", 
+        early_stopping$fm_strategy[[1]] == "hold_out",
         yes = nrounds,
-        no = early_stop_interpreter(early_stopping, train_observer, nrounds)),
+        no = early_stop_interpreter(early_stopping, train_observer, nrounds)
+      ),
       evals = fm_evals,
       early_stopping_rounds = fm_early_stopping,
       verbose = 0
     )
-    
+
     # evaluate full model with hold-out set
-    if(hold_out_evaluation){
+    if (hold_out_evaluation) {
       pred <-
-        suppressMessages(stats::predict(full_model, hold_out_set[,c(predictors,predictors_f)], type = "response"))
-      observed <- hold_out_set[,response]
-      
+        suppressMessages(stats::predict(full_model, hold_out_set[, c(predictors, predictors_f)], type = "response"))
+      observed <- hold_out_set[, response]
+
       hold_out_perf <- adm_eval(obs = observed, pred = pred)
     } else {
       hold_out_perf <- NULL
     }
-    
+
     data_list <- wrap_final_list(
-      "xgb", 
-      full_model, 
-      variables, 
-      response, 
-      replica_training_lists, 
-      hold_out_evaluation, 
-      hold_out_perf, 
-      predict_part, 
+      "xgb",
+      full_model,
+      variables,
+      response,
+      replica_training_lists,
+      hold_out_evaluation,
+      hold_out_perf,
+      predict_part,
       get_metadata(
-        "xgb", 
+        "xgb",
         list(
           evals = fm_evals,
           early_stopping_rounds = fm_early_stopping

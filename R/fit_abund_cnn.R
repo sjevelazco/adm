@@ -145,10 +145,10 @@ fit_abund_cnn <-
       partition = partition,
       xy = c("x", "y")
     )
-    
+
     # Adequate hold-out set
     hold_out_set <- check_adapt_holdout_set(
-      hold_out_set, 
+      hold_out_set,
       predictors,
       predictors_f,
       response
@@ -200,7 +200,7 @@ fit_abund_cnn <-
     )
 
     # loading rasters
-    if(!is.null(rasters)){
+    if (!is.null(rasters)) {
       if (class(rasters) %in% "character") {
         rasters <- terra::rast(rasters)
         rasters <- rasters[[c(predictors, predictors_f)]]
@@ -209,13 +209,13 @@ fit_abund_cnn <-
       } else {
         stop("Please, provide a SpatRaster object or a path to the raster file.")
       }
-      
-      if(!is.null(samples_list)){
+
+      if (!is.null(samples_list)) {
         message("samples_list provided. Rasters will be ignored.")
         rasters <- NULL
       }
     }
-    
+
 
     # architecture setup
     torch::torch_manual_seed(13)
@@ -253,14 +253,14 @@ fit_abund_cnn <-
       if (verbose) {
         message("Replica number: ", h, "/", np)
       }
-      
+
       folds <- data %>%
         dplyr::pull(p_names[h]) %>%
         unique() %>%
         sort()
-      
-      if(is.null(samples_list)){
-        samples_list <- get_partition_samples(data,x,y,response,folds,p_names[h],rasters,crop_size) 
+
+      if (is.null(samples_list)) {
+        samples_list <- get_partition_samples(data, x, y, response, folds, p_names[h], rasters, crop_size)
       } else if (is.list(samples_list)) {
         message("Using provided samples list")
       }
@@ -268,20 +268,20 @@ fit_abund_cnn <-
       #   dplyr::pull(p_names[h]) %>%
       #   unique() %>%
       #   sort()
-      # 
+      #
       # samples_list <- list()
       # for (fold in folds) {
       #   fold_mtx <- data[data[, p_names[h]] == fold, c(x, y, response)] %>%
       #     cnn_make_samples(x, y, response, rasters, size = crop_size) %>%
       #     list()
-      # 
+      #
       #   names(fold_mtx) <- fold
-      # 
+      #
       #   samples_list <- append(samples_list, fold_mtx)
       # }
       # rm(fold_mtx)
 
-      fold_training_lists <- init_training_lists("fold") 
+      fold_training_lists <- init_training_lists("fold")
       # eval_partial <- list()
       # pred_test <- list()
       # part_pred <- list()
@@ -353,7 +353,7 @@ fit_abund_cnn <-
             luz::set_opt_hparams(
               lr = learning_rate,
               weight_decay = weight_decay
-              ) %>%
+            ) %>%
             luz::fit(train_dataloader,
               epochs = n_epochs,
               valid_data = test_dataloader,
@@ -365,15 +365,15 @@ fit_abund_cnn <-
         pred <- pred$to(device = "cpu")
         pred <- as.numeric(pred)
         observed <- test_dataloader$dataset$response_variable %>% as.numeric()
-        
-        if(hold_out_evaluation){
+
+        if (hold_out_evaluation) {
           pred_ho <-
-            suppressMessages(stats::predict(model, newdata = hold_out_set[,c(predictors,predictors_f)], type = "response"))
-          observed_ho <- hold_out_set[,response]
+            suppressMessages(stats::predict(model, newdata = hold_out_set[, c(predictors, predictors_f)], type = "response"))
+          observed_ho <- hold_out_set[, response]
         } else {
           pred_ho <- observed_ho <- NULL
         }
-        
+
         fold_training_lists <- fold_perf_register(
           "cnn", folds, j,
           fold_training_lists,
@@ -387,7 +387,8 @@ fit_abund_cnn <-
       # Create final database with parameter performance
       replica_training_lists <- replica_perf_register(
         replica_training_lists, fold_training_lists,
-        folds, h, predict_part, hold_out_evaluation)
+        folds, h, predict_part, hold_out_evaluation
+      )
     }
 
     # fit final model with all data
@@ -425,7 +426,7 @@ fit_abund_cnn <-
         luz::set_opt_hparams(
           lr = learning_rate,
           weight_decay = weight_decay
-          ) %>%
+        ) %>%
         luz::fit(full_dataloader,
           epochs = n_epochs,
           callbacks = luz::luz_callback_early_stopping(
@@ -434,13 +435,13 @@ fit_abund_cnn <-
           )
         )
     )
-    
+
     # evaluate full model with hold-out set
-    if(hold_out_evaluation){
+    if (hold_out_evaluation) {
       pred <-
-        suppressMessages(predict(full_model, newdata = hold_out_set[,c(predictors,predictors_f)], type = "response"))
-      observed <- hold_out_set[,response]
-      
+        suppressMessages(predict(full_model, newdata = hold_out_set[, c(predictors, predictors_f)], type = "response"))
+      observed <- hold_out_set[, response]
+
       hold_out_perf <- adm_eval(obs = observed, pred = pred)
     } else {
       hold_out_perf <- NULL
@@ -449,15 +450,15 @@ fit_abund_cnn <-
     # Construct the standard final list to be returned
     data_list <- wrap_final_list(
       "cnn",
-      full_model, 
-      variables, 
-      response, 
-      replica_training_lists, 
-      hold_out_evaluation, 
-      hold_out_perf, 
-      predict_part, 
+      full_model,
+      variables,
+      response,
+      replica_training_lists,
+      hold_out_evaluation,
+      hold_out_perf,
+      predict_part,
       get_metadata(
-        "cnn", 
+        "cnn",
         list(
           lr = learning_rate,
           weight_decay = weight_decay,

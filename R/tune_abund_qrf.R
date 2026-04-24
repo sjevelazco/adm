@@ -92,40 +92,55 @@ tune_abund_qrf <-
            n_cores = 1,
            verbose = TRUE) {
     i <- NULL
-    
+
     check_metrics(metrics)
-    
+
     # making default grid
     grid_dict <- list(
       mtry = seq(
-        from = 1, 
-        to = switch (framework,
-          "grf" = {length(c(predictors))},
-          "quantregForest" = {length(c(predictors, predictors_f))}
-        ), 
-        by = 1),
+        from = 1,
+        to = switch(framework,
+          "grf" = {
+            length(c(predictors))
+          },
+          "quantregForest" = {
+            length(c(predictors, predictors_f))
+          }
+        ),
+        by = 1
+      ),
       ntree = seq(from = 500, to = 2000, by = 100),
       nodesize = c(1, 2, 5, 10, 20)
     )
-    
+
     # Check hyperparameters names
     grid <- build_search_grid(grid, grid_dict)
-    
+
     comb_id <- paste("comb_", 1:nrow(grid), sep = "")
     grid <- cbind(comb_id, grid)
-    
+
     # looping the grid
     message("Searching for optimal hyperparameters...")
-    
+
     cl <- parallel::makeCluster(n_cores)
     doParallel::registerDoParallel(cl)
     # doSNOW::registerDoSNOW(cl)
     # pb <- utils::txtProgressBar(max = nrow(grid), style = 3)
     # progress <- function(n) utils::setTxtProgressBar(pb, n)
     # opts <- list(progress = progress)
-    
-    on.exit({tryCatch({parallel::stopCluster(cl)}, error = function(e){})}, add = T)
-    hyper_combinations <- foreach::foreach(i = 1:nrow(grid), .export = c("fit_abund_qrf", "adm_eval"), .packages = c("dplyr","adm")) %dopar% {
+
+    on.exit(
+      {
+        tryCatch(
+          {
+            parallel::stopCluster(cl)
+          },
+          error = function(e) {}
+        )
+      },
+      add = T
+    )
+    hyper_combinations <- foreach::foreach(i = 1:nrow(grid), .export = c("fit_abund_qrf", "adm_eval"), .packages = c("dplyr", "adm")) %dopar% {
       model <-
         fit_abund_qrf(
           data = data,
@@ -148,12 +163,12 @@ tune_abund_qrf <-
       l
     }
     parallel::stopCluster(cl)
-    
+
     hyper_combinations <- lapply(hyper_combinations, function(x) dplyr::bind_rows(x)) %>%
       dplyr::bind_rows()
-    
+
     ranked_combinations <- model_selection(hyper_combinations, metrics)
-    
+
     # fit final model
     message("\nFitting the best model...")
     final_model <-
@@ -173,8 +188,8 @@ tune_abund_qrf <-
         nodesize = ranked_combinations[[1]][[1, "nodesize"]],
         verbose = verbose
       )
-    
+
     final_list <- c(final_model, ranked_combinations)
-    
+
     return(final_list)
   }

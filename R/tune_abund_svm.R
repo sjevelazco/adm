@@ -94,7 +94,7 @@ tune_abund_svm <-
            verbose = TRUE) {
     # Check metrics
     check_metrics(metrics)
-    
+
     # making grid
     grid_dict <- list(
       C = seq(0.2, 1, by = 0.2),
@@ -104,7 +104,7 @@ tune_abund_svm <-
 
     # Check hyperparameters names
     grid <- build_search_grid(grid, grid_dict)
-    
+
     comb_id <- paste("comb_", 1:nrow(grid), sep = "")
     grid <- cbind(comb_id, grid)
     grid[["kernel"]] <- as.character(grid[["kernel"]])
@@ -120,7 +120,17 @@ tune_abund_svm <-
     # progress <- function(n) utils::setTxtProgressBar(pb, n)
     # opts <- list(progress = progress)
 
-    on.exit({tryCatch({parallel::stopCluster(cl)}, error = function(e){})}, add = T)
+    on.exit(
+      {
+        tryCatch(
+          {
+            parallel::stopCluster(cl)
+          },
+          error = function(e) {}
+        )
+      },
+      add = T
+    )
     hyper_combinations <- foreach::foreach(i = 1:nrow(grid), .export = c("fit_abund_svm", "adm_eval"), .packages = c("dplyr")) %dopar% {
       model <-
         fit_abund_svm(

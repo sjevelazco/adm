@@ -6,10 +6,10 @@
 #' @param predictors_f character. Vector with the column names of qualitative predictor variables (i.e. ordinal or nominal variables type). Usage predictors_f = c("landform")
 #' @param partition character. Column name with training and validation partition groups.
 #' @param predict_part logical. Save predicted abundance for testing data. Default = FALSE
-#' @param hold_out_set tibble or data.frame. A hold-out dataset used for evaluation 
+#' @param hold_out_set tibble or data.frame. A hold-out dataset used for evaluation
 #' and early stopping. This data is never used during the training phase.
-#' @param hold_out_evaluation logical. If \code{TRUE}, performance metrics will 
-#' also be calculated for the \code{hold_out_set}. 
+#' @param hold_out_evaluation logical. If \code{TRUE}, performance metrics will
+#' also be calculated for the \code{hold_out_set}.
 #' @param grid tibble or data.frame. A dataframe with "n.trees", "interaction.depth", "n.minobsinnode" and "shrinkage" as columns and its values combinations as rows. If no grid is provided, function will
 #' create a default grid combining the next hyperparameters:
 #' nrounds = c(100, 200, 300),
@@ -25,15 +25,15 @@
 #' @param metrics character. Vector with one or more metrics from c("corr_spear","corr_pear","mae","pdisp","inter","slope").
 #' @param early_stopping NULL or a list containing two elements:
 #' \itemize{
-#'   \item \code{cv_strategy}: Numerical. Specifies the number of rounds without 
+#'   \item \code{cv_strategy}: Numerical. Specifies the number of rounds without
 #'   improvement before training stops during the cross-validation stage.
 #'   \item \code{fm_strategy}: A vector defining the strategy for the final model:
 #'   \itemize{
-#'     \item \code{c("hold_out", n)}: Stops training after \code{n} rounds without 
+#'     \item \code{c("hold_out", n)}: Stops training after \code{n} rounds without
 #'     improvement, using the \code{hold_out_set} as the evaluation set.
-#'     \item \code{c("mean")}: Trains the final model using the average number 
+#'     \item \code{c("mean")}: Trains the final model using the average number
 #'     of rounds reached across all cross-validation folds.
-#'     \item \code{c("median")}: Uses the median number of rounds from the 
+#'     \item \code{c("median")}: Uses the median number of rounds from the
 #'     cross-validation stage.
 #'     \item \code{c("max")}: Uses the maximum number of rounds reached in any fold.
 #'     \item \code{c("min")}: Uses the minimum number of rounds reached in any fold.
@@ -192,8 +192,18 @@ tune_abund_xgb <-
     # progress <- function(n) utils::setTxtProgressBar(pb, n)
     # opts <- list(progress = progress)
 
-    on.exit({tryCatch({parallel::stopCluster(cl)}, error = function(e){})}, add = T)
-    
+    on.exit(
+      {
+        tryCatch(
+          {
+            parallel::stopCluster(cl)
+          },
+          error = function(e) {}
+        )
+      },
+      add = T
+    )
+
     # ## debug
     # browser()
     # i <- 1
@@ -220,14 +230,14 @@ tune_abund_xgb <-
     #       hold_out_evaluation = hold_out_evaluation,
     #       early_stopping = early_stopping
     #     )
-    #   
+    #
     #   saveRDS(model, paste0("/mnt/DATA/PROJETOS/from_ubuntu/projects/BMIP/local_files/xgb_debug/xgb_",i,".rds")) # debug
     #   l <- list(cbind(grid[i, ], model$performance))
     #   names(l) <- grid[i, "comb_id"]
     #   l
     # })
     ## debug
-    
+
     hyper_combinations <- foreach::foreach(i = 1:nrow(grid), .export = c("fit_abund_xgb", "adm_eval"), .packages = c("dplyr")) %dopar% {
       model <-
         fit_abund_xgb(
@@ -249,8 +259,8 @@ tune_abund_xgb <-
           hold_out_set = hold_out_set,
           early_stopping = early_stopping
         )
-      
-      saveRDS(model, paste0("/mnt/DATA/PROJETOS/from_ubuntu/projects/BMIP/local_files/xgb_debug/xgb_",i,".rds")) # debug
+
+      saveRDS(model, paste0("/mnt/DATA/PROJETOS/from_ubuntu/projects/BMIP/local_files/xgb_debug/xgb_", i, ".rds")) # debug
       l <- list(cbind(grid[i, ], model$performance))
       names(l) <- grid[i, "comb_id"]
       l
@@ -261,7 +271,7 @@ tune_abund_xgb <-
       dplyr::bind_rows()
 
     ranked_combinations <- model_selection(hyper_combinations, metrics)
-    
+
     # fit final model
     message("\nFitting the best model...")
     final_model <-
@@ -299,7 +309,7 @@ tune_abund_xgb <-
       "\n nrounds = ",
       ranked_combinations[[1]][1, "nrounds"]
     )
-    
+
     final_list <- c(final_model, ranked_combinations)
 
     # # Standardize output list
