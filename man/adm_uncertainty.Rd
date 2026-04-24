@@ -27,8 +27,8 @@ adm_uncertainty(
 
 \item{n_cores}{numeric. The number of cores to use for parallel processing. Default 1.}
 
-\item{...}{Additional arguments passed to refitting functions or \code{\link{adm_predict}} 
-(e.g., \code{x}, \code{y}, \code{rasters}, \code{sample_size} for CNN; \code{custom_architecture} for DNN/CNN; 
+\item{...}{Additional arguments passed to refitting functions or \code{\link{adm_predict}}
+(e.g., \code{x}, \code{y}, \code{rasters}, \code{sample_size} for CNN; \code{custom_architecture} for DNN/CNN;
 \code{invert_transform}, \code{transform_negative} for spatial prediction).}
 }
 \value{

@@ -36,17 +36,9 @@ fit_abund_qrf(
 
 \item{predict_part}{logical. Save predicted abundance for testing data. Default is FALSE.}
 
-\item{framework}{}
-
-\item{train_quantiles}{}
-
-\item{eval_quantile}{}
-
 \item{mtry}{numeric. Number of variables randomly sampled as candidates at each split. Default (length(c(predictors, predictors_f))/3)}
 
 \item{ntree}{numeric. Number of trees to grow. This should not be set to too small a number, to ensure that every input row gets predicted at least a few times. Default 500}
-
-\item{nodesize}{}
 
 \item{verbose}{logical. If FALSE, disables all console messages. Default TRUE}
 }

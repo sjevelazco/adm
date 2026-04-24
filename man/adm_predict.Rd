@@ -116,7 +116,7 @@ mgbm <- fit_abund_gbm(
   predictors = c("elevation", "sand", "bio3", "bio12"),
   partition = ".part",
   distribution =
-)
+  )
 
 
 ## \%######################################################\%##

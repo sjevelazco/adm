@@ -35,7 +35,7 @@ fit_abund_xgb(
 
 \item{partition}{character. Column name with training and validation partition groups.}
 
-\item{hold_out_set}{tibble or data.frame. A hold-out dataset used for evaluation 
+\item{hold_out_set}{tibble or data.frame. A hold-out dataset used for evaluation
 and early stopping. This data is never used during the training phase.}
 
 \item{predict_part}{logical. Save predicted abundance for testing data. Default = FALSE.}
@@ -58,15 +58,15 @@ and early stopping. This data is never used during the training phase.}
 
 \item{early_stopping}{A list containing two elements:
 \itemize{
-  \item \code{cv_strategy}: Numerical. Specifies the number of rounds without 
+  \item \code{cv_strategy}: Numerical. Specifies the number of rounds without
   improvement before training stops during the cross-validation stage.
   \item \code{fm_strategy}: A vector defining the strategy for the final model:
   \itemize{
-    \item \code{c("hold_out", n)}: Stops training after \code{n} rounds without 
+    \item \code{c("hold_out", n)}: Stops training after \code{n} rounds without
     improvement, using the \code{hold_out_set} as the evaluation set.
-    \item \code{c("mean")}: Trains the final model using the average number 
+    \item \code{c("mean")}: Trains the final model using the average number
     of rounds reached across all cross-validation folds.
-    \item \code{c("median")}: Uses the median number of rounds from the 
+    \item \code{c("median")}: Uses the median number of rounds from the
     cross-validation stage.
     \item \code{c("max")}: Uses the maximum number of rounds reached in any fold.
     \item \code{c("min")}: Uses the minimum number of rounds reached in any fold.
@@ -75,7 +75,7 @@ and early stopping. This data is never used during the training phase.}
 
 \item{verbose}{logical. If FALSE, disables all console messages. Default TRUE.}
 
-\item{hold_out_evaluation}{logical. If \code{TRUE}, performance metrics will 
+\item{hold_out_evaluation}{logical. If \code{TRUE}, performance metrics will
 also be calculated for the \code{hold_out_set}.}
 }
 \value{

@@ -16,20 +16,6 @@ get_partition_samples(
 )
 }
 \arguments{
-\item{data}{}
-
-\item{x}{}
-
-\item{y}{}
-
-\item{response}{}
-
-\item{folds}{}
-
-\item{partition}{}
-
-\item{rasters}{}
-
 \item{crop_size}{}
 }
 \value{
@@ -39,5 +25,5 @@ a list of arrays
 Construct CNN samples list to use with tune_abund_cnn and fit_abund_cnn
 }
 \examples{
-#TODO
+# TODO
 }
