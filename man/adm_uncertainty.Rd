@@ -8,8 +8,7 @@ adm_uncertainty(
   models,
   training_data,
   response,
-  projection_data,
-  partition = ".part",
+  pred,
   iteration = 50,
   n_cores = 1,
   ...
@@ -22,9 +21,7 @@ adm_uncertainty(
 
 \item{response}{character. Column name of the response variable.}
 
-\item{projection_data}{A SpatRaster object with the environmental layers for projection.}
-
-\item{partition}{character. Column name prefix with training and validation partition groups. Default ".part".}
+\item{pred}{A SpatRaster object with the environmental layers for projection.}
 
 \item{iteration}{numeric. The number of bootstrap iterations. Default 50.}
 
@@ -72,7 +69,7 @@ unc <- adm_uncertainty(
   models = mraf,
   training_data = species_data,
   response = "ind_ha",
-  projection_data = cretusa_predictors[[c("PC1", "PC2", "PC3")]],
+  pred = cretusa_predictors[[c("PC1", "PC2", "PC3")]],
   iteration = 10,
   n_cores = 2
 )

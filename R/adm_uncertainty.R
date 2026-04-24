@@ -7,8 +7,7 @@
 #' @param models A model object from `fit_abund_*` or `tune_abund_*` functions.
 #' @param training_data A data.frame or tibble with abundance data and predictors.
 #' @param response character. Column name of the response variable.
-#' @param projection_data A SpatRaster object with the environmental layers for projection.
-#' @param partition character. Column name prefix with training and validation partition groups. Default ".part".
+#' @param pred A SpatRaster object with the environmental layers for projection.
 #' @param iteration numeric. The number of bootstrap iterations. Default 50.
 #' @param n_cores numeric. The number of cores to use for parallel processing. Default 1.
 #' @param ... Additional arguments passed to refitting functions or \code{\link{adm_predict}} 
@@ -50,7 +49,7 @@
 #'   models = mraf,
 #'   training_data = species_data,
 #'   response = "ind_ha",
-#'   projection_data = cretusa_predictors[[c("PC1", "PC2", "PC3")]],
+#'   pred = cretusa_predictors[[c("PC1", "PC2", "PC3")]],
 #'   iteration = 10,
 #'   n_cores = 2
 #' )
@@ -61,21 +60,13 @@ adm_uncertainty <- function(
   models,
   training_data,
   response,
-  projection_data,
-  partition = ".part",
+  pred,
   iteration = 50,
   n_cores = 1,
   ...
 ) {
   # Extract algorithm type
   clss <- models$predictors$model
-
-  # Prepare training dataset (remove partition columns)
-  if (!is.null(partition) && any(nzchar(partition, keepNA = FALSE))) {
-    training_data_clean <- training_data %>% dplyr::select(-dplyr::starts_with(partition))
-  } else {
-    training_data_clean <- training_data
-  }
 
   # Predictor names
   pr_c <- models$predictors %>%
@@ -88,7 +79,7 @@ adm_uncertainty <- function(
   names(pr_f) <- NULL
 
   # Capture extra arguments for refitting and prediction
-  extra_args <- list(...)
+  extra_args <- list()
 
   #### Bootstrap approach ####
   my_cluster <- parallel::makeCluster(n_cores)
@@ -103,7 +94,7 @@ adm_uncertainty <- function(
     set.seed(ii)
     
     # Bootstrap sample
-    db <- training_data_clean[sample(nrow(training_data_clean), replace = TRUE), ]
+    db <- training_data[sample(nrow(training_data), replace = TRUE), ]
 
     # Refit model based on algorithm type
     m_refit <- switch(clss,
@@ -181,7 +172,8 @@ adm_uncertainty <- function(
     )
 
     # Predict
-    p <- adm_predict(models = m_refit, pred = projection_data, training_data = db, ...)
+    models$model <- m_refit$model
+    p <- adm_predict(models = models, pred = pred, training_data = db)
     
     # Return cell values as vector
     as.vector(p[[1]])
@@ -197,7 +189,7 @@ adm_uncertainty <- function(
   unc_vals <- apply(res_mat, 1, stats::sd, na.rm = TRUE)
   
   # Map back to SpatRaster
-  res_raster <- projection_data[[1]]
+  res_raster <- pred[[1]]
   res_raster[] <- unc_vals
   
   names(res_raster) <- "uncertainty"
