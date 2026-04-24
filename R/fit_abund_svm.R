@@ -112,115 +112,132 @@ fit_abund_svm <-
     formula1 <- infer_formula(fit_formula, response, predictors, predictors_f, verbose)
 
     # Fit models
-    np <- ncol(data %>% dplyr::select(dplyr::starts_with(partition)))
-    p_names <- names(data %>% dplyr::select(dplyr::starts_with(partition)))
-
-    # part_pred_list <- list()
-    # eval_partial_list <- list()
-
-    replica_training_lists <- init_training_lists("replica")
-
-    for (h in 1:np) {
-      if (verbose) {
-        message("Replica number: ", h, "/", np)
-      }
-
-      folds <- data %>%
-        dplyr::pull(p_names[h]) %>%
-        unique() %>%
-        sort()
-
-      fold_training_lists <- init_training_lists("fold")
-
-      # eval_partial <- list()
-      # pred_test <- list()
-      # part_pred <- list()
-
-      for (j in 1:length(folds)) {
-        if (verbose) {
-          message("-- Partition number ", j, "/", length(folds))
-        }
-        train_set <- data[data[, p_names[h]] != folds[j], ]
-        test_set <- data[data[, p_names[h]] == folds[j], ]
-
-        set.seed(13)
-        model <- kernlab::ksvm(
-          formula1,
-          data = train_set,
-          type = "eps-svr",
-          kernel = kernel,
-          kpar = kpar_,
-          C = C
-        )
-
-        pred <- kernlab::predict(model, newdata = test_set, type = "response")
-        observed <- dplyr::pull(test_set, response)
-
-        if (hold_out_evaluation) {
-          pred_ho <-
-            suppressMessages(kernlab::predict(model, newdata = hold_out_set[, c(predictors, predictors_f)], type = "response"))
-          observed_ho <- hold_out_set[, response]
-        } else {
-          pred_ho <- observed_ho <- NULL
-        }
-
-        fold_training_lists <- fold_perf_register(
-          "svm", folds, j,
-          fold_training_lists,
-          predict_part,
-          hold_out_evaluation,
-          pred, pred_ho,
-          observed, observed_ho
-        )
-      }
-
-      # Create final database with parameter performance
-      replica_training_lists <- replica_perf_register(
-        replica_training_lists, fold_training_lists,
-        folds, h, predict_part, hold_out_evaluation
+    if (is.null(partition) || !any(nzchar(partition, keepNA = FALSE))) {
+      set.seed(13)
+      full_model <- kernlab::ksvm(
+        formula1,
+        data = data,
+        type = "eps-svr",
+        kernel = kernel,
+        kpar = kpar_,
+        C = C
       )
-    }
 
-    # fit final model with all data
-    set.seed(13)
-    full_model <- kernlab::ksvm(
-      formula1,
-      data = data,
-      type = "eps-svr",
-      kernel = kernel,
-      kpar = kpar_,
-      C = C
-    )
-
-    # evaluate full model with hold-out set
-    if (hold_out_evaluation) {
-      pred <-
-        suppressMessages(kernlab::predict(full_model, newdata = hold_out_set[, c(predictors, predictors_f)], type = "response"))
-      observed <- hold_out_set[, response]
-
-      hold_out_perf <- adm_eval(obs = observed, pred = pred)
+      result <- list(
+        model = full_model
+      )
+      return(result)
     } else {
-      hold_out_perf <- NULL
-    }
+      np <- ncol(data %>% dplyr::select(dplyr::starts_with(partition)))
+      p_names <- names(data %>% dplyr::select(dplyr::starts_with(partition)))
 
-    # Construct the standard final list to be returned
-    data_list <- wrap_final_list(
-      "svm",
-      full_model,
-      variables,
-      response,
-      replica_training_lists,
-      hold_out_evaluation,
-      hold_out_perf,
-      predict_part,
-      get_metadata(
+      # part_pred_list <- list()
+      # eval_partial_list <- list()
+
+      replica_training_lists <- init_training_lists("replica")
+
+      for (h in 1:np) {
+        if (verbose) {
+          message("Replica number: ", h, "/", np)
+        }
+
+        folds <- data %>%
+          dplyr::pull(p_names[h]) %>%
+          unique() %>%
+          sort()
+
+        fold_training_lists <- init_training_lists("fold")
+
+        # eval_partial <- list()
+        # pred_test <- list()
+        # part_pred <- list()
+
+        for (j in 1:length(folds)) {
+          if (verbose) {
+            message("-- Partition number ", j, "/", length(folds))
+          }
+          train_set <- data[data[, p_names[h]] != folds[j], ]
+          test_set <- data[data[, p_names[h]] == folds[j], ]
+
+          set.seed(13)
+          model <- kernlab::ksvm(
+            formula1,
+            data = train_set,
+            type = "eps-svr",
+            kernel = kernel,
+            kpar = kpar_,
+            C = C
+          )
+
+          pred <- kernlab::predict(model, newdata = test_set, type = "response")
+          observed <- dplyr::pull(test_set, response)
+
+          if (hold_out_evaluation) {
+            pred_ho <-
+              suppressMessages(kernlab::predict(model, newdata = hold_out_set[, c(predictors, predictors_f)], type = "response"))
+            observed_ho <- hold_out_set[, response]
+          } else {
+            pred_ho <- observed_ho <- NULL
+          }
+
+          fold_training_lists <- fold_perf_register(
+            "svm", folds, j,
+            fold_training_lists,
+            predict_part,
+            hold_out_evaluation,
+            pred, pred_ho,
+            observed, observed_ho
+          )
+        }
+
+        # Create final database with parameter performance
+        replica_training_lists <- replica_perf_register(
+          replica_training_lists, fold_training_lists,
+          folds, h, predict_part, hold_out_evaluation
+        )
+      }
+
+      # fit final model with all data
+      set.seed(13)
+      full_model <- kernlab::ksvm(
+        formula1,
+        data = data,
+        type = "eps-svr",
+        kernel = kernel,
+        kpar = kpar_,
+        C = C
+      )
+
+      # evaluate full model with hold-out set
+      if (hold_out_evaluation) {
+        pred <-
+          suppressMessages(kernlab::predict(full_model, newdata = hold_out_set[, c(predictors, predictors_f)], type = "response"))
+        observed <- hold_out_set[, response]
+
+        hold_out_perf <- adm_eval(obs = observed, pred = pred)
+      } else {
+        hold_out_perf <- NULL
+      }
+
+      # Construct the standard final list to be returned
+      data_list <- wrap_final_list(
         "svm",
-        list(
-          formula = formula1,
-          type = "eps-svr"
+        full_model,
+        variables,
+        response,
+        replica_training_lists,
+        hold_out_evaluation,
+        hold_out_perf,
+        predict_part,
+        get_metadata(
+          "svm",
+          list(
+            formula = formula1,
+            type = "eps-svr"
+          )
         )
       )
-    )
 
-    return(data_list)
+      return(data_list)
+    }
   }

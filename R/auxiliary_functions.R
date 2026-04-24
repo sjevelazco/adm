@@ -232,8 +232,6 @@ res_calculate <-
 #'
 #' @returns a list of arrays
 #' @export
-#'
-#' @examples # TODO
 get_partition_samples <- function(data, x, y, response, folds, partition, rasters, crop_size) {
   samples_list <- list()
   for (fold in folds) {

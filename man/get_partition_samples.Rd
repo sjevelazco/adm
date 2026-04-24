@@ -24,6 +24,3 @@ a list of arrays
 \description{
 Construct CNN samples list to use with tune_abund_cnn and fit_abund_cnn
 }
-\examples{
-# TODO
-}

@@ -96,153 +96,183 @@ fit_abund_qrf <-
     formula1 <- infer_formula(fit_formula, response, predictors, predictors_f, verbose)
 
     # Fit models
-    np <- ncol(data %>% dplyr::select(dplyr::starts_with(partition)))
-    p_names <- names(data %>% dplyr::select(dplyr::starts_with(partition)))
-
-    part_pred_list <- list()
-    eval_partial_list <- list()
-
-    for (h in 1:np) {
-      if (verbose) {
-        message("Replica number: ", h, "/", np)
-      }
-
-      folds <- data %>%
-        dplyr::pull(p_names[h]) %>%
-        unique() %>%
-        sort()
-
-      eval_partial <- list()
-      pred_test <- list()
-      part_pred <- list()
-
-      for (j in 1:length(folds)) {
-        if (verbose) {
-          message("-- Partition number ", j, "/", length(folds))
-        }
-        train_set <- data[data[, p_names[h]] != folds[j], ]
-        test_set <- data[data[, p_names[h]] == folds[j], ]
-
-        set.seed(13)
-
-        model <- switch(framework,
-          "grf" = {
-            grf::quantile_forest(
-              mtry = mtry,
-              num.trees = ntree,
-              min.node.size = nodesize,
-              X = train_set[, c(predictors)],
-              Y = train_set[, response],
-              quantiles = train_quantiles,
-              num.threads = 1
-            )
-          },
-          "quantregForest" = {
-            quantregForest::quantregForest(
-              formula = formula1,
-              mtry = mtry,
-              ntree = ntree,
-              nodesize = nodesize,
-              importance = FALSE,
-              x = train_set[, c(predictors, predictors_f)],
-              y = train_set[, response]
-            )
-          }
-        )
-
-        pred <- suppressMessages(
-          stats::predict(
-            model,
-            test_set[, c(predictors, predictors_f)],
-            type = "response",
-            what = train_quantiles
+    if (is.null(partition) || !any(nzchar(partition, keepNA = FALSE))) {
+      set.seed(13)
+      full_model <- switch(framework,
+        "grf" = {
+          grf::quantile_forest(
+            mtry = mtry,
+            num.trees = ntree,
+            X = data[, c(predictors)],
+            Y = data[, response],
+            quantiles = train_quantiles,
+            num.threads = 1
           )
-        )
+        },
+        "quantregForest" = {
+          quantregForest::quantregForest(
+            formula = formula1,
+            mtry = mtry,
+            ntree = ntree,
+            importance = FALSE,
+            x = data[, c(predictors, predictors_f)],
+            y = data[, response]
+          )
+        }
+      )
+      result <- list(
+        model = full_model
+      )
+      return(result)
+    } else {
+      np <- ncol(data %>% dplyr::select(dplyr::starts_with(partition)))
+      p_names <- names(data %>% dplyr::select(dplyr::starts_with(partition)))
 
-        pred <- switch(framework,
-          "grf" = {
-            pred$predictions[, which(train_quantiles == eval_quantile)]
-          },
-          "quantregForest" = {
-            if (length(train_quantiles) > 1) {
-              pred[, which(train_quantiles == eval_quantile)]
-            } else {
-              pred
-            }
+      part_pred_list <- list()
+      eval_partial_list <- list()
+
+      for (h in 1:np) {
+        if (verbose) {
+          message("Replica number: ", h, "/", np)
+        }
+
+        folds <- data %>%
+          dplyr::pull(p_names[h]) %>%
+          unique() %>%
+          sort()
+
+        eval_partial <- list()
+        pred_test <- list()
+        part_pred <- list()
+
+        for (j in 1:length(folds)) {
+          if (verbose) {
+            message("-- Partition number ", j, "/", length(folds))
           }
-        )
+          train_set <- data[data[, p_names[h]] != folds[j], ]
+          test_set <- data[data[, p_names[h]] == folds[j], ]
 
-        observed <- dplyr::pull(test_set, response)
+          set.seed(13)
 
-        eval_partial[[j]] <- dplyr::tibble(
-          model = "qrf",
-          adm_eval(obs = observed, pred = pred)
-        )
+          model <- switch(framework,
+            "grf" = {
+              grf::quantile_forest(
+                mtry = mtry,
+                num.trees = ntree,
+                min.node.size = nodesize,
+                X = train_set[, c(predictors)],
+                Y = train_set[, response],
+                quantiles = train_quantiles,
+                num.threads = 1
+              )
+            },
+            "quantregForest" = {
+              quantregForest::quantregForest(
+                formula = formula1,
+                mtry = mtry,
+                ntree = ntree,
+                nodesize = nodesize,
+                importance = FALSE,
+                x = train_set[, c(predictors, predictors_f)],
+                y = train_set[, response]
+              )
+            }
+          )
+
+          pred <- suppressMessages(
+            stats::predict(
+              model,
+              test_set[, c(predictors, predictors_f)],
+              type = "response",
+              what = train_quantiles
+            )
+          )
+
+          pred <- switch(framework,
+            "grf" = {
+              pred$predictions[, which(train_quantiles == eval_quantile)]
+            },
+            "quantregForest" = {
+              if (length(train_quantiles) > 1) {
+                pred[, which(train_quantiles == eval_quantile)]
+              } else {
+                pred
+              }
+            }
+          )
+
+          observed <- dplyr::pull(test_set, response)
+
+          eval_partial[[j]] <- dplyr::tibble(
+            model = "qrf",
+            adm_eval(obs = observed, pred = pred)
+          )
+
+          if (predict_part) {
+            part_pred[[j]] <- data.frame(partition = folds[j], observed, predicted = pred)
+          }
+        }
+
+        # Create final database with parameter performance
+        names(eval_partial) <- 1:length(folds)
+        eval_partial <-
+          eval_partial[sapply(eval_partial, function(x) !is.null(dim(x)))] %>%
+          dplyr::bind_rows(., .id = "partition")
+        eval_partial_list[[h]] <- eval_partial
 
         if (predict_part) {
-          part_pred[[j]] <- data.frame(partition = folds[j], observed, predicted = pred)
+          names(part_pred) <- 1:length(folds)
+          part_pred <-
+            part_pred[sapply(part_pred, function(x) !is.null(dim(x)))] %>%
+            dplyr::bind_rows(., .id = "partition")
+          part_pred_list[[h]] <- part_pred
         }
       }
 
-      # Create final database with parameter performance
-      names(eval_partial) <- 1:length(folds)
-      eval_partial <-
-        eval_partial[sapply(eval_partial, function(x) !is.null(dim(x)))] %>%
-        dplyr::bind_rows(., .id = "partition")
-      eval_partial_list[[h]] <- eval_partial
+      # fit final model with all data
+      set.seed(13)
+      full_model <- switch(framework,
+        "grf" = {
+          grf::quantile_forest(
+            mtry = mtry,
+            num.trees = ntree,
+            X = data[, c(predictors)],
+            Y = data[, response],
+            quantiles = train_quantiles,
+            num.threads = 1
+          )
+        },
+        "quantregForest" = {
+          quantregForest::quantregForest(
+            formula = formula1,
+            mtry = mtry,
+            ntree = ntree,
+            importance = FALSE,
+            x = data[, c(predictors, predictors_f)],
+            y = data[, response]
+          )
+        }
+      )
 
-      if (predict_part) {
-        names(part_pred) <- 1:length(folds)
-        part_pred <-
-          part_pred[sapply(part_pred, function(x) !is.null(dim(x)))] %>%
-          dplyr::bind_rows(., .id = "partition")
-        part_pred_list[[h]] <- part_pred
-      }
-    }
-
-    # fit final model with all data
-    set.seed(13)
-    full_model <- switch(framework,
-      "grf" = {
-        grf::quantile_forest(
-          mtry = mtry,
-          num.trees = ntree,
-          X = data[, c(predictors)],
-          Y = data[, response],
-          quantiles = train_quantiles,
-          num.threads = 1
-        )
-      },
-      "quantregForest" = {
-        quantregForest::quantregForest(
-          formula = formula1,
-          mtry = mtry,
-          ntree = ntree,
-          importance = FALSE,
-          x = data[, c(predictors, predictors_f)],
-          y = data[, response]
-        )
-      }
-    )
-
-    # Construct the standard final list to be returned
-    data_list <- wrap_final_list(
-      "qrf",
-      full_model,
-      variables,
-      response,
-      eval_partial_list,
-      predict_part,
-      part_pred_list,
-      get_metadata(
+      # Construct the standard final list to be returned
+      data_list <- wrap_final_list(
         "qrf",
-        list(
-          train_quantiles = train_quantiles,
-          eval_quantile = eval_quantile,
-          framework = framework
+        full_model,
+        variables,
+        response,
+        eval_partial_list,
+        predict_part,
+        part_pred_list,
+        get_metadata(
+          "qrf",
+          list(
+            train_quantiles = train_quantiles,
+            eval_quantile = eval_quantile,
+            framework = framework
+          )
         )
       )
-    )
 
-    return(data_list)
+      return(data_list)
+    }
   }

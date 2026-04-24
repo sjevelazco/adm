@@ -113,7 +113,7 @@ fit_abund_raf <-
     if (is.null(partition) || !any(nzchar(partition, keepNA = FALSE))) {
       set.seed(13)
       suppressWarnings(
-        mod <- randomForest::randomForest(
+        full_model <- randomForest::randomForest(
           formula1,
           data = data,
           mtry = mtry,
@@ -121,9 +121,8 @@ fit_abund_raf <-
           importance = FALSE
         )
       )
-
       result <- list(
-        model = mod
+        model = full_model
       )
       return(result)
     } else {

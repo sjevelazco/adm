@@ -232,125 +232,143 @@ fit_abund_glm <-
     }
 
     # Fit models
-    np <- ncol(data %>% dplyr::select(dplyr::starts_with(partition)))
-    p_names <- names(data %>% dplyr::select(dplyr::starts_with(partition)))
-
-    # part_pred_list <- list()
-    # eval_partial_list <- list()
-
-    replica_training_lists <- init_training_lists("replica")
-
-    family <- distribution
-
-    for (h in 1:np) {
-      if (verbose) {
-        message("Replica number: ", h, "/", np)
-      }
-
-      folds <- data %>%
-        dplyr::pull(p_names[h]) %>%
-        unique() %>%
-        sort()
-
-      fold_training_lists <- init_training_lists("fold")
-
-      # eval_partial <- list()
-      # pred_test <- list()
-      # part_pred <- list()
-
-      for (j in 1:length(folds)) {
-        if (verbose) {
-          message("-- Partition number ", j, "/", length(folds))
-        }
-
-        train_set <- data[data[, p_names[h]] != folds[j], ]
-        test_set <- data[data[, p_names[h]] == folds[j], ]
-
-        set.seed(13)
-        model <- gamlss::gamlss(
-          formula = formula1,
-          family = family,
-          data = train_set,
-          sigma.formula = sigma_formula,
-          nu.formula = nu_formula,
-          tau.formula = tau_formula,
-          control = control_gamlss,
-          trace = FALSE
-        )
-
-        pred <- predict(model, newdata = test_set, data = train_set, type = "response")
-        observed <- dplyr::pull(test_set, response)
-
-        if (hold_out_evaluation) {
-          pred_ho <-
-            suppressMessages(stats::predict(model, newdata = hold_out_set[, c(predictors, predictors_f)], type = "response"))
-          observed_ho <- hold_out_set[, response]
-        } else {
-          pred_ho <- observed_ho <- NULL
-        }
-
-        fold_training_lists <- fold_perf_register(
-          "glm", folds, j,
-          fold_training_lists,
-          predict_part,
-          hold_out_evaluation,
-          pred, pred_ho,
-          observed, observed_ho
-        )
-      }
-
-      # Create final database with parameter performance
-      replica_training_lists <- replica_perf_register(
-        replica_training_lists, fold_training_lists,
-        folds, h, predict_part, hold_out_evaluation
+    if (is.null(partition) || !any(nzchar(partition, keepNA = FALSE))) {
+      set.seed(13)
+      full_model <- gamlss::gamlss(
+        formula = formula1,
+        family = family,
+        data = data,
+        sigma.formula = sigma_formula,
+        nu.formula = nu_formula,
+        tau.formula = tau_formula,
+        control = control_gamlss,
+        trace = FALSE
       )
-    }
-
-
-    # fit final model with all data
-    set.seed(13)
-    full_model <- gamlss::gamlss(
-      formula = formula1,
-      family = family,
-      data = data,
-      sigma.formula = sigma_formula,
-      nu.formula = nu_formula,
-      tau.formula = tau_formula,
-      control = control_gamlss,
-      trace = FALSE
-    )
-
-    # evaluate full model with hold-out set
-    if (hold_out_evaluation) {
-      pred <-
-        suppressMessages(predict(full_model, newdata = hold_out_set[, c(predictors, predictors_f)], type = "response"))
-      observed <- hold_out_set[, response]
-
-      hold_out_perf <- adm_eval(obs = observed, pred = pred)
+      result <- list(
+        model = full_model
+      )
+      return(result)
     } else {
-      hold_out_perf <- NULL
-    }
+      np <- ncol(data %>% dplyr::select(dplyr::starts_with(partition)))
+      p_names <- names(data %>% dplyr::select(dplyr::starts_with(partition)))
 
-    # Construct the standard final list to be returned
-    data_list <- wrap_final_list(
-      "glm",
-      full_model,
-      variables,
-      response,
-      replica_training_lists,
-      hold_out_evaluation,
-      hold_out_perf,
-      predict_part,
-      get_metadata(
+      # part_pred_list <- list()
+      # eval_partial_list <- list()
+
+      replica_training_lists <- init_training_lists("replica")
+
+      family <- distribution
+
+      for (h in 1:np) {
+        if (verbose) {
+          message("Replica number: ", h, "/", np)
+        }
+
+        folds <- data %>%
+          dplyr::pull(p_names[h]) %>%
+          unique() %>%
+          sort()
+
+        fold_training_lists <- init_training_lists("fold")
+
+        # eval_partial <- list()
+        # pred_test <- list()
+        # part_pred <- list()
+
+        for (j in 1:length(folds)) {
+          if (verbose) {
+            message("-- Partition number ", j, "/", length(folds))
+          }
+
+          train_set <- data[data[, p_names[h]] != folds[j], ]
+          test_set <- data[data[, p_names[h]] == folds[j], ]
+
+          set.seed(13)
+          model <- gamlss::gamlss(
+            formula = formula1,
+            family = family,
+            data = train_set,
+            sigma.formula = sigma_formula,
+            nu.formula = nu_formula,
+            tau.formula = tau_formula,
+            control = control_gamlss,
+            trace = FALSE
+          )
+
+          pred <- predict(model, newdata = test_set, data = train_set, type = "response")
+          observed <- dplyr::pull(test_set, response)
+
+          if (hold_out_evaluation) {
+            pred_ho <-
+              suppressMessages(stats::predict(model, newdata = hold_out_set[, c(predictors, predictors_f)], type = "response"))
+            observed_ho <- hold_out_set[, response]
+          } else {
+            pred_ho <- observed_ho <- NULL
+          }
+
+          fold_training_lists <- fold_perf_register(
+            "glm", folds, j,
+            fold_training_lists,
+            predict_part,
+            hold_out_evaluation,
+            pred, pred_ho,
+            observed, observed_ho
+          )
+        }
+
+        # Create final database with parameter performance
+        replica_training_lists <- replica_perf_register(
+          replica_training_lists, fold_training_lists,
+          folds, h, predict_part, hold_out_evaluation
+        )
+      }
+
+
+      # fit final model with all data
+      set.seed(13)
+      full_model <- gamlss::gamlss(
+        formula = formula1,
+        family = family,
+        data = data,
+        sigma.formula = sigma_formula,
+        nu.formula = nu_formula,
+        tau.formula = tau_formula,
+        control = control_gamlss,
+        trace = FALSE
+      )
+
+      # evaluate full model with hold-out set
+      if (hold_out_evaluation) {
+        pred <-
+          suppressMessages(predict(full_model, newdata = hold_out_set[, c(predictors, predictors_f)], type = "response"))
+        observed <- hold_out_set[, response]
+
+        hold_out_perf <- adm_eval(obs = observed, pred = pred)
+      } else {
+        hold_out_perf <- NULL
+      }
+
+      # Construct the standard final list to be returned
+      data_list <- wrap_final_list(
         "glm",
-        list(
-          formula = formula1,
-          sigma.formula = sigma_formula,
-          nu.formula = nu_formula,
-          tau.formula = tau_formula
+        full_model,
+        variables,
+        response,
+        replica_training_lists,
+        hold_out_evaluation,
+        hold_out_perf,
+        predict_part,
+        get_metadata(
+          "glm",
+          list(
+            formula = formula1,
+            sigma.formula = sigma_formula,
+            nu.formula = nu_formula,
+            tau.formula = tau_formula
+          )
         )
       )
-    )
 
-    return(data_list)
+      return(data_list)
+    }
   }
