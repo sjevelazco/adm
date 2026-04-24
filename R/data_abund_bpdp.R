@@ -327,8 +327,7 @@ data_abund_bpdp <-
           Abundance = suppressMessages(
             stats::predict(
               model,
-              newdata = pred_dataset,
-              type = "response"
+              newdata = pred_dataset
             ) %>%
               as.numeric()
           )
@@ -353,9 +352,9 @@ data_abund_bpdp <-
     #### xgb ####
     if (class(model)[1] == "xgb.Booster") {
       pred_matrix <- list(
-        data = stats::model.matrix(~ . - 1, data = suit_c[, model$feature_names])
+        data = stats::model.matrix(~ . - 1, data = suit_c[, as.vector(unlist(variables)[3:length(variables)])])
       )
-
+      
       suit_c <-
         data.frame(suit_c[1:2],
           Abundance = suppressMessages(stats::predict(model, newdata = pred_matrix$data, type = "response"))

@@ -90,6 +90,7 @@ fit_abund_dnn <-
            predictors,
            predictors_f = NULL,
            partition,
+           hold_out_set = NULL,
            predict_part = FALSE,
            learning_rate = 0.01,
            weight_decay = 0,
@@ -124,6 +125,15 @@ fit_abund_dnn <-
       response = response,
       partition = partition
     )
+    
+    # Adequate hold-out set
+    hold_out_set <- check_adapt_holdout_set(
+      hold_out_set, 
+      predictors,
+      predictors_f,
+      response
+    )
+    hold_out_evaluation <- !is.null(hold_out_set)
 
     # create_dataset definition
     create_dataset <- torch::dataset(
@@ -173,8 +183,7 @@ fit_abund_dnn <-
     np <- ncol(data %>% dplyr::select(dplyr::starts_with(partition)))
     p_names <- names(data %>% dplyr::select(dplyr::starts_with(partition)))
 
-    part_pred_list <- list()
-    eval_partial_list <- list()
+    replica_training_lists <- init_training_lists("replica")
 
     for (h in 1:np) {
       if (verbose) {
@@ -186,9 +195,10 @@ fit_abund_dnn <-
         unique() %>%
         sort()
 
-      eval_partial <- list()
-      pred_test <- list()
-      part_pred <- list()
+      fold_training_lists <- init_training_lists("fold")
+      # eval_partial <- list()
+      # pred_test <- list()
+      # part_pred <- list()
 
       if (learning_monitor){
         monitor <- list()
@@ -250,31 +260,30 @@ fit_abund_dnn <-
         if (!(sum(is.na(pred)) == length(pred))) {
           pred[is.na(pred)] <- stats::runif(sum(is.na(pred)), min(data[[response]]), max(data[[response]]))
           observed <- test_set$response_variable %>% as.numeric()
-          eval_partial[[j]] <- dplyr::tibble(
-            model = "dnn",
-            adm_eval(obs = observed, pred = pred)
-          )
         }
 
-        if (predict_part) {
-          part_pred[[j]] <- data.frame(partition = folds[j], observed, predicted = pred)
+        if(hold_out_evaluation){
+          pred_ho <-
+            suppressMessages(stats::predict(model, newdata = hold_out_set[,c(predictors,predictors_f)], type = "response"))
+          observed_ho <- hold_out_set[,response]
+        } else {
+          pred_ho <- observed_ho <- NULL
         }
+        
+        fold_training_lists <- fold_perf_register(
+          "dnn", folds, j,
+          fold_training_lists,
+          predict_part,
+          hold_out_evaluation,
+          pred, pred_ho,
+          observed, observed_ho
+        )
       }
 
       # Create final database with parameter performance
-      names(eval_partial) <- 1:length(folds)
-      eval_partial <-
-        eval_partial[sapply(eval_partial, function(x) !is.null(dim(x)))] %>%
-        dplyr::bind_rows(., .id = "partition")
-      eval_partial_list[[h]] <- eval_partial
-
-      if (predict_part) {
-        names(part_pred) <- 1:length(folds)
-        part_pred <-
-          part_pred[sapply(part_pred, function(x) !is.null(dim(x)))] %>%
-          dplyr::bind_rows(., .id = "partition")
-        part_pred_list[[h]] <- part_pred
-      }
+      replica_training_lists <- replica_perf_register(
+        replica_training_lists, fold_training_lists,
+        folds, h, predict_part, hold_out_evaluation)
     }
 
     # fit final model with all data
@@ -284,7 +293,7 @@ fit_abund_dnn <-
     set.seed(13)
     torch::torch_manual_seed(13)
     suppressMessages(
-      full_fitted <- net %>%
+      full_model <- net %>%
         luz::setup(
           loss = loss_function(),
           optimizer = optimizer
@@ -303,7 +312,7 @@ fit_abund_dnn <-
     )
     
     if(learning_monitor){
-      train_loss <- full_fitted$records$metrics$train %>% unlist
+      train_loss <- full_model$records$metrics$train %>% unlist
       names(train_loss) <- 1:length(train_loss)
       
       fold_list <- list(
@@ -325,58 +334,37 @@ fit_abund_dnn <-
         dplyr::mutate(epoch = dplyr::row_number()) %>%
         dplyr::ungroup()
     }
-
-    # bind predicted evaluation
-    eval_partial <- eval_partial_list %>%
-      dplyr::bind_rows(.id = "replica") %>%
-      dplyr::as_tibble()
-
-    # bind predicted partition
-    if (predict_part) {
-      part_pred <- part_pred_list %>%
-        dplyr::bind_rows(.id = "replica")
+    
+    # evaluate full model with hold-out set
+    if(hold_out_evaluation){
+      pred <-
+        suppressMessages(predict(full_model, newdata = hold_out_set[,c(predictors,predictors_f)], type = "response"))
+      observed <- hold_out_set[,response]
+      
+      hold_out_perf <- adm_eval(obs = observed, pred = pred)
     } else {
-      part_pred <- NULL
+      hold_out_perf <- NULL
     }
-
-    # Sumarize performance
-    eval_final <- eval_partial %>%
-      dplyr::group_by(model) %>%
-      dplyr::summarise(
-        dplyr::across(
-          c(mae:pdisp),
-          list(
-            mean = ~ mean(.x, na.rm = TRUE),
-            sd = ~ sd(.x, na.rm = TRUE)
-          )
-        ),
-        .groups = "drop"
+    # Construct the standard final list to be returned
+    data_list <- wrap_final_list(
+      "dnn",
+      full_model, 
+      variables, 
+      response, 
+      replica_training_lists, 
+      hold_out_evaluation, 
+      hold_out_perf, 
+      predict_part, 
+      get_metadata(
+        "dnn", 
+        list(
+          lr = learning_rate,
+          weight_decay = weight_decay,
+          loss = loss_function(),
+          optimizer = optimizer
+        )
       )
-
-    variables <- dplyr::bind_cols(
-      data.frame(
-        model = "dnn",
-        response = response
-      ),
-      variables
-    ) %>% as_tibble()
-
-    # Final object
-    data_list <- list(
-      model = full_fitted,
-      predictors = variables,
-      performance = eval_final,
-      performance_part = eval_partial,
-      predicted_part = part_pred,
-      monitor = monitor
     )
-
-    # Standardize output list
-    for (i in 2:length(data_list)) {
-      if (!class(data_list[[i]])[1] == "tbl_df") {
-        data_list[[i]] <- dplyr::as_tibble(data_list[[i]])
-      }
-    }
-
+    
     return(data_list)
   }

@@ -263,7 +263,6 @@ fit_abund_xgb <-
           observed, observed_ho
         )
       }
-
       
       # Create final database with parameter performance
       replica_training_lists <- replica_perf_register(

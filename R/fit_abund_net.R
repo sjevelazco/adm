@@ -70,6 +70,7 @@ fit_abund_net <-
            predictors_f = NULL,
            fit_formula = NULL,
            partition,
+           hold_out_set = NULL,
            predict_part = FALSE,
            size,
            decay = 0,
@@ -85,6 +86,15 @@ fit_abund_net <-
       partition = partition
     )
 
+    # Adequate hold-out set
+    hold_out_set <- check_adapt_holdout_set(
+      hold_out_set, 
+      predictors,
+      predictors_f,
+      response
+    )
+    hold_out_evaluation <- !is.null(hold_out_set)
+    
     # Variables
     variables <- get_variables(predictors, predictors_f)
 
@@ -95,8 +105,10 @@ fit_abund_net <-
     np <- ncol(data %>% dplyr::select(dplyr::starts_with(partition)))
     p_names <- names(data %>% dplyr::select(dplyr::starts_with(partition)))
 
-    part_pred_list <- list()
-    eval_partial_list <- list()
+    # part_pred_list <- list()
+    # eval_partial_list <- list()
+    
+    replica_training_lists <- init_training_lists("replica")
 
     for (h in 1:np) {
       if (verbose) {
@@ -108,9 +120,11 @@ fit_abund_net <-
         unique() %>%
         sort()
 
-      eval_partial <- list()
-      pred_test <- list()
-      part_pred <- list()
+      fold_training_lists <- init_training_lists("fold") 
+      
+      # eval_partial <- list()
+      # pred_test <- list()
+      # part_pred <- list()
 
       for (j in 1:length(folds)) {
         if (verbose) {
@@ -134,30 +148,29 @@ fit_abund_net <-
 
         pred <- suppressMessages(stats::predict(model, newdata = test_set, type = "raw"))
         observed <- dplyr::pull(test_set, response)
-        eval_partial[[j]] <- dplyr::tibble(
-          model = "net",
-          adm_eval(obs = observed, pred = pred)
-        )
-
-        if (predict_part) {
-          part_pred[[j]] <- data.frame(partition = folds[j], observed, predicted = pred)
+        
+        if(hold_out_evaluation){
+          pred_ho <-
+            suppressMessages(stats::predict(model, newdata = hold_out_set[,c(predictors,predictors_f)], type = "response"))
+          observed_ho <- hold_out_set[,response]
+        } else {
+          pred_ho <- observed_ho <- NULL
         }
+        
+        fold_training_lists <- fold_perf_register(
+          "net", folds, j,
+          fold_training_lists,
+          predict_part,
+          hold_out_evaluation,
+          pred, pred_ho,
+          observed, observed_ho
+        )
       }
 
       # Create final database with parameter performance
-      names(eval_partial) <- 1:length(folds)
-      eval_partial <-
-        eval_partial[sapply(eval_partial, function(x) !is.null(dim(x)))] %>%
-        dplyr::bind_rows(., .id = "partition")
-      eval_partial_list[[h]] <- eval_partial
-
-      if (predict_part) {
-        names(part_pred) <- 1:length(folds)
-        part_pred <-
-          part_pred[sapply(part_pred, function(x) !is.null(dim(x)))] %>%
-          dplyr::bind_rows(., .id = "partition")
-        part_pred_list[[h]] <- part_pred
-      }
+      replica_training_lists <- replica_perf_register(
+        replica_training_lists, fold_training_lists,
+        folds, h, predict_part, hold_out_evaluation)
     }
 
     # fit final model with all data
@@ -173,6 +186,17 @@ fit_abund_net <-
       linout = TRUE,
       trace = FALSE
     )
+    
+    # evaluate full model with hold-out set
+    if(hold_out_evaluation){
+      pred <-
+        suppressMessages(stats::predict(full_model, newdata = hold_out_set[,c(predictors,predictors_f)], type = "response"))
+      observed <- hold_out_set[,response]
+      
+      hold_out_perf <- adm_eval(obs = observed, pred = pred)
+    } else {
+      hold_out_perf <- NULL
+    }
 
     # Construct the standard final list to be returned
     data_list <- wrap_final_list(
@@ -180,9 +204,10 @@ fit_abund_net <-
       full_model, 
       variables, 
       response, 
-      eval_partial_list, 
+      replica_training_lists, 
+      hold_out_evaluation, 
+      hold_out_perf, 
       predict_part, 
-      part_pred_list,
       get_metadata(
         "net", 
         list(

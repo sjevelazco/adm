@@ -340,17 +340,28 @@ filter_safe_levels <- function(m_detect, pred_df, training_data) {
   f_cols <- m_detect[1, grep("f", names(m_detect))] |> unlist() |> as.character()
   
   if (length(f_cols) > 0) {
-    is_valid <- Reduce(`&`, lapply(f_cols, function(col) {
-      pred_df[[col]] %in% unique(training_data[[col]])
+    is_valid <- base::Reduce(`&`, base::lapply(f_cols, function(col) {
+      train_levels <- base::levels(training_data[[col]])
+      if (base::is.null(train_levels)) train_levels <- base::unique(training_data[[col]])
+      
+      pred_df[[col]] %in% train_levels
     }))
+    
+    pred_df[!is_valid, ] <- NA 
     
     pred_df <- pred_df %>%
       dplyr::mutate(dplyr::across(
         .cols = dplyr::all_of(f_cols),
-        .fns = ~ factor(.x, levels = unique(training_data[[cur_column()]]))
+        .fns = function(x) {
+          col_name <- dplyr::cur_column()
+          
+          base::factor(
+            x, 
+            levels = base::levels(training_data[[col_name]])
+          )
+        }
       ))
     
-    pred_df[!is_valid, ] <- NA 
   } else {
     is_valid <- rep(TRUE,nrow(pred_df))
   }

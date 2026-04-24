@@ -115,6 +115,7 @@ fit_abund_cnn <-
            rasters = NULL,
            sample_size,
            partition,
+           hold_out_set = NULL,
            predict_part = FALSE,
            learning_rate = 0.01,
            weight_decay = 0,
@@ -144,6 +145,15 @@ fit_abund_cnn <-
       partition = partition,
       xy = c("x", "y")
     )
+    
+    # Adequate hold-out set
+    hold_out_set <- check_adapt_holdout_set(
+      hold_out_set, 
+      predictors,
+      predictors_f,
+      response
+    )
+    hold_out_evaluation <- !is.null(hold_out_set)
 
     # Get cropsize
     if (!is.vector(sample_size)) {
@@ -237,8 +247,7 @@ fit_abund_cnn <-
     np <- ncol(data %>% dplyr::select(dplyr::starts_with(partition)))
     p_names <- names(data %>% dplyr::select(dplyr::starts_with(partition)))
 
-    part_pred_list <- list()
-    eval_partial_list <- list()
+    replica_training_lists <- init_training_lists("replica")
 
     for (h in 1:np) {
       if (verbose) {
@@ -272,9 +281,10 @@ fit_abund_cnn <-
       # }
       # rm(fold_mtx)
 
-      eval_partial <- list()
-      pred_test <- list()
-      part_pred <- list()
+      fold_training_lists <- init_training_lists("fold") 
+      # eval_partial <- list()
+      # pred_test <- list()
+      # part_pred <- list()
 
       for (j in 1:length(folds)) {
         if (verbose) {
@@ -355,30 +365,29 @@ fit_abund_cnn <-
         pred <- pred$to(device = "cpu")
         pred <- as.numeric(pred)
         observed <- test_dataloader$dataset$response_variable %>% as.numeric()
-        eval_partial[[j]] <- dplyr::tibble(
-          model = "cnn",
-          adm_eval(obs = observed, pred = pred)
-        )
-
-        if (predict_part) {
-          part_pred[[j]] <- data.frame(partition = folds[j], observed, predicted = pred)
+        
+        if(hold_out_evaluation){
+          pred_ho <-
+            suppressMessages(stats::predict(model, newdata = hold_out_set[,c(predictors,predictors_f)], type = "response"))
+          observed_ho <- hold_out_set[,response]
+        } else {
+          pred_ho <- observed_ho <- NULL
         }
+        
+        fold_training_lists <- fold_perf_register(
+          "cnn", folds, j,
+          fold_training_lists,
+          predict_part,
+          hold_out_evaluation,
+          pred, pred_ho,
+          observed, observed_ho
+        )
       }
 
       # Create final database with parameter performance
-      names(eval_partial) <- 1:length(folds)
-      eval_partial <-
-        eval_partial[sapply(eval_partial, function(x) !is.null(dim(x)))] %>%
-        dplyr::bind_rows(., .id = "partition")
-      eval_partial_list[[h]] <- eval_partial
-
-      if (predict_part) {
-        names(part_pred) <- 1:length(folds)
-        part_pred <-
-          part_pred[sapply(part_pred, function(x) !is.null(dim(x)))] %>%
-          dplyr::bind_rows(., .id = "partition")
-        part_pred_list[[h]] <- part_pred
-      }
+      replica_training_lists <- replica_perf_register(
+        replica_training_lists, fold_training_lists,
+        folds, h, predict_part, hold_out_evaluation)
     }
 
     # fit final model with all data
@@ -425,57 +434,38 @@ fit_abund_cnn <-
           )
         )
     )
-
-    # bind predicted evaluation
-    eval_partial <- eval_partial_list %>%
-      dplyr::bind_rows(.id = "replica") %>%
-      dplyr::as_tibble()
-
-    # bind predicted partition
-    if (predict_part) {
-      part_pred <- part_pred_list %>%
-        dplyr::bind_rows(.id = "replica")
+    
+    # evaluate full model with hold-out set
+    if(hold_out_evaluation){
+      pred <-
+        suppressMessages(predict(full_model, newdata = hold_out_set[,c(predictors,predictors_f)], type = "response"))
+      observed <- hold_out_set[,response]
+      
+      hold_out_perf <- adm_eval(obs = observed, pred = pred)
     } else {
-      part_pred <- NULL
+      hold_out_perf <- NULL
     }
 
-    # Sumarize performance
-    eval_final <- eval_partial %>%
-      dplyr::group_by(model) %>%
-      dplyr::summarise(
-        dplyr::across(
-          c(mae:pdisp),
-          list(
-            mean = ~ mean(.x, na.rm = TRUE),
-            sd = ~ stats::sd(.x, na.rm = TRUE)
-          )
-        ),
-        .groups = "drop"
+    # Construct the standard final list to be returned
+    data_list <- wrap_final_list(
+      "cnn",
+      full_model, 
+      variables, 
+      response, 
+      replica_training_lists, 
+      hold_out_evaluation, 
+      hold_out_perf, 
+      predict_part, 
+      get_metadata(
+        "cnn", 
+        list(
+          lr = learning_rate,
+          weight_decay = weight_decay,
+          loss = loss_function(),
+          optimizer = optimizer
+        )
       )
-
-    variables <- dplyr::bind_cols(
-      data.frame(
-        model = "cnn",
-        response = response
-      ),
-      variables
-    ) %>% as_tibble()
-
-    # Final object
-    data_list <- list(
-      model = full_model,
-      predictors = variables,
-      performance = eval_final,
-      performance_part = eval_partial,
-      predicted_part = part_pred
     )
-
-    # Standardize output list
-    for (i in 2:length(data_list)) {
-      if (!class(data_list[[i]])[1] == "tbl_df") {
-        data_list[[i]] <- dplyr::as_tibble(data_list[[i]])
-      }
-    }
 
     return(data_list)
   }

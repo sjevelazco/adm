@@ -11,6 +11,7 @@ fit_abund_net(
   predictors_f = NULL,
   fit_formula = NULL,
   partition,
+  hold_out_set = NULL,
   predict_part = FALSE,
   size,
   decay = 0,

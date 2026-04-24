@@ -479,7 +479,7 @@ adm_predict <-
           r <- pred[[!terra::is.factor(pred)]][[1]]
           r[!is.na(r)] <- NA
           r[as.numeric(rownames(pred_df))] <-
-            suppressMessages(stats::predict(m[[i]], pred_dataset, shuffle = TRUE) %>% as.numeric())
+            suppressMessages(stats::predict(m[[i]], pred_dataset) %>% as.numeric())
           
           model_c[[i]][rowset] <- r[rowset]
         }
@@ -603,7 +603,6 @@ adm_predict <-
       if (length(wm) > 0) {
         wm <- names(wm)
         for (i in wm) {
-          
           pred_df <- filter_safe_levels(m_detect[[i]], pred_df, training_data)[[1]]
           vfilter <- filter_safe_levels(m_detect[[i]], pred_df, training_data)[[2]]
           
@@ -611,6 +610,7 @@ adm_predict <-
           
           r <- pred[[!terra::is.factor(pred)]][[1]]
           r[!is.na(r)] <- NA
+          
           
           v[vfilter] <- 
             suppressMessages(

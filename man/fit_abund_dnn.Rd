@@ -10,6 +10,7 @@ fit_abund_dnn(
   predictors,
   predictors_f = NULL,
   partition,
+  hold_out_set = NULL,
   predict_part = FALSE,
   learning_rate = 0.01,
   weight_decay = 0,

@@ -11,6 +11,7 @@ fit_abund_gbm(
   predictors_f = NULL,
   fit_formula = NULL,
   partition,
+  hold_out_set = NULL,
   predict_part = FALSE,
   distribution,
   n.trees = 100,

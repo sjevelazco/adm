@@ -110,7 +110,6 @@ tune_abund_xgb <-
            partition,
            predict_part = FALSE,
            hold_out_set = NULL,
-           hold_out_evaluation = FALSE,
            grid = NULL,
            objective = "reg:squarederror",
            metrics = NULL,
@@ -248,7 +247,6 @@ tune_abund_xgb <-
           nrounds = grid[i, "nrounds"],
           verbose = verbose,
           hold_out_set = hold_out_set,
-          hold_out_evaluation = hold_out_evaluation,
           early_stopping = early_stopping
         )
       
@@ -262,9 +260,7 @@ tune_abund_xgb <-
     hyper_combinations <- lapply(hyper_combinations, function(x) dplyr::bind_rows(x)) %>%
       dplyr::bind_rows()
 
-    print("entering model selection") # debug
     ranked_combinations <- model_selection(hyper_combinations, metrics)
-    print("out model selection") # debug
     
     # fit final model
     message("\nFitting the best model...")
@@ -303,15 +299,15 @@ tune_abund_xgb <-
       "\n nrounds = ",
       ranked_combinations[[1]][1, "nrounds"]
     )
-
+    
     final_list <- c(final_model, ranked_combinations)
 
-    # Standardize output list
-    for (i in 2:length(final_list)) {
-      if (!class(final_list[[i]])[1] == "tbl_df") {
-        final_list[[i]] <- dplyr::as_tibble(final_list[[i]])
-      }
-    }
+    # # Standardize output list
+    # for (i in 2:length(final_list)) {
+    #   if (!class(final_list[[i]])[1] == "tbl_df") {
+    #     final_list[[i]] <- dplyr::as_tibble(final_list[[i]])
+    #   }
+    # }
 
     return(final_list)
   }

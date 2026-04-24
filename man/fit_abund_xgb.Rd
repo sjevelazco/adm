@@ -11,7 +11,6 @@ fit_abund_xgb(
   predictors_f = NULL,
   partition,
   hold_out_set = NULL,
-  hold_out_evaluation = FALSE,
   predict_part = FALSE,
   nrounds = 1000,
   max_depth = 5,
@@ -21,7 +20,7 @@ fit_abund_xgb(
   min_child_weight = 1,
   subsample = 0.5,
   objective = "reg:squarederror",
-  early_stopping = list(cv_strategy = 10, fm_strategy = "mean"),
+  early_stopping = list(cv_strategy = 10, fm_strategy = "median"),
   verbose = TRUE
 )
 }
@@ -38,9 +37,6 @@ fit_abund_xgb(
 
 \item{hold_out_set}{tibble or data.frame. A hold-out dataset used for evaluation 
 and early stopping. This data is never used during the training phase.}
-
-\item{hold_out_evaluation}{logical. If \code{TRUE}, performance metrics will 
-also be calculated for the \code{hold_out_set}.}
 
 \item{predict_part}{logical. Save predicted abundance for testing data. Default = FALSE.}
 
@@ -78,6 +74,9 @@ also be calculated for the \code{hold_out_set}.}
 }}
 
 \item{verbose}{logical. If FALSE, disables all console messages. Default TRUE.}
+
+\item{hold_out_evaluation}{logical. If \code{TRUE}, performance metrics will 
+also be calculated for the \code{hold_out_set}.}
 }
 \value{
 A list object with:

@@ -14,6 +14,7 @@ fit_abund_gam(
   nu_formula = ~1,
   tau_formula = ~1,
   partition,
+  hold_out_set = NULL,
   predict_part = FALSE,
   distribution = NULL,
   inter = "automatic",

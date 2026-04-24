@@ -11,6 +11,7 @@ fit_abund_raf(
   predictors_f = NULL,
   fit_formula = NULL,
   partition,
+  hold_out_set = NULL,
   predict_part = FALSE,
   mtry = length(c(predictors, predictors_f))/3,
   ntree = 500,

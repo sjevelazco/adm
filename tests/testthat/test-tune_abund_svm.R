@@ -24,7 +24,7 @@ test_that("tune_abund_svm and fit_abund_svm", {
   )
   expect_equal(names(tuned_), c(
     "model", "predictors", "performance", "performance_part",
-    "predicted_part", "optimal_combination", "all_combinations"
+    "predicted_part", "metadata","optimal_combination", "all_combinations"
   ))
   expect_equal(class(tuned_$model)[1], "ksvm")
   expect_equal(round(tuned_$performance$corr_spear_mean, 2), 0.58)
