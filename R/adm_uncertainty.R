@@ -94,7 +94,7 @@ adm_uncertainty <- function(
     .export = c(
       "fit_abund_cnn", "fit_abund_dnn", "fit_abund_gam", "fit_abund_glm",
       "fit_abund_net", "fit_abund_qrf", "fit_abund_raf", "fit_abund_svm",
-      "fit_abund_xgb"
+      "fit_abund_xgb", "adm_predict"
     ),
     .errorhandling = "pass"
   ) %dopar% {
