@@ -126,8 +126,8 @@ fit_abund_raf <-
       )
       return(result)
     } else {
-      np <- ncol(data %>% dplyr::select(dplyr::starts_with(partition)))
-      p_names <- names(data %>% dplyr::select(dplyr::starts_with(partition)))
+      np <- ncol(data %>% dplyr::select(dplyr::starts_with(!!partition)))
+      p_names <- names(data %>% dplyr::select(dplyr::starts_with(!!partition)))
 
       # part_pred_list <- list()
       # eval_partial_list <- list()

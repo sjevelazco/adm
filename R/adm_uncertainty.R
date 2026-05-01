@@ -81,7 +81,7 @@ adm_uncertainty <- function(
   names(pr_f) <- NULL
 
   # Capture extra arguments for refitting and prediction
-  extra_args <- list()
+  extra_args <- list(...)
 
   #### Bootstrap approach ####
   my_cluster <- parallel::makeCluster(n_cores)
