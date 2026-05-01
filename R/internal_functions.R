@@ -15,16 +15,20 @@ adapt_df <- function(data, predictors, predictors_f, response, partition, xy = N
     xy_cols <- data.frame(xy_cols)
   }
 
-  if (is.null(predictors_f)) {
-    data <- data %>%
-      dplyr::select(dplyr::all_of(response), dplyr::all_of(predictors), if (!is.null(partition) && any(nzchar(partition, keepNA = FALSE))) dplyr::starts_with(partition))
-    data <- data.frame(data)
-  } else {
-    data <- data %>%
-      dplyr::select(dplyr::all_of(response), dplyr::all_of(predictors), dplyr::all_of(predictors_f), if (!is.null(partition) && any(nzchar(partition, keepNA = FALSE))) dplyr::starts_with(partition))
-    data <- data.frame(data)
+  # Identify partition columns prefix outside the select call to avoid evaluation errors
+  part_vars <- character(0)
+  if (!is.null(partition) && any(nzchar(partition, keepNA = FALSE))) {
+    part_vars <- names(data)[startsWith(names(data), partition)]
+  }
+
+  # Select all necessary columns safely
+  sel_vars <- unique(c(response, predictors, predictors_f, part_vars))
+  data <- data %>% dplyr::select(dplyr::all_of(sel_vars))
+
+  # Convert qualitative predictors to factors
+  if (!is.null(predictors_f)) {
     for (i in predictors_f) {
-      data[, i] <- as.factor(data[, i])
+      data[[i]] <- as.factor(data[[i]])
     }
   }
 
