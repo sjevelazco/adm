@@ -11,9 +11,11 @@ tune_abund_xgb(
   predictors_f = NULL,
   partition,
   predict_part = FALSE,
+  hold_out_set = NULL,
   grid = NULL,
   objective = "reg:squarederror",
   metrics = NULL,
+  early_stopping = list(cv_strategy = 10, fm_strategy = "median"),
   n_cores = 1,
   verbose = TRUE
 )
@@ -31,12 +33,15 @@ tune_abund_xgb(
 
 \item{predict_part}{logical. Save predicted abundance for testing data. Default = FALSE}
 
+\item{hold_out_set}{tibble or data.frame. A hold-out dataset used for evaluation
+and early stopping. This data is never used during the training phase.}
+
 \item{grid}{tibble or data.frame. A dataframe with "n.trees", "interaction.depth", "n.minobsinnode" and "shrinkage" as columns and its values combinations as rows. If no grid is provided, function will
 create a default grid combining the next hyperparameters:
 nrounds = c(100, 200, 300),
 max_depth = c(4, 6, 8),
-eta = c(0.2, 0.4, 0.5),
-gamma = c(1, 5, 10),
+learning_rate = c(0.2, 0.4, 0.5),
+min_split_loss = c(1, 5, 10),
 colsample_bytree = c(0.5, 1, 2),
 min_child_weight = c(0.5, 1, 2),
 subsample = c(0.5, 0.75, 1).
@@ -47,9 +52,29 @@ the grid with the default values.}
 
 \item{metrics}{character. Vector with one or more metrics from c("corr_spear","corr_pear","mae","pdisp","inter","slope").}
 
+\item{early_stopping}{NULL or a list containing two elements:
+\itemize{
+  \item \code{cv_strategy}: Numerical. Specifies the number of rounds without
+  improvement before training stops during the cross-validation stage.
+  \item \code{fm_strategy}: A vector defining the strategy for the final model:
+  \itemize{
+    \item \code{c("hold_out", n)}: Stops training after \code{n} rounds without
+    improvement, using the \code{hold_out_set} as the evaluation set.
+    \item \code{c("mean")}: Trains the final model using the average number
+    of rounds reached across all cross-validation folds.
+    \item \code{c("median")}: Uses the median number of rounds from the
+    cross-validation stage.
+    \item \code{c("max")}: Uses the maximum number of rounds reached in any fold.
+    \item \code{c("min")}: Uses the minimum number of rounds reached in any fold.
+  }
+}}
+
 \item{n_cores}{numeric. Number of cores used in parallel processing.}
 
 \item{verbose}{logical. If FALSE, disables all console messages. Default TRUE}
+
+\item{hold_out_evaluation}{logical. If \code{TRUE}, performance metrics will
+also be calculated for the \code{hold_out_set}.}
 }
 \value{
 A list object with:
@@ -85,8 +110,8 @@ some_sp <-
 xgb_grid <- expand.grid(
   nrounds = c(100, 300),
   max_depth = c(4, 6, 8),
-  eta = c(0.2, 0.5),
-  gamma = c(1, 5, 10),
+  learning_rate = c(0.2, 0.5),
+  min_split_loss = c(1, 5, 10),
   colsample_bytree = c(0.5, 1),
   min_child_weight = c(0.5, 1, 2),
   subsample = c(0.5, 1),

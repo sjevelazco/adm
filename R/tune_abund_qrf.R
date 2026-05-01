@@ -1,4 +1,4 @@
-#' Fit and validate Support Vector Machine models with exploration of hyper-parameters that optimize performance
+#' Fit and validate Random Forest models with exploration of hyper-parameters that optimize performance
 #'
 #' @param data tibble or data.frame. Database with response, predictors, and partition values
 #' @param response character. Column name with species abundance.
@@ -6,13 +6,9 @@
 #' @param predictors_f character. Vector with the column names of qualitative predictor variables (i.e. ordinal or nominal variables type). Usage predictors_f = c("landform")
 #' @param fit_formula formula. A formula object with response and predictor variables (e.g. formula(abund ~ temp + precipt + sand + landform)). Note that the variables used here must be consistent with those used in response, predictors, and predictors_f arguments. Default NULL
 #' @param partition character. Column name with training and validation partition groups.
-#' @param predict_part logical. Save predicted abundance for testing data. Default is FALSE.
-#' @param grid tibble or data.frame. A dataframe with "kernel", "sigma", "C" as columns and
-#' its values combinations as rows. If now grid is provided, funcion will create a default grid combining
-#' the next hyperparameters:
-#' C = seq(0.2, 1, by = 0.2),
-#' sigma = "automatic",
-#' kernel = c("rbfdot", "laplacedot").
+#' @param predict_part logical. Save predicted abundance for testing data. Default = FALSE
+#' @param grid tibble or data.frame. A dataframe with "mtry" and "ntree" as columns and its values combinations as rows. If no grid is provided, function will create a default grid combining the next hyperparameters:
+#' mtry = seq(2, length(predictors), by = 1), ntree = seq(500, 1000, by = 100).
 #' In case one or more hyperparameters are provided, the function will complete the grid with the default values.
 #' @param metrics character. Vector with one or more metrics from c("corr_spear","corr_pear","mae","pdisp","inter","slope").
 #' @param n_cores numeric. Number of cores used in parallel processing.
@@ -27,7 +23,7 @@
 #'
 #' A list object with:
 #' \itemize{
-#' \item model: A "ksvm" class object from kernlab package. This object can be used for predicting.
+#' \item model: A "randomForest" class object from randomForest package. This object can be used for predicting.
 #' \item predictors: A tibble with quantitative (c column names) and qualitative (f column names) variables use for modeling.
 #' \item performance: A tibble with selected model's performance metrics calculated in adm_eval.
 #' \item performance_part: A tibble with performance metrics for each test partition.
@@ -35,6 +31,7 @@
 #' \item optimal_combination: A tibble with the selected hyperparameter combination and its performance.
 #' \item all_combinations: A tibble with all hyperparameters combinations and its performance.
 #' }
+#'
 #' @export
 #'
 #' @examples
@@ -46,7 +43,7 @@
 #'
 #' # Select data for a single species
 #' some_sp <- sppabund %>%
-#'   dplyr::filter(species == "Species one") %>%
+#'   dplyr::filter(species == "Species two") %>%
 #'   dplyr::select(-.part2, -.part3)
 #'
 #' # Explore response variables
@@ -58,15 +55,14 @@
 #'   balance_dataset(some_sp, response = "ind_ha", absence_ratio = 0.2)
 #'
 #' # Create a grid
-#' svm_grid <- expand.grid(
-#'   sigma = "automatic",
-#'   C = c(0.5, 1, 2),
-#'   kernel = c("rbfdot", "laplacedot"),
+#' raf_grid <- expand.grid(
+#'   mtry = seq(from = 2, to = 3, by = 1),
+#'   ntree = seq(from = 500, to = 1000, by = 100),
 #'   stringsAsFactors = FALSE
 #' )
 #'
-#' # Tune a SVM model
-#' tuned_svm <- tune_abund_svm(
+#' # Tune a RAF model
+#' tuned_raf <- tune_abund_raf(
 #'   data = some_sp,
 #'   response = "ind_ha",
 #'   predictors = c("bio12", "elevation", "sand"),
@@ -74,13 +70,13 @@
 #'   partition = ".part",
 #'   predict_part = TRUE,
 #'   metrics = c("corr_pear", "mae"),
-#'   grid = svm_grid,
+#'   grid = raf_grid,
 #'   n_cores = 3
 #' )
 #'
-#' tuned_svm
+#' tuned_raf
 #' }
-tune_abund_svm <-
+tune_abund_qrf <-
   function(data,
            response,
            predictors,
@@ -88,18 +84,33 @@ tune_abund_svm <-
            fit_formula = NULL,
            partition,
            predict_part = FALSE,
+           framework = "quantregForest",
+           train_quantiles = c(0.5),
+           eval_quantile = 0.5,
            grid = NULL,
            metrics = NULL,
            n_cores = 1,
            verbose = TRUE) {
-    # Check metrics
+    i <- NULL
+
     check_metrics(metrics)
 
-    # making grid
+    # making default grid
     grid_dict <- list(
-      C = seq(0.2, 1, by = 0.2),
-      sigma = "automatic",
-      kernel = c("rbfdot", "laplacedot")
+      mtry = seq(
+        from = 1,
+        to = switch(framework,
+          "grf" = {
+            length(c(predictors))
+          },
+          "quantregForest" = {
+            length(c(predictors, predictors_f))
+          }
+        ),
+        by = 1
+      ),
+      ntree = seq(from = 500, to = 2000, by = 100),
+      nodesize = c(1, 2, 5, 10, 20)
     )
 
     # Check hyperparameters names
@@ -107,8 +118,6 @@ tune_abund_svm <-
 
     comb_id <- paste("comb_", 1:nrow(grid), sep = "")
     grid <- cbind(comb_id, grid)
-    grid[["kernel"]] <- as.character(grid[["kernel"]])
-    grid[["sigma"]] <- as.character(grid[["sigma"]])
 
     # looping the grid
     message("Searching for optimal hyperparameters...")
@@ -131,9 +140,9 @@ tune_abund_svm <-
       },
       add = T
     )
-    hyper_combinations <- foreach::foreach(i = 1:nrow(grid), .export = c("fit_abund_svm", "adm_eval"), .packages = c("dplyr")) %dopar% {
+    hyper_combinations <- foreach::foreach(i = 1:nrow(grid), .export = c("fit_abund_qrf", "adm_eval"), .packages = c("dplyr", "adm")) %dopar% {
       model <-
-        fit_abund_svm(
+        fit_abund_qrf(
           data = data,
           response = response,
           predictors = predictors,
@@ -141,9 +150,12 @@ tune_abund_svm <-
           fit_formula = fit_formula,
           partition = partition,
           predict_part = predict_part,
-          sigma = grid[[i, "sigma"]],
-          kernel = grid[[i, "kernel"]],
-          C = grid[[i, "C"]],
+          framework = framework,
+          train_quantiles = train_quantiles,
+          eval_quantile = eval_quantile,
+          mtry = grid[i, "mtry"],
+          ntree = grid[i, "ntree"],
+          nodesize = grid[i, "nodesize"],
           verbose = verbose
         )
       l <- list(cbind(grid[i, ], model$performance))
@@ -160,7 +172,7 @@ tune_abund_svm <-
     # fit final model
     message("\nFitting the best model...")
     final_model <-
-      fit_abund_svm(
+      fit_abund_qrf(
         data = data,
         response = response,
         predictors = predictors,
@@ -168,29 +180,16 @@ tune_abund_svm <-
         fit_formula = fit_formula,
         partition = partition,
         predict_part = predict_part,
-        sigma = ranked_combinations[[1]][[1, "sigma"]],
-        kernel = ranked_combinations[[1]][[1, "kernel"]],
-        C = ranked_combinations[[1]][[1, "C"]],
+        framework = framework,
+        train_quantiles = train_quantiles,
+        eval_quantile = eval_quantile,
+        mtry = ranked_combinations[[1]][[1, "mtry"]],
+        ntree = ranked_combinations[[1]][[1, "ntree"]],
+        nodesize = ranked_combinations[[1]][[1, "nodesize"]],
         verbose = verbose
       )
 
-    message(
-      "The best model was achieved with: \n sigma = ",
-      ranked_combinations[[1]][[1, "sigma"]],
-      ", kernel = ",
-      ranked_combinations[[1]][[1, "kernel"]],
-      " and C = ",
-      ranked_combinations[[1]][[1, "C"]]
-    )
-
     final_list <- c(final_model, ranked_combinations)
-
-    # # Standardize output list
-    # for (i in 2:length(final_list)) {
-    #   if (!class(final_list[[i]])[1] == "tbl_df") {
-    #     final_list[[i]] <- dplyr::as_tibble(final_list[[i]])
-    #   }
-    # }
 
     return(final_list)
   }

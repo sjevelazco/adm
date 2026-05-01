@@ -14,6 +14,7 @@ fit_abund_cnn(
   rasters = NULL,
   sample_size,
   partition,
+  hold_out_set = NULL,
   predict_part = FALSE,
   learning_rate = 0.01,
   weight_decay = 0,

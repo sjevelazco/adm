@@ -193,12 +193,12 @@ p_abund_pdp <-
 
     if (class(model)[1] %in% "xgb.Booster") {
       if (!is.null(training_data)) {
-        v <- training_data[model$feature_names] %>% sapply(class)  
+        v <- training_data[model$feature_names] %>% sapply(class)
       } else {
         stop("Training data needed.")
       }
-    } 
-    
+    }
+
     if (class(model)[1] %in% c("luz_module_fitted")) {
       if (!is.null(training_data)) {
         v <- training_data[variables[1, 2:ncol(variables)] %>%

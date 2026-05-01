@@ -16,7 +16,7 @@
 #' @param verbose logical. If FALSE, disables all console messages. Default TRUE
 #' @param validation_patience numerical. An integer indicating the number of epochs without loss improvement tolerated by the algorithm in the validation process. If the patience limit is exceeded, the training ends. Default 2
 #' @param fitting_patience numerical. The same as validation_patience, but in the final model fitting process. Default 5
-#' @param learning_monitor logical. If TRUE, the function will return a tibble containing loss values over training epochs. It is useful to create learning/convergence plots. 
+#' @param learning_monitor logical. If TRUE, the function will return a tibble containing loss values over training epochs. It is useful to create learning/convergence plots.
 #'
 #' @importFrom dplyr bind_rows bind_cols pull tibble as_tibble group_by summarise across
 #' @importFrom luz setup set_opt_hparams fit
@@ -90,6 +90,7 @@ fit_abund_dnn <-
            predictors,
            predictors_f = NULL,
            partition,
+           hold_out_set = NULL,
            predict_part = FALSE,
            learning_rate = 0.01,
            weight_decay = 0,
@@ -124,6 +125,15 @@ fit_abund_dnn <-
       response = response,
       partition = partition
     )
+
+    # Adequate hold-out set
+    hold_out_set <- check_adapt_holdout_set(
+      hold_out_set,
+      predictors,
+      predictors_f,
+      response
+    )
+    hold_out_evaluation <- !is.null(hold_out_set)
 
     # create_dataset definition
     create_dataset <- torch::dataset(
@@ -170,213 +180,221 @@ fit_abund_dnn <-
     }
 
     # Fit models
-    np <- ncol(data %>% dplyr::select(dplyr::starts_with(partition)))
-    p_names <- names(data %>% dplyr::select(dplyr::starts_with(partition)))
-
-    part_pred_list <- list()
-    eval_partial_list <- list()
-
-    for (h in 1:np) {
-      if (verbose) {
-        message("Replica number: ", h, "/", np)
-      }
-
-      folds <- data %>%
-        dplyr::pull(p_names[h]) %>%
-        unique() %>%
-        sort()
-
-      eval_partial <- list()
-      pred_test <- list()
-      part_pred <- list()
-
-      if (learning_monitor){
-        monitor <- list()
-      } else {
-        monitor <- NULL
-      }
-      
-      for (j in 1:length(folds)) {
-        if (verbose) {
-          message("-- Partition number ", j, "/", length(folds))
-        }
-
-        train_set <- data[data[, p_names[h]] != folds[j], c(predictors, response)] %>%
-          create_dataset(response_variable = response)
-        test_set <- data[data[, p_names[h]] == folds[j], c(predictors, response)] %>%
-          create_dataset(response_variable = response)
-
-        train_dataloader <- torch::dataloader(train_set, batch_size = batch_size, shuffle = TRUE, num_workers = 0)
-        test_dataloader <- torch::dataloader(test_set, batch_size = batch_size, shuffle = TRUE, num_workers = 0)
-
-        set.seed(13)
-        torch::torch_manual_seed(13)
-
-        suppressMessages(
-          fitted <- net %>%
-            luz::setup(
-              loss = loss_function(),
-              optimizer = optimizer
-            ) %>%
-            luz::set_opt_hparams(
-              lr = learning_rate,
-              weight_decay = weight_decay
-              ) %>%
-            luz::fit(train_dataloader,
-              valid_data = test_dataloader,
-              epochs = n_epochs,
-              callbacks = luz::luz_callback_early_stopping(patience = validation_patience)
+    if (is.null(partition) || !any(nzchar(partition, keepNA = FALSE))) {
+      set.seed(13)
+      # TODO check full_model here
+      set.seed(13)
+      torch::torch_manual_seed(13)
+      suppressMessages(
+        full_model <- net %>%
+          luz::setup(
+            loss = loss_function(),
+            optimizer = optimizer
+          ) %>%
+          luz::set_opt_hparams(
+            lr = learning_rate,
+            weight_decay = weight_decay
+          ) %>%
+          luz::fit(df_dl,
+            epochs = n_epochs,
+            callbacks = luz::luz_callback_early_stopping(
+              monitor = "train_loss",
+              patience = fitting_patience
             )
-        )
-        
-        if(learning_monitor){
-          train_loss <- fitted$records$metrics$train %>% unlist()
-          names(train_loss) <- 1:length(train_loss)
-          
-          valid_loss <- fitted$records$metrics$valid %>% unlist()
-          names(valid_loss) <- 1:length(valid_loss)
-          
-          fold_monitor <- list(
-            train = train_loss,
-            valid = valid_loss
           )
-          
-          monitor[[j]] <- fold_monitor
-          names(monitor)[[j]] <- paste0("fold-",j)
-        }
-        
-        pred <- predict(fitted, test_set) %>% as.numeric()
-
-        if (!(sum(is.na(pred)) == length(pred))) {
-          pred[is.na(pred)] <- stats::runif(sum(is.na(pred)), min(data[[response]]), max(data[[response]]))
-          observed <- test_set$response_variable %>% as.numeric()
-          eval_partial[[j]] <- dplyr::tibble(
-            model = "dnn",
-            adm_eval(obs = observed, pred = pred)
-          )
-        }
-
-        if (predict_part) {
-          part_pred[[j]] <- data.frame(partition = folds[j], observed, predicted = pred)
-        }
-      }
-
-      # Create final database with parameter performance
-      names(eval_partial) <- 1:length(folds)
-      eval_partial <-
-        eval_partial[sapply(eval_partial, function(x) !is.null(dim(x)))] %>%
-        dplyr::bind_rows(., .id = "partition")
-      eval_partial_list[[h]] <- eval_partial
-
-      if (predict_part) {
-        names(part_pred) <- 1:length(folds)
-        part_pred <-
-          part_pred[sapply(part_pred, function(x) !is.null(dim(x)))] %>%
-          dplyr::bind_rows(., .id = "partition")
-        part_pred_list[[h]] <- part_pred
-      }
-    }
-
-    # fit final model with all data
-    df <- create_dataset(data[, c(predictors, response)], response)
-    df_dl <- torch::dataloader(df, batch_size = batch_size, shuffle = TRUE, num_workers = 0)
-
-    set.seed(13)
-    torch::torch_manual_seed(13)
-    suppressMessages(
-      full_fitted <- net %>%
-        luz::setup(
-          loss = loss_function(),
-          optimizer = optimizer
-        ) %>%
-        luz::set_opt_hparams(
-          lr = learning_rate,
-          weight_decay = weight_decay
-        ) %>%
-        luz::fit(df_dl,
-          epochs = n_epochs,
-          callbacks = luz::luz_callback_early_stopping(
-            monitor = "train_loss",
-            patience = fitting_patience
-          )
-        )
-    )
-    
-    if(learning_monitor){
-      train_loss <- full_fitted$records$metrics$train %>% unlist
-      names(train_loss) <- 1:length(train_loss)
-      
-      fold_list <- list(
-        train = train_loss
       )
-      
-      monitor[[length(monitor)+1]] <- fold_list
-      
-      names(monitor)[[length(monitor)]] <- "final_model"
-      
-      monitor <- lapply(names(monitor), function(m){
-        m_df <- dplyr::as_tibble(monitor[[m]])
-        m_df$fitted <- m
-        m_df
-      }) %>% dplyr::bind_rows()
-      
-      monitor <- monitor %>%
-        dplyr::group_by(fitted) %>%
-        dplyr::mutate(epoch = dplyr::row_number()) %>%
-        dplyr::ungroup()
-    }
-
-    # bind predicted evaluation
-    eval_partial <- eval_partial_list %>%
-      dplyr::bind_rows(.id = "replica") %>%
-      dplyr::as_tibble()
-
-    # bind predicted partition
-    if (predict_part) {
-      part_pred <- part_pred_list %>%
-        dplyr::bind_rows(.id = "replica")
+      result <- list(
+        model = full_model
+      )
+      return(result)
     } else {
-      part_pred <- NULL
-    }
+      np <- ncol(data %>% dplyr::select(dplyr::starts_with(partition)))
+      p_names <- names(data %>% dplyr::select(dplyr::starts_with(partition)))
 
-    # Sumarize performance
-    eval_final <- eval_partial %>%
-      dplyr::group_by(model) %>%
-      dplyr::summarise(
-        dplyr::across(
-          c(mae:pdisp),
-          list(
-            mean = ~ mean(.x, na.rm = TRUE),
-            sd = ~ sd(.x, na.rm = TRUE)
+      replica_training_lists <- init_training_lists("replica")
+
+      for (h in 1:np) {
+        if (verbose) {
+          message("Replica number: ", h, "/", np)
+        }
+
+        folds <- data %>%
+          dplyr::pull(p_names[h]) %>%
+          unique() %>%
+          sort()
+
+        fold_training_lists <- init_training_lists("fold")
+        # eval_partial <- list()
+        # pred_test <- list()
+        # part_pred <- list()
+
+        if (learning_monitor) {
+          monitor <- list()
+        } else {
+          monitor <- NULL
+        }
+
+        for (j in 1:length(folds)) {
+          if (verbose) {
+            message("-- Partition number ", j, "/", length(folds))
+          }
+
+          train_set <- data[data[, p_names[h]] != folds[j], c(predictors, response)] %>%
+            create_dataset(response_variable = response)
+          test_set <- data[data[, p_names[h]] == folds[j], c(predictors, response)] %>%
+            create_dataset(response_variable = response)
+
+          train_dataloader <- torch::dataloader(train_set, batch_size = batch_size, shuffle = TRUE, num_workers = 0)
+          test_dataloader <- torch::dataloader(test_set, batch_size = batch_size, shuffle = TRUE, num_workers = 0)
+
+          set.seed(13)
+          torch::torch_manual_seed(13)
+
+          suppressMessages(
+            fitted <- net %>%
+              luz::setup(
+                loss = loss_function(),
+                optimizer = optimizer
+              ) %>%
+              luz::set_opt_hparams(
+                lr = learning_rate,
+                weight_decay = weight_decay
+              ) %>%
+              luz::fit(train_dataloader,
+                valid_data = test_dataloader,
+                epochs = n_epochs,
+                callbacks = luz::luz_callback_early_stopping(patience = validation_patience)
+              )
           )
-        ),
-        .groups = "drop"
+
+          if (learning_monitor) {
+            train_loss <- fitted$records$metrics$train %>% unlist()
+            names(train_loss) <- 1:length(train_loss)
+
+            valid_loss <- fitted$records$metrics$valid %>% unlist()
+            names(valid_loss) <- 1:length(valid_loss)
+
+            fold_monitor <- list(
+              train = train_loss,
+              valid = valid_loss
+            )
+
+            monitor[[j]] <- fold_monitor
+            names(monitor)[[j]] <- paste0("fold-", j)
+          }
+
+          pred <- predict(fitted, test_set) %>% as.numeric()
+
+          if (!(sum(is.na(pred)) == length(pred))) {
+            pred[is.na(pred)] <- stats::runif(sum(is.na(pred)), min(data[[response]]), max(data[[response]]))
+            observed <- test_set$response_variable %>% as.numeric()
+          }
+
+          if (hold_out_evaluation) {
+            pred_ho <-
+              suppressMessages(stats::predict(model, newdata = hold_out_set[, c(predictors, predictors_f)], type = "response"))
+            observed_ho <- hold_out_set[, response]
+          } else {
+            pred_ho <- observed_ho <- NULL
+          }
+
+          fold_training_lists <- fold_perf_register(
+            "dnn", folds, j,
+            fold_training_lists,
+            predict_part,
+            hold_out_evaluation,
+            pred, pred_ho,
+            observed, observed_ho
+          )
+        }
+
+        # Create final database with parameter performance
+        replica_training_lists <- replica_perf_register(
+          replica_training_lists, fold_training_lists,
+          folds, h, predict_part, hold_out_evaluation
+        )
+      }
+
+      # fit final model with all data
+      df <- create_dataset(data[, c(predictors, response)], response)
+      df_dl <- torch::dataloader(df, batch_size = batch_size, shuffle = TRUE, num_workers = 0)
+
+      set.seed(13)
+      torch::torch_manual_seed(13)
+      suppressMessages(
+        full_model <- net %>%
+          luz::setup(
+            loss = loss_function(),
+            optimizer = optimizer
+          ) %>%
+          luz::set_opt_hparams(
+            lr = learning_rate,
+            weight_decay = weight_decay
+          ) %>%
+          luz::fit(df_dl,
+            epochs = n_epochs,
+            callbacks = luz::luz_callback_early_stopping(
+              monitor = "train_loss",
+              patience = fitting_patience
+            )
+          )
       )
 
-    variables <- dplyr::bind_cols(
-      data.frame(
-        model = "dnn",
-        response = response
-      ),
-      variables
-    ) %>% as_tibble()
+      if (learning_monitor) {
+        train_loss <- full_model$records$metrics$train %>% unlist()
+        names(train_loss) <- 1:length(train_loss)
 
-    # Final object
-    data_list <- list(
-      model = full_fitted,
-      predictors = variables,
-      performance = eval_final,
-      performance_part = eval_partial,
-      predicted_part = part_pred,
-      monitor = monitor
-    )
+        fold_list <- list(
+          train = train_loss
+        )
 
-    # Standardize output list
-    for (i in 2:length(data_list)) {
-      if (!class(data_list[[i]])[1] == "tbl_df") {
-        data_list[[i]] <- dplyr::as_tibble(data_list[[i]])
+        monitor[[length(monitor) + 1]] <- fold_list
+
+        names(monitor)[[length(monitor)]] <- "final_model"
+
+        monitor <- lapply(names(monitor), function(m) {
+          m_df <- dplyr::as_tibble(monitor[[m]])
+          m_df$fitted <- m
+          m_df
+        }) %>% dplyr::bind_rows()
+
+        monitor <- monitor %>%
+          dplyr::group_by(fitted) %>%
+          dplyr::mutate(epoch = dplyr::row_number()) %>%
+          dplyr::ungroup()
       }
-    }
 
-    return(data_list)
+      # evaluate full model with hold-out set
+      if (hold_out_evaluation) {
+        pred <-
+          suppressMessages(predict(full_model, newdata = hold_out_set[, c(predictors, predictors_f)], type = "response"))
+        observed <- hold_out_set[, response]
+
+        hold_out_perf <- adm_eval(obs = observed, pred = pred)
+      } else {
+        hold_out_perf <- NULL
+      }
+      # Construct the standard final list to be returned
+      data_list <- wrap_final_list(
+        "dnn",
+        full_model,
+        variables,
+        response,
+        replica_training_lists,
+        hold_out_evaluation,
+        hold_out_perf,
+        predict_part,
+        get_metadata(
+          "dnn",
+          list(
+            lr = learning_rate,
+            weight_decay = weight_decay,
+            loss = loss_function(),
+            optimizer = optimizer
+          )
+        )
+      )
+
+      return(data_list)
+    }
   }

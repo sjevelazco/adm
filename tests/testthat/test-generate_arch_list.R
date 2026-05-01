@@ -1,7 +1,6 @@
 # install torch
 
 
-
 test_that("architecture for cnn", {
   if (!torch::torch_is_installed()) {
     skip()

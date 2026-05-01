@@ -309,7 +309,7 @@ adm_transform <- function(data, variable, method, inverse = FALSE, t_terms = NUL
         paste(variable, method, sep = "_")
 
       data <- c(data, x)
-    } else if (class(data)[1] %in% c("tbl_df", "df", "data.frame")) {
+    } else if (any(class(data) %in% c("tbl_df", "df", "data.frame"))) {
       x <- data %>% dplyr::pull(variable)
 
       if (method == "01") {

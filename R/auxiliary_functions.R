@@ -4,53 +4,6 @@
 #                                                          #
 ## %######################################################%##
 
-#' adapt_df
-#'
-#' @noRd
-adapt_df <- function(data, predictors, predictors_f, response, partition, xy = NULL) {
-  data <- data.frame(data)
-  if (is.vector(xy)) {
-    xy_cols <- data %>%
-      dplyr::select(dplyr::all_of(xy))
-    xy_cols <- data.frame(xy_cols)
-  }
-
-  if (is.null(predictors_f)) {
-    data <- data %>%
-      dplyr::select(dplyr::all_of(response), dplyr::all_of(predictors), dplyr::starts_with(partition))
-    data <- data.frame(data)
-  } else {
-    data <- data %>%
-      dplyr::select(dplyr::all_of(response), dplyr::all_of(predictors), dplyr::all_of(predictors_f), dplyr::starts_with(partition))
-    data <- data.frame(data)
-    for (i in predictors_f) {
-      data[, i] <- as.factor(data[, i])
-    }
-  }
-
-  if (is.vector(xy)) {
-    data <- dplyr::bind_cols(data, xy_cols)
-  }
-
-  return(data)
-}
-
-
-
-#' cnn_get_crop_size
-#'
-#' @noRd
-cnn_get_crop_size <- function(sample_size) {
-  if (!is.vector(sample_size)) {
-    stop("Please, provide a vector containing the sample size c(width,height)")
-  } else if (!(sample_size[[1]] == sample_size[[2]])) {
-    stop("adm currently only accepts square samples.")
-  } else {
-    crop_size <- floor(sample_size[[1]] / 2)
-  }
-
-  return(crop_size)
-}
 
 #' Crop rasters around a point (Convolutional Neural Networks)
 #'
@@ -268,30 +221,28 @@ res_calculate <-
 
 #' Construct CNN samples list to use with tune_abund_cnn and fit_abund_cnn
 #'
-#' @param data 
-#' @param x 
-#' @param y 
-#' @param response 
-#' @param folds 
-#' @param partition 
-#' @param rasters 
-#' @param crop_size 
+#' @param data
+#' @param x
+#' @param y
+#' @param response
+#' @param folds
+#' @param partition
+#' @param rasters
+#' @param crop_size
 #'
 #' @returns a list of arrays
 #' @export
-#'
-#' @examples #TODO
-get_partition_samples <- function(data,x,y,response,folds,partition,rasters,crop_size){
+get_partition_samples <- function(data, x, y, response, folds, partition, rasters, crop_size) {
   samples_list <- list()
   for (fold in folds) {
     fold_mtx <- data[data[, partition] == fold, c(x, y, response)] %>%
       cnn_make_samples(x, y, response, rasters, size = crop_size) %>%
       list()
-    
+
     names(fold_mtx) <- fold
-    
+
     samples_list <- append(samples_list, fold_mtx)
   }
-  
+
   return(samples_list)
 }

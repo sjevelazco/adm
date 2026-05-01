@@ -11,6 +11,7 @@ fit_abund_svm(
   predictors_f = NULL,
   fit_formula = NULL,
   partition,
+  hold_out_set = NULL,
   predict_part = FALSE,
   kernel = "rbfdot",
   sigma = "automatic",

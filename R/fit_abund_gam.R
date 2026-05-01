@@ -81,6 +81,7 @@ fit_abund_gam <-
            nu_formula = ~1,
            tau_formula = ~1,
            partition,
+           hold_out_set = NULL,
            predict_part = FALSE,
            distribution = NULL,
            inter = "automatic",
@@ -101,12 +102,17 @@ fit_abund_gam <-
       partition = partition
     )
 
+    # Adequate hold-out set
+    hold_out_set <- check_adapt_holdout_set(
+      hold_out_set,
+      predictors,
+      predictors_f,
+      response
+    )
+    hold_out_evaluation <- !is.null(hold_out_set)
+
     # Variables
-    if (!is.null(predictors_f)) {
-      variables <- dplyr::bind_rows(c(c = predictors, f = predictors_f))
-    } else {
-      variables <- dplyr::bind_rows(c(c = predictors))
-    }
+    variables <- get_variables(predictors, predictors_f)
 
     # Formula
     if (is.null(fit_formula)) {
@@ -139,135 +145,146 @@ fit_abund_gam <-
       "\n"
     )
 
+
     # Fit models
-    np <- ncol(data %>% dplyr::select(dplyr::starts_with(partition)))
-    p_names <- names(data %>% dplyr::select(dplyr::starts_with(partition)))
-
-    part_pred_list <- list()
-    eval_partial_list <- list()
-
-    for (h in 1:np) {
-      if (verbose) {
-        message("Replica number: ", h, "/", np)
-      }
-
-      folds <- data %>%
-        dplyr::pull(p_names[h]) %>%
-        unique() %>%
-        sort()
-
-      eval_partial <- list()
-      pred_test <- list()
-      part_pred <- list()
-      family <- distribution
-
-      for (j in 1:length(folds)) {
-        if (verbose) {
-          message("-- Partition number ", j, "/", length(folds))
-        }
-
-        train_set <- data[data[, p_names[h]] != folds[j], ]
-        test_set <- data[data[, p_names[h]] == folds[j], ]
-
-        set.seed(13)
-        model <- gamlss::gamlss(
+    if (is.null(partition) || !any(nzchar(partition, keepNA = FALSE))) {
+      set.seed(13)
+      suppressWarnings(
+        full_model <- gamlss::gamlss(
           formula = formula1,
           family = family,
-          data = train_set,
+          data = data,
           sigma.formula = sigma_formula,
           nu.formula = nu_formula,
           tau.formula = tau_formula,
           control = control_gamlss,
           trace = FALSE
         )
-
-        pred <- gamlss::predictAll(model, newdata = test_set, data = train_set, type = "response")[[1]]
-        observed <- dplyr::pull(test_set, response)
-        eval_partial[[j]] <- dplyr::tibble(
-          model = "gam",
-          adm_eval(obs = observed, pred = pred)
-        )
-
-        if (predict_part) {
-          part_pred[[j]] <- data.frame(partition = folds[j], observed, predicted = pred)
-        }
-      }
-
-      # Create final database with parameter performance
-      names(eval_partial) <- 1:length(folds)
-      eval_partial <-
-        eval_partial[sapply(eval_partial, function(x) !is.null(dim(x)))] %>%
-        dplyr::bind_rows(., .id = "partition")
-      eval_partial_list[[h]] <- eval_partial
-
-      if (predict_part) {
-        names(part_pred) <- 1:length(folds)
-        part_pred <-
-          part_pred[sapply(part_pred, function(x) !is.null(dim(x)))] %>%
-          dplyr::bind_rows(., .id = "partition")
-        part_pred_list[[h]] <- part_pred
-      }
-    }
-
-
-    # fit final model with all data
-    set.seed(13)
-    full_model <- gamlss::gamlss(
-      formula = formula1,
-      family = family,
-      data = data,
-      sigma.formula = sigma_formula,
-      nu.formula = nu_formula,
-      tau.formula = tau_formula,
-      control = control_gamlss,
-      trace = FALSE
-    )
-
-
-    # bind predicted evaluation
-    eval_partial <- eval_partial_list %>%
-      dplyr::bind_rows(.id = "replica") %>%
-      dplyr::as_tibble()
-
-    # bind predicted partition
-    if (predict_part) {
-      part_pred <- part_pred_list %>%
-        dplyr::bind_rows(.id = "replica")
+      )
+      result <- list(
+        model = full_model
+      )
+      return(result)
     } else {
-      part_pred <- NULL
-    }
+      np <- ncol(data %>% dplyr::select(dplyr::starts_with(partition)))
+      p_names <- names(data %>% dplyr::select(dplyr::starts_with(partition)))
 
-    # Summarize performance
-    eval_final <- eval_partial %>%
-      dplyr::group_by(model) %>%
-      dplyr::summarise(dplyr::across(mae:pdisp, list(
-        mean = mean,
-        sd = stats::sd
-      )), .groups = "drop")
+      # part_pred_list <- list()
+      # eval_partial_list <- list()
 
-    variables <- dplyr::bind_cols(
-      data.frame(
-        model = "gam",
-        response = response
-      ),
-      variables
-    ) %>% as_tibble()
+      replica_training_lists <- init_training_lists("replica")
 
-    # Final object
-    data_list <- list(
-      model = full_model,
-      predictors = variables,
-      performance = eval_final,
-      performance_part = eval_partial,
-      predicted_part = part_pred
-    )
+      family <- distribution
+      for (h in 1:np) {
+        if (verbose) {
+          message("Replica number: ", h, "/", np)
+        }
 
-    # Standardize output list
-    for (i in 2:length(data_list)) {
-      if (!class(data_list[[i]])[1] == "tbl_df") {
-        data_list[[i]] <- dplyr::as_tibble(data_list[[i]])
+        folds <- data %>%
+          dplyr::pull(p_names[h]) %>%
+          unique() %>%
+          sort()
+
+        fold_training_lists <- init_training_lists("fold")
+
+        # eval_partial <- list()
+        # pred_test <- list()
+        # part_pred <- list()
+
+        for (j in 1:length(folds)) {
+          if (verbose) {
+            message("-- Partition number ", j, "/", length(folds))
+          }
+
+          train_set <- data[data[, p_names[h]] != folds[j], ]
+          test_set <- data[data[, p_names[h]] == folds[j], ]
+
+          set.seed(13)
+          model <- gamlss::gamlss(
+            formula = formula1,
+            family = family,
+            data = train_set,
+            sigma.formula = sigma_formula,
+            nu.formula = nu_formula,
+            tau.formula = tau_formula,
+            control = control_gamlss,
+            trace = FALSE
+          )
+
+          pred <- gamlss::predictAll(model, newdata = test_set, data = train_set, type = "response")[[1]]
+          observed <- dplyr::pull(test_set, response)
+
+          if (hold_out_evaluation) {
+            pred_ho <-
+              suppressMessages(stats::predict(model, newdata = hold_out_set[, c(predictors, predictors_f)], type = "response"))
+            observed_ho <- hold_out_set[, response]
+          } else {
+            pred_ho <- observed_ho <- NULL
+          }
+
+          fold_training_lists <- fold_perf_register(
+            "gam", folds, j,
+            fold_training_lists,
+            predict_part,
+            hold_out_evaluation,
+            pred, pred_ho,
+            observed, observed_ho
+          )
+        }
+
+        # Create final database with parameter performance
+        replica_training_lists <- replica_perf_register(
+          replica_training_lists, fold_training_lists,
+          folds, h, predict_part, hold_out_evaluation
+        )
       }
-    }
 
-    return(data_list)
+
+      # fit final model with all data
+      set.seed(13)
+      full_model <- gamlss::gamlss(
+        formula = formula1,
+        family = family,
+        data = data,
+        sigma.formula = sigma_formula,
+        nu.formula = nu_formula,
+        tau.formula = tau_formula,
+        control = control_gamlss,
+        trace = FALSE
+      )
+
+      # evaluate full model with hold-out set
+      if (hold_out_evaluation) {
+        pred <-
+          suppressMessages(predict(full_model, newdata = hold_out_set[, c(predictors, predictors_f)], type = "response"))
+        observed <- hold_out_set[, response]
+
+        hold_out_perf <- adm_eval(obs = observed, pred = pred)
+      } else {
+        hold_out_perf <- NULL
+      }
+
+      # Construct the standard final list to be returned
+      data_list <- wrap_final_list(
+        "gam",
+        full_model,
+        variables,
+        response,
+        replica_training_lists,
+        hold_out_evaluation,
+        hold_out_perf,
+        predict_part,
+        get_metadata(
+          "gam",
+          list(
+            formula = formula1,
+            sigma.formula = sigma_formula,
+            nu.formula = nu_formula,
+            tau.formula = tau_formula
+          )
+        )
+      )
+
+      return(data_list)
+    }
   }

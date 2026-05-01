@@ -12,7 +12,8 @@ adm_predict(
   predict_area = NULL,
   invert_transform = NULL,
   transform_negative = FALSE,
-  sample_size = NULL
+  sample_size = NULL,
+  pred_quantile = 0.5
 )
 }
 \arguments{
@@ -94,12 +95,12 @@ some_sp <- flexsdm::part_random(
 # choosen_dist <- gamlss::chooseDist(m1, parallel="multicore", ncpus=4, type="realAll")
 
 mgam <- fit_abund_gam(
-  data = some_sp,
+  data = some_sp \%>\% dplyr::mutate(ind_ha = round(ind_ha)),
   response = "ind_ha",
   predictors = c("elevation", "sand", "bio3", "bio12"),
   predictors_f = "eco",
   partition = ".part",
-  distribution = gamlss.dist::NO()
+  distribution = gamlss.dist::PO()
 )
 
 mraf <- fit_abund_raf(
@@ -120,48 +121,34 @@ mgbm <- fit_abund_gbm(
 
 ## \%######################################################\%##
 #                                                          #
-####            ' ####      Predict models              ####
+####                        Predict models               ####
 #                                                          #
 ## \%######################################################\%##
 
 # adm_predict can be used for predict one or more models fitted with fit_ or tune_ functions
 
 # a single model
-ind_p <- sdm_predict(
-  models = mglm,
-  pred = somevar,
-  thr = "max_fpb",
-  con_thr = FALSE,
-  predict_area = NULL
+ind_p <- adm_predict(
+  models = mgam,
+  pred = envar,
+  training_data = some_sp,
+  nchunk = 1,
+  predict_area = NULL,
+  invert_transform = NULL,
+  transform_negative = FALSE,
+  sample_size = NULL
 )
 
 # a list of models
-list_p <- sdm_predict(
-  models = list(mglm, mraf, mgbm),
-  pred = somevar,
-  thr = "max_fpb",
-  con_thr = FALSE,
-  predict_area = NULL
-)
-
-# Predict an ensemble model
-# (only is possilbe use one fit_ensemble)
-ensemble_p <- sdm_predict(
-  models = mensemble,
-  pred = somevar,
-  thr = "max_fpb",
-  con_thr = FALSE,
-  predict_area = NULL
-)
-
-# Predict an ensemble of small models
-# (only is possible to use one ensemble of small models)
-small_p <- sdm_predict(
-  models = msmall,
-  pred = somevar,
-  thr = "max_fpb",
-  con_thr = FALSE,
-  predict_area = NULL
+list_p <- adm_predict(
+  models = list(mgam, mraf, mgbm),
+  pred = envar,
+  training_data = some_sp,
+  nchunk = 1,
+  predict_area = NULL,
+  invert_transform = NULL,
+  transform_negative = FALSE,
+  sample_size = NULL
 )
 
 ## \%######################################################\%##
@@ -172,14 +159,18 @@ small_p <- sdm_predict(
 # Predicting models in chunks helps reduce memory requirements in
 # cases where models are predicted for large scales and high resolution
 
-ind_p <- sdm_predict(
-  models = mglm,
-  pred = somevar,
-  thr = "max_fpb",
-  con_thr = FALSE,
+ind_p <- adm_predict(
+  models = mraf,
+  pred = envar,
+  training_data = some_sp,
+  nchunk = 4,
   predict_area = NULL,
-  nchunk = 4
+  invert_transform = NULL,
+  transform_negative = FALSE,
 )
+ind_p
+ind_p$raf
+plot(ind_p$raf)
 }
 
 }

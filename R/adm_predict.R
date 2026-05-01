@@ -80,12 +80,12 @@
 #' # choosen_dist <- gamlss::chooseDist(m1, parallel="multicore", ncpus=4, type="realAll")
 #'
 #' mgam <- fit_abund_gam(
-#'   data = some_sp,
+#'   data = some_sp %>% dplyr::mutate(ind_ha = round(ind_ha)),
 #'   response = "ind_ha",
 #'   predictors = c("elevation", "sand", "bio3", "bio12"),
 #'   predictors_f = "eco",
 #'   partition = ".part",
-#'   distribution = gamlss.dist::NO()
+#'   distribution = gamlss.dist::PO()
 #' )
 #'
 #' mraf <- fit_abund_raf(
@@ -106,48 +106,34 @@
 #'
 #' ## %######################################################%##
 #' #                                                          #
-#' ####            ' ####      Predict models              ####
+#' ####                        Predict models               ####
 #' #                                                          #
 #' ## %######################################################%##
 #'
 #' # adm_predict can be used for predict one or more models fitted with fit_ or tune_ functions
 #'
 #' # a single model
-#' ind_p <- sdm_predict(
-#'   models = mglm,
-#'   pred = somevar,
-#'   thr = "max_fpb",
-#'   con_thr = FALSE,
-#'   predict_area = NULL
+#' ind_p <- adm_predict(
+#'   models = mgam,
+#'   pred = envar,
+#'   training_data = some_sp,
+#'   nchunk = 1,
+#'   predict_area = NULL,
+#'   invert_transform = NULL,
+#'   transform_negative = FALSE,
+#'   sample_size = NULL
 #' )
 #'
 #' # a list of models
-#' list_p <- sdm_predict(
-#'   models = list(mglm, mraf, mgbm),
-#'   pred = somevar,
-#'   thr = "max_fpb",
-#'   con_thr = FALSE,
-#'   predict_area = NULL
-#' )
-#'
-#' # Predict an ensemble model
-#' # (only is possilbe use one fit_ensemble)
-#' ensemble_p <- sdm_predict(
-#'   models = mensemble,
-#'   pred = somevar,
-#'   thr = "max_fpb",
-#'   con_thr = FALSE,
-#'   predict_area = NULL
-#' )
-#'
-#' # Predict an ensemble of small models
-#' # (only is possible to use one ensemble of small models)
-#' small_p <- sdm_predict(
-#'   models = msmall,
-#'   pred = somevar,
-#'   thr = "max_fpb",
-#'   con_thr = FALSE,
-#'   predict_area = NULL
+#' list_p <- adm_predict(
+#'   models = list(mgam, mraf, mgbm),
+#'   pred = envar,
+#'   training_data = some_sp,
+#'   nchunk = 1,
+#'   predict_area = NULL,
+#'   invert_transform = NULL,
+#'   transform_negative = FALSE,
+#'   sample_size = NULL
 #' )
 #'
 #' ## %######################################################%##
@@ -158,14 +144,18 @@
 #' # Predicting models in chunks helps reduce memory requirements in
 #' # cases where models are predicted for large scales and high resolution
 #'
-#' ind_p <- sdm_predict(
-#'   models = mglm,
-#'   pred = somevar,
-#'   thr = "max_fpb",
-#'   con_thr = FALSE,
+#' ind_p <- adm_predict(
+#'   models = mraf,
+#'   pred = envar,
+#'   training_data = some_sp,
+#'   nchunk = 4,
 #'   predict_area = NULL,
-#'   nchunk = 4
+#'   invert_transform = NULL,
+#'   transform_negative = FALSE,
 #' )
+#' ind_p
+#' ind_p$raf
+#' plot(ind_p$raf)
 #' }
 #'
 adm_predict <-
@@ -176,29 +166,23 @@ adm_predict <-
            predict_area = NULL,
            invert_transform = NULL,
            transform_negative = FALSE,
-           sample_size = NULL) {
+           sample_size = NULL,
+           pred_quantile = 0.5) {
     . <- model <- threshold <- thr_value <- self <- response <- NULL
 
-    if (is.null(names(models))) {
-      message("Predicting list of individual models")
-      ensembles <- NULL
-      esm <- NULL
-    } else if (all(names(models) %in% c("models", "thr_metric", "predictors", "performance"))) {
-      message("Predicting ensembles")
-      ensembles <- models
-      models <- NULL
-      esm <- NULL
-    } else if (all(names(models) %in% c("esm_model", "predictors", "performance"))) {
-      message("Predicting ensemble of small models")
-      esm <- models
-      models <- NULL
-      ensembles <- NULL
-    } else {
-      message("Predicting individual models")
-      models <- list(models)
-      ensembles <- NULL
-      esm <- NULL
+    if (!check_models_validity(models)[[1]] %>% as.logical()) {
+      stop("Models argument is invalid.")
     }
+
+    switch(check_models_validity(models)[[2]],
+      "list_of_models" = {
+        message("Predicting a list of models")
+      },
+      "individual_models" = {
+        message("Predicting an individual model")
+        models <- list(models)
+      }
+    )
 
     #### Prepare datasets ####
     # Crop and mask projection area
@@ -251,12 +235,13 @@ adm_predict <-
     # if(chunk){
     cell <- terra::as.data.frame(pred, cells = TRUE, na.rm = TRUE)[, "cell"]
     cell_coord <- terra::as.data.frame(pred, xy = TRUE, na.rm = TRUE)[, c("x", "y")]
-    set <-
-      c(
-        seq(1, length(cell), length.out = nchunk) # length.out = nchunk
-        %>% round(),
-        length(cell) + 1
-      )
+
+    set <- seq(
+      from = 1,
+      to = length(cell) + 1,
+      length.out = nchunk + 1
+    ) |> round()
+
     # } #else {
     #   pred_df <-
     #   terra::as.data.frame(pred, cells = FALSE, na.rm = TRUE)
@@ -273,14 +258,13 @@ adm_predict <-
       model_c[[i]] <- r
     }
 
-    # Write here the loop
+    # Prediction loop
     for (CH in seq_len((length(set) - 1))) {
       rowset <- set[CH]:(set[CH + 1] - 1)
       pred_coord <- cell_coord[rowset, ]
       rowset <- cell[rowset]
       pred_df <- pred[rowset]
       rownames(pred_df) <- rowset
-
 
       ## %######################################################%##
       #                                                          #
@@ -354,7 +338,7 @@ adm_predict <-
             # rm(v)
           } else {
             pred_matrix <- list(
-              data = stats::model.matrix(~ . - 1, data = pred_df[m[[i]]$feature_names])
+              data = stats::model.matrix(~ . - 1, data = pred_df[get_predictor_names(m_detect, i)])
             )
 
             r[as.numeric(rownames(pred_df))] <-
@@ -485,7 +469,7 @@ adm_predict <-
           r <- pred[[!terra::is.factor(pred)]][[1]]
           r[!is.na(r)] <- NA
           r[as.numeric(rownames(pred_df))] <-
-            suppressMessages(stats::predict(m[[i]], pred_dataset, shuffle = TRUE) %>% as.numeric())
+            suppressMessages(stats::predict(m[[i]], pred_dataset) %>% as.numeric())
 
           model_c[[i]][rowset] <- r[rowset]
         }
@@ -496,10 +480,25 @@ adm_predict <-
       if (length(wm) > 0) {
         wm <- names(wm)
         for (i in wm) {
+          vfilter <- filter_safe_levels(m_detect[[i]], pred_df, training_data)[[2]]
+
+          v <- rep(NA, nrow(pred_df))
+
           r <- pred[[!terra::is.factor(pred)]][[1]]
           r[!is.na(r)] <- NA
-          r[as.numeric(rownames(pred_df))] <-
-            suppressMessages(stats::predict(m[[i]], newdata = pred_df, data = training_data, type = "response"))
+
+          v[vfilter] <-
+            suppressMessages(
+              stats::predict(
+                m[[i]],
+                newdata = pred_df[vfilter, get_predictor_names(m_detect, i)],
+                data = training_data,
+                type = "response"
+              )
+            )
+
+          r[as.numeric(rownames(pred_df))] <- v
+          rm(v)
 
           model_c[[i]][rowset] <- r[rowset]
         }
@@ -520,8 +519,8 @@ adm_predict <-
       }
 
 
-      #### randomforest class ####
-      wm <- which(clss == "randomforest")
+      #### quantregforest class ####
+      wm <- which(clss == "quantregforest")
       if (length(wm) > 0) {
         wm <- names(wm)
         for (i in wm) {
@@ -563,16 +562,57 @@ adm_predict <-
               suppressMessages(stats::predict(m[[i]], pred_df[!vfilter, ] %>%
                 dplyr::mutate(dplyr::across(
                   .cols = names(f),
-                  .fns = ~ droplevels(.)
+                  .fns = ~ factor(.x, levels = m[[i]]$forest$xlevels[[cur_column()]])
                 )),
-              type = "response"
+              type = "response",
+              what = pred_quantile
               ))
             r[as.numeric(rownames(pred_df))] <- v
             rm(v)
           } else {
+            if (length(f) > 0) {
+              pred_df <- pred_df %>%
+                dplyr::mutate(dplyr::across(
+                  .cols = names(f),
+                  .fns = ~ factor(.x, levels = m[[i]]$forest$xlevels[[cur_column()]])
+                ))
+            }
+
             r[as.numeric(rownames(pred_df))] <-
-              suppressMessages(stats::predict(m[[i]], pred_df, type = "response"))
+              suppressMessages(stats::predict(m[[i]], pred_df, type = "response", what = pred_quantile))
           }
+
+          model_c[[i]][rowset] <- r[rowset]
+        }
+      }
+
+
+      #### randomforest class ####
+      wm <- which(clss == "randomforest")
+      if (length(wm) > 0) {
+        wm <- names(wm)
+        for (i in wm) {
+          pred_df <- filter_safe_levels(m_detect[[i]], pred_df, training_data)[[1]]
+          vfilter <- filter_safe_levels(m_detect[[i]], pred_df, training_data)[[2]]
+
+          v <- rep(NA, nrow(pred_df))
+
+          r <- pred[[!terra::is.factor(pred)]][[1]]
+          r[!is.na(r)] <- NA
+
+
+          v[vfilter] <-
+            suppressMessages(
+              stats::predict(
+                m[[i]],
+                newdata = pred_df[vfilter, get_predictor_names(m_detect, i)],
+                data = as.data.frame(training_data),
+                type = "response"
+              )
+            )
+
+          r[as.numeric(rownames(pred_df))] <- v
+          rm(v)
 
           model_c[[i]][rowset] <- r[rowset]
         }
@@ -662,9 +702,10 @@ adm_predict <-
         "nnet",
         "randomforest",
         "ksvm",
-        "xgb.booster"
+        "xgb.booster",
+        "quantregForest"
       ),
-      names = c("dnn", "cnn", "gam", "glm", "gbm", "net", "raf", "svm", "xgb")
+      names = c("dnn", "cnn", "gam", "glm", "gbm", "net", "raf", "svm", "xgb", "qrf")
     )
 
     for (i in 1:length(names(clss))) {

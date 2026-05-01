@@ -169,7 +169,8 @@ test_that("data_abund_bpdp for gam", {
       sigma_formula = ~ elevation + bio3 + bio12,
       predictors_f = NULL,
       partition = ".part",
-      distribution = gamlss.dist::ZAGA()
+      distribution = gamlss.dist::ZAGA(),
+      predict_part = TRUE
     )
   )
 
@@ -439,8 +440,8 @@ test_that("data_abund_bpdp for xgb", {
     partition = ".part",
     nrounds = 200,
     max_depth = 5,
-    eta = 0.1,
-    gamma = 1,
+    learning_rate = 0.1,
+    min_split_loss = 1,
     colsample_bytree = 0.7,
     min_child_weight = 2,
     subsample = 0.3,

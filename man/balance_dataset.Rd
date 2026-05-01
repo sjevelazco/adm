@@ -4,7 +4,7 @@
 \alias{balance_dataset}
 \title{Balance database at a given absence-presence ratio}
 \usage{
-balance_dataset(data, response, absence_ratio)
+balance_dataset(data, response, absence_ratio, na.rm = TRUE)
 }
 \arguments{
 \item{data}{data.frame or tibble. Database that contains a columns with abundance.}
