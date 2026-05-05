@@ -95,7 +95,7 @@ data_abund_bpdp <-
     # Extract training data
 
     if (class(model)[1] == "list") {
-      if (all(c("model", "predictors", "performance", "performance_part", "predicted_part") %in% names(model))
+      if (all(c("model", "predictors") %in% names(model))
       ) {
         variables <- model$predictors
         model <- model[[1]]

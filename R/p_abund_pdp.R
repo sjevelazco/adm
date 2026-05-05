@@ -164,7 +164,7 @@ p_abund_pdp <-
     Type <- Value <- val <- Abundance <- sym <- NULL
 
     if (class(model)[1] == "list") {
-      if (all(c("model", "predictors", "performance", "performance_part", "predicted_part") %in% names(model))
+      if (all(c("model", "predictors") %in% names(model))
       ) {
         variables <- model$predictors
         model_l <- model
