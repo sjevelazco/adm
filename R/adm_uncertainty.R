@@ -83,21 +83,23 @@ adm_uncertainty <- function(
   # Capture extra arguments for refitting and prediction
   extra_args <- list(...)
 
-  #### Bootstrap approach ####
-  my_cluster <- parallel::makeCluster(n_cores)
-  doParallel::registerDoParallel(my_cluster)
+  # #### Bootstrap approach ####
+  # my_cluster <- parallel::makeCluster(n_cores)
+  # doParallel::registerDoParallel(my_cluster)
 
-  # Refitting and prediction loop
-  r_list <- foreach::foreach(
-    ii = 1:iteration,
-    .packages = c("dplyr", "terra"),
-    .export = c(
-      "fit_abund_cnn", "fit_abund_dnn", "fit_abund_gam", "fit_abund_glm",
-      "fit_abund_net", "fit_abund_qrf", "fit_abund_raf", "fit_abund_svm",
-      "fit_abund_xgb", "adm_predict"
-    ),
-    .errorhandling = "pass"
-  ) %dopar% {
+  # # Refitting and prediction loop
+  # r_list <- foreach::foreach(
+  #   ii = 1:iteration,
+  #   .packages = c("dplyr", "terra"),
+  #   .export = c(
+  #     "fit_abund_cnn", "fit_abund_dnn", "fit_abund_gam", "fit_abund_glm",
+  #     "fit_abund_net", "fit_abund_qrf", "fit_abund_raf", "fit_abund_svm",
+  #     "fit_abund_xgb", "adm_predict"
+  #   ),
+  #   .errorhandling = "pass"
+  # ) %dopar% {
+  r_list <- list()
+  for(ii in 1:iteration){
     set.seed(ii)
 
     # Bootstrap sample
@@ -145,8 +147,8 @@ adm_uncertainty <- function(
         fit_abund_svm(
           data = db, response = response, predictors = pr_c, predictors_f = pr_f,
           kernel = if (!is.null(models$optimal_combination$kernel)) models$optimal_combination$kernel else "rbfdot",
-          sigma = if (!is.null(models$optimal_combination$sigma)) models$optimal_combination$sigma else "automatic",
-          C = if (!is.null(models$optimal_combination$C)) models$optimal_combination$C else 1,
+          sigma = if (!is.null(models$optimal_combination$sigma)) models$optimal_combination$sigma else models$model@kernelf@kpar$sigma,
+          C = if (!is.null(models$optimal_combination$C)) models$optimal_combination$C else models$model@param$C,
           partition = NULL, verbose = FALSE
         )
       },
@@ -167,8 +169,8 @@ adm_uncertainty <- function(
       "net" = {
         fit_abund_net(
           data = db, response = response, predictors = pr_c, predictors_f = pr_f,
-          size = if (!is.null(models$optimal_combination$size)) models$optimal_combination$size else 10,
-          decay = if (!is.null(models$optimal_combination$decay)) models$optimal_combination$decay else 0.1,
+          size = if (!is.null(models$optimal_combination$size)) models$model else models$model$n[2],
+          decay = if (!is.null(models$optimal_combination$decay)) models$optimal_combination$decay else models$model$decay,
           partition = NULL, verbose = FALSE
         )
       },
@@ -198,12 +200,12 @@ adm_uncertainty <- function(
 
     # Predict
     models$model <- m_refit$model
-    p <- adm_predict(models = models, pred = pred, training_data = db)
+    suppressMessages(p <- adm_predict(models = models, pred = pred, training_data = db))
 
     # Return cell values as vector
-    as.vector(p[[1]])
+    r_list[[ii]] <- as.vector(p[[1]])
   }
-  parallel::stopCluster(my_cluster)
+  # parallel::stopCluster(my_cluster)
 
   # Identify successful iterations
   r_list_clean <- Filter(function(x) is.numeric(x), r_list)
