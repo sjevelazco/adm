@@ -164,7 +164,7 @@ adm_predict <-
            training_data = NULL,
            nchunk = 1,
            predict_area = NULL,
-           invert_transform = NULL,
+           invert_transform =  NULL,
            transform_negative = FALSE,
            sample_size = NULL,
            pred_quantile = 0.5) {

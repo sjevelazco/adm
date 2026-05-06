@@ -87,7 +87,6 @@ suitable_distributions <- family_selector(data = some_sp, response = "ind_ha")
 suitable_distributions
 # Create a grid
 gam_grid <- expand.grid(
-  inter = "automatic",
   distribution = suitable_distributions$family_call,
   stringsAsFactors = FALSE
 )

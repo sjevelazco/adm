@@ -152,7 +152,7 @@ fit_abund_gam <-
       suppressWarnings(
         full_model <- gamlss::gamlss(
           formula = formula1,
-          family = family,
+          family = distribution,
           data = data,
           sigma.formula = sigma_formula,
           nu.formula = nu_formula,
