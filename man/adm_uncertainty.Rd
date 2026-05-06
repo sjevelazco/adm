@@ -10,8 +10,7 @@ adm_uncertainty(
   response,
   pred,
   iteration = 50,
-  n_cores = 1,
-  ...
+  n_cores = 1
 )
 }
 \arguments{

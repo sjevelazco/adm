@@ -491,8 +491,9 @@ adm_predict <-
             suppressMessages(
               stats::predict(
                 m[[i]],
+                what="mu",
                 newdata = pred_df[vfilter, get_predictor_names(m_detect, i)],
-                data = training_data,
+                # data = training_data,
                 type = "response"
               )
             )

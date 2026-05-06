@@ -62,8 +62,7 @@ adm_uncertainty <- function(
   response,
   pred,
   iteration = 50,
-  n_cores = 1,
-  ...
+  n_cores = 1
 ) {
   # Extract algorithm type
   clss <- models$predictors$model
@@ -71,17 +70,12 @@ adm_uncertainty <- function(
   # Predictor names
   pr_c <- models$predictors %>%
     dplyr::select(dplyr::starts_with("c")) %>%
-    unlist() %>%
-    as.character()
+    unlist() 
   pr_f <- models$predictors %>%
     dplyr::select(dplyr::starts_with("f")) %>%
-    unlist() %>%
-    as.character()
+    unlist()
   names(pr_c) <- NULL
   names(pr_f) <- NULL
-
-  # Capture extra arguments for refitting and prediction
-  extra_args <- list(...)
 
   # #### Bootstrap approach ####
   # my_cluster <- parallel::makeCluster(n_cores)

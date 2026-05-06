@@ -80,7 +80,7 @@ fit_abund_gam <-
            sigma_formula = ~1,
            nu_formula = ~1,
            tau_formula = ~1,
-           partition,
+           partition = NULL,
            hold_out_set = NULL,
            predict_part = FALSE,
            distribution = NULL,
