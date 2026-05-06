@@ -105,6 +105,13 @@ adm_uncertainty <- function(
     # Bootstrap sample
     db <- training_data[sample(nrow(training_data), replace = TRUE), ]
 
+    # Family for GAM and GLM
+    if (clss == "gam" || clss == "glm"){
+      fam_char <- if (!is.null(models$optimal_combination$distribution)) models$optimal_combination$distribution else models$model$family[[1]]
+      fam_char <- as.character(fam_char)
+    }
+    
+
     # Refit model based on algorithm type
     m_refit <- switch(clss,
       "raf" = {
@@ -127,8 +134,7 @@ adm_uncertainty <- function(
       "gam" = {
         fit_abund_gam(
           data = db, response = response, predictors = pr_c, predictors_f = pr_f,
-          distribution = if (!is.null(models$optimal_combination$distribution)) models$optimal_combination$distribution else models$model$family[1],
-          inter = if (!is.null(models$optimal_combination$inter)) models$optimal_combination$inter else "automatic",
+          distribution = fam_char,
           partition = NULL, verbose = FALSE
         )
       },
