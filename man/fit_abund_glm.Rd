@@ -13,7 +13,7 @@ fit_abund_glm(
   sigma_formula = ~1,
   nu_formula = ~1,
   tau_formula = ~1,
-  partition,
+  partition = NULL,
   hold_out_set = NULL,
   predict_part = FALSE,
   distribution = NULL,
