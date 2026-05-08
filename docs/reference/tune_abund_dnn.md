@@ -1,0 +1,202 @@
+# Fit and validate Deep Neural Network model with exploration of hyper-parameters that optimize performance
+
+Fit and validate Deep Neural Network model with exploration of
+hyper-parameters that optimize performance
+
+## Usage
+
+``` r
+tune_abund_dnn(
+  data,
+  response,
+  predictors,
+  predictors_f = NULL,
+  partition,
+  predict_part = FALSE,
+  grid = NULL,
+  architectures = NULL,
+  metrics = NULL,
+  n_cores = 1,
+  verbose = TRUE
+)
+```
+
+## Arguments
+
+- data:
+
+  tibble or data.frame. Database with response, predictors, and
+  partition values
+
+- response:
+
+  character. Column name with species abundance.
+
+- predictors:
+
+  character. Vector with the column names of quantitative predictor
+  variables (i.e. continuous variables). Usage predictors = c("temp",
+  "precipt", "sand")
+
+- predictors_f:
+
+  character. Vector with the column names of qualitative predictor
+  variables (i.e. ordinal or nominal variables type). Usage predictors_f
+  = c("landform")
+
+- partition:
+
+  character. Column name with training and validation partition groups.
+
+- predict_part:
+
+  logical. Save predicted abundance for testing data. Default = FALSE
+
+- grid:
+
+  tibble or data.frame. A dataframe with "batch_size", "n_epochs",
+  "learning_rate" as columns and its values combinations as rows. If no
+  grid is provided, function will create a default grid combining the
+  next hyperparameters: batch_size = 2^seq(4, 6) n_epochs = 10
+  learning_rate = seq(from = 0.1, to = 0.2, by = 0.1)
+  validation_patience = 2 fitting_patience = 5. In case one or more
+  hyperparameters are provided, the function will complete the grid with
+  the default values.
+
+- architectures:
+
+  list or character. A list object containing a list of architectures
+  (nn_modules_generators from torch), called "arch_list", and a list of
+  matrices describing each architecture, called ("arch_dict"); use
+  generate_arch_list function to create it. It's also possible to use
+  "fit_intern", what will construct the default neural network
+  architecture of fit_abund_dnn. If NULL, a list of architectures will
+  be generated. Default NULL
+
+- metrics:
+
+  character. Vector with one or more metrics from
+  c("corr_spear","corr_pear","mae","pdisp","inter","slope").
+
+- n_cores:
+
+  numeric. Number of cores used in parallel processing.
+
+- verbose:
+
+  logical. If FALSE, disables all console messages. Default TRUE
+
+## Value
+
+A list object with:
+
+- model: A "luz_module_fitted" object from luz (torch framework). This
+  object can be used to predicting.
+
+- predictors: A tibble with quantitative (c column names) and
+  qualitative (f column names) variables use for modeling.
+
+- performance: A tibble with selected model's performance metrics
+  calculated in adm_eval.
+
+- performance_part: A tibble with performance metrics for each test
+  partition.
+
+- predicted_part: A tibble with predicted abundance for each test
+  partition.
+
+- optimal_combination: A tibble with the selected hyperparameter
+  combination and its performance.
+
+- all_combinations: A tibble with all hyperparameters combinations and
+  its performance.
+
+- selected_arch: A numeric vector describing the selected architecture
+  layers.
+
+## Examples
+
+``` r
+if (FALSE) { # \dontrun{
+require(dplyr)
+
+# Database with species abundance and x and y coordinates
+data("sppabund")
+
+# Select data for a single species
+some_sp <- sppabund %>%
+  dplyr::filter(species == "Species one") %>%
+  dplyr::select(-.part2, -.part3)
+
+# Explore response variables
+some_sp$ind_ha %>% range()
+some_sp$ind_ha %>% hist()
+
+# Here we balance number of absences
+some_sp <-
+  balance_dataset(some_sp, response = "ind_ha", absence_ratio = 0.2)
+
+# Generate some architectures
+many_archs <- generate_arch_list(
+  type = "dnn",
+  number_of_features = 3,
+  number_of_outputs = 1,
+  n_layers = c(2, 3),
+  n_neurons = c(6, 12, 16)
+) %>% select_arch_list(
+  type = c("dnn"),
+  method = "percentile",
+  n_samples = 1,
+  min_max = TRUE
+)
+
+# Create a grid
+# Obs.: the grid is tested with every architecture, thus it can get very large.
+dnn_grid <- expand.grid(
+  learning_rate = c(0.01, 0.005),
+  n_epochs = c(50, 100),
+  batch_size = c(32),
+  validation_patience = c(2, 4),
+  fitting_patience = c(2, 4),
+  stringsAsFactors = FALSE
+)
+
+# Tune a DNN model
+tuned_dnn <- tune_abund_dnn(
+  data = some_sp,
+  response = "ind_ha",
+  predictors = c("bio12", "elevation", "sand"),
+  partition = ".part",
+  predict_part = TRUE,
+  metrics = c("corr_pear", "mae"),
+  grid = dnn_grid,
+  architectures = many_archs,
+  n_cores = 3
+)
+
+tuned_dnn
+
+# It is also possible to use a only one architecture
+one_arch <- generate_dnn_architecture(
+  number_of_features = 3,
+  number_of_outputs = 1,
+  number_of_hidden_layers = 3,
+  hidden_layers_size = c(8, 16, 8),
+  batch_norm = TRUE
+)
+
+tuned_dnn_2 <- tune_abund_dnn(
+  data = some_sp,
+  response = "ind_ha",
+  predictors = c("bio12", "elevation", "sand"),
+  partition = ".part",
+  predict_part = TRUE,
+  metrics = c("corr_pear", "mae"),
+  grid = dnn_grid,
+  architectures = one_arch,
+  n_cores = 3
+)
+
+tuned_dnn_2
+} # }
+```

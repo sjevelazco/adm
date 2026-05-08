@@ -1,0 +1,234 @@
+# Partial dependent plots for abundance-based distribution models
+
+Create partial dependence plots to explore the marginal effect of
+predictors on modeled abundance
+
+## Usage
+
+``` r
+p_abund_pdp(
+  model,
+  predictors = NULL,
+  resolution = 100,
+  resid = FALSE,
+  training_data = NULL,
+  invert_transform = NULL,
+  response_name = NULL,
+  projection_data = NULL,
+  rug = FALSE,
+  colorl = c("#462777", "#6DCC57"),
+  colorp = "black",
+  alpha = 0.2,
+  theme = ggplot2::theme_classic(),
+  sample_size = NULL,
+  training_raster = NULL,
+  x_coord = NULL,
+  y_coord = NULL
+)
+```
+
+## Arguments
+
+- model:
+
+  A model object found in the first element of the list returned by any
+  function from the fit_abund\_ or tune_abund\_ function families
+
+- predictors:
+
+  character. Vector of predictor name(s) to calculate partial dependence
+  plots. If NULL all predictors will be used. Default NULL
+
+- resolution:
+
+  numeric. Number of equally spaced points at which to predict abundance
+  values for continuous predictors. Default 50
+
+- resid:
+
+  logical. Calculate residuals based on training data. Default FALSE
+
+- training_data:
+
+  data.frame or tibble. Database with response and predictor values used
+  to fit a model. Default NULL
+
+- invert_transform:
+
+  logical. If TRUE, inverse transformation of response variable will be
+  applied.
+
+- response_name:
+
+  character. Name of the response variable. Default NULL
+
+- projection_data:
+
+  SpatRaster. Raster layer with environmental variables used for model
+  projection. When this argument is used, function will calculate
+  partial dependence curves distinguishing conditions used in training
+  and projection conditions (i.e., projection data present in projection
+  area but not training). Default NULL
+
+- rug:
+
+  logical. Add rug plot to partial dependence plot. Default FALSE
+
+- colorl:
+
+  character. Vector with colors to plot partial dependence curves.
+  Default c("#462777", "#6DCC57")
+
+- colorp:
+
+  character. Color to plot residuals. Default "black"
+
+- alpha:
+
+  numeric. Transparency of residuals. Default 0.2
+
+- theme:
+
+  ggplot2 theme. Default ggplot2::theme_classic()
+
+- sample_size:
+
+  vector. For CNN only. A vector containing the dimensions, in pixels,
+  of raster samples. See cnn_make_samples beforehand. Default c(11,11)
+
+- training_raster:
+
+  a terra SpatRaster object. For CNN only. A raster containing the
+  predictor variables used in tune_abund_cnn or fit_abund_cnn.
+
+- x_coord:
+
+  character. For CNN only. The name of the column containing longitude
+  information for each observation.
+
+- y_coord:
+
+  character. For CNN only. The name of the column containing latitude
+  information for each observation.
+
+## Value
+
+A ggplot object
+
+## Details
+
+This function creates partial dependent plots to explore the marginal
+effect of predictors on modeled abundance. If projection_data is used,
+function will extract the minimum and maximum values found in a region
+or time period to which a model will be projected. If the range of
+projection data is greater than of the training data it will be plotted
+with a different color. Partial dependence plot could be used to
+interpret a model or to explore how a model may extrapolate outside the
+environmental conditions used to train the model.
+
+## See also
+
+[`data_abund_pdp`](https://sjevelazco.github.io/adm/reference/data_abund_pdp.md),
+[`data_abund_bpdp`](https://sjevelazco.github.io/adm/reference/data_abund_bpdp.md),
+[`p_abund_bpdp`](https://sjevelazco.github.io/adm/reference/p_abund_bpdp.md)
+
+## Examples
+
+``` r
+if (FALSE) { # \dontrun{
+require(dplyr)
+require(terra)
+
+# Load data
+envar <- system.file("external/envar.tif", package = "adm") %>%
+  rast()
+
+data("sppabund")
+some_sp <- sppabund %>%
+  filter(species == "Species one")
+
+# Fit some models
+mglm <- fit_abund_glm(
+  data = some_sp,
+  response = "ind_ha",
+  predictors = c("bio12", "elevation", "sand"),
+  predictors_f = c("eco"),
+  partition = ".part",
+  distribution = "ZAIG",
+  poly = 3,
+  inter_order = 0,
+  predict_part = TRUE
+)
+
+# Partial Dependence Plots:
+
+# In different resolutions
+p_abund_pdp(
+  model = mglm,
+  resolution = 50,
+  training_data = some_sp,
+  response_name = "Abundance"
+)
+
+p_abund_pdp(
+  model = mglm,
+  resolution = 5,
+  training_data = some_sp,
+  response_name = "Abundance"
+)
+
+# Especific variables and different resulotions
+p_abund_pdp(
+  model = mglm,
+  predictors = c("bio12", "sand"),
+  training_data = some_sp,
+  response_name = "Abundance"
+)
+
+# With residuals and rug plot
+p_abund_pdp(
+  model = mglm,
+  training_data = some_sp,
+  response_name = "Abundance",
+  resid = TRUE
+)
+
+p_abund_pdp(
+  model = mglm,
+  training_data = some_sp,
+  response_name = "Abundance",
+  rug = TRUE
+)
+
+p_abund_pdp(
+  model = mglm,
+  training_data = some_sp,
+  response_name = "Abundance",
+  resid = TRUE,
+  rug = TRUE
+)
+
+# Partial depence plot for training and projection condition found in a projection area
+p_abund_pdp(
+  model = mglm,
+  training_data = some_sp,
+  projection_data = envar,
+  response_name = "Abundance",
+  rug = TRUE
+)
+
+# Custumize colors and theme
+p_abund_pdp(
+  model = mglm,
+  predictors = NULL,
+  resolution = 100,
+  resid = TRUE,
+  training_data = some_sp,
+  projection_data = envar,
+  colorl = c("blue", "red"),
+  colorp = "darkgray",
+  alpha = 0.4,
+  theme = ggplot2::theme_dark()
+)
+} # }
+```

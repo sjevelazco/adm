@@ -1,0 +1,85 @@
+# Select architectures for Convolutional Neural Network or Deep Neural Network
+
+Select architectures for Convolutional Neural Network or Deep Neural
+Network
+
+## Usage
+
+``` r
+select_arch_list(
+  arch_list,
+  type = c("dnn", "cnn"),
+  method = "percentile",
+  n_samples = 1,
+  min_max = TRUE
+)
+```
+
+## Arguments
+
+- arch_list:
+
+  list. Containing Convolutional Neural Network or Deep Neural Network
+  architectures.
+
+- type:
+
+  character. Indicating the type of network. Options are "dnn" or "cnn".
+
+- method:
+
+  character. Indicating the method to select architectures. Default is
+  "percentile".
+
+- n_samples:
+
+  integer. Specifying the number of samples to select per group. Default
+  is 1.
+
+- min_max:
+
+  logical. If TRUE, include networks with minimal and maximal
+  parameters.
+
+## Value
+
+A list with:
+
+- arch_list: a list containing torch neural networks
+
+- arch_dict: a list of matrices describing the structure of those
+  networks
+
+- changes: a tibble with information about neural networks name changes,
+  number of parameters and deepness
+
+## Examples
+
+``` r
+if (FALSE) { # \dontrun{
+# Generate some big list of architectures combining all argument values
+big_arch_list <- generate_arch_list(
+  type = "dnn",
+  number_of_features = 4,
+  number_of_outputs = 1,
+  n_layers = seq(from = 2, to = 6, by = 1),
+  n_neurons = c(8, 16, 32, 64)
+)
+
+length(big_arch_list$arch_list) # 5456 architectures!
+
+# It can be reduced sampling network architectures by its parameters number
+
+reduced_arch_list <- big_arch_list %>% select_arch_list(
+  type = c("dnn"),
+  method = "percentile",
+  n_samples = 1, # Keep at least one of each deepness
+  min_max = TRUE # Keep the network with the minimum and maximum number of parameters
+)
+
+length(reduced_arch_list$arch_list) # from 5456 to 92 architectures!!
+
+# See architectures names, deepness and number of parameters
+reduced_arch_list$changes
+} # }
+```

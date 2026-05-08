@@ -1,0 +1,241 @@
+# Performs data transformation on a variable based on the specified method.
+
+This function transforms the data in a tibble or SpatRaster object on
+the method specified The available methods are "01", "zscore", "log",
+and "round".
+
+## Usage
+
+``` r
+adm_transform(data, variable, method, inverse = FALSE, t_terms = NULL)
+```
+
+## Arguments
+
+- data:
+
+  A data.frame, tibble, or SpatRaster containing the data.
+
+- variable:
+
+  A character string specifying the variable (column) to be transformed.
+
+- method:
+
+  A character string specifying the method to be used for
+  transformation. Available methods are "01", "zscore", "log", and
+  "round."
+
+  - For "01", it scales the variable between 0 and 1 using the formula
+    (x - min(x)) (max(x) - min(x)).
+
+  - For "zscore", it standardizes the variable by subtracting the mean
+    and dividing by the standard deviation.
+
+  - For "log", it applies natural logarithm transformation to the
+    variable.
+
+  - For "log1", it sums 1 and then applies natural logarithm
+    transformation to the variable.
+
+  - For "round", it rounds the variable's values to the nearest whole
+    numbers.
+
+- inverse:
+
+  logical. Invert the transformation?
+
+- t_terms:
+
+  vector. c(a,b):
+
+  - For "01", a = min(x), b = max(x).
+
+  - For "zscore", a = mean(x), b = sd(x).
+
+  - For "log" and "log1, not needed.
+
+  - Can't invert "round" transformations.
+
+## Value
+
+A data.frame or tibble with the transformed variable added as a new
+column. The new column's name is the original variable name followed by
+an underscore and method name.
+
+## Examples
+
+``` r
+if (FALSE) { # \dontrun{
+require(dplyr)
+require(terra)
+
+# Select data for a single species
+data("sppabund")
+some_sp <- sppabund %>%
+  dplyr::filter(species == "Species one") %>%
+  dplyr::select(species, ind_ha, x, y)
+
+envar <- system.file("external/envar.tif", package = "adm")
+envar <- terra::rast(envar)[["bio12"]]
+
+# Transform tabular data
+## Transform abundance data to 0-1
+some_sp_2 <- adm_transform(
+  data = some_sp,
+  variable = "ind_ha",
+  method = "01"
+)
+some_sp_2
+
+## Transform abundance data z-score
+some_sp_2 <- adm_transform(
+  data = some_sp,
+  variable = "ind_ha",
+  method = "zscore"
+)
+some_sp_2
+
+## Transform abundance data log
+some_sp_2 <- adm_transform(
+  data = some_sp,
+  variable = "ind_ha",
+  method = "log"
+)
+some_sp_2
+
+## Round abundance data
+some_sp_2 <- adm_transform(
+  data = some_sp,
+  variable = "ind_ha",
+  method = "round"
+)
+some_sp_2
+
+# Tranform raster data
+## Transform to 0-1
+envar_2 <- adm_transform(
+  data = envar,
+  variable = "bio12",
+  method = "01"
+)
+envar_2
+
+## Transform z-score
+envar_2 <- adm_transform(
+  data = envar,
+  variable = "bio12",
+  method = "zscore"
+)
+envar_2
+
+## Transform log
+envar_2 <- adm_transform(
+  data = envar,
+  variable = "bio12",
+  method = "log"
+)
+envar_2
+
+## Round
+envar_2 <- adm_transform(
+  data = envar,
+  variable = "bio12",
+  method = "round"
+)
+envar_2
+
+# Invert transformation
+## Invert 01 tranformation
+some_sp_transformed <- adm_transform(
+  data = some_sp,
+  variable = "ind_ha",
+  method = "01"
+)
+some_sp_transformed
+
+some_sp_inverted <- adm_transform(
+  data = some_sp_transformed,
+  variable = "ind_ha_01",
+  method = "01",
+  inverse = TRUE,
+  t_terms = c(
+    a = min(some_sp[["ind_ha"]]),
+    b = max(some_sp[["ind_ha"]])
+  )
+)
+some_sp_inverted
+
+## Invert z-score tranformation
+some_sp_transformed <- adm_transform(
+  data = some_sp,
+  variable = "ind_ha",
+  method = "zscore"
+)
+some_sp_transformed
+
+some_sp_inverted <- adm_transform(
+  data = some_sp_transformed,
+  variable = "ind_ha_zscore",
+  method = "zscore",
+  inverse = TRUE,
+  t_terms = c(
+    a = mean(some_sp[["ind_ha"]]),
+    b = sd(some_sp[["ind_ha"]])
+  )
+)
+some_sp_inverted
+
+## Invert log and log1
+some_sp_transformed <- adm_transform(
+  data = some_sp,
+  variable = "ind_ha",
+  method = "log"
+)
+some_sp_transformed
+
+some_sp_inverted <- adm_transform(
+  data = some_sp_transformed,
+  variable = "ind_ha_log",
+  method = "log",
+  inverse = TRUE
+)
+some_sp_inverted
+
+some_sp_transformed <- adm_transform(
+  data = some_sp,
+  variable = "ind_ha",
+  method = "log1"
+)
+some_sp_transformed
+
+some_sp_inverted <- adm_transform(
+  data = some_sp_transformed,
+  variable = "ind_ha_log1",
+  method = "log1",
+  inverse = TRUE
+)
+some_sp_inverted
+
+## To invert raster, is the same process
+## Example:
+envar_transformed <- adm_transform(
+  data = envar,
+  variable = "bio12",
+  method = "01"
+)
+envar_transformed
+
+envar_inverted <- adm_transform(
+  data = envar_transformed,
+  variable = "bio12_01",
+  method = "01",
+  inverse = TRUE,
+  t_terms = c(
+    a = terra::global(envar, min, na.rm = T),
+    b = terra::global(envar, max, na.rm = T)
+  )
+)
+envar_inverted
+} # }
+```

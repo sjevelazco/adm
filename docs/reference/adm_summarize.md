@@ -1,0 +1,79 @@
+# Merge model performance tables
+
+Merge model performance tables
+
+## Usage
+
+``` r
+adm_summarize(models)
+```
+
+## Arguments
+
+- models:
+
+  list. A list of a single or several models fitted with some of fit\_
+  or tune\_ functions. Usage models = list(mod1, mod2, mod3)
+
+## Value
+
+A tibble object with combined model performance for all input models.
+Models fit with tune will include model performance for the best
+hyperparameters.
+
+## Examples
+
+``` r
+if (FALSE) { # \dontrun{
+require(dplyr)
+require(terra)
+
+data("sppabund")
+envar <- system.file("external/envar.tif", package = "adm")
+envar <- terra::rast(envar)
+
+# Species abundance data, coordinates, and partition
+some_sp <- sppabund %>%
+  dplyr::filter(species == "Species one") %>%
+  dplyr::select(species, ind_ha, x, y, .part)
+some_sp
+
+# Extract data
+some_sp <-
+  adm_extract(
+    data = some_sp,
+    x = "x",
+    y = "y",
+    env_layer = envar
+  )
+
+# Fit RAF
+m_raf <- fit_abund_raf(
+  data = some_sp,
+  response = "ind_ha",
+  predictors = c("elevation", "sand", "bio3", "bio12"),
+  partition = ".part",
+)
+
+# Fit SVM
+m_svm <- fit_abund_svm(
+  data = some_sp,
+  response = "ind_ha",
+  predictors = c("elevation", "sand", "bio3", "bio12"),
+  partition = ".part"
+)
+
+# XGB
+m_xbg <- fit_abund_xgb(
+  data = some_sp,
+  response = "ind_ha",
+  predictors = c("elevation", "sand", "bio3", "bio12"),
+  partition = ".part"
+)
+
+
+perf <- adm_summarize(list(m_svm, m_raf, m_xbg))
+
+perf
+} # }
+```
