@@ -62,7 +62,8 @@ adm_uncertainty <- function(
   response,
   pred,
   iteration = 50,
-  n_cores = 1
+  sample_prop = 0.80,
+  n_cores = 1,
 ) {
   # Extract algorithm type
   clss <- models$predictors$model
@@ -97,6 +98,8 @@ adm_uncertainty <- function(
     set.seed(ii)
 
     # Bootstrap sample
+    # Classify abundance into presencen and absence
+    # group by pr ab and sample based on the proportion set up in sample_prop
     db <- training_data[sample(nrow(training_data), replace = TRUE), ]
 
     # Family for GAM and GLM
