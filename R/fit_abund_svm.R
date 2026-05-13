@@ -122,9 +122,30 @@ fit_abund_svm <-
         kpar = kpar_,
         C = C
       )
+      
+      variables <- get_variables(predictors, predictors_f)
+      variables <- dplyr::bind_cols(
+        data.frame(
+          model = "svm",
+          response = response
+        ),
+        variables
+      ) %>% as_tibble()
 
       result <- list(
-        model = full_model
+        model = full_model,
+        predictors = variables,
+        metadata = get_metadata(
+          "svm",
+          list(
+            type = "eps-svr",
+            hyperparameters = list(
+              kernel = kernel,
+              sigma = sigma,
+              C = C
+            )
+          )
+        )
       )
       return(result)
     } else {
@@ -233,7 +254,12 @@ fit_abund_svm <-
           "svm",
           list(
             formula = formula1,
-            type = "eps-svr"
+            type = "eps-svr",
+            hyperparameters = list(
+              kernel = kernel,
+              sigma = sigma,
+              C = C
+            )
           )
         )
       )

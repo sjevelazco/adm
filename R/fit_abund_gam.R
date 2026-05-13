@@ -161,8 +161,32 @@ fit_abund_gam <-
           trace = FALSE
         )
       )
+      
+      variables <- get_variables(predictors, predictors_f)
+      variables <- dplyr::bind_cols(
+        data.frame(
+          model = "gam",
+          response = response
+        ),
+        variables
+      ) %>% as_tibble()
+      
       result <- list(
-        model = full_model
+        model = full_model,
+        predictors = variables,
+        metadata = get_metadata(
+          "gam",
+          list(
+            formula = formula1,
+            sigma.formula = sigma_formula,
+            nu.formula = nu_formula,
+            tau.formula = tau_formula,
+            hyperparameters = list(
+              distribution = distribution,
+              inter = inter
+            )
+          )
+        )
       )
       return(result)
     } else {
@@ -280,7 +304,11 @@ fit_abund_gam <-
             formula = formula1,
             sigma.formula = sigma_formula,
             nu.formula = nu_formula,
-            tau.formula = tau_formula
+            tau.formula = tau_formula,
+            hyperparameters = list(
+              distribution = distribution,
+              inter = inter
+            )
           )
         )
       )

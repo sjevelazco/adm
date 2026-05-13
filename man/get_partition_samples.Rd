@@ -15,9 +15,6 @@ get_partition_samples(
   crop_size
 )
 }
-\arguments{
-\item{crop_size}{}
-}
 \value{
 a list of arrays
 }

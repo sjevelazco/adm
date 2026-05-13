@@ -123,8 +123,33 @@ fit_abund_gbm <-
         shrinkage = shrinkage,
         bag.fraction = 0.9
       )
+      
+      variables <- get_variables(predictors, predictors_f)
+      variables <- dplyr::bind_cols(
+        data.frame(
+          model = "gbm",
+          response = response
+        ),
+        variables
+      ) %>% as_tibble()
+      
       result <- list(
-        model = full_model
+        model = full_model,
+        predictors = variables,
+        metadata = get_metadata(
+          "gbm",
+          list(
+            formula = formula1,
+            hyperparameters = list(
+              distribution = distribution,
+              n.trees = n.trees,
+              interaction.depth = interaction.depth,
+              n.minobsinnode = n.minobsinnode,
+              shrinkage = shrinkage,
+              bag.fraction = 0.9
+            )
+          )
+        )
       )
       return(result)
     } else {
@@ -238,7 +263,14 @@ fit_abund_gbm <-
           "gbm",
           list(
             formula = formula1,
-            bag.fraction = 0.9
+            hyperparameters = list(
+              distribution = distribution,
+              n.trees = n.trees,
+              interaction.depth = interaction.depth,
+              n.minobsinnode = n.minobsinnode,
+              shrinkage = shrinkage,
+              bag.fraction = 0.9
+            )
           )
         )
       )

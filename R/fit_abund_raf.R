@@ -121,8 +121,30 @@ fit_abund_raf <-
           importance = FALSE
         )
       )
+      
+      variables <- get_variables(predictors, predictors_f)
+      variables <- dplyr::bind_cols(
+        data.frame(
+          model = "raf",
+          response = response
+        ),
+        variables
+      ) %>% as_tibble()
+        
+      
       result <- list(
-        model = full_model
+        model = full_model,
+        predictors = variables,
+        metadata = get_metadata(
+          "raf",
+          list(
+            importance = FALSE,
+            hyperparameters = list(
+              mtry = mtry,
+              ntree = ntree),
+            partition = NULL
+          )
+        )
       )
       return(result)
     } else {
@@ -229,7 +251,10 @@ fit_abund_raf <-
           "raf",
           list(
             formula = formula1,
-            importance = FALSE
+            importance = FALSE,
+            hyperparameters = list(
+              mtry = mtry,
+              ntree = ntree)
           )
         )
       )

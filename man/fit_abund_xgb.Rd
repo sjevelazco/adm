@@ -71,7 +71,8 @@ and early stopping. This data is never used during the training phase.}
     \item \code{c("max")}: Uses the maximum number of rounds reached in any fold.
     \item \code{c("min")}: Uses the minimum number of rounds reached in any fold.
   }
-}}
+}
+if partition = NULL, no early stopping is performed.}
 
 \item{verbose}{logical. If FALSE, disables all console messages. Default TRUE.}
 
