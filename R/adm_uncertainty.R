@@ -63,7 +63,7 @@ adm_uncertainty <- function(
   pred,
   iteration = 50,
   sample_prop = 0.80,
-  n_cores = 1,
+  n_cores = 1
 ) {
   # Extract algorithm type
   clss <- models$predictors$model
