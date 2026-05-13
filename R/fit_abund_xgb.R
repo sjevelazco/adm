@@ -34,6 +34,7 @@
 #'     \item \code{c("min")}: Uses the minimum number of rounds reached in any fold.
 #'   }
 #' }
+#' if partition = NULL, no early stopping is performed.
 #' @param verbose logical. If FALSE, disables all console messages. Default TRUE.
 #'
 #' @importFrom dplyr bind_rows select starts_with pull tibble as_tibble group_by summarise across bind_cols
@@ -101,7 +102,6 @@ fit_abund_xgb <-
            predictors_f = NULL,
            partition,
            hold_out_set = NULL,
-           # hold_out_evaluation = FALSE,
            predict_part = FALSE,
            nrounds = 1000,
            max_depth = 5,
@@ -158,8 +158,15 @@ fit_abund_xgb <-
 
     # Fit models
     if (is.null(partition) || !any(nzchar(partition, keepNA = FALSE))) {
-      train_observer <- observer_init() # TODO check this  train_observer object
       set.seed(13)
+      
+      full_train <- list(
+        data = stats::model.matrix(~ . - 1, data = data[, c(predictors, predictors_f)]),
+        target = data[, response]
+      )
+      
+      dfull <- xgboost::xgb.DMatrix(data = full_train$data, label = full_train$target)
+      
       full_model <- xgboost::xgb.train(
         data = dfull,
         params = list(
@@ -172,18 +179,37 @@ fit_abund_xgb <-
           min_split_loss = min_split_loss,
           seed = 13
         ),
-        nrounds = ifelse(
-          early_stopping$fm_strategy[[1]] == "hold_out",
-          yes = nrounds,
-          no = early_stop_interpreter(early_stopping, train_observer, nrounds)
-        ),
-        evals = fm_evals,
-        early_stopping_rounds = fm_early_stopping,
+        nrounds = nrounds,
         verbose = 0
       )
+      
+      variables <- get_variables(predictors, predictors_f)
+      variables <- dplyr::bind_cols(
+        data.frame(
+          model = "xgb",
+          response = response
+        ),
+        variables
+      ) %>% as_tibble()
 
       result <- list(
-        model = full_model
+        model = full_model,
+        predictors = variables,
+        metadata = get_metadata(
+          "xgb",
+          list(
+            boosted_rounds = xgboost::xgb.get.num.boosted.rounds(full_model),
+            hyperparameters = list(
+              objective = objective,
+              max_depth = max_depth,
+              learning_rate = learning_rate,
+              min_child_weight = min_child_weight,
+              subsample = subsample,
+              colsample_bytree = colsample_bytree,
+              min_split_loss = min_split_loss
+            )
+          )
+        )
       )
       return(result)
     } else {
@@ -372,7 +398,17 @@ fit_abund_xgb <-
           "xgb",
           list(
             evals = fm_evals,
-            early_stopping_rounds = fm_early_stopping
+            early_stopping_rounds = fm_early_stopping,
+            boosted_rounds = xgboost::xgb.get.num.boosted.rounds(full_model),
+            hyperparameters = list(
+              objective = objective,
+              max_depth = max_depth,
+              learning_rate = learning_rate,
+              min_child_weight = min_child_weight,
+              subsample = subsample,
+              colsample_bytree = colsample_bytree,
+              min_split_loss = min_split_loss
+            )
           )
         )
       )

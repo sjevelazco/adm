@@ -487,6 +487,7 @@ adm_predict <-
           r <- pred[[!terra::is.factor(pred)]][[1]]
           r[!is.na(r)] <- NA
 
+          m[[i]]$call$family <- m[[i]]$family[[1]]
           v[vfilter] <-
             suppressMessages(
               stats::predict(

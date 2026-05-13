@@ -190,6 +190,7 @@ get_metadata <- function(algo, ...) {
   )
 
   metadata <- append(metadata, list(...)[[1]])
+  metadata$source_function <- paste0("fit_abund_",algo)
 
   return(metadata)
 }
@@ -302,28 +303,34 @@ check_models_validity <- function(models) {
   # 1. it is properly organized in sublists
   # 2. each one containing one algorithm
   # 3. and a predictors table
-  if (is.list(models)) {
-    all_list <- all(lapply(models, function(x) {
-      class(x) == "list"
-    }) %>% unlist())
-
-    if (all_list) {
-      has_names <- lapply(models, function(x) {
-        all(c("model", "predictors") %in% names(x))
-      }) %>%
-        unlist() %>%
-        all()
-    } else {
-      has_names <- all(c("model", "predictors") %in% names(models))
-    }
-
-    if (all_list & has_names) {
-      return(c(TRUE, "list_of_models"))
-    } else if (has_names) {
-      return(c(TRUE, "individual_models"))
-    }
+  
+  minimum_names <- c("model","predictors","metadata")
+  
+  if(all(minimum_names %in% names(models))) {
+    is_big_list <- FALSE
+  } else if(lapply(models, function(x){all(minimum_names %in% names(x))}) |> unlist() |> all()) {
+    is_big_list <- TRUE
+  } else {
+    return(FALSE)
   }
-
+  
+  came_from_adm <- FALSE
+  if(is_big_list){
+    came_from_adm <- lapply(models, function(x){
+      grepl("tune_abund_",x$metadata$source_function) || grepl("fit_abund_",x$metadata$source_function)
+    }) |> unlist() |> all()
+  } else {
+    came_from_adm <- grepl("tune_abund_",models$metadata$source_function) || grepl("fit_abund_",models$metadata$source_function) 
+  }
+  
+  if (is_big_list & came_from_adm) {
+    return(c(TRUE, "list_of_models"))
+  } else if (came_from_adm) {
+    return(c(TRUE, "individual_models"))
+  } else {
+    return(FALSE)
+  }
+  
   return(FALSE)
 }
 

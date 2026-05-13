@@ -236,7 +236,7 @@ fit_abund_glm <-
       set.seed(13)
       full_model <- gamlss::gamlss(
         formula = formula1,
-        family = family,
+        family = distribution,
         data = data,
         sigma.formula = sigma_formula,
         nu.formula = nu_formula,
@@ -244,8 +244,33 @@ fit_abund_glm <-
         control = control_gamlss,
         trace = FALSE
       )
+      
+      variables <- get_variables(predictors, predictors_f)
+      variables <- dplyr::bind_cols(
+        data.frame(
+          model = "glm",
+          response = response
+        ),
+        variables
+      ) %>% as_tibble()
+      
       result <- list(
-        model = full_model
+        model = full_model,
+        predictors = variables,
+        metadata = get_metadata(
+          "glm",
+          list(
+            formula = formula1,
+            sigma.formula = sigma_formula,
+            nu.formula = nu_formula,
+            tau.formula = tau_formula,
+            hyperparameters = list(
+              distribution = distribution,
+              poly = poly,
+              inter_order = inter_order
+            )
+          )
+        )
       )
       return(result)
     } else {
@@ -364,7 +389,12 @@ fit_abund_glm <-
             formula = formula1,
             sigma.formula = sigma_formula,
             nu.formula = nu_formula,
-            tau.formula = tau_formula
+            tau.formula = tau_formula,
+            hyperparameters = list(
+              distribution = distribution,
+              poly = poly,
+              inter_order = inter_order
+            )
           )
         )
       )

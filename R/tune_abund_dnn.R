@@ -348,6 +348,7 @@ tune_abund_dnn <-
     selected_arch <- paste0(substr(selected_arch, 1, nchar(selected_arch) - 2), "_layer_net")
     n_comb <- as.numeric(arch_indexes[[1]][2])
 
+    final_model$metadata$source_function <- "tune_abund_raf"
     final_list <- c(final_model, ranked_combinations, list("selected_arch" = arch_dict[[selected_arch]][, n_comb]))
 
     return(final_list)

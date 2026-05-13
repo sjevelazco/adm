@@ -115,8 +115,33 @@ fit_abund_net <-
         linout = TRUE,
         trace = FALSE
       )
+      
+      variables <- get_variables(predictors, predictors_f)
+      variables <- dplyr::bind_cols(
+        data.frame(
+          model = "net",
+          response = response
+        ),
+        variables
+      ) %>% as_tibble()
+      
       result <- list(
-        model = full_model
+        model = full_model,
+        predictors = variables,
+        metadata = get_metadata(
+          "net",
+          list(
+            hyperparameters = list(
+              size = size,
+              decay = decay,
+              rang = 0.1,
+              maxit = 1000,
+              reltol = 1e-5,
+              linout = TRUE,
+              trace = FALSE
+            )
+          )
+        )
       )
       return(result)
     } else {
@@ -231,11 +256,15 @@ fit_abund_net <-
           "net",
           list(
             formula = formula1,
-            rang = 0.1,
-            maxit = 1000,
-            reltol = 1e-5,
-            linout = "TRUE",
-            trace = "FALSE"
+            hyperparameters = list(
+              size = size,
+              decay = decay,
+              rang = 0.1,
+              maxit = 1000,
+              reltol = 1e-5,
+              linout = TRUE,
+              trace = FALSE
+            )
           )
         )
       )

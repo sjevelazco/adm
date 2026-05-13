@@ -98,10 +98,17 @@ adm_uncertainty <- function(
     set.seed(ii)
 
     # Bootstrap sample
-    # Classify abundance into presencen and absence
-    # group by pr ab and sample based on the proportion set up in sample_prop
-    db <- training_data[sample(nrow(training_data), replace = TRUE), ]
-
+    db <- training_data %>%
+      mutate(
+        pr_ab = case_when(
+          .data[[response]] == 0 ~ 0,
+          .data[[response]] > 0 ~ 1
+        )
+      ) %>%
+      group_by(pr_ab) %>%
+      slice_sample(prop = sample_prop) %>%
+      ungroup()
+    
     # Family for GAM and GLM
     if (clss == "gam" || clss == "glm"){
       fam_char <- if (!is.null(models$optimal_combination$distribution)) models$optimal_combination$distribution else models$model$family[[1]]
@@ -114,76 +121,82 @@ adm_uncertainty <- function(
       "raf" = {
         fit_abund_raf(
           data = db, response = response, predictors = pr_c, predictors_f = pr_f,
-          mtry = if (!is.null(models$optimal_combination$mtry)) models$optimal_combination$mtry else models$model$mtry,
-          ntree = if (!is.null(models$optimal_combination$ntree)) models$optimal_combination$ntree else models$model$ntree,
+          mtry = models$metadata$hyperparameters$mtry,
+          ntree = models$metadata$hyperparameters$ntree,
           partition = NULL, verbose = FALSE
         )
       },
       "glm" = {
         fit_abund_glm(
           data = db, response = response, predictors = pr_c, predictors_f = pr_f,
-          distribution = if (!is.null(models$optimal_combination$distribution)) models$optimal_combination$distribution else models$model$family[1],
-          poly = if (!is.null(models$optimal_combination$poly)) models$optimal_combination$poly else 0,
-          inter_order = if (!is.null(models$optimal_combination$inter_order)) models$optimal_combination$inter_order else 0,
+          distribution = models$metadata$hyperparameters$distribution,
+          poly = models$metadata$hyperparameters$poly,
+          inter_order = models$metadata$hyperparameters$inter_order,
           partition = NULL, verbose = FALSE
         )
       },
       "gam" = {
         fit_abund_gam(
           data = db, response = response, predictors = pr_c, predictors_f = pr_f,
-          distribution = fam_char,
+          inter = models$metadata$hyperparameters$inter,
+          distribution = models$metadata$hyperparameters$distribution,
           partition = NULL, verbose = FALSE
         )
       },
       "gbm" = {
         fit_abund_gbm(
           data = db, response = response, predictors = pr_c, predictors_f = pr_f,
-          distribution = if (!is.null(models$optimal_combination$distribution)) models$optimal_combination$distribution else models$model$distribution,
-          n.trees = if (!is.null(models$optimal_combination$n.trees)) models$optimal_combination$n.trees else models$model$n.trees,
-          interaction.depth = if (!is.null(models$optimal_combination$interaction.depth)) models$optimal_combination$interaction.depth else models$model$interaction.depth,
-          n.minobsinnode = if (!is.null(models$optimal_combination$n.minobsinnode)) models$optimal_combination$n.minobsinnode else models$model$n.minobsinnode,
-          shrinkage = if (!is.null(models$optimal_combination$shrinkage)) models$optimal_combination$shrinkage else models$model$shrinkage,
+          distribution = models$metadata$hyperparameters$distribution,
+          n.trees = models$metadata$hyperparameters$n.trees,
+          interaction.depth = models$metadata$hyperparameters$interaction.depth,
+          n.minobsinnode = models$metadata$hyperparameters$n.minobsinnode,
+          shrinkage = models$metadata$hyperparameters$shrinkage,
           partition = NULL, verbose = FALSE
         )
       },
       "svm" = {
         fit_abund_svm(
           data = db, response = response, predictors = pr_c, predictors_f = pr_f,
-          kernel = if (!is.null(models$optimal_combination$kernel)) models$optimal_combination$kernel else "rbfdot",
-          sigma = if (!is.null(models$optimal_combination$sigma)) models$optimal_combination$sigma else models$model@kernelf@kpar$sigma,
-          C = if (!is.null(models$optimal_combination$C)) models$optimal_combination$C else models$model@param$C,
+          kernel = models$metadata$hyperparameters$kernel,
+          sigma = models$metadata$hyperparameters$sigma,
+          C = models$metadata$hyperparameters$C,
           partition = NULL, verbose = FALSE
         )
       },
       "xgb" = {
         fit_abund_xgb(
           data = db, response = response, predictors = pr_c, predictors_f = pr_f,
-          nrounds = if (!is.null(models$optimal_combination$nrounds)) models$optimal_combination$nrounds else 100,
-          max_depth = if (!is.null(models$optimal_combination$max_depth)) models$optimal_combination$max_depth else 5,
-          eta = if (!is.null(models$optimal_combination$eta)) models$optimal_combination$eta else 0.1,
-          gamma = if (!is.null(models$optimal_combination$gamma)) models$optimal_combination$gamma else 1,
-          colsample_bytree = if (!is.null(models$optimal_combination$colsample_bytree)) models$optimal_combination$colsample_bytree else 1,
-          min_child_weight = if (!is.null(models$optimal_combination$min_child_weight)) models$optimal_combination$min_child_weight else 1,
-          subsample = if (!is.null(models$optimal_combination$subsample)) models$optimal_combination$subsample else 0.5,
-          objective = if (!is.null(models$optimal_combination$objective)) models$optimal_combination$objective else "reg:squarederror",
+          nrounds = models$metadata$boosted_rounds,
+          max_depth = models$metadata$hyperparameters$max_depth,
+          learning_rate = models$metadata$hyperparameters$learning_rate,
+          min_split_loss = models$metadata$hyperparameters$min_split_loss,
+          colsample_bytree = models$metadata$hyperparameters$colsample_bytree,
+          min_child_weight = models$metadata$hyperparameters$min_child_weight,
+          subsample = models$metadata$hyperparameters$subsample,
+          objective = models$metadata$hyperparameters$objective,
           partition = NULL, verbose = FALSE
         )
       },
       "net" = {
         fit_abund_net(
           data = db, response = response, predictors = pr_c, predictors_f = pr_f,
-          size = if (!is.null(models$optimal_combination$size)) models$model else models$model$n[2],
-          decay = if (!is.null(models$optimal_combination$decay)) models$optimal_combination$decay else models$model$decay,
+          size = models$metadata$hyperparameters$size,
+          decay = models$metadata$hyperparameters$decay,
           partition = NULL, verbose = FALSE
         )
       },
       "dnn" = {
         fit_abund_dnn(
           data = db, response = response, predictors = pr_c, predictors_f = pr_f,
-          learning_rate = if (!is.null(models$optimal_combination$learning_rate)) models$optimal_combination$learning_rate else 0.01,
-          n_epochs = if (!is.null(models$optimal_combination$n_epochs)) models$optimal_combination$n_epochs else 10,
-          batch_size = if (!is.null(models$optimal_combination$batch_size)) models$optimal_combination$batch_size else 32,
-          custom_architecture = extra_args$custom_architecture,
+          learning_rate = models$metadata$hyperparameters$learning_rate,
+          n_epochs = models$metadata$hyperparameters$n_epochs,
+          batch_size = models$metadata$hyperparameters$batch_size,
+          optimizer = models$metadata$hyperparameters$optimizer,
+          validation_patience = models$metadata$hyperparameters$validation_patience,
+          fitting_patience = models$metadata$hyperparameters$fitting_patience,
+          loss_function = models$metadata$hyperparameters$loss_function,
+          weight_decay = models$metadata$hyperparameters$weight_decay,
+          custom_architecture = models$metadata$network,
           partition = NULL, verbose = FALSE
         )
       },

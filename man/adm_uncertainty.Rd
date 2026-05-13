@@ -10,6 +10,7 @@ adm_uncertainty(
   response,
   pred,
   iteration = 50,
+  sample_prop = 0.8,
   n_cores = 1
 )
 }

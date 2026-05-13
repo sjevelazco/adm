@@ -189,6 +189,7 @@ tune_abund_qrf <-
         verbose = verbose
       )
 
+    final_model$metadata$source_function <- "tune_abund_qrf"
     final_list <- c(final_model, ranked_combinations)
 
     return(final_list)

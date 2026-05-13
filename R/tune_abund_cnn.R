@@ -423,6 +423,7 @@ tune_abund_cnn <-
     selected_arch <- paste0(substr(selected_arch, 1, nchar(selected_arch) - 2), "-net")
     n_comb <- as.numeric(arch_indexes[[1]][3])
 
+    
     final_list <- c(
       final_model,
       ranked_combinations,
