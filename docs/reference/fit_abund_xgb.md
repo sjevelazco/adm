@@ -120,6 +120,8 @@ fit_abund_xgb(
 
     - `c("min")`: Uses the minimum number of rounds reached in any fold.
 
+  if partition = NULL, no early stopping is performed.
+
 - verbose:
 
   logical. If FALSE, disables all console messages. Default TRUE.

@@ -7,7 +7,14 @@
 #' adapt_df
 #'
 #' @noRd
-adapt_df <- function(data, predictors, predictors_f, response, partition, xy = NULL) {
+adapt_df <- function(
+  data,
+  predictors,
+  predictors_f,
+  response,
+  partition,
+  xy = NULL
+) {
   data <- data.frame(data)
   if (is.vector(xy)) {
     xy_cols <- data %>%
@@ -70,12 +77,25 @@ get_variables <- function(predictors, predictors_f) {
 #' infer_formula
 #'
 #' @noRd
-infer_formula <- function(fit_formula, response, predictors, predictors_f, verbose) {
+infer_formula <- function(
+  fit_formula,
+  response,
+  predictors,
+  predictors_f,
+  verbose
+) {
   if (is.null(fit_formula)) {
-    formula1 <- stats::formula(paste(response, "~", paste(c(
-      predictors,
-      predictors_f
-    ), collapse = " + ")))
+    formula1 <- stats::formula(paste(
+      response,
+      "~",
+      paste(
+        c(
+          predictors,
+          predictors_f
+        ),
+        collapse = " + "
+      )
+    ))
   } else {
     formula1 <- fit_formula
   }
@@ -83,7 +103,8 @@ infer_formula <- function(fit_formula, response, predictors, predictors_f, verbo
   if (verbose) {
     message(
       "Formula used for model fitting:\n",
-      Reduce(paste, deparse(formula1)) %>% gsub(paste("  ", "   ", collapse = "|"), " ", .),
+      Reduce(paste, deparse(formula1)) %>%
+        gsub(paste("  ", "   ", collapse = "|"), " ", .),
       "\n"
     )
   }
@@ -95,7 +116,17 @@ infer_formula <- function(fit_formula, response, predictors, predictors_f, verbo
 #'
 #' @noRd
 # wrap_final_list <- function(algo, full_model, variables, response, eval_partial_list, predict_part, part_pred_list, metadata){
-wrap_final_list <- function(algo, full_model, variables, response, replica_training_lists, hold_out_evaluation, hold_out_perf, predict_part, metadata) {
+wrap_final_list <- function(
+  algo,
+  full_model,
+  variables,
+  response,
+  replica_training_lists,
+  hold_out_evaluation,
+  hold_out_perf,
+  predict_part,
+  metadata
+) {
   # bind predicted evaluation
   eval_partial <- replica_training_lists$eval_partial_list %>%
     dplyr::bind_rows(.id = "replica") %>%
@@ -127,10 +158,16 @@ wrap_final_list <- function(algo, full_model, variables, response, replica_train
   # Summarize performance
   eval_final <- eval_partial %>%
     dplyr::group_by(model) %>%
-    dplyr::summarise(dplyr::across(mae:pdisp, list(
-      mean = mean,
-      sd = stats::sd
-    )), .groups = "drop")
+    dplyr::summarise(
+      dplyr::across(
+        mae:pdisp,
+        list(
+          mean = mean,
+          sd = stats::sd
+        )
+      ),
+      .groups = "drop"
+    )
 
   if (hold_out_evaluation) {
     eval_final <- bind_rows(
@@ -138,10 +175,16 @@ wrap_final_list <- function(algo, full_model, variables, response, replica_train
       eval_partial_ho %>%
         mutate(model = paste0(model, "_ho")) %>%
         dplyr::group_by(model) %>%
-        dplyr::summarise(dplyr::across(mae:pdisp, list(
-          mean = mean,
-          sd = stats::sd
-        )), .groups = "drop")
+        dplyr::summarise(
+          dplyr::across(
+            mae:pdisp,
+            list(
+              mean = mean,
+              sd = stats::sd
+            )
+          ),
+          .groups = "drop"
+        )
     )
   }
 
@@ -151,7 +194,8 @@ wrap_final_list <- function(algo, full_model, variables, response, replica_train
       response = response
     ),
     variables
-  ) %>% as_tibble()
+  ) %>%
+    as_tibble()
 
   # Final object
   data_list <- list(
@@ -190,7 +234,7 @@ get_metadata <- function(algo, ...) {
   )
 
   metadata <- append(metadata, list(...)[[1]])
-  metadata$source_function <- paste0("fit_abund_",algo)
+  metadata$source_function <- paste0("fit_abund_", algo)
 
   return(metadata)
 }
@@ -199,8 +243,13 @@ get_metadata <- function(algo, ...) {
 #'
 #' @noRd
 check_metrics <- function(metrics) {
-  if (is.null(metrics) |
-    !all(metrics %in% c("corr_spear", "corr_pear", "mae", "inter", "slope", "pdisp"))) {
+  if (
+    is.null(metrics) |
+      !all(
+        metrics %in%
+          c("corr_spear", "corr_pear", "mae", "inter", "slope", "pdisp")
+      )
+  ) {
     stop("Metrics is needed to be defined in 'metric' argument")
   }
 }
@@ -214,8 +263,12 @@ build_search_grid <- function(grid, grid_dict) {
 
   if (!all(nms_grid %in% nms_hypers)) {
     stop(
-      paste(paste(nms_grid[!nms_grid %in% nms_hypers], collapse = ", "), " is not hyperparameters\n"),
-      "Grid expected to be any combination between ", paste(nms_hypers, collapse = ", ")
+      paste(
+        paste(nms_grid[!nms_grid %in% nms_hypers], collapse = ", "),
+        " is not hyperparameters\n"
+      ),
+      "Grid expected to be any combination between ",
+      paste(nms_hypers, collapse = ", ")
     )
   }
 
@@ -272,7 +325,8 @@ observer_register <- function(observer, what, how) {
 #'
 #' @noRd
 early_stop_interpreter <- function(early_stopping, observer, nrounds) {
-  early_value <- switch(early_stopping$fm_strategy[[1]],
+  early_value <- switch(
+    early_stopping$fm_strategy[[1]],
     "mean" = {
       mean(observer$early_stop)
     },
@@ -303,26 +357,36 @@ check_models_validity <- function(models) {
   # 1. it is properly organized in sublists
   # 2. each one containing one algorithm
   # 3. and a predictors table
-  
-  minimum_names <- c("model","predictors","metadata")
-  
-  if(all(minimum_names %in% names(models))) {
+
+  minimum_names <- c("model", "predictors", "metadata")
+
+  if (all(minimum_names %in% names(models))) {
     is_big_list <- FALSE
-  } else if(lapply(models, function(x){all(minimum_names %in% names(x))}) |> unlist() |> all()) {
+  } else if (
+    lapply(models, function(x) {
+      all(minimum_names %in% names(x))
+    }) %>%
+      unlist() %>%
+      all()
+  ) {
     is_big_list <- TRUE
   } else {
     return(FALSE)
   }
-  
+
   came_from_adm <- FALSE
-  if(is_big_list){
-    came_from_adm <- lapply(models, function(x){
-      grepl("tune_abund_",x$metadata$source_function) || grepl("fit_abund_",x$metadata$source_function)
-    }) |> unlist() |> all()
+  if (is_big_list) {
+    came_from_adm <- lapply(models, function(x) {
+      grepl("tune_abund_", x$metadata$source_function) ||
+        grepl("fit_abund_", x$metadata$source_function)
+    }) %>%
+      unlist() %>%
+      all()
   } else {
-    came_from_adm <- grepl("tune_abund_",models$metadata$source_function) || grepl("fit_abund_",models$metadata$source_function) 
+    came_from_adm <- grepl("tune_abund_", models$metadata$source_function) ||
+      grepl("fit_abund_", models$metadata$source_function)
   }
-  
+
   if (is_big_list & came_from_adm) {
     return(c(TRUE, "list_of_models"))
   } else if (came_from_adm) {
@@ -330,7 +394,7 @@ check_models_validity <- function(models) {
   } else {
     return(FALSE)
   }
-  
+
   return(FALSE)
 }
 
@@ -355,17 +419,22 @@ get_predictor_names <- function(m_detect, i) {
 #'
 #' @noRd
 filter_safe_levels <- function(m_detect, pred_df, training_data) {
-  f_cols <- m_detect[1, grep("f", names(m_detect))] |>
-    unlist() |>
+  f_cols <- m_detect[1, grep("f", names(m_detect))] %>%
+    unlist() %>%
     as.character()
 
   if (length(f_cols) > 0) {
-    is_valid <- base::Reduce(`&`, base::lapply(f_cols, function(col) {
-      train_levels <- base::levels(training_data[[col]])
-      if (base::is.null(train_levels)) train_levels <- base::unique(training_data[[col]])
+    is_valid <- base::Reduce(
+      `&`,
+      base::lapply(f_cols, function(col) {
+        train_levels <- base::levels(training_data[[col]])
+        if (base::is.null(train_levels)) {
+          train_levels <- base::unique(training_data[[col]])
+        }
 
-      pred_df[[col]] %in% train_levels
-    }))
+        pred_df[[col]] %in% train_levels
+      })
+    )
 
     pred_df[!is_valid, ] <- NA
 
@@ -405,14 +474,16 @@ check_adapt_holdout_set <- function(
       predictors_f = predictors_f,
       response = response,
       partition = "mock_part"
-    ) %>% select(-mock_part)
+    ) %>%
+      select(-mock_part)
   }
 
   return(hold_out_set)
 }
 
 init_training_lists <- function(scopus) {
-  switch(scopus,
+  switch(
+    scopus,
     "replica" = {
       list(
         part_pred_list = list(),
@@ -448,12 +519,16 @@ init_training_lists <- function(scopus) {
 #'
 #' @noRd
 fold_perf_register <- function(
-  model, folds, j,
+  model,
+  folds,
+  j,
   fold_training_lists,
   predict_part,
   hold_out_evaluation,
-  pred, pred_ho,
-  observed, observed_ho
+  pred,
+  pred_ho,
+  observed,
+  observed_ho
 ) {
   fold_training_lists$eval_partial[[j]] <- dplyr::tibble(
     model = model,
@@ -461,7 +536,11 @@ fold_perf_register <- function(
   )
 
   if (predict_part) {
-    fold_training_lists$part_pred[[j]] <- data.frame(partition = folds[j], observed, predicted = pred)
+    fold_training_lists$part_pred[[j]] <- data.frame(
+      partition = folds[j],
+      observed,
+      predicted = pred
+    )
   }
 
   if (hold_out_evaluation) {
@@ -472,7 +551,11 @@ fold_perf_register <- function(
   }
 
   if (all(predict_part, hold_out_evaluation)) {
-    fold_training_lists$part_pred_ho[[j]] <- data.frame(partition = folds[j], observed_ho, predicted = pred_ho)
+    fold_training_lists$part_pred_ho[[j]] <- data.frame(
+      partition = folds[j],
+      observed_ho,
+      predicted = pred_ho
+    )
   }
 
   fold_training_lists
@@ -499,15 +582,23 @@ replica_perf_register <- function(
   names(fold_training_lists$eval_partial) <- 1:length(folds)
 
   fold_training_lists$eval_partial <-
-    fold_training_lists$eval_partial[sapply(fold_training_lists$eval_partial, function(x) !is.null(dim(x)))] %>%
+    fold_training_lists$eval_partial[sapply(
+      fold_training_lists$eval_partial,
+      function(x) !is.null(dim(x))
+    )] %>%
     dplyr::bind_rows(., .id = "partition")
 
-  replica_training_lists$eval_partial_list[[h]] <- fold_training_lists$eval_partial
+  replica_training_lists$eval_partial_list[[
+    h
+  ]] <- fold_training_lists$eval_partial
 
   if (predict_part) {
     names(fold_training_lists$part_pred) <- 1:length(folds)
     fold_training_lists$part_pred <-
-      fold_training_lists$part_pred[sapply(fold_training_lists$part_pred, function(x) !is.null(dim(x)))] %>%
+      fold_training_lists$part_pred[sapply(
+        fold_training_lists$part_pred,
+        function(x) !is.null(dim(x))
+      )] %>%
       dplyr::bind_rows(., .id = "partition")
     replica_training_lists$part_pred_list[[h]] <- fold_training_lists$part_pred
   }
@@ -516,18 +607,28 @@ replica_perf_register <- function(
     names(fold_training_lists$eval_partial_ho) <- 1:length(folds)
 
     fold_training_lists$eval_partial_ho <-
-      fold_training_lists$eval_partial_ho[sapply(fold_training_lists$eval_partial_ho, function(x) !is.null(dim(x)))] %>%
+      fold_training_lists$eval_partial_ho[sapply(
+        fold_training_lists$eval_partial_ho,
+        function(x) !is.null(dim(x))
+      )] %>%
       dplyr::bind_rows(., .id = "partition")
 
-    replica_training_lists$eval_partial_list_ho[[h]] <- fold_training_lists$eval_partial_ho
+    replica_training_lists$eval_partial_list_ho[[
+      h
+    ]] <- fold_training_lists$eval_partial_ho
   }
 
   if (all(hold_out_evaluation, predict_part)) {
     names(fold_training_lists$part_pred_ho) <- 1:length(folds)
     fold_training_lists$part_pred_ho <-
-      fold_training_lists$part_pred_ho[sapply(fold_training_lists$part_pred_ho, function(x) !is.null(dim(x)))] %>%
+      fold_training_lists$part_pred_ho[sapply(
+        fold_training_lists$part_pred_ho,
+        function(x) !is.null(dim(x))
+      )] %>%
       dplyr::bind_rows(., .id = "partition")
-    replica_training_lists$part_pred_list_ho[[h]] <- fold_training_lists$part_pred_ho
+    replica_training_lists$part_pred_list_ho[[
+      h
+    ]] <- fold_training_lists$part_pred_ho
   }
 
   return(replica_training_lists)

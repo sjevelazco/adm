@@ -159,22 +159,25 @@
 #' }
 #'
 adm_predict <-
-  function(models,
-           pred,
-           training_data = NULL,
-           nchunk = 1,
-           predict_area = NULL,
-           invert_transform =  NULL,
-           transform_negative = FALSE,
-           sample_size = NULL,
-           pred_quantile = 0.5) {
+  function(
+    models,
+    pred,
+    training_data = NULL,
+    nchunk = 1,
+    predict_area = NULL,
+    invert_transform = NULL,
+    transform_negative = FALSE,
+    sample_size = NULL,
+    pred_quantile = 0.5
+  ) {
     . <- model <- threshold <- thr_value <- self <- response <- NULL
 
     if (!check_models_validity(models)[[1]] %>% as.logical()) {
       stop("Models argument is invalid.")
     }
 
-    switch(check_models_validity(models)[[2]],
+    switch(
+      check_models_validity(models)[[2]],
       "list_of_models" = {
         message("Predicting a list of models")
       },
@@ -187,7 +190,10 @@ adm_predict <-
     #### Prepare datasets ####
     # Crop and mask projection area
     if (!is.null(predict_area)) {
-      if (class(predict_area) %in% c("SpatialPolygons", "SpatialPolygonsDataFrame")) {
+      if (
+        class(predict_area) %in%
+          c("SpatialPolygons", "SpatialPolygonsDataFrame")
+      ) {
         predict_area <- terra::vect(predict_area)
       }
       pred <-
@@ -216,15 +222,26 @@ adm_predict <-
         tolower() %>%
         gsub(".formula", "", .)
 
-      if (any(lapply(models, function(x) {
-        class(x[[1]])[1]
-      }) %>% unlist() == "gamlss")) {
-        indx <- which(lapply(models, function(x) {
-          class(x[[1]])[1]
-        }) %>% unlist() == "gamlss")
+      if (
+        any(
+          lapply(models, function(x) {
+            class(x[[1]])[1]
+          }) %>%
+            unlist() ==
+            "gamlss"
+        )
+      ) {
+        indx <- which(
+          lapply(models, function(x) {
+            class(x[[1]])[1]
+          }) %>%
+            unlist() ==
+            "gamlss"
+        )
         gamlss_classes <- lapply(models[indx], function(x) {
           x$predictors$model
-        }) %>% unlist()
+        }) %>%
+          unlist()
 
         clss[indx] <- paste0(clss[indx], "_", gamlss_classes)
       }
@@ -234,13 +251,17 @@ adm_predict <-
 
     # if(chunk){
     cell <- terra::as.data.frame(pred, cells = TRUE, na.rm = TRUE)[, "cell"]
-    cell_coord <- terra::as.data.frame(pred, xy = TRUE, na.rm = TRUE)[, c("x", "y")]
+    cell_coord <- terra::as.data.frame(pred, xy = TRUE, na.rm = TRUE)[, c(
+      "x",
+      "y"
+    )]
 
     set <- seq(
       from = 1,
       to = length(cell) + 1,
       length.out = nchunk + 1
-    ) |> round()
+    ) %>%
+      round()
 
     # } #else {
     #   pred_df <-
@@ -285,7 +306,10 @@ adm_predict <-
           f_names <- which(sapply(pred_df, class) == "factor") %>% names()
 
           if (length(f_names) > 0) {
-            f_encoded <- stringr::str_detect(f_n2, stringr::str_c(f_names, collapse = "|"))
+            f_encoded <- stringr::str_detect(
+              f_n2,
+              stringr::str_c(f_names, collapse = "|")
+            )
           } else {
             f_encoded <- FALSE
           }
@@ -326,7 +350,8 @@ adm_predict <-
             vfilter <- 0
           }
           ##
-          if (sum(vfilter) > 0) { # TODO
+          if (sum(vfilter) > 0) {
+            # TODO
             # v <- rep(0, nrow(pred_df))
             # v[!vfilter] <-
             #   kernlab::predict(m[[i]], pred_df[!vfilter, ] %>%
@@ -338,7 +363,10 @@ adm_predict <-
             # rm(v)
           } else {
             pred_matrix <- list(
-              data = stats::model.matrix(~ . - 1, data = pred_df[get_predictor_names(m_detect, i)])
+              data = stats::model.matrix(
+                ~ . - 1,
+                data = pred_df[get_predictor_names(m_detect, i)]
+              )
             )
 
             r[as.numeric(rownames(pred_df))] <-
@@ -469,7 +497,9 @@ adm_predict <-
           r <- pred[[!terra::is.factor(pred)]][[1]]
           r[!is.na(r)] <- NA
           r[as.numeric(rownames(pred_df))] <-
-            suppressMessages(stats::predict(m[[i]], pred_dataset) %>% as.numeric())
+            suppressMessages(
+              stats::predict(m[[i]], pred_dataset) %>% as.numeric()
+            )
 
           model_c[[i]][rowset] <- r[rowset]
         }
@@ -480,7 +510,9 @@ adm_predict <-
       if (length(wm) > 0) {
         wm <- names(wm)
         for (i in wm) {
-          vfilter <- filter_safe_levels(m_detect[[i]], pred_df, training_data)[[2]]
+          vfilter <- filter_safe_levels(m_detect[[i]], pred_df, training_data)[[
+            2
+          ]]
 
           v <- rep(NA, nrow(pred_df))
 
@@ -492,7 +524,7 @@ adm_predict <-
             suppressMessages(
               stats::predict(
                 m[[i]],
-                what="mu",
+                what = "mu",
                 newdata = pred_df[vfilter, get_predictor_names(m_detect, i)],
                 data = training_data,
                 type = "response"
@@ -519,7 +551,6 @@ adm_predict <-
           model_c[[i]][rowset] <- r[rowset]
         }
       }
-
 
       #### quantregforest class ####
       wm <- which(clss == "quantregforest")
@@ -557,17 +588,21 @@ adm_predict <-
             vfilter <- 0
           }
 
-
           if (sum(vfilter) > 0) {
             v <- rep(0, nrow(pred_df))
             v[!vfilter] <-
-              suppressMessages(stats::predict(m[[i]], pred_df[!vfilter, ] %>%
-                dplyr::mutate(dplyr::across(
-                  .cols = names(f),
-                  .fns = ~ factor(.x, levels = m[[i]]$forest$xlevels[[cur_column()]])
-                )),
-              type = "response",
-              what = pred_quantile
+              suppressMessages(stats::predict(
+                m[[i]],
+                pred_df[!vfilter, ] %>%
+                  dplyr::mutate(dplyr::across(
+                    .cols = names(f),
+                    .fns = ~ factor(
+                      .x,
+                      levels = m[[i]]$forest$xlevels[[cur_column()]]
+                    )
+                  )),
+                type = "response",
+                what = pred_quantile
               ))
             r[as.numeric(rownames(pred_df))] <- v
             rm(v)
@@ -576,32 +611,42 @@ adm_predict <-
               pred_df <- pred_df %>%
                 dplyr::mutate(dplyr::across(
                   .cols = names(f),
-                  .fns = ~ factor(.x, levels = m[[i]]$forest$xlevels[[cur_column()]])
+                  .fns = ~ factor(
+                    .x,
+                    levels = m[[i]]$forest$xlevels[[cur_column()]]
+                  )
                 ))
             }
 
             r[as.numeric(rownames(pred_df))] <-
-              suppressMessages(stats::predict(m[[i]], pred_df, type = "response", what = pred_quantile))
+              suppressMessages(stats::predict(
+                m[[i]],
+                pred_df,
+                type = "response",
+                what = pred_quantile
+              ))
           }
 
           model_c[[i]][rowset] <- r[rowset]
         }
       }
 
-
       #### randomforest class ####
       wm <- which(clss == "randomforest")
       if (length(wm) > 0) {
         wm <- names(wm)
         for (i in wm) {
-          pred_df <- filter_safe_levels(m_detect[[i]], pred_df, training_data)[[1]]
-          vfilter <- filter_safe_levels(m_detect[[i]], pred_df, training_data)[[2]]
+          pred_df <- filter_safe_levels(m_detect[[i]], pred_df, training_data)[[
+            1
+          ]]
+          vfilter <- filter_safe_levels(m_detect[[i]], pred_df, training_data)[[
+            2
+          ]]
 
           v <- rep(NA, nrow(pred_df))
 
           r <- pred[[!terra::is.factor(pred)]][[1]]
           r[!is.na(r)] <- NA
-
 
           v[vfilter] <-
             suppressMessages(
@@ -633,7 +678,10 @@ adm_predict <-
           f_names <- which(sapply(pred_df, class) == "factor") %>% names()
 
           if (length(f_names) > 0) {
-            f_encoded <- stringr::str_detect(f_n2, stringr::str_c(f_names, collapse = "|"))
+            f_encoded <- stringr::str_detect(
+              f_n2,
+              stringr::str_c(f_names, collapse = "|")
+            )
           } else {
             f_encoded <- FALSE
           }
@@ -676,11 +724,15 @@ adm_predict <-
           if (sum(vfilter) > 0) {
             v <- rep(0, nrow(pred_df))
             v[!vfilter] <-
-              kernlab::predict(m[[i]], pred_df[!vfilter, ] %>%
-                dplyr::mutate(dplyr::across(
-                  .cols = names(f),
-                  .fns = ~ droplevels(.)
-                )), type = "response") # [, 2]
+              kernlab::predict(
+                m[[i]],
+                pred_df[!vfilter, ] %>%
+                  dplyr::mutate(dplyr::across(
+                    .cols = names(f),
+                    .fns = ~ droplevels(.)
+                  )),
+                type = "response"
+              ) # [, 2]
             r[as.numeric(rownames(pred_df))] <- v
             rm(v)
           } else {
@@ -707,7 +759,18 @@ adm_predict <-
         "xgb.booster",
         "quantregForest"
       ),
-      names = c("dnn", "cnn", "gam", "glm", "gbm", "net", "raf", "svm", "xgb", "qrf")
+      names = c(
+        "dnn",
+        "cnn",
+        "gam",
+        "glm",
+        "gbm",
+        "net",
+        "raf",
+        "svm",
+        "xgb",
+        "qrf"
+      )
     )
 
     for (i in 1:length(names(clss))) {
@@ -718,18 +781,22 @@ adm_predict <-
 
     names(model_c) <-
       dplyr::left_join(data.frame(alg = clss), df, by = "alg")[, 2]
-    model_c <- mapply(function(x, n) {
-      names(x) <- n
-      x
-    }, model_c, names(model_c))
-
+    model_c <- mapply(
+      function(x, n) {
+        names(x) <- n
+        x
+      },
+      model_c,
+      names(model_c)
+    )
 
     # Invert transformations
     if (!is.null(invert_transform)) {
       for (i in 1:length(model_c)) {
         x <- model_c[[i]]
         mname <- names(x)
-        x <- adm_transform(x,
+        x <- adm_transform(
+          x,
           variable = names(x),
           method = invert_transform[["method"]],
           inverse = TRUE,

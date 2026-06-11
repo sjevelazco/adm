@@ -1,4 +1,4 @@
-# adm - Abundance-based species distribution models ![](reference/figures/adm_logo.svg)
+# adm - Abundance-based species distribution models ![](reference/figures/adm_logo.png)
 
 [![License](https://img.shields.io/badge/license-GPL%20%28%3E=%203%29-lightgrey.svg?style=flat)](http://www.gnu.org/licenses/gpl-3.0.md)
 [![R-CMD-check](https://github.com/sjevelazco/adm/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/sjevelazco/adm/actions/workflows/R-CMD-check.yaml)
