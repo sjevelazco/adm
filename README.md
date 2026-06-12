@@ -120,5 +120,5 @@ remotes::install_github("sjevelazco/adm")
 See the package website (<https://sjevelazco.github.io/adm/>) for functions explanation and vignettes.
 
 ### Package citation
+de Oliveira Junior, A.C., Velazco, S.J.E., 2025. adm: An R package for constructing abundance-based species distribution models. *Methods in Ecology and Evolution*. 16, 1404–1412. <https://doi.org/10.1111/2041-210X.70074>
 
-de Oliveira Junior A.C., Velazco S.J.E. (2025). adm: an R package for constructing abundance-based species distribution models. *Methods in Ecology and Evolution*. <https://doi.org/10.1111/2041-210X.70074>

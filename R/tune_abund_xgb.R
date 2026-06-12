@@ -103,21 +103,28 @@
 #' tuned_xgb
 #' }
 tune_abund_xgb <-
-  function(data,
-           response,
-           predictors,
-           predictors_f = NULL,
-           partition,
-           predict_part = FALSE,
-           hold_out_set = NULL,
-           grid = NULL,
-           objective = "reg:squarederror",
-           metrics = NULL,
-           early_stopping = list(cv_strategy = 10, fm_strategy = "median"),
-           n_cores = 1,
-           verbose = TRUE) {
-    if (is.null(metrics) |
-      !all(metrics %in% c("corr_spear", "corr_pear", "mae", "inter", "slope", "pdisp"))) {
+  function(
+    data,
+    response,
+    predictors,
+    predictors_f = NULL,
+    partition,
+    predict_part = FALSE,
+    hold_out_set = NULL,
+    grid = NULL,
+    objective = "reg:squarederror",
+    metrics = NULL,
+    early_stopping = list(cv_strategy = 10, fm_strategy = "median"),
+    n_cores = 1,
+    verbose = TRUE
+  ) {
+    if (
+      is.null(metrics) |
+        !all(
+          metrics %in%
+            c("corr_spear", "corr_pear", "mae", "inter", "slope", "pdisp")
+        )
+    ) {
       stop("Metrics is needed to be defined in 'metric' argument")
     }
 
@@ -148,24 +155,35 @@ tune_abund_xgb <-
 
     if (!all(nms_grid %in% nms_hypers)) {
       stop(
-        paste(paste(nms_grid[!nms_grid %in% nms_hypers], collapse = ", "), " is not hyperparameters\n"),
-        "Grid expected to be any combination between ", paste(nms_hypers, collapse = ", ")
+        paste(
+          paste(nms_grid[!nms_grid %in% nms_hypers], collapse = ", "),
+          " is not hyperparameters\n"
+        ),
+        "Grid expected to be any combination between ",
+        paste(nms_hypers, collapse = ", ")
       )
     }
 
     if (is.null(grid)) {
-      message("Grid not provided. Using the default one for Extreme Gradient Boosting.")
+      message(
+        "Grid not provided. Using the default one for Extreme Gradient Boosting."
+      )
       grid <- expand.grid(grid_dict, stringsAsFactors = FALSE)
     } else if (all(nms_hypers %in% nms_grid)) {
       message("Using provided grid.")
     } else if (any(!nms_hypers %in% nms_grid)) {
       message(
         "Adding default hyperparameter for: ",
-        paste(names(grid_dict)[!names(grid_dict) %in% nms_grid], collapse = ", ")
+        paste(
+          names(grid_dict)[!names(grid_dict) %in% nms_grid],
+          collapse = ", "
+        )
       )
 
       user_hyper <- names(grid)[which(names(grid) %in% names(grid_dict))]
-      default_hyper <- names(grid_dict)[which(!names(grid_dict) %in% user_hyper)]
+      default_hyper <- names(grid_dict)[which(
+        !names(grid_dict) %in% user_hyper
+      )]
 
       user_list <- grid_dict[default_hyper]
       for (i in user_hyper) {
@@ -238,36 +256,43 @@ tune_abund_xgb <-
     # })
     ## debug
 
-    hyper_combinations <- foreach::foreach(i = 1:nrow(grid), .export = c("fit_abund_xgb", "adm_eval"), .packages = c("dplyr")) %dopar% {
-      model <-
-        fit_abund_xgb(
-          data = data,
-          response = response,
-          predictors = predictors,
-          predictors_f = predictors_f,
-          partition = partition,
-          predict_part = predict_part,
-          max_depth = grid[i, "max_depth"],
-          learning_rate = grid[i, "learning_rate"],
-          min_split_loss = grid[i, "min_split_loss"],
-          colsample_bytree = grid[i, "colsample_bytree"],
-          min_child_weight = grid[i, "min_child_weight"],
-          subsample = grid[i, "subsample"],
-          objective = objective,
-          nrounds = grid[i, "nrounds"],
-          verbose = verbose,
-          hold_out_set = hold_out_set,
-          early_stopping = early_stopping
-        )
+    hyper_combinations <- foreach::foreach(
+      i = 1:nrow(grid),
+      .export = c("fit_abund_xgb", "adm_eval"),
+      .packages = c("dplyr")
+    ) %dopar%
+      {
+        model <-
+          fit_abund_xgb(
+            data = data,
+            response = response,
+            predictors = predictors,
+            predictors_f = predictors_f,
+            partition = partition,
+            predict_part = predict_part,
+            max_depth = grid[i, "max_depth"],
+            learning_rate = grid[i, "learning_rate"],
+            min_split_loss = grid[i, "min_split_loss"],
+            colsample_bytree = grid[i, "colsample_bytree"],
+            min_child_weight = grid[i, "min_child_weight"],
+            subsample = grid[i, "subsample"],
+            objective = objective,
+            nrounds = grid[i, "nrounds"],
+            verbose = verbose,
+            hold_out_set = hold_out_set,
+            early_stopping = early_stopping
+          )
 
-      saveRDS(model, paste0("/mnt/DATA/PROJETOS/from_ubuntu/projects/BMIP/local_files/xgb_debug/xgb_", i, ".rds")) # debug
-      l <- list(cbind(grid[i, ], model$performance))
-      names(l) <- grid[i, "comb_id"]
-      l
-    }
+        # saveRDS(model, paste0("/mnt/DATA/PROJETOS/from_ubuntu/projects/BMIP/local_files/xgb_debug/xgb_", i, ".rds")) # debug
+        l <- list(cbind(grid[i, ], model$performance))
+        names(l) <- grid[i, "comb_id"]
+        l
+      }
     parallel::stopCluster(cl)
 
-    hyper_combinations <- lapply(hyper_combinations, function(x) dplyr::bind_rows(x)) %>%
+    hyper_combinations <- lapply(hyper_combinations, function(x) {
+      dplyr::bind_rows(x)
+    }) %>%
       dplyr::bind_rows()
 
     ranked_combinations <- model_selection(hyper_combinations, metrics)
