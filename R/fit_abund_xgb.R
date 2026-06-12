@@ -159,14 +159,14 @@ fit_abund_xgb <-
     # Fit models
     if (is.null(partition) || !any(nzchar(partition, keepNA = FALSE))) {
       set.seed(13)
-      
+
       full_train <- list(
         data = stats::model.matrix(~ . - 1, data = data[, c(predictors, predictors_f)]),
         target = data[, response]
       )
-      
+
       dfull <- xgboost::xgb.DMatrix(data = full_train$data, label = full_train$target)
-      
+
       full_model <- xgboost::xgb.train(
         data = dfull,
         params = list(
@@ -182,7 +182,7 @@ fit_abund_xgb <-
         nrounds = nrounds,
         verbose = 0
       )
-      
+
       variables <- get_variables(predictors, predictors_f)
       variables <- dplyr::bind_cols(
         data.frame(

@@ -48,7 +48,10 @@ data("cretusa_data")
 
 
 # Load raster with environmental variables
-cretusa_predictors <- system.file("external/cretusa_predictors.tif", package = "adm")
+cretusa_predictors <- system.file(
+  "external/cretusa_predictors.tif",
+  package = "adm"
+)
 cretusa_predictors <- terra::rast(cretusa_predictors)
 names(cretusa_predictors)
 
@@ -150,7 +153,7 @@ Now we can use this grid with *tune_abund_raf* to tune and validate a RAF model:
 mraf <- tune_abund_raf(
   data = species_data,
   response = "ind_ha",
-  predictors = c("PC1", "PC2", "PC3", "PC4", "PC5", "PC6", "PC7"),
+  predictors = c("PC1", "PC2", "PC3", "PC4", "PC5"),
   partition = ".part",
   predict_part = TRUE, # predictions for every partition will be returned
   grid = raf_grid,
@@ -243,9 +246,23 @@ Now, we can construct the grid:
 ```{r glm_grid}
 glm_grid <- list(
   distribution = c(
-    "NO", "NOF", "RG", "TF", "ZAIG", "LQNO", "DEL",
-    "PIG", "WARING", "YULE", "ZALG", "ZIP", "BNB",
-    "DBURR12", "ZIBNB", "LO", "PO"
+    "NO",
+    "NOF",
+    "RG",
+    "TF",
+    "ZAIG",
+    "LQNO",
+    "DEL",
+    "PIG",
+    "WARING",
+    "YULE",
+    "ZALG",
+    "ZIP",
+    "BNB",
+    "DBURR12",
+    "ZIBNB",
+    "LO",
+    "PO"
   ),
   poly = c(1, 2, 3),
   inter_order = c(0, 1, 2)
@@ -261,7 +278,7 @@ Tuning the GLM with the grid:
 mglm <- tune_abund_glm(
   data = species_data,
   response = "ind_ha",
-  predictors = c("PC1", "PC2", "PC3", "PC4", "PC5", "PC6", "PC7"),
+  predictors = c("PC1", "PC2", "PC3", "PC4", "PC5"),
   predictors_f = NULL,
   partition = ".part",
   predict_part = TRUE,
@@ -290,13 +307,13 @@ To filter this list, users can use *select_arch_list* to reduce it, sampling the
 This is highly recommended.
 Let's create and select some architectures:
 
-```{r dnn architectures, eval = FALSE}
+```{r dnn architectures}
 archs <- adm::generate_arch_list(
   type = "dnn",
-  number_of_features = 7, # input/predictor variables
+  number_of_features = 5, # input/predictor variables
   number_of_outputs = 1, # output/response variable
   n_layers = c(2, 3, 4), # possible number of layers
-  n_neurons = c(7, 14, 21), # possible number of neurons on each layer
+  n_neurons = c(5, 14, 21), # possible number of neurons on each layer
   batch_norm = TRUE, # batch normalization between layers
   dropout = 0 # without training dropout
 )
@@ -311,16 +328,14 @@ archs <- adm::select_arch_list(
   min_max = TRUE # keep the more simple and the more complex networks
 )
 
-number_after <- archs$arch_list %>% length() # 52
+archs$arch_list %>% length()
 ```
-```{r, include=FALSE}
-archs <- readRDS(system.file("external/v1_archs.rds", package = "adm"))
-```
+
 
 However, for the sake of brevity in this tutorial, we will manually reduce even more our architectures list to just a few:
 
 ```{r reducing arch list}
-archs$arch_list <- archs$arch_list[seq(from = 1, to = 52, by = 5)]
+archs$arch_list <- archs$arch_list[seq(from = 1, to = length(archs), by = 10)]
 
 length(archs$arch_list)
 ```
@@ -334,7 +349,7 @@ dnn_grid <- expand.grid(
   batch_size = c(64),
   validation_patience = c(5),
   fitting_patience = c(5),
-  learning_rate = c(0.005, 0.001, 0.0005),
+  learning_rate = c(0.005, 0.0005),
   n_epochs = 200
 )
 head(dnn_grid)
@@ -347,7 +362,7 @@ Now we can use the architectures generated and the grid created within the *tune
 mdnn <- tune_abund_dnn(
   data = species_data,
   response = "ind_ha_zscore", # using the transformed response
-  predictors = c("PC1", "PC2", "PC3", "PC4", "PC5", "PC6", "PC7"),
+  predictors = c("PC1", "PC2", "PC3", "PC4", "PC5"),
   predictors_f = NULL,
   partition = ".part",
   predict_part = TRUE,
@@ -495,7 +510,7 @@ pdp_glm
 ```
 
 BPDP are similar to PDP, but instead of one, it illustrates the marginal response of a pair of variables.
-In this example we will use the first and seventh PC.
+In this example we will use the first and third PC.
 Note that for `p_abund_pdp` and `p_abund_bpdp`, any subset of predictors can be used in the "predictors" argument.
 If "predictors" argument is NULL, functions plot all variables or variables pair combinations, respectively.
 
@@ -503,7 +518,7 @@ If "predictors" argument is NULL, functions plot all variables or variables pair
 # BPDP for DNN
 bpdp_dnn <- p_abund_bpdp(
   model = mdnn,
-  predictors = c("PC1", "PC7"), # a pair of predictors
+  predictors = c("PC1", "PC3"), # a pair of predictors
   resolution = 100,
   training_data = species_data,
   projection_data = cretusa_predictors,
@@ -515,8 +530,16 @@ bpdp_dnn <- p_abund_bpdp(
   ),
   response_name = "ind/ha",
   color_gradient = c(
-    "#000004", "#1B0A40", "#4A0C69", "#781B6C", "#A42C5F", "#CD4345",
-    "#EC6824", "#FA990B", "#F7CF3D", "#FCFFA4"
+    "#000004",
+    "#1B0A40",
+    "#4A0C69",
+    "#781B6C",
+    "#A42C5F",
+    "#CD4345",
+    "#EC6824",
+    "#FA990B",
+    "#F7CF3D",
+    "#FCFFA4"
   ), # gradient for response variable
   color_training_boundaries = "white",
   theme = ggplot2::theme_classic()
@@ -525,15 +548,23 @@ bpdp_dnn <- p_abund_bpdp(
 # BPDP for GLM
 bpdp_glm <- p_abund_bpdp(
   model = mglm,
-  predictors = c("PC1", "PC7"),
+  predictors = c("PC1", "PC3"),
   resolution = 100,
   training_data = species_data,
   projection_data = cretusa_predictors,
   training_boundaries = "convexh",
   response_name = "ind/ha",
   color_gradient = c(
-    "#000004", "#1B0A40", "#4A0C69", "#781B6C", "#A42C5F", "#CD4345",
-    "#EC6824", "#FA990B", "#F7CF3D", "#FCFFA4"
+    "#000004",
+    "#1B0A40",
+    "#4A0C69",
+    "#781B6C",
+    "#A42C5F",
+    "#CD4345",
+    "#EC6824",
+    "#FA990B",
+    "#F7CF3D",
+    "#FCFFA4"
   ),
   color_training_boundaries = "white",
   theme = ggplot2::theme_classic()
@@ -542,15 +573,23 @@ bpdp_glm <- p_abund_bpdp(
 # BPDP for RAF
 bpdp_raf <- p_abund_bpdp(
   model = mraf,
-  predictors = c("PC1", "PC7"),
+  predictors = c("PC1", "PC3"),
   resolution = 100,
   training_data = species_data,
   projection_data = cretusa_predictors,
   training_boundaries = "convexh",
   response_name = "ind/ha",
   color_gradient = c(
-    "#000004", "#1B0A40", "#4A0C69", "#781B6C", "#A42C5F", "#CD4345",
-    "#EC6824", "#FA990B", "#F7CF3D", "#FCFFA4"
+    "#000004",
+    "#1B0A40",
+    "#4A0C69",
+    "#781B6C",
+    "#A42C5F",
+    "#CD4345",
+    "#EC6824",
+    "#FA990B",
+    "#F7CF3D",
+    "#FCFFA4"
   ),
   color_training_boundaries = "white",
   theme = ggplot2::theme_classic()

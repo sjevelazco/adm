@@ -244,7 +244,7 @@ fit_abund_glm <-
         control = control_gamlss,
         trace = FALSE
       )
-      
+
       variables <- get_variables(predictors, predictors_f)
       variables <- dplyr::bind_cols(
         data.frame(
@@ -253,7 +253,7 @@ fit_abund_glm <-
         ),
         variables
       ) %>% as_tibble()
-      
+
       result <- list(
         model = full_model,
         predictors = variables,

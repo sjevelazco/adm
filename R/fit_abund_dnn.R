@@ -182,12 +182,12 @@ fit_abund_dnn <-
     # Fit models
     if (is.null(partition) || !any(nzchar(partition, keepNA = FALSE))) {
       # TODO check full_model here
-      
+
       torch::torch_manual_seed(13)
-      
+
       df <- create_dataset(data[, c(predictors, response)], response)
       df_dl <- torch::dataloader(df, batch_size = batch_size, shuffle = TRUE, num_workers = 0)
-      
+
       suppressMessages(
         full_model <- net %>%
           luz::setup(
@@ -206,7 +206,7 @@ fit_abund_dnn <-
             )
           )
       )
-      
+
       variables <- get_variables(predictors, predictors_f)
       variables <- dplyr::bind_cols(
         data.frame(
@@ -215,7 +215,7 @@ fit_abund_dnn <-
         ),
         variables
       ) %>% as_tibble()
-      
+
       result <- list(
         model = full_model,
         predictors = variables,

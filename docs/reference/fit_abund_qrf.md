@@ -61,6 +61,23 @@ fit_abund_qrf(
 
   logical. Save predicted abundance for testing data. Default is FALSE.
 
+- framework:
+
+  character. Specifies the quantile regression framework to use. Either
+  "quantregForest" (default) for traditional quantile regression forest
+  from quantregForest package, or "grf" for generalized random forests
+  from grf package.
+
+- train_quantiles:
+
+  numeric vector. Quantiles to be estimated during model training.
+  Default c(0.5) for median.
+
+- eval_quantile:
+
+  numeric. Specific quantile to use for model evaluation metrics. Must
+  be one of the values in train_quantiles. Default 0.5.
+
 - mtry:
 
   numeric. Number of variables randomly sampled as candidates at each
@@ -71,6 +88,11 @@ fit_abund_qrf(
   numeric. Number of trees to grow. This should not be set to too small
   a number, to ensure that every input row gets predicted at least a few
   times. Default 500
+
+- nodesize:
+
+  numeric. Minimum size of terminal nodes. Controls tree depth - larger
+  values produce smaller trees. Default 5 for quantregForest framework.
 
 - verbose:
 

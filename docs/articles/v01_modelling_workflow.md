@@ -12,6 +12,7 @@ preparation to model fitting and prediction.
 ## Installation
 
 ``` r
+
 require(adm)
 require(terra)
 require(dplyr)
@@ -27,12 +28,16 @@ predictor variables, we will use the first 7 PC (cumulative viarance \>
 load all needed data with:
 
 ``` r
+
 # Load species abundance data
 data("cretusa_data")
 
 
 # Load raster with environmental variables
-cretusa_predictors <- system.file("external/cretusa_predictors.tif", package = "adm")
+cretusa_predictors <- system.file(
+  "external/cretusa_predictors.tif",
+  package = "adm"
+)
 cretusa_predictors <- terra::rast(cretusa_predictors)
 names(cretusa_predictors)
 #> [1] "PC1" "PC2" "PC3" "PC4" "PC5" "PC6" "PC7"
@@ -45,26 +50,28 @@ sp_train_a <- terra::vect(sp_train_a)
 Let’s explore these data
 
 ``` r
+
 # Species data
 # ?cretusa_data
 cretusa_data # species dat
-#> [38;5;246m# A tibble: 366 × 5[39m
+#> # A tibble: 366 × 5
 #>    species           ind_ha     x     y .part
-#>    [3m[38;5;246m<chr>[39m[23m              [3m[38;5;246m<int>[39m[23m [3m[38;5;246m<dbl>[39m[23m [3m[38;5;246m<dbl>[39m[23m [3m[38;5;246m<int>[39m[23m
-#> [38;5;250m 1[39m Cynophalla retusa     10 -[31m64[39m[31m.[39m[31m5[39m -[31m22[39m[31m.[39m[31m7[39m     1
-#> [38;5;250m 2[39m Cynophalla retusa     10 -[31m64[39m[31m.[39m[31m1[39m -[31m22[39m[31m.[39m[31m7[39m     1
-#> [38;5;250m 3[39m Cynophalla retusa     20 -[31m64[39m[31m.[39m[31m7[39m -[31m23[39m[31m.[39m[31m1[39m     2
-#> [38;5;250m 4[39m Cynophalla retusa      0 -[31m62[39m[31m.[39m[31m6[39m -[31m23[39m[31m.[39m[31m2[39m     3
-#> [38;5;250m 5[39m Cynophalla retusa      0 -[31m61[39m[31m.[39m[31m7[39m -[31m24[39m[31m.[39m[31m5[39m     3
-#> [38;5;250m 6[39m Cynophalla retusa      0 -[31m61[39m[31m.[39m[31m6[39m -[31m25[39m[31m.[39m[31m0[39m     3
-#> [38;5;250m 7[39m Cynophalla retusa      0 -[31m61[39m[31m.[39m[31m2[39m -[31m24[39m[31m.[39m[31m5[39m     3
-#> [38;5;250m 8[39m Cynophalla retusa      0 -[31m64[39m[31m.[39m[31m9[39m -[31m23[39m[31m.[39m[31m8[39m     2
-#> [38;5;250m 9[39m Cynophalla retusa      0 -[31m65[39m[31m.[39m[31m3[39m -[31m24[39m[31m.[39m[31m4[39m     3
-#> [38;5;250m10[39m Cynophalla retusa      0 -[31m64[39m[31m.[39m[31m7[39m -[31m24[39m[31m.[39m[31m8[39m     1
-#> [38;5;246m# ℹ 356 more rows[39m
+#>    <chr>              <int> <dbl> <dbl> <int>
+#>  1 Cynophalla retusa     10 -64.5 -22.7     1
+#>  2 Cynophalla retusa     10 -64.1 -22.7     1
+#>  3 Cynophalla retusa     20 -64.7 -23.1     2
+#>  4 Cynophalla retusa      0 -62.6 -23.2     3
+#>  5 Cynophalla retusa      0 -61.7 -24.5     3
+#>  6 Cynophalla retusa      0 -61.6 -25.0     3
+#>  7 Cynophalla retusa      0 -61.2 -24.5     3
+#>  8 Cynophalla retusa      0 -64.9 -23.8     2
+#>  9 Cynophalla retusa      0 -65.3 -24.4     3
+#> 10 Cynophalla retusa      0 -64.7 -24.8     1
+#> # ℹ 356 more rows
 ```
 
 ``` r
+
 # Environmental predictors
 names(cretusa_predictors)
 #> [1] "PC1" "PC2" "PC3" "PC4" "PC5" "PC6" "PC7"
@@ -74,6 +81,7 @@ plot(cretusa_predictors)
 ![](v01_modelling_workflow_files/figure-html/Environmental%20predictors-1.png)
 
 ``` r
+
 # Training area
 plot(sp_train_a)
 ```
@@ -81,6 +89,7 @@ plot(sp_train_a)
 ![](v01_modelling_workflow_files/figure-html/Training%20area-1.png)
 
 ``` r
+
 plot(cretusa_predictors[[1]])
 plot(sp_train_a, add = TRUE)
 points(cretusa_data %>% dplyr::select(x, y), col = "red", pch = 20)
@@ -97,6 +106,7 @@ predictors raster. For that, we will use *adm_extract*, and columns with
 x and y coordinates will be important.
 
 ``` r
+
 species_data <- adm_extract(
   data = cretusa_data, # georeferenced dataframe
   x = "x", # spatial x coordinates
@@ -107,21 +117,21 @@ species_data <- adm_extract(
 )
 
 species_data
-#> [38;5;246m# A tibble: 366 × 12[39m
+#> # A tibble: 366 × 12
 #>    species    ind_ha     x     y .part    PC1    PC2    PC3   PC4    PC5     PC6
-#>    [3m[38;5;246m<chr>[39m[23m       [3m[38;5;246m<int>[39m[23m [3m[38;5;246m<dbl>[39m[23m [3m[38;5;246m<dbl>[39m[23m [3m[38;5;246m<int>[39m[23m  [3m[38;5;246m<dbl>[39m[23m  [3m[38;5;246m<dbl>[39m[23m  [3m[38;5;246m<dbl>[39m[23m [3m[38;5;246m<dbl>[39m[23m  [3m[38;5;246m<dbl>[39m[23m   [3m[38;5;246m<dbl>[39m[23m
-#> [38;5;250m 1[39m Cynophall…     10 -[31m64[39m[31m.[39m[31m5[39m -[31m22[39m[31m.[39m[31m7[39m     1  1.50  -[31m1[39m[31m.[39m[31m28[39m   0.773 0.784 -[31m0[39m[31m.[39m[31m249[39m -[31m0[39m[31m.[39m[31m559[39m 
-#> [38;5;250m 2[39m Cynophall…     10 -[31m64[39m[31m.[39m[31m1[39m -[31m22[39m[31m.[39m[31m7[39m     1  0.750 -[31m1[39m[31m.[39m[31m22[39m   1.36  0.359 -[31m0[39m[31m.[39m[31m434[39m -[31m0[39m[31m.[39m[31m742[39m 
-#> [38;5;250m 3[39m Cynophall…     20 -[31m64[39m[31m.[39m[31m7[39m -[31m23[39m[31m.[39m[31m1[39m     2  1.21  -[31m1[39m[31m.[39m[31m82[39m   1.36  0.336 -[31m0[39m[31m.[39m[31m862[39m  0.087[4m8[24m
-#> [38;5;250m 4[39m Cynophall…      0 -[31m62[39m[31m.[39m[31m6[39m -[31m23[39m[31m.[39m[31m2[39m     3 -[31m1[39m[31m.[39m[31m71[39m  -[31m2[39m[31m.[39m[31m85[39m  -[31m1[39m[31m.[39m[31m34[39m  0.762 -[31m0[39m[31m.[39m[31m745[39m -[31m1[39m[31m.[39m[31m0[39m[31m2[39m  
-#> [38;5;250m 5[39m Cynophall…      0 -[31m61[39m[31m.[39m[31m7[39m -[31m24[39m[31m.[39m[31m5[39m     3 -[31m1[39m[31m.[39m[31m65[39m  -[31m2[39m[31m.[39m[31m17[39m  -[31m1[39m[31m.[39m[31m68[39m  0.175 -[31m0[39m[31m.[39m[31m839[39m -[31m0[39m[31m.[39m[31m637[39m 
-#> [38;5;250m 6[39m Cynophall…      0 -[31m61[39m[31m.[39m[31m6[39m -[31m25[39m[31m.[39m[31m0[39m     3 -[31m1[39m[31m.[39m[31m29[39m  -[31m2[39m[31m.[39m[31m35[39m  -[31m1[39m[31m.[39m[31m94[39m  0.614 -[31m0[39m[31m.[39m[31m944[39m -[31m0[39m[31m.[39m[31m805[39m 
-#> [38;5;250m 7[39m Cynophall…      0 -[31m61[39m[31m.[39m[31m2[39m -[31m24[39m[31m.[39m[31m5[39m     3 -[31m0[39m[31m.[39m[31m904[39m -[31m2[39m[31m.[39m[31m73[39m  -[31m2[39m[31m.[39m[31m30[39m  1.05  -[31m0[39m[31m.[39m[31m604[39m -[31m0[39m[31m.[39m[31m830[39m 
-#> [38;5;250m 8[39m Cynophall…      0 -[31m64[39m[31m.[39m[31m9[39m -[31m23[39m[31m.[39m[31m8[39m     2  0.676 -[31m1[39m[31m.[39m[31m57[39m   0.401 1.54  -[31m0[39m[31m.[39m[31m346[39m -[31m0[39m[31m.[39m[31m417[39m 
-#> [38;5;250m 9[39m Cynophall…      0 -[31m65[39m[31m.[39m[31m3[39m -[31m24[39m[31m.[39m[31m4[39m     3  0.460 -[31m0[39m[31m.[39m[31m795[39m  0.409 2.19  -[31m0[39m[31m.[39m[31m172[39m -[31m0[39m[31m.[39m[31m249[39m 
-#> [38;5;250m10[39m Cynophall…      0 -[31m64[39m[31m.[39m[31m7[39m -[31m24[39m[31m.[39m[31m8[39m     1  1.18   0.201  0.606 2.65  -[31m0[39m[31m.[39m[31m356[39m -[31m0[39m[31m.[39m[31m775[39m 
-#> [38;5;246m# ℹ 356 more rows[39m
-#> [38;5;246m# ℹ 1 more variable: PC7 <dbl>[39m
+#>    <chr>       <int> <dbl> <dbl> <int>  <dbl>  <dbl>  <dbl> <dbl>  <dbl>   <dbl>
+#>  1 Cynophall…     10 -64.5 -22.7     1  1.50  -1.28   0.773 0.784 -0.249 -0.559 
+#>  2 Cynophall…     10 -64.1 -22.7     1  0.750 -1.22   1.36  0.359 -0.434 -0.742 
+#>  3 Cynophall…     20 -64.7 -23.1     2  1.21  -1.82   1.36  0.336 -0.862  0.0878
+#>  4 Cynophall…      0 -62.6 -23.2     3 -1.71  -2.85  -1.34  0.762 -0.745 -1.02  
+#>  5 Cynophall…      0 -61.7 -24.5     3 -1.65  -2.17  -1.68  0.175 -0.839 -0.637 
+#>  6 Cynophall…      0 -61.6 -25.0     3 -1.29  -2.35  -1.94  0.614 -0.944 -0.805 
+#>  7 Cynophall…      0 -61.2 -24.5     3 -0.904 -2.73  -2.30  1.05  -0.604 -0.830 
+#>  8 Cynophall…      0 -64.9 -23.8     2  0.676 -1.57   0.401 1.54  -0.346 -0.417 
+#>  9 Cynophall…      0 -65.3 -24.4     3  0.460 -0.795  0.409 2.19  -0.172 -0.249 
+#> 10 Cynophall…      0 -64.7 -24.8     1  1.18   0.201  0.606 2.65  -0.356 -0.775 
+#> # ℹ 356 more rows
+#> # ℹ 1 more variable: PC7 <dbl>
 ```
 
 Notice that the new dataframe have one column for each environmental
@@ -131,6 +141,7 @@ stabilize Deep Neural Networks training, we will transform response data
 using “zscore” method.
 
 ``` r
+
 species_data <- adm_transform(
   data = species_data,
   variable = "ind_ha",
@@ -138,20 +149,20 @@ species_data <- adm_transform(
 )
 
 species_data %>% dplyr::select(ind_ha, ind_ha_zscore)
-#> [38;5;246m# A tibble: 366 × 2[39m
+#> # A tibble: 366 × 2
 #>    ind_ha ind_ha_zscore
-#>     [3m[38;5;246m<int>[39m[23m         [3m[38;5;246m<dbl>[39m[23m
-#> [38;5;250m 1[39m     10        0.075[4m4[24m
-#> [38;5;250m 2[39m     10        0.075[4m4[24m
-#> [38;5;250m 3[39m     20        0.802 
-#> [38;5;250m 4[39m      0       -[31m0[39m[31m.[39m[31m651[39m 
-#> [38;5;250m 5[39m      0       -[31m0[39m[31m.[39m[31m651[39m 
-#> [38;5;250m 6[39m      0       -[31m0[39m[31m.[39m[31m651[39m 
-#> [38;5;250m 7[39m      0       -[31m0[39m[31m.[39m[31m651[39m 
-#> [38;5;250m 8[39m      0       -[31m0[39m[31m.[39m[31m651[39m 
-#> [38;5;250m 9[39m      0       -[31m0[39m[31m.[39m[31m651[39m 
-#> [38;5;250m10[39m      0       -[31m0[39m[31m.[39m[31m651[39m 
-#> [38;5;246m# ℹ 356 more rows[39m
+#>     <int>         <dbl>
+#>  1     10        0.0754
+#>  2     10        0.0754
+#>  3     20        0.802 
+#>  4      0       -0.651 
+#>  5      0       -0.651 
+#>  6      0       -0.651 
+#>  7      0       -0.651 
+#>  8      0       -0.651 
+#>  9      0       -0.651 
+#> 10      0       -0.651 
+#> # ℹ 356 more rows
 ```
 
 It creates a new column called “ind_ha_zscore”, which can be used as
@@ -174,6 +185,7 @@ exploration, what can be easily constructed with *expand.grid* base
 function:
 
 ``` r
+
 raf_grid <- expand.grid(
   mtry = seq(from = 1, to = 7, by = 1),
   ntree = seq(from = 100, to = 1000, by = 100)
@@ -199,10 +211,11 @@ pair of values, totalizing 70 combinations (number of rows in
 validate a RAF model:
 
 ``` r
+
 mraf <- tune_abund_raf(
   data = species_data,
   response = "ind_ha",
-  predictors = c("PC1", "PC2", "PC3", "PC4", "PC5", "PC6", "PC7"),
+  predictors = c("PC1", "PC2", "PC3", "PC4", "PC5"),
   partition = ".part",
   predict_part = TRUE, # predictions for every partition will be returned
   grid = raf_grid,
@@ -215,12 +228,13 @@ mraf <- tune_abund_raf(
 #> 
 #> Fitting the best model...
 #> The best model was achieved with: 
-#>  mtry = 3 and ntree = 100
+#>  mtry = 3 and ntree = 400
 ```
 
 The function returns a list with the following elements:
 
 ``` r
+
 names(mraf)
 #> [1] "model"               "predictors"          "performance"        
 #> [4] "performance_part"    "predicted_part"      "metadata"           
@@ -230,6 +244,7 @@ names(mraf)
 “model”: a “randomForest” class object.
 
 ``` r
+
 class(mraf$model)
 #> [1] "randomForest.formula" "randomForest"
 mraf$model
@@ -237,113 +252,119 @@ mraf$model
 #> Call:
 #>  randomForest(formula = formula1, data = data, mtry = mtry, ntree = ntree,      importance = FALSE) 
 #>                Type of random forest: regression
-#>                      Number of trees: 100
+#>                      Number of trees: 400
 #> No. of variables tried at each split: 3
 #> 
-#>           Mean of squared residuals: 154.5952
-#>                     % Var explained: 18.24
+#>           Mean of squared residuals: 150.0551
+#>                     % Var explained: 20.64
 ```
 
 “predictors”: a tibble containing relevant informations about the model
 fitted.
 
 ``` r
+
 mraf$predictors
-#> [38;5;246m# A tibble: 1 × 9[39m
-#>   model response c1    c2    c3    c4    c5    c6    c7   
-#>   [3m[38;5;246m<chr>[39m[23m [3m[38;5;246m<chr>[39m[23m    [3m[38;5;246m<chr>[39m[23m [3m[38;5;246m<chr>[39m[23m [3m[38;5;246m<chr>[39m[23m [3m[38;5;246m<chr>[39m[23m [3m[38;5;246m<chr>[39m[23m [3m[38;5;246m<chr>[39m[23m [3m[38;5;246m<chr>[39m[23m
-#> [38;5;250m1[39m raf   ind_ha   PC1   PC2   PC3   PC4   PC5   PC6   PC7
+#> # A tibble: 1 × 7
+#>   model response c1    c2    c3    c4    c5   
+#>   <chr> <chr>    <chr> <chr> <chr> <chr> <chr>
+#> 1 raf   ind_ha   PC1   PC2   PC3   PC4   PC5
 ```
 
 “performance”: a tibble containing the best models’ performance.
 
 ``` r
+
 mraf$performance
-#> [38;5;246m# A tibble: 1 × 13[39m
+#> # A tibble: 1 × 13
 #>   model mae_mean mae_sd corr_spear_mean corr_spear_sd corr_pear_mean
-#>   [3m[38;5;246m<chr>[39m[23m    [3m[38;5;246m<dbl>[39m[23m  [3m[38;5;246m<dbl>[39m[23m           [3m[38;5;246m<dbl>[39m[23m         [3m[38;5;246m<dbl>[39m[23m          [3m[38;5;246m<dbl>[39m[23m
-#> [38;5;250m1[39m raf       7.75   1.98           0.408         0.184          0.365
-#> [38;5;246m# ℹ 7 more variables: corr_pear_sd <dbl>, inter_mean <dbl>, inter_sd <dbl>,[39m
-#> [38;5;246m#   slope_mean <dbl>, slope_sd <dbl>, pdisp_mean <dbl>, pdisp_sd <dbl>[39m
+#>   <chr>    <dbl>  <dbl>           <dbl>         <dbl>          <dbl>
+#> 1 raf       7.73   1.91           0.386         0.188          0.316
+#> # ℹ 7 more variables: corr_pear_sd <dbl>, inter_mean <dbl>, inter_sd <dbl>,
+#> #   slope_mean <dbl>, slope_sd <dbl>, pdisp_mean <dbl>, pdisp_sd <dbl>
 ```
 
 “performance_part”: a tibble with the performance of each partition.
 
 ``` r
+
 mraf$performance_part
-#> [38;5;246m# A tibble: 3 × 9[39m
-#>   replica partition model   mae corr_spear corr_pear  inter slope pdisp
-#>   [3m[38;5;246m<chr>[39m[23m   [3m[38;5;246m<chr>[39m[23m     [3m[38;5;246m<chr>[39m[23m [3m[38;5;246m<dbl>[39m[23m      [3m[38;5;246m<dbl>[39m[23m     [3m[38;5;246m<dbl>[39m[23m  [3m[38;5;246m<dbl>[39m[23m [3m[38;5;246m<dbl>[39m[23m [3m[38;5;246m<dbl>[39m[23m
-#> [38;5;250m1[39m 1       1         raf    9.92      0.618     0.496 -[31m0[39m[31m.[39m[31m435[39m 1.23  0.404
-#> [38;5;250m2[39m 1       2         raf    7.29      0.334     0.331  2.42  0.502 0.659
-#> [38;5;250m3[39m 1       3         raf    6.04      0.272     0.268  2.07  0.574 0.467
+#> # A tibble: 3 × 9
+#>   replica partition model   mae corr_spear corr_pear inter slope pdisp
+#>   <chr>   <chr>     <chr> <dbl>      <dbl>     <dbl> <dbl> <dbl> <dbl>
+#> 1 1       1         raf    9.84      0.587     0.476  1.45 1.04  0.457
+#> 2 1       2         raf    7.24      0.355     0.284  3.23 0.448 0.634
+#> 3 1       3         raf    6.11      0.214     0.187  3.29 0.427 0.439
 ```
 
 “predicted_part”: predictions for each partition.
 
 ``` r
+
 mraf$predicted_part %>% head()
-#> [38;5;246m# A tibble: 6 × 4[39m
+#> # A tibble: 6 × 4
 #>   replica partition observed predicted
-#>   [3m[38;5;246m<chr>[39m[23m   [3m[38;5;246m<chr>[39m[23m        [3m[38;5;246m<int>[39m[23m     [3m[38;5;246m<dbl>[39m[23m
-#> [38;5;250m1[39m 1       1               10      1.14
-#> [38;5;250m2[39m 1       1               10      3.23
-#> [38;5;250m3[39m 1       1                0      0.75
-#> [38;5;250m4[39m 1       1               10      7.03
-#> [38;5;250m5[39m 1       1               10      7.58
-#> [38;5;250m6[39m 1       1               10      6.51
+#>   <chr>   <chr>        <int>     <dbl>
+#> 1 1       1               10     1.47 
+#> 2 1       1               10     1.95 
+#> 3 1       1                0     0.299
+#> 4 1       1               10    10.6  
+#> 5 1       1               10    10.0  
+#> 6 1       1               10     8.47
 ```
 
 “optimal_combination”: the set of hyperparameters values considered the
 best given the metrics and its performance.
 
 ``` r
+
 mraf$optimal_combination %>% dplyr::glimpse()
 #> Rows: 1
 #> Columns: 16
-#> $ comb_id         [3m[38;5;246m<chr>[39m[23m "comb_3"
-#> $ mtry            [3m[38;5;246m<dbl>[39m[23m 3
-#> $ ntree           [3m[38;5;246m<dbl>[39m[23m 100
-#> $ model           [3m[38;5;246m<chr>[39m[23m "raf"
-#> $ mae_mean        [3m[38;5;246m<dbl>[39m[23m 7.752958
-#> $ mae_sd          [3m[38;5;246m<dbl>[39m[23m 1.978733
-#> $ corr_spear_mean [3m[38;5;246m<dbl>[39m[23m 0.4077742
-#> $ corr_spear_sd   [3m[38;5;246m<dbl>[39m[23m 0.1843192
-#> $ corr_pear_mean  [3m[38;5;246m<dbl>[39m[23m 0.3649869
-#> $ corr_pear_sd    [3m[38;5;246m<dbl>[39m[23m 0.1175491
-#> $ inter_mean      [3m[38;5;246m<dbl>[39m[23m 1.352334
-#> $ inter_sd        [3m[38;5;246m<dbl>[39m[23m 1.557785
-#> $ slope_mean      [3m[38;5;246m<dbl>[39m[23m 0.7677054
-#> $ slope_sd        [3m[38;5;246m<dbl>[39m[23m 0.3987553
-#> $ pdisp_mean      [3m[38;5;246m<dbl>[39m[23m 0.5099857
-#> $ pdisp_sd        [3m[38;5;246m<dbl>[39m[23m 0.132572
+#> $ comb_id         <chr> "comb_24"
+#> $ mtry            <dbl> 3
+#> $ ntree           <dbl> 400
+#> $ model           <chr> "raf"
+#> $ mae_mean        <dbl> 7.729639
+#> $ mae_sd          <dbl> 1.912355
+#> $ corr_spear_mean <dbl> 0.3857151
+#> $ corr_spear_sd   <dbl> 0.188368
+#> $ corr_pear_mean  <dbl> 0.3157325
+#> $ corr_pear_sd    <dbl> 0.1468567
+#> $ inter_mean      <dbl> 2.656427
+#> $ inter_sd        <dbl> 1.048376
+#> $ slope_mean      <dbl> 0.6382733
+#> $ slope_sd        <dbl> 0.3480411
+#> $ pdisp_mean      <dbl> 0.5101291
+#> $ pdisp_sd        <dbl> 0.1079395
 ```
 
 “all_combinations”: performance for every hyper-parameter combination.
 
 ``` r
+
 mraf$all_combinations %>% head()
 #>   comb_id mtry ntree model mae_mean   mae_sd corr_spear_mean corr_spear_sd
-#> 1  comb_1    1   100   raf 7.813960 2.017926       0.4025162     0.2032571
-#> 2  comb_2    2   100   raf 7.747226 2.033879       0.4074822     0.2012660
-#> 3  comb_3    3   100   raf 7.752958 1.978733       0.4077742     0.1843192
-#> 4  comb_4    4   100   raf 7.914473 2.073345       0.3837011     0.1823989
-#> 5  comb_5    5   100   raf 7.747859 2.025944       0.4148284     0.1760800
-#> 6  comb_6    6   100   raf 7.828127 1.987517       0.3957971     0.1810064
-#>   corr_pear_mean corr_pear_sd inter_mean inter_sd slope_mean  slope_sd
-#> 1      0.3683706    0.1314427  0.1869509 3.140764  0.9354092 0.6426653
-#> 2      0.3497574    0.1241406  1.4048856 1.975473  0.7860210 0.4652657
-#> 3      0.3649869    0.1175491  1.3523338 1.557785  0.7677054 0.3987553
-#> 4      0.3050910    0.1248031  2.5319942 1.591738  0.6509941 0.4394166
-#> 5      0.3235970    0.1355859  2.3228934 1.722592  0.6842002 0.4249527
-#> 6      0.3049805    0.1470374  2.7259012 1.529523  0.6224873 0.4073050
-#>   pdisp_mean  pdisp_sd
-#> 1  0.4520509 0.1437945
-#> 2  0.4878463 0.1460967
-#> 3  0.5099857 0.1325720
-#> 4  0.5255862 0.1625121
-#> 5  0.5243141 0.1681618
-#> 6  0.5352171 0.1516525
+#> 1  comb_1    1   100   raf 7.879923 1.994658       0.3777350     0.1991773
+#> 2  comb_2    2   100   raf 7.817054 1.942683       0.3818128     0.1755735
+#> 3  comb_3    3   100   raf 7.755626 1.884941       0.3610172     0.2023806
+#> 4  comb_4    4   100   raf 7.709753 1.853860       0.3994898     0.1900201
+#> 5  comb_5    5   100   raf 7.581052 1.894581       0.4047669     0.1911419
+#> 6  comb_6    6   100   raf 7.581052 1.894581       0.4047669     0.1911419
+#>   corr_pear_mean corr_pear_sd inter_mean  inter_sd slope_mean  slope_sd
+#> 1      0.3419217    0.1456207   1.002681 2.7823673  0.8673265 0.6257408
+#> 2      0.3126395    0.1321951   2.622964 1.4231532  0.6678264 0.4199777
+#> 3      0.3099935    0.1407401   2.728000 0.8643917  0.6534981 0.3612145
+#> 4      0.3000989    0.1553253   3.039585 1.1707461  0.5932970 0.3619571
+#> 5      0.3099383    0.1677273   3.009371 1.1492067  0.5874383 0.3389303
+#> 6      0.3099383    0.1677273   3.009371 1.1492067  0.5874383 0.3389303
+#>   pdisp_mean   pdisp_sd
+#> 1  0.4488406 0.13373204
+#> 2  0.5095975 0.13604188
+#> 3  0.4928913 0.11587233
+#> 4  0.5288956 0.12081622
+#> 5  0.5341898 0.07949349
+#> 6  0.5341898 0.07949349
 ```
 
 ### GLM
@@ -357,6 +378,7 @@ provides help via *family_selector* function. This function compares the
 response variable range to the *gamlss* compatible families:
 
 ``` r
+
 suitable_families <- family_selector(
   data = species_data,
   response = "ind_ha"
@@ -370,40 +392,57 @@ column “family_call” can be directly used in a grid.
 
 If you are interested in exploring the attributes of the families for
 GLM and GAM, you can use the *families_bank* database. For further
-details about family distributions see `?gamlss.dist::gamlss.family`.
+details about family distributions see
+[`?gamlss.dist::gamlss.family`](https://rdrr.io/pkg/gamlss.dist/man/gamlss.family.html).
 
 ``` r
+
 fm <- system.file("external/families_bank.txt", package = "adm") %>%
   utils::read.delim(., header = TRUE, quote = "\t") %>%
   dplyr::as_tibble()
 fm
-#> [38;5;246m# A tibble: 87 × 9[39m
+#> # A tibble: 87 × 9
 #>    family_name             family_call range no_parameters discrete accepts_zero
-#>    [3m[38;5;246m<chr>[39m[23m                   [3m[38;5;246m<chr>[39m[23m       [3m[38;5;246m<chr>[39m[23m         [3m[38;5;246m<int>[39m[23m    [3m[38;5;246m<int>[39m[23m        [3m[38;5;246m<int>[39m[23m
-#> [38;5;250m 1[39m Beta                    BE          (0,1)             2        0            0
-#> [38;5;250m 2[39m Beta one inflated       BEOI        (0,1]             3        0            0
-#> [38;5;250m 3[39m Box-Cox Cole and Green  BCCG        (0, …             3        0            0
-#> [38;5;250m 4[39m Box-Cox Power Exponent… BCPE        (0, …             4        0            0
-#> [38;5;250m 5[39m Box-Cox-t               BCT         (0, …             4        0            0
-#> [38;5;250m 6[39m Exponential             EXP         (0, …             1        0            0
-#> [38;5;250m 7[39m Gamma                   GA          (0, …             2        0            0
-#> [38;5;250m 8[39m Generalized Beta type 1 GB1         (0,1)             4        0            0
-#> [38;5;250m 9[39m Generalized Beta type 2 GB2         (0, …             4        0            0
-#> [38;5;250m10[39m Generalized Gamma       GG          (0, …             3        0            0
-#> [38;5;246m# ℹ 77 more rows[39m
-#> [38;5;246m# ℹ 3 more variables: one_restricted <int>, accepts_one <int>,[39m
-#> [38;5;246m#   accepts_negatives <int>[39m
+#>    <chr>                   <chr>       <chr>         <int>    <int>        <int>
+#>  1 Beta                    BE          (0,1)             2        0            0
+#>  2 Beta one inflated       BEOI        (0,1]             3        0            0
+#>  3 Box-Cox Cole and Green  BCCG        (0, …             3        0            0
+#>  4 Box-Cox Power Exponent… BCPE        (0, …             4        0            0
+#>  5 Box-Cox-t               BCT         (0, …             4        0            0
+#>  6 Exponential             EXP         (0, …             1        0            0
+#>  7 Gamma                   GA          (0, …             2        0            0
+#>  8 Generalized Beta type 1 GB1         (0,1)             4        0            0
+#>  9 Generalized Beta type 2 GB2         (0, …             4        0            0
+#> 10 Generalized Gamma       GG          (0, …             3        0            0
+#> # ℹ 77 more rows
+#> # ℹ 3 more variables: one_restricted <int>, accepts_one <int>,
+#> #   accepts_negatives <int>
 ```
 
 In this example, we selected some suitable distributions for use. Now,
 we can construct the grid:
 
 ``` r
+
 glm_grid <- list(
   distribution = c(
-    "NO", "NOF", "RG", "TF", "ZAIG", "LQNO", "DEL",
-    "PIG", "WARING", "YULE", "ZALG", "ZIP", "BNB",
-    "DBURR12", "ZIBNB", "LO", "PO"
+    "NO",
+    "NOF",
+    "RG",
+    "TF",
+    "ZAIG",
+    "LQNO",
+    "DEL",
+    "PIG",
+    "WARING",
+    "YULE",
+    "ZALG",
+    "ZIP",
+    "BNB",
+    "DBURR12",
+    "ZIBNB",
+    "LO",
+    "PO"
   ),
   poly = c(1, 2, 3),
   inter_order = c(0, 1, 2)
@@ -417,10 +456,11 @@ For GLM, “poly” refers to the polynomials used in model formula, and
 Tuning the GLM with the grid:
 
 ``` r
+
 mglm <- tune_abund_glm(
   data = species_data,
   response = "ind_ha",
-  predictors = c("PC1", "PC2", "PC3", "PC4", "PC5", "PC6", "PC7"),
+  predictors = c("PC1", "PC2", "PC3", "PC4", "PC5"),
   predictors_f = NULL,
   partition = ".part",
   predict_part = TRUE,
@@ -434,7 +474,7 @@ mglm <- tune_abund_glm(
 #> 
 #> Fitting the best model...
 #> The best model was achieved with:
-#>  distribution = PO
+#>  distribution = TF
 #>  poly = 2
 #>  inter_order = 0
 ```
@@ -444,11 +484,12 @@ The output is a list with basically the same elements as
 difference here is the “model”, which is now is a “gamlss” class object.
 
 ``` r
+
 class(mglm$model)
 #> [1] "gamlss" "gam"    "glm"    "lm"
 mglm$model
 #> 
-#> Family:  c("PO", "Poisson") 
+#> Family:  c("TF", "t Family") 
 #> Fitting method: RS() 
 #> 
 #> Call:  gamlss::gamlss(formula = formula1, sigma.formula = sigma_formula,  
@@ -458,16 +499,20 @@ mglm$model
 #> 
 #> Mu Coefficients:
 #> (Intercept)          PC1          PC2          PC3          PC4          PC5  
-#>   -0.539373     0.426482    -1.486044     0.500924     0.074328     0.447586  
-#>         PC6          PC7     I(PC1^2)     I(PC2^2)     I(PC3^2)     I(PC4^2)  
-#>   -1.497579     0.290151    -0.372255     0.004844     0.072316    -0.382721  
-#>    I(PC5^2)     I(PC6^2)     I(PC7^2)  
-#>    0.684274    -0.697127    -1.088711  
+#>      1.1361       1.1419       3.0295       0.4442       0.2818      -2.2983  
+#>    I(PC1^2)     I(PC2^2)     I(PC3^2)     I(PC4^2)     I(PC5^2)  
+#>     -0.7504       2.2560      -0.4292      -0.5493       0.7783  
+#> Sigma Coefficients:
+#> (Intercept)  
+#>       1.596  
+#> Nu Coefficients:
+#> (Intercept)  
+#>      0.5979  
 #> 
-#>  Degrees of Freedom for the fit: 15 Residual Deg. of Freedom   351 
-#> Global Deviance:     4604.94 
-#>             AIC:     4634.94 
-#>             SBC:     4693.48
+#>  Degrees of Freedom for the fit: 13 Residual Deg. of Freedom   353 
+#> Global Deviance:     2644.64 
+#>             AIC:     2670.64 
+#>             SBC:     2721.37
 ```
 
 ### DNN
@@ -485,12 +530,13 @@ measurement. This is highly recommended. Let’s create and select some
 architectures:
 
 ``` r
+
 archs <- adm::generate_arch_list(
   type = "dnn",
-  number_of_features = 7, # input/predictor variables
+  number_of_features = 5, # input/predictor variables
   number_of_outputs = 1, # output/response variable
   n_layers = c(2, 3, 4), # possible number of layers
-  n_neurons = c(7, 14, 21), # possible number of neurons on each layer
+  n_neurons = c(5, 14, 21), # possible number of neurons on each layer
   batch_norm = TRUE, # batch normalization between layers
   dropout = 0 # without training dropout
 )
@@ -505,17 +551,19 @@ archs <- adm::select_arch_list(
   min_max = TRUE # keep the more simple and the more complex networks
 )
 
-number_after <- archs$arch_list %>% length() # 52
+archs$arch_list %>% length()
+#> [1] 50
 ```
 
 However, for the sake of brevity in this tutorial, we will manually
 reduce even more our architectures list to just a few:
 
 ``` r
-archs$arch_list <- archs$arch_list[seq(from = 1, to = 52, by = 5)]
+
+archs$arch_list <- archs$arch_list[seq(from = 1, to = length(archs), by = 10)]
 
 length(archs$arch_list)
-#> [1] 11
+#> [1] 1
 ```
 
 Now we can construct the grid with hyper-parameters combinations. Note
@@ -524,30 +572,31 @@ Therefore user needs to be careful with grid and architecture list
 sizes.
 
 ``` r
+
 dnn_grid <- expand.grid(
   batch_size = c(64),
   validation_patience = c(5),
   fitting_patience = c(5),
-  learning_rate = c(0.005, 0.001, 0.0005),
+  learning_rate = c(0.005, 0.0005),
   n_epochs = 200
 )
 head(dnn_grid)
 #>   batch_size validation_patience fitting_patience learning_rate n_epochs
 #> 1         64                   5                5         5e-03      200
-#> 2         64                   5                5         1e-03      200
-#> 3         64                   5                5         5e-04      200
+#> 2         64                   5                5         5e-04      200
 nrow(dnn_grid)
-#> [1] 3
+#> [1] 2
 ```
 
 Now we can use the architectures generated and the grid created within
 the *tune_abund_dnn* function:
 
 ``` r
+
 mdnn <- tune_abund_dnn(
   data = species_data,
   response = "ind_ha_zscore", # using the transformed response
-  predictors = c("PC1", "PC2", "PC3", "PC4", "PC5", "PC6", "PC7"),
+  predictors = c("PC1", "PC2", "PC3", "PC4", "PC5"),
   predictors_f = NULL,
   partition = ".part",
   predict_part = TRUE,
@@ -559,65 +608,65 @@ mdnn <- tune_abund_dnn(
 )
 #> Using provided architectures.
 #> Adding default hyperparameter for: weight_decay
-#> Testing 99 combinations.
+#> Testing 6 combinations.
 #> Searching for optimal hyperparameters...
 #> 
 #> Fitting the best model...
-#> Warning: [1m[22mSome torch operators might not yet be implemented for the MPS device. A
+#> Warning: Some torch operators might not yet be implemented for the MPS device. A
 #> temporary fix is to set the `PYTORCH_ENABLE_MPS_FALLBACK=1` to use the CPU as a
 #> fall back for those operators:
-#> [36mℹ[39m Add `PYTORCH_ENABLE_MPS_FALLBACK=1` to your `.Renviron` file, for example use
+#> ℹ Add `PYTORCH_ENABLE_MPS_FALLBACK=1` to your `.Renviron` file, for example use
 #>   `usethis::edit_r_environ()`.
-#> [31m✖[39m Using `Sys.setenv()` doesn't work because the env var must be set before R
+#> ✖ Using `Sys.setenv()` doesn't work because the env var must be set before R
 #>   starts.
-#> [1m[22mSome torch operators might not yet be implemented for the MPS device. A
+#> Some torch operators might not yet be implemented for the MPS device. A
 #> temporary fix is to set the `PYTORCH_ENABLE_MPS_FALLBACK=1` to use the CPU as a
 #> fall back for those operators:
-#> [36mℹ[39m Add `PYTORCH_ENABLE_MPS_FALLBACK=1` to your `.Renviron` file, for example use
+#> ℹ Add `PYTORCH_ENABLE_MPS_FALLBACK=1` to your `.Renviron` file, for example use
 #>   `usethis::edit_r_environ()`.
-#> [31m✖[39m Using `Sys.setenv()` doesn't work because the env var must be set before R
+#> ✖ Using `Sys.setenv()` doesn't work because the env var must be set before R
 #>   starts.
-#> [1m[22mSome torch operators might not yet be implemented for the MPS device. A
+#> Some torch operators might not yet be implemented for the MPS device. A
 #> temporary fix is to set the `PYTORCH_ENABLE_MPS_FALLBACK=1` to use the CPU as a
 #> fall back for those operators:
-#> [36mℹ[39m Add `PYTORCH_ENABLE_MPS_FALLBACK=1` to your `.Renviron` file, for example use
+#> ℹ Add `PYTORCH_ENABLE_MPS_FALLBACK=1` to your `.Renviron` file, for example use
 #>   `usethis::edit_r_environ()`.
-#> [31m✖[39m Using `Sys.setenv()` doesn't work because the env var must be set before R
+#> ✖ Using `Sys.setenv()` doesn't work because the env var must be set before R
 #>   starts.
-#> [1m[22mSome torch operators might not yet be implemented for the MPS device. A
+#> Some torch operators might not yet be implemented for the MPS device. A
 #> temporary fix is to set the `PYTORCH_ENABLE_MPS_FALLBACK=1` to use the CPU as a
 #> fall back for those operators:
-#> [36mℹ[39m Add `PYTORCH_ENABLE_MPS_FALLBACK=1` to your `.Renviron` file, for example use
+#> ℹ Add `PYTORCH_ENABLE_MPS_FALLBACK=1` to your `.Renviron` file, for example use
 #>   `usethis::edit_r_environ()`.
-#> [31m✖[39m Using `Sys.setenv()` doesn't work because the env var must be set before R
+#> ✖ Using `Sys.setenv()` doesn't work because the env var must be set before R
 #>   starts.
-#> [1m[22mSome torch operators might not yet be implemented for the MPS device. A
+#> Some torch operators might not yet be implemented for the MPS device. A
 #> temporary fix is to set the `PYTORCH_ENABLE_MPS_FALLBACK=1` to use the CPU as a
 #> fall back for those operators:
-#> [36mℹ[39m Add `PYTORCH_ENABLE_MPS_FALLBACK=1` to your `.Renviron` file, for example use
+#> ℹ Add `PYTORCH_ENABLE_MPS_FALLBACK=1` to your `.Renviron` file, for example use
 #>   `usethis::edit_r_environ()`.
-#> [31m✖[39m Using `Sys.setenv()` doesn't work because the env var must be set before R
+#> ✖ Using `Sys.setenv()` doesn't work because the env var must be set before R
 #>   starts.
-#> [1m[22mSome torch operators might not yet be implemented for the MPS device. A
+#> Some torch operators might not yet be implemented for the MPS device. A
 #> temporary fix is to set the `PYTORCH_ENABLE_MPS_FALLBACK=1` to use the CPU as a
 #> fall back for those operators:
-#> [36mℹ[39m Add `PYTORCH_ENABLE_MPS_FALLBACK=1` to your `.Renviron` file, for example use
+#> ℹ Add `PYTORCH_ENABLE_MPS_FALLBACK=1` to your `.Renviron` file, for example use
 #>   `usethis::edit_r_environ()`.
-#> [31m✖[39m Using `Sys.setenv()` doesn't work because the env var must be set before R
+#> ✖ Using `Sys.setenv()` doesn't work because the env var must be set before R
 #>   starts.
-#> [1m[22mSome torch operators might not yet be implemented for the MPS device. A
+#> Some torch operators might not yet be implemented for the MPS device. A
 #> temporary fix is to set the `PYTORCH_ENABLE_MPS_FALLBACK=1` to use the CPU as a
 #> fall back for those operators:
-#> [36mℹ[39m Add `PYTORCH_ENABLE_MPS_FALLBACK=1` to your `.Renviron` file, for example use
+#> ℹ Add `PYTORCH_ENABLE_MPS_FALLBACK=1` to your `.Renviron` file, for example use
 #>   `usethis::edit_r_environ()`.
-#> [31m✖[39m Using `Sys.setenv()` doesn't work because the env var must be set before R
+#> ✖ Using `Sys.setenv()` doesn't work because the env var must be set before R
 #>   starts.
 #> The best model was achieved with: 
 #>  learning_rate = 0.005
 #>  n_epochs = 200
 #>  patience = 5 and 5
 #>  batch_size = 64
-#>  arch = 4 layers with 21->7->14->14 neurons
+#>  arch = 2 layers with 5->5 neurons
 ```
 
 Again, the output is very similar as before, because they are
@@ -625,33 +674,30 @@ standardize for all *tune_abund\_* functions. Now, the “model” element
 is a “luz_module_fitted” from *torch* and *luz* packages.
 
 ``` r
+
 class(mdnn$model)
 #> [1] "luz_module_fitted"
 mdnn$model
 #> A `luz_module_fitted`
 #> ── Time ────────────────────────────────────────────────────────────────────────
-#> • Total time: 17m 1.9s
-#> • Avg time per training epoch: 1m 13s
+#> • Total time: 2.2s
+#> • Avg time per training epoch: 122ms
 #> 
 #> ── Results ─────────────────────────────────────────────────────────────────────
 #> Metrics observed in the last epoch.
 #> 
-#> [34mℹ[39m Training:
-#> loss: 0.5043
+#> ℹ Training:
+#> loss: 0.5333
 #> 
 #> ── Model ───────────────────────────────────────────────────────────────────────
-#> An `nn_module` containing 771 parameters.
+#> An `nn_module` containing 86 parameters.
 #> 
 #> ── Modules ─────────────────────────────────────────────────────────────────────
-#> • linear1: <nn_linear> #168 parameters
-#> • linear2: <nn_linear> #154 parameters
-#> • linear3: <nn_linear> #112 parameters
-#> • linear4: <nn_linear> #210 parameters
-#> • output: <nn_linear> #15 parameters
-#> • bn1: <nn_batch_norm1d> #42 parameters
-#> • bn2: <nn_batch_norm1d> #14 parameters
-#> • bn3: <nn_batch_norm1d> #28 parameters
-#> • bn4: <nn_batch_norm1d> #28 parameters
+#> • linear1: <nn_linear> #30 parameters
+#> • linear2: <nn_linear> #30 parameters
+#> • output: <nn_linear> #6 parameters
+#> • bn1: <nn_batch_norm1d> #10 parameters
+#> • bn2: <nn_batch_norm1d> #10 parameters
 ```
 
 ### Summarizing results
@@ -660,15 +706,16 @@ In *adm* is possible to quick summarize several models evalutions in one
 dataframe, using *adm_summarize* function:
 
 ``` r
+
 adm_summarize(list(mdnn, mraf, mglm))
-#> [38;5;246m# A tibble: 3 × 14[39m
+#> # A tibble: 3 × 14
 #>   model_ID model mae_mean mae_sd corr_spear_mean corr_spear_sd corr_pear_mean
-#>      [3m[38;5;246m<int>[39m[23m [3m[38;5;246m<chr>[39m[23m    [3m[38;5;246m<dbl>[39m[23m  [3m[38;5;246m<dbl>[39m[23m           [3m[38;5;246m<dbl>[39m[23m         [3m[38;5;246m<dbl>[39m[23m          [3m[38;5;246m<dbl>[39m[23m
-#> [38;5;250m1[39m        1 dnn      0.536  0.171           0.445         0.157          0.425
-#> [38;5;250m2[39m        2 raf      7.75   1.98            0.408         0.184          0.365
-#> [38;5;250m3[39m        3 glm      7.59   2.17            0.492         0.162          0.427
-#> [38;5;246m# ℹ 7 more variables: corr_pear_sd <dbl>, inter_mean <dbl>, inter_sd <dbl>,[39m
-#> [38;5;246m#   slope_mean <dbl>, slope_sd <dbl>, pdisp_mean <dbl>, pdisp_sd <dbl>[39m
+#>      <int> <chr>    <dbl>  <dbl>           <dbl>         <dbl>          <dbl>
+#> 1        1 dnn      0.579  0.176           0.404         0.125          0.321
+#> 2        2 raf      7.73   1.91            0.386         0.188          0.316
+#> 3        3 glm      7.41   2.62            0.505         0.167          0.428
+#> # ℹ 7 more variables: corr_pear_sd <dbl>, inter_mean <dbl>, inter_sd <dbl>,
+#> #   slope_mean <dbl>, slope_sd <dbl>, pdisp_mean <dbl>, pdisp_sd <dbl>
 ```
 
 ## Predicting models
@@ -681,6 +728,7 @@ buffered minimum convex polygon around species presence points, but this
 process is optional.
 
 ``` r
+
 sp_train_a <- system.file("external/cretusa_calib_area.gpkg", package = "adm")
 sp_train_a <- terra::vect(sp_train_a)
 
@@ -700,6 +748,7 @@ original scale, we need to use the “invert_transform” argument in
 *adm_predict*:
 
 ``` r
+
 pred_dnn <- adm_predict(
   models = mdnn,
   pred = cretusa_predictors,
@@ -713,12 +762,12 @@ pred_dnn <- adm_predict(
   )
 )
 #> Predicting an individual model
-#> Warning: [1m[22mSome torch operators might not yet be implemented for the MPS device. A
+#> Warning: Some torch operators might not yet be implemented for the MPS device. A
 #> temporary fix is to set the `PYTORCH_ENABLE_MPS_FALLBACK=1` to use the CPU as a
 #> fall back for those operators:
-#> [36mℹ[39m Add `PYTORCH_ENABLE_MPS_FALLBACK=1` to your `.Renviron` file, for example use
+#> ℹ Add `PYTORCH_ENABLE_MPS_FALLBACK=1` to your `.Renviron` file, for example use
 #>   `usethis::edit_r_environ()`.
-#> [31m✖[39m Using `Sys.setenv()` doesn't work because the env var must be set before R
+#> ✖ Using `Sys.setenv()` doesn't work because the env var must be set before R
 #>   starts.
 ```
 
@@ -727,15 +776,17 @@ more about it, visit *adm_transform* documentation. Let’s visualize the
 predictions:
 
 ``` r
+
 par(mfrow = c(1, 3))
 plot(pred_dnn$dnn, main = "DNN")
 plot(preds$raf, main = "RAF")
 plot(preds$glm, main = "GLM")
 ```
 
-![](v01_modelling_workflow_files/figure-html/unnamed-chunk-5-1.png)
+![](v01_modelling_workflow_files/figure-html/unnamed-chunk-4-1.png)
 
 ``` r
+
 par(mfrow = c(1, 1))
 ```
 
@@ -749,6 +800,7 @@ It can provide very relevant information about residuals and model
 extrapolation:
 
 ``` r
+
 # PDP for DNN model
 pdp_dnn <- p_abund_pdp(
   model = mdnn, # the output of tune_abund_ or fit_abund_
@@ -769,19 +821,19 @@ pdp_dnn <- p_abund_pdp(
   alpha = 0.2,
   theme = ggplot2::theme_classic() # a ggplot2 theme
 )
-#> Warning: [1m[22mSome torch operators might not yet be implemented for the MPS device. A
+#> Warning: Some torch operators might not yet be implemented for the MPS device. A
 #> temporary fix is to set the `PYTORCH_ENABLE_MPS_FALLBACK=1` to use the CPU as a
 #> fall back for those operators:
-#> [36mℹ[39m Add `PYTORCH_ENABLE_MPS_FALLBACK=1` to your `.Renviron` file, for example use
+#> ℹ Add `PYTORCH_ENABLE_MPS_FALLBACK=1` to your `.Renviron` file, for example use
 #>   `usethis::edit_r_environ()`.
-#> [31m✖[39m Using `Sys.setenv()` doesn't work because the env var must be set before R
+#> ✖ Using `Sys.setenv()` doesn't work because the env var must be set before R
 #>   starts.
-#> [1m[22mSome torch operators might not yet be implemented for the MPS device. A
+#> Some torch operators might not yet be implemented for the MPS device. A
 #> temporary fix is to set the `PYTORCH_ENABLE_MPS_FALLBACK=1` to use the CPU as a
 #> fall back for those operators:
-#> [36mℹ[39m Add `PYTORCH_ENABLE_MPS_FALLBACK=1` to your `.Renviron` file, for example use
+#> ℹ Add `PYTORCH_ENABLE_MPS_FALLBACK=1` to your `.Renviron` file, for example use
 #>   `usethis::edit_r_environ()`.
-#> [31m✖[39m Using `Sys.setenv()` doesn't work because the env var must be set before R
+#> ✖ Using `Sys.setenv()` doesn't work because the env var must be set before R
 #>   starts.
 
 # PDP for GLM model
@@ -818,18 +870,21 @@ pdp_raf <- p_abund_pdp(
 ```
 
 ``` r
+
 pdp_dnn
 ```
 
 ![](v01_modelling_workflow_files/figure-html/all%20pdp-1.png)
 
 ``` r
+
 pdp_raf
 ```
 
 ![](v01_modelling_workflow_files/figure-html/all%20pdp-2.png)
 
 ``` r
+
 pdp_glm
 ```
 
@@ -837,16 +892,17 @@ pdp_glm
 
 BPDP are similar to PDP, but instead of one, it illustrates the marginal
 response of a pair of variables. In this example we will use the first
-and seventh PC. Note that for `p_abund_pdp` and `p_abund_bpdp`, any
-subset of predictors can be used in the “predictors” argument. If
-“predictors” argument is NULL, functions plot all variables or variables
-pair combinations, respectively.
+and third PC. Note that for `p_abund_pdp` and `p_abund_bpdp`, any subset
+of predictors can be used in the “predictors” argument. If “predictors”
+argument is NULL, functions plot all variables or variables pair
+combinations, respectively.
 
 ``` r
+
 # BPDP for DNN
 bpdp_dnn <- p_abund_bpdp(
   model = mdnn,
-  predictors = c("PC1", "PC7"), # a pair of predictors
+  predictors = c("PC1", "PC3"), # a pair of predictors
   resolution = 100,
   training_data = species_data,
   projection_data = cretusa_predictors,
@@ -858,32 +914,48 @@ bpdp_dnn <- p_abund_bpdp(
   ),
   response_name = "ind/ha",
   color_gradient = c(
-    "#000004", "#1B0A40", "#4A0C69", "#781B6C", "#A42C5F", "#CD4345",
-    "#EC6824", "#FA990B", "#F7CF3D", "#FCFFA4"
+    "#000004",
+    "#1B0A40",
+    "#4A0C69",
+    "#781B6C",
+    "#A42C5F",
+    "#CD4345",
+    "#EC6824",
+    "#FA990B",
+    "#F7CF3D",
+    "#FCFFA4"
   ), # gradient for response variable
   color_training_boundaries = "white",
   theme = ggplot2::theme_classic()
 )
-#> Warning: [1m[22mSome torch operators might not yet be implemented for the MPS device. A
+#> Warning: Some torch operators might not yet be implemented for the MPS device. A
 #> temporary fix is to set the `PYTORCH_ENABLE_MPS_FALLBACK=1` to use the CPU as a
 #> fall back for those operators:
-#> [36mℹ[39m Add `PYTORCH_ENABLE_MPS_FALLBACK=1` to your `.Renviron` file, for example use
+#> ℹ Add `PYTORCH_ENABLE_MPS_FALLBACK=1` to your `.Renviron` file, for example use
 #>   `usethis::edit_r_environ()`.
-#> [31m✖[39m Using `Sys.setenv()` doesn't work because the env var must be set before R
+#> ✖ Using `Sys.setenv()` doesn't work because the env var must be set before R
 #>   starts.
 
 # BPDP for GLM
 bpdp_glm <- p_abund_bpdp(
   model = mglm,
-  predictors = c("PC1", "PC7"),
+  predictors = c("PC1", "PC3"),
   resolution = 100,
   training_data = species_data,
   projection_data = cretusa_predictors,
   training_boundaries = "convexh",
   response_name = "ind/ha",
   color_gradient = c(
-    "#000004", "#1B0A40", "#4A0C69", "#781B6C", "#A42C5F", "#CD4345",
-    "#EC6824", "#FA990B", "#F7CF3D", "#FCFFA4"
+    "#000004",
+    "#1B0A40",
+    "#4A0C69",
+    "#781B6C",
+    "#A42C5F",
+    "#CD4345",
+    "#EC6824",
+    "#FA990B",
+    "#F7CF3D",
+    "#FCFFA4"
   ),
   color_training_boundaries = "white",
   theme = ggplot2::theme_classic()
@@ -892,15 +964,23 @@ bpdp_glm <- p_abund_bpdp(
 # BPDP for RAF
 bpdp_raf <- p_abund_bpdp(
   model = mraf,
-  predictors = c("PC1", "PC7"),
+  predictors = c("PC1", "PC3"),
   resolution = 100,
   training_data = species_data,
   projection_data = cretusa_predictors,
   training_boundaries = "convexh",
   response_name = "ind/ha",
   color_gradient = c(
-    "#000004", "#1B0A40", "#4A0C69", "#781B6C", "#A42C5F", "#CD4345",
-    "#EC6824", "#FA990B", "#F7CF3D", "#FCFFA4"
+    "#000004",
+    "#1B0A40",
+    "#4A0C69",
+    "#781B6C",
+    "#A42C5F",
+    "#CD4345",
+    "#EC6824",
+    "#FA990B",
+    "#F7CF3D",
+    "#FCFFA4"
   ),
   color_training_boundaries = "white",
   theme = ggplot2::theme_classic()
@@ -908,18 +988,21 @@ bpdp_raf <- p_abund_bpdp(
 ```
 
 ``` r
+
 bpdp_dnn
 ```
 
 ![](v01_modelling_workflow_files/figure-html/all%20bpdp-1.png)
 
 ``` r
+
 bpdp_raf
 ```
 
 ![](v01_modelling_workflow_files/figure-html/all%20bpdp-2.png)
 
 ``` r
+
 bpdp_glm
 ```
 

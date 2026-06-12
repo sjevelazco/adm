@@ -222,40 +222,6 @@ tune_abund_xgb <-
       add = T
     )
 
-    # ## debug
-    # browser()
-    # i <- 1
-    # grid[i,]
-    # hyper_combinations <- lapply(1:nrow(grid),function(i){
-    #   model <-
-    #     fit_abund_xgb(
-    #       data = data,
-    #       response = response,
-    #       predictors = predictors,
-    #       predictors_f = predictors_f,
-    #       partition = partition,
-    #       predict_part = predict_part,
-    #       max_depth = grid[i, "max_depth"],
-    #       learning_rate = grid[i, "learning_rate"],
-    #       min_split_loss = grid[i, "min_split_loss"],
-    #       colsample_bytree = grid[i, "colsample_bytree"],
-    #       min_child_weight = grid[i, "min_child_weight"],
-    #       subsample = grid[i, "subsample"],
-    #       objective = objective,
-    #       nrounds = grid[i, "nrounds"],
-    #       verbose = verbose,
-    #       hold_out_set = hold_out_set,
-    #       hold_out_evaluation = hold_out_evaluation,
-    #       early_stopping = early_stopping
-    #     )
-    #
-    #   saveRDS(model, paste0("/mnt/DATA/PROJETOS/from_ubuntu/projects/BMIP/local_files/xgb_debug/xgb_",i,".rds")) # debug
-    #   l <- list(cbind(grid[i, ], model$performance))
-    #   names(l) <- grid[i, "comb_id"]
-    #   l
-    # })
-    ## debug
-
     hyper_combinations <- foreach::foreach(
       i = 1:nrow(grid),
       .export = c("fit_abund_xgb", "adm_eval"),
@@ -283,7 +249,6 @@ tune_abund_xgb <-
             early_stopping = early_stopping
           )
 
-        # saveRDS(model, paste0("/mnt/DATA/PROJETOS/from_ubuntu/projects/BMIP/local_files/xgb_debug/xgb_", i, ".rds")) # debug
         l <- list(cbind(grid[i, ], model$performance))
         names(l) <- grid[i, "comb_id"]
         l

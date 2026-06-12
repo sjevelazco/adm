@@ -161,7 +161,7 @@ fit_abund_gam <-
           trace = FALSE
         )
       )
-      
+
       variables <- get_variables(predictors, predictors_f)
       variables <- dplyr::bind_cols(
         data.frame(
@@ -170,7 +170,7 @@ fit_abund_gam <-
         ),
         variables
       ) %>% as_tibble()
-      
+
       result <- list(
         model = full_model,
         predictors = variables,

@@ -77,20 +77,22 @@
 #' tuned_raf
 #' }
 tune_abund_qrf <-
-  function(data,
-           response,
-           predictors,
-           predictors_f = NULL,
-           fit_formula = NULL,
-           partition,
-           predict_part = FALSE,
-           framework = "quantregForest",
-           train_quantiles = c(0.5),
-           eval_quantile = 0.5,
-           grid = NULL,
-           metrics = NULL,
-           n_cores = 1,
-           verbose = TRUE) {
+  function(
+    data,
+    response,
+    predictors,
+    predictors_f = NULL,
+    fit_formula = NULL,
+    partition,
+    predict_part = FALSE,
+    framework = "quantregForest",
+    train_quantiles = c(0.5),
+    eval_quantile = 0.5,
+    grid = NULL,
+    metrics = NULL,
+    n_cores = 1,
+    verbose = TRUE
+  ) {
     i <- NULL
 
     check_metrics(metrics)
@@ -99,7 +101,8 @@ tune_abund_qrf <-
     grid_dict <- list(
       mtry = seq(
         from = 1,
-        to = switch(framework,
+        to = switch(
+          framework,
           "grf" = {
             length(c(predictors))
           },
@@ -140,31 +143,38 @@ tune_abund_qrf <-
       },
       add = T
     )
-    hyper_combinations <- foreach::foreach(i = 1:nrow(grid), .export = c("fit_abund_qrf", "adm_eval"), .packages = c("dplyr", "adm")) %dopar% {
-      model <-
-        fit_abund_qrf(
-          data = data,
-          response = response,
-          predictors = predictors,
-          predictors_f = predictors_f,
-          fit_formula = fit_formula,
-          partition = partition,
-          predict_part = predict_part,
-          framework = framework,
-          train_quantiles = train_quantiles,
-          eval_quantile = eval_quantile,
-          mtry = grid[i, "mtry"],
-          ntree = grid[i, "ntree"],
-          nodesize = grid[i, "nodesize"],
-          verbose = verbose
-        )
-      l <- list(cbind(grid[i, ], model$performance))
-      names(l) <- grid[i, "comb_id"]
-      l
-    }
+    hyper_combinations <- foreach::foreach(
+      i = 1:nrow(grid),
+      .export = c("fit_abund_qrf", "adm_eval"),
+      .packages = c("dplyr", "adm")
+    ) %dopar%
+      {
+        model <-
+          fit_abund_qrf(
+            data = data,
+            response = response,
+            predictors = predictors,
+            predictors_f = predictors_f,
+            fit_formula = fit_formula,
+            partition = partition,
+            predict_part = predict_part,
+            framework = framework,
+            train_quantiles = train_quantiles,
+            eval_quantile = eval_quantile,
+            mtry = grid[i, "mtry"],
+            ntree = grid[i, "ntree"],
+            nodesize = grid[i, "nodesize"],
+            verbose = verbose
+          )
+        l <- list(cbind(grid[i, ], model$performance))
+        names(l) <- grid[i, "comb_id"]
+        l
+      }
     parallel::stopCluster(cl)
 
-    hyper_combinations <- lapply(hyper_combinations, function(x) dplyr::bind_rows(x)) %>%
+    hyper_combinations <- lapply(hyper_combinations, function(x) {
+      dplyr::bind_rows(x)
+    }) %>%
       dplyr::bind_rows()
 
     ranked_combinations <- model_selection(hyper_combinations, metrics)

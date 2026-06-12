@@ -71,7 +71,7 @@ adm_uncertainty <- function(
   # Predictor names
   pr_c <- models$predictors %>%
     dplyr::select(dplyr::starts_with("c")) %>%
-    unlist() 
+    unlist()
   pr_f <- models$predictors %>%
     dplyr::select(dplyr::starts_with("f")) %>%
     unlist()
@@ -94,7 +94,7 @@ adm_uncertainty <- function(
   #   .errorhandling = "pass"
   # ) %dopar% {
   r_list <- list()
-  for(ii in 1:iteration){
+  for (ii in 1:iteration) {
     set.seed(ii)
 
     # Bootstrap sample
@@ -108,13 +108,13 @@ adm_uncertainty <- function(
       group_by(pr_ab) %>%
       slice_sample(prop = sample_prop) %>%
       ungroup()
-    
+
     # Family for GAM and GLM
-    if (clss == "gam" || clss == "glm"){
+    if (clss == "gam" || clss == "glm") {
       fam_char <- if (!is.null(models$optimal_combination$distribution)) models$optimal_combination$distribution else models$model$family[[1]]
       fam_char <- as.character(fam_char)
     }
-    
+
 
     # Refit model based on algorithm type
     m_refit <- switch(clss,

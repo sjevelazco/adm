@@ -36,9 +36,17 @@ fit_abund_qrf(
 
 \item{predict_part}{logical. Save predicted abundance for testing data. Default is FALSE.}
 
+\item{framework}{character. Specifies the quantile regression framework to use. Either "quantregForest" (default) for traditional quantile regression forest from quantregForest package, or "grf" for generalized random forests from grf package.}
+
+\item{train_quantiles}{numeric vector. Quantiles to be estimated during model training. Default c(0.5) for median.}
+
+\item{eval_quantile}{numeric. Specific quantile to use for model evaluation metrics. Must be one of the values in train_quantiles. Default 0.5.}
+
 \item{mtry}{numeric. Number of variables randomly sampled as candidates at each split. Default (length(c(predictors, predictors_f))/3)}
 
 \item{ntree}{numeric. Number of trees to grow. This should not be set to too small a number, to ensure that every input row gets predicted at least a few times. Default 500}
+
+\item{nodesize}{numeric. Minimum size of terminal nodes. Controls tree depth - larger values produce smaller trees. Default 5 for quantregForest framework.}
 
 \item{verbose}{logical. If FALSE, disables all console messages. Default TRUE}
 }

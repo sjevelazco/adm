@@ -185,6 +185,6 @@ tune_abund_svm <-
 
     final_model$metadata$source_function <- "tune_abund_svm"
     final_list <- c(final_model, ranked_combinations)
-    
+
     return(final_list)
   }

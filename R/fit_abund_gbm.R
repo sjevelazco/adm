@@ -123,7 +123,7 @@ fit_abund_gbm <-
         shrinkage = shrinkage,
         bag.fraction = 0.9
       )
-      
+
       variables <- get_variables(predictors, predictors_f)
       variables <- dplyr::bind_cols(
         data.frame(
@@ -132,7 +132,7 @@ fit_abund_gbm <-
         ),
         variables
       ) %>% as_tibble()
-      
+
       result <- list(
         model = full_model,
         predictors = variables,

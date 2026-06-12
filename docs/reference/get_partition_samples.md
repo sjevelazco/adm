@@ -17,10 +17,6 @@ get_partition_samples(
 )
 ```
 
-## Arguments
-
-- crop_size:
-
 ## Value
 
 a list of arrays

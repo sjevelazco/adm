@@ -7,12 +7,12 @@
 #' @param fit_formula formula. A formula object with response and predictor variables (e.g. formula(abund ~ temp + precipt + sand + landform)). Note that the variables used here must be consistent with those used in response, predictors, and predictors_f arguments. Default NULL
 #' @param partition character. Column name with training and validation partition groups.
 #' @param predict_part logical. Save predicted abundance for testing data. Default is FALSE.
-#' @param framework
-#' @param train_quantiles
-#' @param eval_quantile
+#' @param framework character. Specifies the quantile regression framework to use. Either "quantregForest" (default) for traditional quantile regression forest from quantregForest package, or "grf" for generalized random forests from grf package.
+#' @param train_quantiles numeric vector. Quantiles to be estimated during model training. Default c(0.5) for median.
+#' @param eval_quantile numeric. Specific quantile to use for model evaluation metrics. Must be one of the values in train_quantiles. Default 0.5.
 #' @param mtry numeric. Number of variables randomly sampled as candidates at each split. Default (length(c(predictors, predictors_f))/3)
 #' @param ntree numeric. Number of trees to grow. This should not be set to too small a number, to ensure that every input row gets predicted at least a few times. Default 500
-#' @param nodesize
+#' @param nodesize numeric. Minimum size of terminal nodes. Controls tree depth - larger values produce smaller trees. Default 5 for quantregForest framework.
 #' @param verbose logical. If FALSE, disables all console messages. Default TRUE
 #'
 #' @importFrom dplyr bind_rows pull tibble as_tibble group_by summarise across
@@ -61,20 +61,22 @@
 #'   balance_dataset(some_sp, response = "ind_ha", absence_ratio = 0.2)
 #' }
 fit_abund_qrf <-
-  function(data,
-           response,
-           predictors,
-           predictors_f = NULL,
-           fit_formula = NULL,
-           partition,
-           predict_part = FALSE,
-           framework = "quantregForest",
-           train_quantiles = c(0.5),
-           eval_quantile = 0.5,
-           mtry = length(c(predictors, predictors_f)) / 3,
-           ntree = 2000,
-           nodesize = 5,
-           verbose = TRUE) {
+  function(
+    data,
+    response,
+    predictors,
+    predictors_f = NULL,
+    fit_formula = NULL,
+    partition,
+    predict_part = FALSE,
+    framework = "quantregForest",
+    train_quantiles = c(0.5),
+    eval_quantile = 0.5,
+    mtry = length(c(predictors, predictors_f)) / 3,
+    ntree = 2000,
+    nodesize = 5,
+    verbose = TRUE
+  ) {
     . <- mae <- pdisp <- NULL
 
     # Algorithm checks and fixes
@@ -93,7 +95,13 @@ fit_abund_qrf <-
     variables <- get_variables(predictors, predictors_f)
 
     # Formula
-    formula1 <- infer_formula(fit_formula, response, predictors, predictors_f, verbose)
+    formula1 <- infer_formula(
+      fit_formula,
+      response,
+      predictors,
+      predictors_f,
+      verbose
+    )
 
     # Fit models
     if (is.null(partition) || !any(nzchar(partition, keepNA = FALSE))) {
@@ -209,7 +217,11 @@ fit_abund_qrf <-
           )
 
           if (predict_part) {
-            part_pred[[j]] <- data.frame(partition = folds[j], observed, predicted = pred)
+            part_pred[[j]] <- data.frame(
+              partition = folds[j],
+              observed,
+              predicted = pred
+            )
           }
         }
 

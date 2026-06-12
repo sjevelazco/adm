@@ -121,7 +121,7 @@ fit_abund_raf <-
           importance = FALSE
         )
       )
-      
+
       variables <- get_variables(predictors, predictors_f)
       variables <- dplyr::bind_cols(
         data.frame(
@@ -130,8 +130,8 @@ fit_abund_raf <-
         ),
         variables
       ) %>% as_tibble()
-        
-      
+
+
       result <- list(
         model = full_model,
         predictors = variables,
@@ -141,7 +141,8 @@ fit_abund_raf <-
             importance = FALSE,
             hyperparameters = list(
               mtry = mtry,
-              ntree = ntree),
+              ntree = ntree
+            ),
             partition = NULL
           )
         )
@@ -254,7 +255,8 @@ fit_abund_raf <-
             importance = FALSE,
             hyperparameters = list(
               mtry = mtry,
-              ntree = ntree)
+              ntree = ntree
+            )
           )
         )
       )

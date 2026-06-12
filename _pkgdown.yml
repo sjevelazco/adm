@@ -21,6 +21,11 @@ navbar:
          href: articles/v00_hyperparameter_tuning.html
       -  text: "1. Modeling workflow with adm"
          href: articles/v01_modelling_workflow.html
+    - text: "News"
+      icon: fa-newspaper-o
+      href: news/index.html
+      aria-label: News
+  right:
     - text: GitHub
       href: https://sjevelazco.github.io/adm
       aria-label: GitHub

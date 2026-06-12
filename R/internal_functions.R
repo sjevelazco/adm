@@ -325,8 +325,7 @@ observer_register <- function(observer, what, how) {
 #'
 #' @noRd
 early_stop_interpreter <- function(early_stopping, observer, nrounds) {
-  early_value <- switch(
-    early_stopping$fm_strategy[[1]],
+  early_value <- switch(early_stopping$fm_strategy[[1]],
     "mean" = {
       mean(observer$early_stop)
     },
@@ -348,8 +347,6 @@ early_stop_interpreter <- function(early_stopping, observer, nrounds) {
 }
 
 #' check_models_validity
-#'
-#' @param models
 #'
 #' @noRd
 check_models_validity <- function(models) {
@@ -400,8 +397,6 @@ check_models_validity <- function(models) {
 
 #' get_predictor_names
 #'
-#' @param m_detect
-#'
 #' @noRd
 get_predictor_names <- function(m_detect, i) {
   m_detect[[i]] %>%
@@ -412,10 +407,6 @@ get_predictor_names <- function(m_detect, i) {
 
 
 #' filter_safe_levels
-#'
-#' @param m_detect
-#' @param pred_df
-#' @param training_data
 #'
 #' @noRd
 filter_safe_levels <- function(m_detect, pred_df, training_data) {
@@ -482,8 +473,7 @@ check_adapt_holdout_set <- function(
 }
 
 init_training_lists <- function(scopus) {
-  switch(
-    scopus,
+  switch(scopus,
     "replica" = {
       list(
         part_pred_list = list(),
@@ -505,17 +495,6 @@ init_training_lists <- function(scopus) {
 }
 
 #' fold_perf_register
-#'
-#' @param model
-#' @param folds
-#' @param j
-#' @param fold_training_lists
-#' @param predict_part
-#' @param hold_out_evaluation
-#' @param pred
-#' @param pred_ho
-#' @param observed
-#' @param observed_ho
 #'
 #' @noRd
 fold_perf_register <- function(
@@ -562,13 +541,6 @@ fold_perf_register <- function(
 }
 
 #' replica_perf_register
-#'
-#' @param replica_training_lists
-#' @param fold_training_lists
-#' @param folds
-#' @param h
-#' @param predict_part
-#' @param hold_out_evaluation
 #'
 #' @noRd
 replica_perf_register <- function(

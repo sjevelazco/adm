@@ -176,8 +176,7 @@ adm_predict <-
       stop("Models argument is invalid.")
     }
 
-    switch(
-      check_models_validity(models)[[2]],
+    switch(check_models_validity(models)[[2]],
       "list_of_models" = {
         message("Predicting a list of models")
       },

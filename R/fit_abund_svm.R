@@ -122,7 +122,7 @@ fit_abund_svm <-
         kpar = kpar_,
         C = C
       )
-      
+
       variables <- get_variables(predictors, predictors_f)
       variables <- dplyr::bind_cols(
         data.frame(

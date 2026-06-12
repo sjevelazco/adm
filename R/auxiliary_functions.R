@@ -4,7 +4,6 @@
 #                                                          #
 ## %######################################################%##
 
-
 #' Crop rasters around a point (Convolutional Neural Networks)
 #'
 #' @description Crop rasters for a single spatial point. Function used internally to construct Convolutional Neural Networks
@@ -43,13 +42,15 @@
 #' plot(sampl_r[[1]])
 #' points(some_sp[1, c("x", "y")], pch = 19)
 #' }
-croppin_hood <- function(occ,
-                         x,
-                         y,
-                         raster,
-                         size,
-                         raster_padding = FALSE,
-                         padding_method = NULL) {
+croppin_hood <- function(
+  occ,
+  x,
+  y,
+  raster,
+  size,
+  raster_padding = FALSE,
+  padding_method = NULL
+) {
   if (raster_padding & is.null(padding_method)) {
     stop("Padding method needed.")
   }
@@ -128,10 +129,14 @@ family_selector <- function(data, response) {
 
   if (all(round(data[, response]) == data[, response])) {
     # discrete <- TRUE
-    message("Response variable is discrete. Both continuous and discrete families will be tested.")
+    message(
+      "Response variable is discrete. Both continuous and discrete families will be tested."
+    )
   } else {
     # discrete <- FALSE
-    message("Response variable is continuous and need to be transformed to integer in order to test for discrete families.")
+    message(
+      "Response variable is continuous and need to be transformed to integer in order to test for discrete families."
+    )
     families_bank <- families_bank %>%
       filter(discrete == 0)
   }
@@ -163,10 +168,16 @@ family_selector <- function(data, response) {
   testing_families <- families_bank %>%
     dplyr::select(family_name, family_call, range, discrete)
 
-  message("Selected ", nrow(testing_families), " suitable families for the data.")
+  message(
+    "Selected ",
+    nrow(testing_families),
+    " suitable families for the data."
+  )
 
-  return(dplyr::as_tibble(testing_families) %>%
-    dplyr::arrange(family_name))
+  return(
+    dplyr::as_tibble(testing_families) %>%
+      dplyr::arrange(family_name)
+  )
 }
 
 #' Calculate the output resolution of a layer
@@ -204,11 +215,7 @@ family_selector <- function(data, response) {
 #' res_calculate(type = "pooling", in_res = 12, kernel_size = 2)
 #' }
 res_calculate <-
-  function(type = c("layer", "pooling"),
-           in_res,
-           kernel_size,
-           stride,
-           padding) {
+  function(type = c("layer", "pooling"), in_res, kernel_size, stride, padding) {
     type <- match.arg(type)
     if (type == "layer") {
       out_res <- (((in_res - kernel_size + (2 * padding)) / stride) + 1)
@@ -221,18 +228,18 @@ res_calculate <-
 
 #' Construct CNN samples list to use with tune_abund_cnn and fit_abund_cnn
 #'
-#' @param data
-#' @param x
-#' @param y
-#' @param response
-#' @param folds
-#' @param partition
-#' @param rasters
-#' @param crop_size
-#'
 #' @returns a list of arrays
 #' @export
-get_partition_samples <- function(data, x, y, response, folds, partition, rasters, crop_size) {
+get_partition_samples <- function(
+  data,
+  x,
+  y,
+  response,
+  folds,
+  partition,
+  rasters,
+  crop_size
+) {
   samples_list <- list()
   for (fold in folds) {
     fold_mtx <- data[data[, partition] == fold, c(x, y, response)] %>%
