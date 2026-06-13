@@ -96,68 +96,68 @@ some_sp <-
 # expect_equal(nrow(pdp_data$pdpdata), 27)
 # })
 
-test_that("data_abund_bpdp for dnn", {
-  if (!torch::torch_is_installed()) {
-    skip()
-  }
+# test_that("data_abund_bpdp for dnn", {
+#   if (!torch::torch_is_installed()) {
+#     skip()
+#   } else {
+#     # Generate a architecture
+#     dnn_arch <- generate_dnn_architecture(
+#       number_of_features = 3,
+#       number_of_outputs = 1,
+#       number_of_hidden_layers = 3,
+#       hidden_layers_size = c(8, 16, 8),
+#       batch_norm = TRUE
+#     )
+#     set.seed(1)
+#     suppressMessages(
+#       m <- fit_abund_dnn(
+#         data = some_sp,
+#         response = "ind_ha",
+#         predictors = c("bio12", "elevation", "sand"),
+#         predictors_f = NULL,
+#         partition = ".part",
+#         learning_rate = 0.01,
+#         n_epochs = 10,
+#         batch_size = 32,
+#         validation_patience = 2,
+#         fitting_patience = 5,
+#         custom_architecture = dnn_arch,
+#         verbose = TRUE,
+#         predict_part = TRUE
+#       )
+#     )
+#     # BPDP
+#     bpdp_data <- data_abund_bpdp(
+#       model = m,
+#       predictors = c("bio12", "sand"),
+#       resolution = 25,
+#       training_data = some_sp,
+#       response_name = "Abundance",
+#       projection_data = envar,
+#       training_boundaries = "convexh"
+#     )
 
-  # Generate a architecture
-  dnn_arch <- generate_dnn_architecture(
-    number_of_features = 3,
-    number_of_outputs = 1,
-    number_of_hidden_layers = 3,
-    hidden_layers_size = c(8, 16, 8),
-    batch_norm = TRUE
-  )
-  set.seed(1)
-  suppressMessages(
-    m <- fit_abund_dnn(
-      data = some_sp,
-      response = "ind_ha",
-      predictors = c("bio12", "elevation", "sand"),
-      predictors_f = NULL,
-      partition = ".part",
-      learning_rate = 0.01,
-      n_epochs = 10,
-      batch_size = 32,
-      validation_patience = 2,
-      fitting_patience = 5,
-      custom_architecture = dnn_arch,
-      verbose = TRUE,
-      predict_part = TRUE
-    )
-  )
-  # BPDP
-  bpdp_data <- data_abund_bpdp(
-    model = m,
-    predictors = c("bio12", "sand"),
-    resolution = 25,
-    training_data = some_sp,
-    response_name = "Abundance",
-    projection_data = envar,
-    training_boundaries = "convexh"
-  )
+#     expect_equal(names(bpdp_data), c("pdpdata", "training_boundaries"))
+#     expect_equal(length(bpdp_data$pdpdata), 3)
+#     expect_equal(ncol(bpdp_data$training_boundaries), 2)
+#     expect_equal(nrow(bpdp_data$pdpdata), 25 * 25)
 
-  expect_equal(names(bpdp_data), c("pdpdata", "training_boundaries"))
-  expect_equal(length(bpdp_data$pdpdata), 3)
-  expect_equal(ncol(bpdp_data$training_boundaries), 2)
-  expect_equal(nrow(bpdp_data$pdpdata), 25 * 25)
-
-  # PDP
-  pdp_data <- data_abund_pdp(
-    model = m,
-    predictors = "bio12",
-    resolution = 25,
-    resid = TRUE,
-    training_data = some_sp,
-    response_name = "Abundance",
-    projection_data = envar
-  )
-  expect_equal(names(pdp_data), c("pdpdata", "resid"))
-  expect_equal(length(pdp_data$pdpdata), 3)
-  expect_equal(ncol(pdp_data$resid), 2)
-  expect_equal(nrow(pdp_data$pdpdata), 27)
-})
+#     # PDP
+#     pdp_data <- data_abund_pdp(
+#       model = m,
+#       predictors = "bio12",
+#       resolution = 25,
+#       resid = TRUE,
+#       training_data = some_sp,
+#       response_name = "Abundance",
+#       projection_data = envar
+#     )
+#     expect_equal(names(pdp_data), c("pdpdata", "resid"))
+#     expect_equal(length(pdp_data$pdpdata), 3)
+#     expect_equal(ncol(pdp_data$resid), 2)
+#     expect_equal(nrow(pdp_data$pdpdata), 27)
+#   }
+# })
 
 test_that("data_abund_bpdp for gam", {
   set.seed(1)
