@@ -6,6 +6,8 @@
 coverage](https://codecov.io/gh/sjevelazco/adm/graph/badge.svg?token=cKRmbNhn0A)](https://codecov.io/gh/sjevelazco/adm)
 [![](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
 [![DOI](https://img.shields.io/badge/DOI-10.1111%2F2041--210X.70074-blue)](https://doi.org/10.1111/2041-210X.70074)
+[![Ask
+DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/sjevelazco/adm)
 
 ------------------------------------------------------------------------
 

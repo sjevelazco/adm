@@ -44,112 +44,140 @@ export(tune_abund_raf)
 export(tune_abund_svm)
 export(tune_abund_xgb)
 importFrom(doParallel,registerDoParallel)
-importFrom(dplyr,"%>%")
-importFrom(dplyr,across)
-importFrom(dplyr,all_of)
-importFrom(dplyr,arrange)
-importFrom(dplyr,as_tibble)
-importFrom(dplyr,bind_cols)
-importFrom(dplyr,bind_rows)
-importFrom(dplyr,filter)
-importFrom(dplyr,group_by)
-importFrom(dplyr,join_by)
-importFrom(dplyr,left_join)
-importFrom(dplyr,mutate)
-importFrom(dplyr,pull)
-importFrom(dplyr,relocate)
-importFrom(dplyr,rename)
-importFrom(dplyr,select)
-importFrom(dplyr,slice_min)
-importFrom(dplyr,starts_with)
-importFrom(dplyr,summarise)
-importFrom(dplyr,tibble)
-importFrom(foreach,"%dopar%")
-importFrom(foreach,foreach)
-importFrom(gamlss,gamlss)
-importFrom(gamlss,gamlss.control)
-importFrom(gamlss,pb)
-importFrom(gamlss,predictAll)
+importFrom(dplyr,
+  "%>%",
+  across,
+  all_of,
+  arrange,
+  as_tibble,
+  bind_cols,
+  bind_rows,
+  filter,
+  group_by,
+  join_by,
+  left_join,
+  mutate,
+  pull,
+  relocate,
+  rename,
+  select,
+  slice_min,
+  starts_with,
+  summarise,
+  tibble
+)
+importFrom(foreach,
+  "%dopar%",
+  foreach
+)
+importFrom(gamlss,
+  gamlss,
+  gamlss.control,
+  pb,
+  predictAll
+)
 importFrom(gamlss.dist,NO)
-importFrom(gbm,gbm)
-importFrom(gbm,predict.gbm)
-importFrom(ggplot2,aes)
-importFrom(ggplot2,coord_cartesian)
-importFrom(ggplot2,element_blank)
-importFrom(ggplot2,geom_col)
-importFrom(ggplot2,geom_line)
-importFrom(ggplot2,geom_point)
-importFrom(ggplot2,geom_polygon)
-importFrom(ggplot2,geom_raster)
-importFrom(ggplot2,geom_rect)
-importFrom(ggplot2,geom_rug)
-importFrom(ggplot2,geom_vline)
-importFrom(ggplot2,ggplot)
-importFrom(ggplot2,labs)
-importFrom(ggplot2,scale_color_manual)
-importFrom(ggplot2,scale_fill_gradientn)
-importFrom(ggplot2,theme)
+importFrom(gbm,
+  gbm,
+  predict.gbm
+)
+importFrom(ggplot2,
+  aes,
+  coord_cartesian,
+  element_blank,
+  geom_col,
+  geom_line,
+  geom_point,
+  geom_polygon,
+  geom_raster,
+  geom_rect,
+  geom_rug,
+  geom_vline,
+  ggplot,
+  labs,
+  scale_color_manual,
+  scale_fill_gradientn,
+  theme
+)
 importFrom(grDevices,chull)
-importFrom(kernlab,ksvm)
-importFrom(kernlab,predict)
-importFrom(luz,fit)
-importFrom(luz,luz_callback_early_stopping)
-importFrom(luz,set_opt_hparams)
-importFrom(luz,setup)
+importFrom(kernlab,
+  ksvm,
+  predict
+)
+importFrom(luz,
+  fit,
+  luz_callback_early_stopping,
+  set_opt_hparams,
+  setup
+)
 importFrom(nnet,nnet)
-importFrom(parallel,makeCluster)
-importFrom(parallel,stopCluster)
-importFrom(patchwork,plot_layout)
-importFrom(patchwork,wrap_plots)
+importFrom(parallel,
+  makeCluster,
+  stopCluster
+)
+importFrom(patchwork,
+  plot_layout,
+  wrap_plots
+)
 importFrom(randomForest,randomForest)
-importFrom(stats,complete.cases)
-importFrom(stats,cor)
-importFrom(stats,formula)
-importFrom(stats,lm)
-importFrom(stats,median)
-importFrom(stats,model.matrix)
-importFrom(stats,na.omit)
-importFrom(stats,quantile)
-importFrom(stats,runif)
-importFrom(stats,sd)
-importFrom(stringr,str_detect)
-importFrom(stringr,str_extract_all)
-importFrom(stringr,str_remove)
-importFrom(stringr,str_replace_all)
-importFrom(terra,app)
-importFrom(terra,as.array)
-importFrom(terra,as.data.frame)
-importFrom(terra,colFromX)
-importFrom(terra,crop)
-importFrom(terra,crs)
-importFrom(terra,ext)
-importFrom(terra,extend)
-importFrom(terra,extract)
-importFrom(terra,global)
-importFrom(terra,is.factor)
-importFrom(terra,lapp)
-importFrom(terra,mask)
-importFrom(terra,minmax)
-importFrom(terra,rast)
-importFrom(terra,rowFromY)
-importFrom(terra,spatSample)
-importFrom(terra,vect)
-importFrom(terra,weighted.mean)
-importFrom(terra,xFromCol)
-importFrom(terra,yFromRow)
+importFrom(stats,
+  complete.cases,
+  cor,
+  formula,
+  lm,
+  median,
+  model.matrix,
+  na.omit,
+  quantile,
+  runif,
+  sd
+)
+importFrom(stringr,
+  str_detect,
+  str_extract_all,
+  str_remove,
+  str_replace_all
+)
+importFrom(terra,
+  app,
+  as.array,
+  as.data.frame,
+  colFromX,
+  crop,
+  crs,
+  ext,
+  extend,
+  extract,
+  global,
+  is.factor,
+  lapp,
+  mask,
+  minmax,
+  rast,
+  rowFromY,
+  spatSample,
+  vect,
+  weighted.mean,
+  xFromCol,
+  yFromRow
+)
 importFrom(tidyr,unnest_wider)
-importFrom(torch,dataloader)
-importFrom(torch,dataset)
-importFrom(torch,nn_conv2d)
-importFrom(torch,nn_l1_loss)
-importFrom(torch,nn_linear)
-importFrom(torch,nn_module)
-importFrom(torch,nnf_relu)
-importFrom(torch,optim_adam)
-importFrom(torch,torch_flatten)
-importFrom(torch,torch_manual_seed)
-importFrom(torch,torch_tensor)
+importFrom(torch,
+  dataloader,
+  dataset,
+  nn_conv2d,
+  nn_l1_loss,
+  nn_linear,
+  nn_module,
+  nnf_relu,
+  optim_adam,
+  torch_flatten,
+  torch_manual_seed,
+  torch_tensor
+)
 importFrom(torchvision,transform_to_tensor)
-importFrom(utils,combn)
-importFrom(utils,read.delim)
+importFrom(utils,
+  combn,
+  read.delim
+)
 importFrom(xgboost,xgboost)
