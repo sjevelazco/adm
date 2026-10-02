@@ -3,11 +3,9 @@
 [![License](https://img.shields.io/badge/license-GPL%20%28%3E=%203%29-lightgrey.svg?style=flat)](http://www.gnu.org/licenses/gpl-3.0.md)
 [![R-CMD-check](https://github.com/sjevelazco/adm/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/sjevelazco/adm/actions/workflows/R-CMD-check.yaml)
 [![Codecov test
-coverage](https://codecov.io/gh/sjevelazco/adm/graph/badge.svg?token=cKRmbNhn0A)](https://codecov.io/gh/sjevelazco/adm)
+coverage](https://codecov.io/gh/sjevelazco/adm/graph/badge.svg?token=cKRmbNhn0A)](https://app.codecov.io/gh/sjevelazco/adm)
 [![](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
 [![DOI](https://img.shields.io/badge/DOI-10.1111%2F2041--210X.70074-blue)](https://doi.org/10.1111/2041-210X.70074)
-[![Ask
-DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/sjevelazco/adm)
 
 ------------------------------------------------------------------------
 
@@ -27,7 +25,7 @@ outputs, ***adm*** can be easily integrated into other packages.
 ***adm*** functions are grouped in three categories: modeling,
 post-modeling, and miscellaneous tools
 
-[![](https://raw.githubusercontent.com/sjevelazco/adm/main/man/figures/adm.png)](https://sjevelazco.github.io/adm)
+[![](https://raw.githubusercontent.com/sjevelazco/adm/main/man/figures/adm.png)](https://sjevelazco.github.io/adm/)
 
 #### i) **modeling**
 
@@ -180,11 +178,9 @@ handling, transformations, and hyperparameter selection.
 You can install the development version of ***adm*** from
 [github](https://github.com/sjevelazco/adm)
 
-``` r
-
-# For Windows and Mac OS operating systems
-remotes::install_github("sjevelazco/adm")
-```
+\
+`# For Windows and Mac OS operating systems`\
+`remotes``::`[`install_github`](https://remotes.r-lib.org/reference/install_github.html)`(``"sjevelazco/adm"``)`
 
 ### Package website
 

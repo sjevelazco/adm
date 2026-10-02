@@ -9,12 +9,14 @@
 #' @param response character. Column name of the response variable.
 #' @param pred A SpatRaster object with the environmental layers for projection.
 #' @param iteration numeric. The number of bootstrap iterations. Default 50.
+#' @param sample_prop numeric. Proportion of the training data (stratified by presence and absence) resampled in each iteration. Default 0.80.
 #' @param n_cores numeric. The number of cores to use for parallel processing. Default 1.
 #' @param ... Additional arguments passed to refitting functions or \code{\link{adm_predict}}
 #' (e.g., \code{x}, \code{y}, \code{rasters}, \code{sample_size} for CNN; \code{custom_architecture} for DNN/CNN;
 #' \code{invert_transform}, \code{transform_negative} for spatial prediction).
 #'
 #' @return A SpatRaster object with a single layer representing the model uncertainty, calculated as the standard deviation of the bootstrap predictions.
+#' @importFrom dplyr case_when slice_sample ungroup
 #' @export
 #'
 #' @seealso \code{\link{adm_predict}}
@@ -63,8 +65,11 @@ adm_uncertainty <- function(
   pred,
   iteration = 50,
   sample_prop = 0.80,
-  n_cores = 1
+  n_cores = 1,
+  ...
 ) {
+  extra_args <- list(...)
+
   # Extract algorithm type
   clss <- models$predictors$model
 

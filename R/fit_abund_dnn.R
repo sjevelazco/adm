@@ -6,6 +6,7 @@
 #' @param predictors_f character. Vector with the column names of qualitative predictor variables (i.e. ordinal or nominal variables type). Usage predictors_f = c("landform")
 #' @param partition character. Column name with training and validation partition groups.
 #' @param predict_part logical. Save predicted abundance for testing data. Default = FALSE
+#' @param hold_out_set tibble or data.frame. Optional hold-out dataset, never used during training, with the response and predictor columns. If provided, performance metrics are also calculated on it. Default NULL
 #' @param learning_rate numeric. The size of the step taken during the optimization process. Default = 0.01
 #' @param weight_decay numeric. The regularization strength: 0 means no penalty, while higher values (e.g. 0.01) apply stronger shrinkage to the weights during training. Default is 0
 #' @param optimizer a torch_optimizer_generator. The optimizer to be used in model fitting. Default is torch::optim_adamw.

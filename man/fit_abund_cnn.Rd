@@ -48,9 +48,13 @@ fit_abund_cnn(
 
 \item{partition}{character. Column name with training and validation partition groups.}
 
+\item{hold_out_set}{tibble or data.frame. Optional hold-out dataset, never used during training, with the response and predictor columns. If provided, performance metrics are also calculated on it. Default NULL}
+
 \item{predict_part}{logical. Save predicted abundance for testing data. Default = FALSE}
 
 \item{learning_rate}{numeric. The size of the step taken during the optimization process. Default = 0.01}
+
+\item{weight_decay}{numeric. Weight decay (L2 penalty) used by the optimizer. Default 0}
 
 \item{n_epochs}{numeric. Maximum number of times the learning algorithm will work through the training set. Default = 10}
 
@@ -60,7 +64,13 @@ fit_abund_cnn(
 
 \item{fitting_patience}{numerical. The same as validation_patience, but in the final model fitting process. Default 5}
 
+\item{optimizer}{a torch optimizer generator. Default torch::optim_adamw}
+
+\item{loss_function}{a torch loss function generator. Default torch::nn_l1_loss}
+
 \item{custom_architecture}{a Torch nn_module_generator object. A neural network architecture to be used instead of the internal default one. Default NULL}
+
+\item{samples_list}{list. Optional list of pre-computed samples (see \code{\link{get_partition_samples}}), used instead of extracting them from \code{rasters}. Default NULL}
 
 \item{verbose}{logical. If FALSE, disables all console messages. Default TRUE}
 }

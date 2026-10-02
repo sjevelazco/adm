@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">adm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.5.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -37,6 +37,32 @@
     </div>
 
     <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.5.0" id="adm-050">adm 0.5.0<a class="anchor" aria-label="anchor" href="#adm-050"></a></h2>
+<div class="section level3">
+<h3 id="bug-fixes-0-5-0">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-5-0"></a></h3>
+<ul><li>
+<code>fit_abund_qrf</code> now works when a partition is used; it was calling the internal result wrapper with an outdated argument order. Without a partition it now also returns <code>predictors</code> and <code>metadata</code>, as the other <code>fit_abund_*</code> functions do.</li>
+<li>
+<code>fit_abund_glm</code> and <code>fit_abund_gam</code> no longer fail when <code>hold_out_set</code> is used (<code>object 'train_set' not found</code>).</li>
+<li>
+<code>adm_uncertainty</code> now accepts <code>...</code> (as documented), so the extra arguments needed for CNN models (<code>x</code>, <code>y</code>, <code>rasters</code>, <code>sample_size</code>, <code>custom_architecture</code>) can be passed.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="testing-0-5-0">Testing<a class="anchor" aria-label="anchor" href="#testing-0-5-0"></a></h3>
+<ul><li>New tests for <code>fit_abund_*</code> (RAF, GLM, GAM, NET, SVM, GBM, XGB, QRF), <code>adm_uncertainty</code>, <code>model_selection</code>, <code>data_abund_pdp</code>, <code>p_abund_pdp</code>, <code>p_abund_bpdp</code>, <code>generate_dnn_architecture</code>, <code>generate_cnn_architecture</code>, <code>res_calculate</code>, <code>family_selector</code>, <code>croppin_hood</code>, <code>cnn_make_samples</code> and <code>get_partition_samples</code>.</li>
+<li>The DNN/CNN tuning and prediction tests were shortened (smaller data, networks and epochs) and the heaviest ones are skipped on CRAN, reducing the test time from about 16 to 2 minutes.</li>
+<li>The test-coverage workflow now uploads the <code>covr</code> report (<code>cobertura.xml</code>) to Codecov explicitly; previously the wrong file was uploaded and coverage was reported as 0.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="documentation-and-cran-preparation-0-5-0">Documentation and CRAN preparation<a class="anchor" aria-label="anchor" href="#documentation-and-cran-preparation-0-5-0"></a></h3>
+<ul><li>Documented previously undocumented arguments (<code>hold_out_set</code>, <code>samples_list</code>, <code>weight_decay</code>, <code>optimizer</code>, <code>loss_function</code>, <code>framework</code>, <code>train_quantiles</code>, <code>eval_quantile</code>, <code>pred_quantile</code>, <code>sample_prop</code>, <code>na.rm</code>, and the arguments of <code>get_partition_samples</code>) and removed the non-existent <code>hold_out_evaluation</code> argument from the XGB help pages.</li>
+<li>
+<code>grf</code> and <code>quantregForest</code> were added to <code>Suggests</code>.</li>
+<li>The DNN sections of the “Modeling workflow” vignette are only evaluated when torch is installed; vignette titles now match their index entries.</li>
+<li>Declared global variables to avoid R CMD check notes; updated the package title, CITATION, and README links.</li>
+</ul></div>
+</div>
+    <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.0.2" id="adm-002">adm 0.0.2<a class="anchor" aria-label="anchor" href="#adm-002"></a></h2>
 <ul><li>
 <code>fit_abund_qrf</code> &amp; <code>tune_abund_qrf</code> were implemented to construct Quantile Regression Random Forests models</li>
@@ -50,7 +76,8 @@
 <code>p_abund_bpdp</code> for XBT was fixed when polynomials are used <a href="https://github.com/sjevelazco/adm/pull/209" class="external-link">#209</a>
 </li>
 </ul></div>
-  </main></div>
+  </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
+    </nav></aside></div>
 
 
     <footer><div class="pkgdown-footer-left">

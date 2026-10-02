@@ -34,6 +34,8 @@ fit_abund_gbm(
 
 \item{partition}{character. Column name with training and validation partition groups.}
 
+\item{hold_out_set}{tibble or data.frame. Optional hold-out dataset, never used during training, with the response and predictor columns. If provided, performance metrics are also calculated on it. Default NULL}
+
 \item{predict_part}{logical. Save predicted abundance for testing data. Default = FALSE}
 
 \item{distribution}{character. A string specifying the distribution to be used. See gbm::gbm documentation for details.}

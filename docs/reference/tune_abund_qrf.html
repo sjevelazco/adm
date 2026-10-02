@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">adm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.5.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -91,6 +91,18 @@
 
 <dt id="arg-predict-part">predict_part<a class="anchor" aria-label="anchor" href="#arg-predict-part"></a></dt>
 <dd><p>logical. Save predicted abundance for testing data. Default = FALSE</p></dd>
+
+
+<dt id="arg-framework">framework<a class="anchor" aria-label="anchor" href="#arg-framework"></a></dt>
+<dd><p>character. Package used to fit the quantile random forest, either "quantregForest" (default) or "grf"</p></dd>
+
+
+<dt id="arg-train-quantiles">train_quantiles<a class="anchor" aria-label="anchor" href="#arg-train-quantiles"></a></dt>
+<dd><p>numeric. Vector of quantiles estimated during training. Default 0.5</p></dd>
+
+
+<dt id="arg-eval-quantile">eval_quantile<a class="anchor" aria-label="anchor" href="#arg-eval-quantile"></a></dt>
+<dd><p>numeric. Quantile used to evaluate the model. It is added to <code>train_quantiles</code> if absent. Default 0.5</p></dd>
 
 
 <dt id="arg-grid">grid<a class="anchor" aria-label="anchor" href="#arg-grid"></a></dt>

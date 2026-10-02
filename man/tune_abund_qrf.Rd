@@ -36,6 +36,12 @@ tune_abund_qrf(
 
 \item{predict_part}{logical. Save predicted abundance for testing data. Default = FALSE}
 
+\item{framework}{character. Package used to fit the quantile random forest, either "quantregForest" (default) or "grf"}
+
+\item{train_quantiles}{numeric. Vector of quantiles estimated during training. Default 0.5}
+
+\item{eval_quantile}{numeric. Quantile used to evaluate the model. It is added to \code{train_quantiles} if absent. Default 0.5}
+
 \item{grid}{tibble or data.frame. A dataframe with "mtry" and "ntree" as columns and its values combinations as rows. If no grid is provided, function will create a default grid combining the next hyperparameters:
 mtry = seq(2, length(predictors), by = 1), ntree = seq(500, 1000, by = 100).
 In case one or more hyperparameters are provided, the function will complete the grid with the default values.}

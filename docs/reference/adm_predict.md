@@ -73,6 +73,11 @@ adm_predict(
   numeric. A vector containing the dimensions, in pixels, of raster
   samples. See cnn_make_samples beforehand. Default c(11,11)
 
+- pred_quantile:
+
+  numeric. Quantile to predict when `models` is a quantile random forest
+  (qrf). Default 0.5
+
 ## Value
 
 A list of SpatRaster with continuous and/or binary predictions

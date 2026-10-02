@@ -26,7 +26,7 @@ test_that("predic XGB", {
     predictors = c("bio12", "elevation", "sand"),
     # predictors_f = c("eco"),
     partition = ".part",
-    nrounds = 200,
+    nrounds = 30,
     max_depth = 5,
     learning_rate = 0.1,
     min_split_loss = 1,
@@ -215,6 +215,7 @@ test_that("predic RAF", {
 
 #### predict CNN ####
 test_that("predic CNN", {
+  skip_on_cran()
   if (!torch::torch_is_installed()) {
     skip()
   }
@@ -223,18 +224,18 @@ test_that("predic CNN", {
   cnn_arch <- generate_cnn_architecture(
     number_of_features = 3,
     number_of_outputs = 1,
-    sample_size = c(11, 11),
+    sample_size = c(5, 5),
     number_of_conv_layers = 2,
-    conv_layers_size = c(14, 28),
+    conv_layers_size = c(4, 8),
     conv_layers_kernel = 3,
     conv_layers_stride = 1,
     conv_layers_padding = 0,
     number_of_fc_layers = 1,
-    fc_layers_size = c(28),
+    fc_layers_size = c(8),
     pooling = NULL,
     batch_norm = TRUE,
     dropout = 0,
-    verbose = T
+    verbose = FALSE
   )
 
   if (!torch::torch_is_installed()) {
@@ -250,25 +251,31 @@ test_that("predic CNN", {
     x = "x",
     y = "y",
     rasters = envar,
-    sample_size = c(11, 11),
+    sample_size = c(5, 5),
     learning_rate = 0.01,
-    n_epochs = 100,
+    n_epochs = 2,
     batch_size = 32,
     validation_patience = 2,
     fitting_patience = 5,
     custom_architecture = cnn_arch,
-    verbose = TRUE,
+    verbose = FALSE,
     predict_part = TRUE
   )
 
 
+  # Predict on a small window to keep the test fast
+  small_env <- terra::crop(
+    envar,
+    terra::ext(terra::xmin(envar), terra::xmin(envar) + 15 * terra::res(envar)[1],
+               terra::ymax(envar) - 15 * terra::res(envar)[2], terra::ymax(envar))
+  )
   prd <- adm_predict(
     m,
-    envar,
+    small_env,
     training_data = some_sp,
     transform_negative = TRUE,
-    nchunk = 12,
-    sample_size = c(11, 11)
+    nchunk = 4,
+    sample_size = c(5, 5)
   )
 
   expect_equal(names(prd), "cnn")
@@ -302,12 +309,12 @@ test_that("predic DNN", {
     predictors_f = NULL,
     partition = ".part",
     learning_rate = 0.01,
-    n_epochs = 10,
+    n_epochs = 2,
     batch_size = 32,
     validation_patience = 2,
     fitting_patience = 5,
     custom_architecture = dnn_arch,
-    verbose = TRUE,
+    verbose = FALSE,
     predict_part = TRUE
   )
 

@@ -12,6 +12,7 @@
 #' @param sample_size numeric. A vector containing the dimensions, in pixels, of raster samples. See cnn_make_samples beforehand. Default c(11,11)
 #' @param partition character. Column name with training and validation partition groups.
 #' @param predict_part logical. Save predicted abundance for testing data. Default = FALSE
+#' @param hold_out_set tibble or data.frame. Optional hold-out dataset, never used during training, with the response and predictor columns. If provided, performance metrics are also calculated on it. Default NULL
 #' @param learning_rate numeric. The size of the step taken during the optimization process. Default = 0.01
 #' @param n_epochs numeric. Maximum number of times the learning algorithm will work through the training set. Default = 10
 #' @param batch_size numeric. A batch is a subset of the training set used in a single iteration of the training process. The size of each batch is referred to as the batch size. Default = 32
@@ -19,6 +20,10 @@
 #' @param verbose logical. If FALSE, disables all console messages. Default TRUE
 #' @param validation_patience numerical. An integer indicating the number of epochs without loss improvement tolerated by the algorithm in the validation process. If the patience limit is exceeded, the training ends. Default 2
 #' @param fitting_patience numerical. The same as validation_patience, but in the final model fitting process. Default 5
+#' @param weight_decay numeric. Weight decay (L2 penalty) used by the optimizer. Default 0
+#' @param optimizer a torch optimizer generator. Default torch::optim_adamw
+#' @param loss_function a torch loss function generator. Default torch::nn_l1_loss
+#' @param samples_list list. Optional list of pre-computed samples (see \code{\link{get_partition_samples}}), used instead of extracting them from \code{rasters}. Default NULL
 #'
 #' @importFrom dplyr bind_rows select starts_with pull tibble as_tibble group_by summarise across bind_cols
 #' @importFrom luz setup set_opt_hparams fit luz_callback_early_stopping

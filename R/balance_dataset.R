@@ -12,6 +12,7 @@
 #' response column. E.g., if set to 1 the function will remove absence until have
 #' the same number of presence. If set 1.5, the function will remove absence until have
 #' 1.5 times the number of presence. Usage absence_ratio = 0.5
+#' @param na.rm logical. If TRUE (default), rows with missing values in the response are removed.
 #'
 #' @return Returns a balanced data.frame or tibble with absence-presence ratio in the response column equal to absence_ratio
 #' @export

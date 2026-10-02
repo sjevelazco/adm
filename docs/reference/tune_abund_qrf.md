@@ -62,6 +62,20 @@ tune_abund_qrf(
 
   logical. Save predicted abundance for testing data. Default = FALSE
 
+- framework:
+
+  character. Package used to fit the quantile random forest, either
+  "quantregForest" (default) or "grf"
+
+- train_quantiles:
+
+  numeric. Vector of quantiles estimated during training. Default 0.5
+
+- eval_quantile:
+
+  numeric. Quantile used to evaluate the model. It is added to
+  `train_quantiles` if absent. Default 0.5
+
 - grid:
 
   tibble or data.frame. A dataframe with "mtry" and "ntree" as columns

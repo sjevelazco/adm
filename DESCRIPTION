@@ -1,7 +1,7 @@
 Package: adm
 Type: Package
-Title: Tools for Constructing, Predicting, and Post-Processing Abundance-based Species Distribution Models
-Version: 0.0.2
+Title: Tools for Constructing, Predicting, and Post-Processing Abundance-Based Species Distribution Models
+Version: 0.5.0
 Authors@R: c(person(given = "Admir Cesar", family = "de Oliveira Junior", role = c("aut", "cre"),
            email = "admircjunior@gmail.com",
            comment = c(ORCID = "0000-0002-1946-0475")), 
@@ -9,7 +9,7 @@ Authors@R: c(person(given = "Admir Cesar", family = "de Oliveira Junior", role =
            email = "sjevelazco@gmail.com",
            comment = c(ORCID = "0000-0002-7527-0967")))
 Maintainer: Admir Cesar de Oliveira Junior  <admircjunior@gmail.com>
-URL: https://sjevelazco.github.io/adm
+URL: https://sjevelazco.github.io/adm/
 BugReports: https://github.com/sjevelazco/adm/issues
 Depends: R (>= 3.5.0)
 Imports: 
@@ -40,7 +40,9 @@ Encoding: UTF-8
 LazyData: true
 Suggests:
     covr,
+    grf,
     knitr,
+    quantregForest,
     rmarkdown,
     testthat (>= 3.0.0)
 VignetteBuilder:

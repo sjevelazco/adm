@@ -38,6 +38,8 @@ used for restring prediction into only a given region. Default = NULL}
 default FALSE.}
 
 \item{sample_size}{numeric. A vector containing the dimensions, in pixels, of raster samples. See cnn_make_samples beforehand. Default c(11,11)}
+
+\item{pred_quantile}{numeric. Quantile to predict when \code{models} is a quantile random forest (qrf). Default 0.5}
 }
 \value{
 A list of SpatRaster with continuous and/or binary predictions

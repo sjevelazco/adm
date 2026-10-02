@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">adm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.5.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -109,12 +109,20 @@
 <dd><p>character. Column name with training and validation partition groups.</p></dd>
 
 
+<dt id="arg-hold-out-set">hold_out_set<a class="anchor" aria-label="anchor" href="#arg-hold-out-set"></a></dt>
+<dd><p>tibble or data.frame. Optional hold-out dataset, never used during training, with the response and predictor columns. If provided, performance metrics are also calculated on it. Default NULL</p></dd>
+
+
 <dt id="arg-predict-part">predict_part<a class="anchor" aria-label="anchor" href="#arg-predict-part"></a></dt>
 <dd><p>logical. Save predicted abundance for testing data. Default = FALSE</p></dd>
 
 
 <dt id="arg-learning-rate">learning_rate<a class="anchor" aria-label="anchor" href="#arg-learning-rate"></a></dt>
 <dd><p>numeric. The size of the step taken during the optimization process. Default = 0.01</p></dd>
+
+
+<dt id="arg-weight-decay">weight_decay<a class="anchor" aria-label="anchor" href="#arg-weight-decay"></a></dt>
+<dd><p>numeric. Weight decay (L2 penalty) used by the optimizer. Default 0</p></dd>
 
 
 <dt id="arg-n-epochs">n_epochs<a class="anchor" aria-label="anchor" href="#arg-n-epochs"></a></dt>
@@ -133,8 +141,20 @@
 <dd><p>numerical. The same as validation_patience, but in the final model fitting process. Default 5</p></dd>
 
 
+<dt id="arg-optimizer">optimizer<a class="anchor" aria-label="anchor" href="#arg-optimizer"></a></dt>
+<dd><p>a torch optimizer generator. Default torch::optim_adamw</p></dd>
+
+
+<dt id="arg-loss-function">loss_function<a class="anchor" aria-label="anchor" href="#arg-loss-function"></a></dt>
+<dd><p>a torch loss function generator. Default torch::nn_l1_loss</p></dd>
+
+
 <dt id="arg-custom-architecture">custom_architecture<a class="anchor" aria-label="anchor" href="#arg-custom-architecture"></a></dt>
 <dd><p>a Torch nn_module_generator object. A neural network architecture to be used instead of the internal default one. Default NULL</p></dd>
+
+
+<dt id="arg-samples-list">samples_list<a class="anchor" aria-label="anchor" href="#arg-samples-list"></a></dt>
+<dd><p>list. Optional list of pre-computed samples (see <code><a href="get_partition_samples.html">get_partition_samples</a></code>), used instead of extracting them from <code>rasters</code>. Default NULL</p></dd>
 
 
 <dt id="arg-verbose">verbose<a class="anchor" aria-label="anchor" href="#arg-verbose"></a></dt>

@@ -11,7 +11,8 @@ adm_uncertainty(
   pred,
   iteration = 50,
   sample_prop = 0.8,
-  n_cores = 1
+  n_cores = 1,
+  ...
 )
 }
 \arguments{
@@ -24,6 +25,8 @@ adm_uncertainty(
 \item{pred}{A SpatRaster object with the environmental layers for projection.}
 
 \item{iteration}{numeric. The number of bootstrap iterations. Default 50.}
+
+\item{sample_prop}{numeric. Proportion of the training data (stratified by presence and absence) resampled in each iteration. Default 0.80.}
 
 \item{n_cores}{numeric. The number of cores to use for parallel processing. Default 1.}
 

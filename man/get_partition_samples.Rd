@@ -15,6 +15,23 @@ get_partition_samples(
   crop_size
 )
 }
+\arguments{
+\item{data}{data.frame or tibble. Database with response, coordinates, and partition values}
+
+\item{x}{character. Column name with spatial x coordinates}
+
+\item{y}{character. Column name with spatial y coordinates}
+
+\item{response}{character. Column name with species abundance}
+
+\item{folds}{vector. Values of the partition column (folds) for which samples will be built}
+
+\item{partition}{character. Column name with the partition groups}
+
+\item{rasters}{SpatRaster. Raster with environmental variables}
+
+\item{crop_size}{numeric. Number of cells in each direction of a focal cell (see \code{\link{cnn_make_samples}})}
+}
 \value{
 a list of arrays
 }

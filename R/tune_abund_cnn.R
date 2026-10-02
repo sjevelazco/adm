@@ -20,6 +20,7 @@
 #' @param metrics character. Vector with one or more metrics from c("corr_spear","corr_pear","mae","pdisp","inter","slope").
 #' @param n_cores numeric. Number of cores used in parallel processing.
 #' @param verbose logical. If FALSE, disables all console messages. Default TRUE
+#' @param samples_list list. Optional list of pre-computed samples (see \code{\link{get_partition_samples}}), used instead of extracting them from \code{rasters}. Default NULL
 #'
 #' @importFrom doParallel registerDoParallel
 #' @importFrom dplyr bind_rows

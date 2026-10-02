@@ -15,7 +15,8 @@ adm_uncertainty(
   pred,
   iteration = 50,
   sample_prop = 0.8,
-  n_cores = 1
+  n_cores = 1,
+  ...
 )
 ```
 
@@ -40,6 +41,11 @@ adm_uncertainty(
 - iteration:
 
   numeric. The number of bootstrap iterations. Default 50.
+
+- sample_prop:
+
+  numeric. Proportion of the training data (stratified by presence and
+  absence) resampled in each iteration. Default 0.80.
 
 - n_cores:
 

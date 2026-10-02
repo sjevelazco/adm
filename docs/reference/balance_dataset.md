@@ -31,6 +31,11 @@ balance_dataset(data, response, absence_ratio, na.rm = TRUE)
   absence until have 1.5 times the number of presence. Usage
   absence_ratio = 0.5
 
+- na.rm:
+
+  logical. If TRUE (default), rows with missing values in the response
+  are removed.
+
 ## Value
 
 Returns a balanced data.frame or tibble with absence-presence ratio in

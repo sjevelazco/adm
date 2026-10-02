@@ -32,6 +32,8 @@ fit_abund_raf(
 \item{partition}{character. Column name with training and validation partition groups.
 If partition = NULL, the model will be validated with the same data used for fitting.}
 
+\item{hold_out_set}{tibble or data.frame. Optional hold-out dataset, never used during training, with the response and predictor columns. If provided, performance metrics are also calculated on it. Default NULL}
+
 \item{predict_part}{logical. Save predicted abundance for testing data. Default is FALSE.}
 
 \item{mtry}{numeric. Number of variables randomly sampled as candidates at each split. Default (length(c(predictors, predictors_f))/3)}

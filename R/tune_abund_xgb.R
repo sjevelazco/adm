@@ -8,8 +8,6 @@
 #' @param predict_part logical. Save predicted abundance for testing data. Default = FALSE
 #' @param hold_out_set tibble or data.frame. A hold-out dataset used for evaluation
 #' and early stopping. This data is never used during the training phase.
-#' @param hold_out_evaluation logical. If \code{TRUE}, performance metrics will
-#' also be calculated for the \code{hold_out_set}.
 #' @param grid tibble or data.frame. A dataframe with "n.trees", "interaction.depth", "n.minobsinnode" and "shrinkage" as columns and its values combinations as rows. If no grid is provided, function will
 #' create a default grid combining the next hyperparameters:
 #' nrounds = c(100, 200, 300),

@@ -11,7 +11,7 @@ all iterations."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">adm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.5.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -56,7 +56,8 @@ all iterations.</p>
 <span>  <span class="va">pred</span>,</span>
 <span>  iteration <span class="op">=</span> <span class="fl">50</span>,</span>
 <span>  sample_prop <span class="op">=</span> <span class="fl">0.8</span>,</span>
-<span>  n_cores <span class="op">=</span> <span class="fl">1</span></span>
+<span>  n_cores <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -82,6 +83,10 @@ all iterations.</p>
 
 <dt id="arg-iteration">iteration<a class="anchor" aria-label="anchor" href="#arg-iteration"></a></dt>
 <dd><p>numeric. The number of bootstrap iterations. Default 50.</p></dd>
+
+
+<dt id="arg-sample-prop">sample_prop<a class="anchor" aria-label="anchor" href="#arg-sample-prop"></a></dt>
+<dd><p>numeric. Proportion of the training data (stratified by presence and absence) resampled in each iteration. Default 0.80.</p></dd>
 
 
 <dt id="arg-n-cores">n_cores<a class="anchor" aria-label="anchor" href="#arg-n-cores"></a></dt>

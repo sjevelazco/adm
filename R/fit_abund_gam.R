@@ -10,6 +10,7 @@
 #' @param tau_formula formula. formula for fitting a model to the tau parameter. Usage tau_formula = ~ precipt + temp
 #' @param partition character. Column name with training and validation partition groups.
 #' @param predict_part logical. Save predicted abundance for testing data. Default = FALSE
+#' @param hold_out_set tibble or data.frame. Optional hold-out dataset, never used during training, with the response and predictor columns. If provided, performance metrics are also calculated on it. Default NULL
 #' @param inter integer. Number of knots in x-axis. Default "automatic"
 #' @param distribution character. A string specifying the distribution to be used. See \link[gamlss.dist]{gamlss.family} documentation for details. Use distribution = gamlss.dist::NO(). Default NULL
 #' @param verbose logical. If FALSE, disables all console messages. Default TRUE
@@ -240,7 +241,7 @@ fit_abund_gam <-
 
           if (hold_out_evaluation) {
             pred_ho <-
-              suppressMessages(stats::predict(model, newdata = hold_out_set[, c(predictors, predictors_f)], type = "response"))
+              suppressMessages(stats::predict(model, newdata = hold_out_set[, c(predictors, predictors_f)], data = train_set, type = "response"))
             observed_ho <- hold_out_set[, response]
           } else {
             pred_ho <- observed_ho <- NULL
@@ -280,7 +281,7 @@ fit_abund_gam <-
       # evaluate full model with hold-out set
       if (hold_out_evaluation) {
         pred <-
-          suppressMessages(predict(full_model, newdata = hold_out_set[, c(predictors, predictors_f)], type = "response"))
+          suppressMessages(predict(full_model, newdata = hold_out_set[, c(predictors, predictors_f)], data = data, type = "response"))
         observed <- hold_out_set[, response]
 
         hold_out_perf <- adm_eval(obs = observed, pred = pred)

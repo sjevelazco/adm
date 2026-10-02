@@ -26,11 +26,18 @@ jobs:
           needs: coverage
 
       - name: Test coverage
-        run: covr::codecov(quiet = FALSE)
+        run: |
+          cov <- covr::package_coverage(quiet = FALSE)
+          print(cov)
+          covr::to_cobertura(cov, filename = "cobertura.xml")
         shell: Rscript {0}
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v5
-        env:
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+        with:
+          # upload only the covr report (otherwise the action may pick up unrelated files)
+          files: ./cobertura.xml
+          disable_search: true
+          token: ${{ secrets.CODECOV_TOKEN }}
+          fail_ci_if_error: true
 

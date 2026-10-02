@@ -126,11 +126,6 @@ fit_abund_xgb(
 
   logical. If FALSE, disables all console messages. Default TRUE.
 
-- hold_out_evaluation:
-
-  logical. If `TRUE`, performance metrics will also be calculated for
-  the `hold_out_set`.
-
 ## Value
 
 A list object with:
