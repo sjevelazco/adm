@@ -128,16 +128,40 @@ fit_abund_qrf <-
           )
         }
       )
+      variables <- dplyr::bind_cols(
+        data.frame(
+          model = "qrf",
+          response = response
+        ),
+        variables
+      ) %>% dplyr::as_tibble()
+
       result <- list(
-        model = full_model
+        model = full_model,
+        predictors = variables,
+        metadata = get_metadata(
+          "qrf",
+          list(
+            formula = formula1,
+            importance = FALSE,
+            hyperparameters = list(
+              mtry = mtry,
+              ntree = ntree,
+              nodesize = nodesize
+            ),
+            train_quantiles = train_quantiles,
+            eval_quantile = eval_quantile,
+            framework = framework,
+            partition = NULL
+          )
+        )
       )
       return(result)
     } else {
       np <- ncol(data %>% dplyr::select(dplyr::starts_with(partition)))
       p_names <- names(data %>% dplyr::select(dplyr::starts_with(partition)))
 
-      part_pred_list <- list()
-      eval_partial_list <- list()
+      replica_training_lists <- init_training_lists("replica")
 
       for (h in 1:np) {
         if (verbose) {
@@ -149,9 +173,7 @@ fit_abund_qrf <-
           unique() %>%
           sort()
 
-        eval_partial <- list()
-        pred_test <- list()
-        part_pred <- list()
+        fold_training_lists <- init_training_lists("fold")
 
         for (j in 1:length(folds)) {
           if (verbose) {
@@ -211,34 +233,21 @@ fit_abund_qrf <-
 
           observed <- dplyr::pull(test_set, response)
 
-          eval_partial[[j]] <- dplyr::tibble(
-            model = "qrf",
-            adm_eval(obs = observed, pred = pred)
+          fold_training_lists <- fold_perf_register(
+            "qrf", folds, j,
+            fold_training_lists,
+            predict_part,
+            FALSE,
+            pred, NULL,
+            observed, NULL
           )
-
-          if (predict_part) {
-            part_pred[[j]] <- data.frame(
-              partition = folds[j],
-              observed,
-              predicted = pred
-            )
-          }
         }
 
         # Create final database with parameter performance
-        names(eval_partial) <- 1:length(folds)
-        eval_partial <-
-          eval_partial[sapply(eval_partial, function(x) !is.null(dim(x)))] %>%
-          dplyr::bind_rows(., .id = "partition")
-        eval_partial_list[[h]] <- eval_partial
-
-        if (predict_part) {
-          names(part_pred) <- 1:length(folds)
-          part_pred <-
-            part_pred[sapply(part_pred, function(x) !is.null(dim(x)))] %>%
-            dplyr::bind_rows(., .id = "partition")
-          part_pred_list[[h]] <- part_pred
-        }
+        replica_training_lists <- replica_perf_register(
+          replica_training_lists, fold_training_lists,
+          folds, h, predict_part, FALSE
+        )
       }
 
       # fit final model with all data
@@ -272,12 +281,20 @@ fit_abund_qrf <-
         full_model,
         variables,
         response,
-        eval_partial_list,
+        replica_training_lists,
+        FALSE,
+        NULL,
         predict_part,
-        part_pred_list,
         get_metadata(
           "qrf",
           list(
+            formula = formula1,
+            importance = FALSE,
+            hyperparameters = list(
+              mtry = mtry,
+              ntree = ntree,
+              nodesize = nodesize
+            ),
             train_quantiles = train_quantiles,
             eval_quantile = eval_quantile,
             framework = framework
