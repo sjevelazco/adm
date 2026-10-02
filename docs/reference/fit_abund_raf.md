@@ -56,6 +56,12 @@ fit_abund_raf(
   If partition = NULL, the model will be validated with the same data
   used for fitting.
 
+- hold_out_set:
+
+  tibble or data.frame. Optional hold-out dataset, never used during
+  training, with the response and predictor columns. If provided,
+  performance metrics are also calculated on it. Default NULL
+
 - predict_part:
 
   logical. Save predicted abundance for testing data. Default is FALSE.

@@ -13,7 +13,7 @@ continuous or continuous and binary predictions for one or more thresholds"></he
 
     <a class="navbar-brand me-2" href="../index.html">adm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.5.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -105,6 +105,10 @@ default FALSE.</p></dd>
 
 <dt id="arg-sample-size">sample_size<a class="anchor" aria-label="anchor" href="#arg-sample-size"></a></dt>
 <dd><p>numeric. A vector containing the dimensions, in pixels, of raster samples. See cnn_make_samples beforehand. Default c(11,11)</p></dd>
+
+
+<dt id="arg-pred-quantile">pred_quantile<a class="anchor" aria-label="anchor" href="#arg-pred-quantile"></a></dt>
+<dd><p>numeric. Quantile to predict when <code>models</code> is a quantile random forest (qrf). Default 0.5</p></dd>
 
 </dl></div>
     <div class="section level2">

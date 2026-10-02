@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">adm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.5.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -78,7 +78,7 @@ data preparation to model fitting and prediction.</p>
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="va"><a href="https://sjevelazco.github.io/adm">adm</a></span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="va"><a href="https://sjevelazco.github.io/adm/">adm</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="va"><a href="https://rspatial.org/" class="external-link">terra</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -261,7 +261,7 @@ tune and validate a RAF model:</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Fitting the best model...</span></span>
 <span><span class="co">#&gt; The best model was achieved with: </span></span>
-<span><span class="co">#&gt;  mtry = 3 and ntree = 400</span></span></code></pre></div>
+<span><span class="co">#&gt;  mtry = 2 and ntree = 800</span></span></code></pre></div>
 <p>The function returns a list with the following elements:</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rspatial.github.io/terra/reference/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">mraf</span><span class="op">)</span></span>
@@ -277,11 +277,11 @@ tune and validate a RAF model:</p>
 <span><span class="co">#&gt; Call:</span></span>
 <span><span class="co">#&gt;  randomForest(formula = formula1, data = data, mtry = mtry, ntree = ntree,      importance = FALSE) </span></span>
 <span><span class="co">#&gt;                Type of random forest: regression</span></span>
-<span><span class="co">#&gt;                      Number of trees: 400</span></span>
-<span><span class="co">#&gt; No. of variables tried at each split: 3</span></span>
+<span><span class="co">#&gt;                      Number of trees: 800</span></span>
+<span><span class="co">#&gt; No. of variables tried at each split: 2</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;           Mean of squared residuals: 150.0551</span></span>
-<span><span class="co">#&gt;                     % Var explained: 20.64</span></span></code></pre></div>
+<span><span class="co">#&gt;           Mean of squared residuals: 144.7283</span></span>
+<span><span class="co">#&gt;                     % Var explained: 23.46</span></span></code></pre></div>
 <p>“predictors”: a tibble containing relevant informations about the
 model fitted.</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
@@ -296,7 +296,7 @@ model fitted.</p>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 1 × 13</span></span></span>
 <span><span class="co">#&gt;   model mae_mean mae_sd corr_spear_mean corr_spear_sd corr_pear_mean</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>           <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> raf       7.73   1.91           0.386         0.188          0.316</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> raf       7.79   1.89           0.381         0.201          0.319</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 7 more variables: corr_pear_sd &lt;dbl&gt;, inter_mean &lt;dbl&gt;, inter_sd &lt;dbl&gt;,</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;">#   slope_mean &lt;dbl&gt;, slope_sd &lt;dbl&gt;, pdisp_mean &lt;dbl&gt;, pdisp_sd &lt;dbl&gt;</span></span></span></code></pre></div>
 <p>“performance_part”: a tibble with the performance of each
@@ -306,68 +306,68 @@ partition.</p>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 3 × 9</span></span></span>
 <span><span class="co">#&gt;   replica partition model   mae corr_spear corr_pear inter slope pdisp</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> 1       1         raf    9.84      0.587     0.476  1.45 1.04  0.457</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> 1       2         raf    7.24      0.355     0.284  3.23 0.448 0.634</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> 1       3         raf    6.11      0.214     0.187  3.29 0.427 0.439</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> 1       1         raf    9.90      0.590     0.470 0.684 1.15  0.409</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> 1       2         raf    7.23      0.364     0.302 2.89  0.491 0.616</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> 1       3         raf    6.24      0.188     0.184 3.36  0.409 0.450</span></span></code></pre></div>
 <p>“predicted_part”: predictions for each partition.</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">mraf</span><span class="op">$</span><span class="va">predicted_part</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rspatial.github.io/terra/reference/headtail.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 6 × 4</span></span></span>
 <span><span class="co">#&gt;   replica partition observed predicted</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> 1       1               10     1.47 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> 1       1               10     1.95 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> 1       1                0     0.299</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> 1       1               10    10.6  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> 1       1               10    10.0  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span> 1       1               10     8.47</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> 1       1               10     1.93 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> 1       1               10     2.55 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> 1       1                0     0.304</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> 1       1               10    10.5  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> 1       1               10    11.1  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span> 1       1               10     9.03</span></span></code></pre></div>
 <p>“optimal_combination”: the set of hyperparameters values considered
 the best given the metrics and its performance.</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">mraf</span><span class="op">$</span><span class="va">optimal_combination</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Rows: 1</span></span>
 <span><span class="co">#&gt; Columns: 16</span></span>
-<span><span class="co">#&gt; $ comb_id         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "comb_24"</span></span>
-<span><span class="co">#&gt; $ mtry            <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 3</span></span>
-<span><span class="co">#&gt; $ ntree           <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 400</span></span>
+<span><span class="co">#&gt; $ comb_id         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "comb_51"</span></span>
+<span><span class="co">#&gt; $ mtry            <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 2</span></span>
+<span><span class="co">#&gt; $ ntree           <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 800</span></span>
 <span><span class="co">#&gt; $ model           <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "raf"</span></span>
-<span><span class="co">#&gt; $ mae_mean        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 7.729639</span></span>
-<span><span class="co">#&gt; $ mae_sd          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 1.912355</span></span>
-<span><span class="co">#&gt; $ corr_spear_mean <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 0.3857151</span></span>
-<span><span class="co">#&gt; $ corr_spear_sd   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 0.188368</span></span>
-<span><span class="co">#&gt; $ corr_pear_mean  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 0.3157325</span></span>
-<span><span class="co">#&gt; $ corr_pear_sd    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 0.1468567</span></span>
-<span><span class="co">#&gt; $ inter_mean      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 2.656427</span></span>
-<span><span class="co">#&gt; $ inter_sd        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 1.048376</span></span>
-<span><span class="co">#&gt; $ slope_mean      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 0.6382733</span></span>
-<span><span class="co">#&gt; $ slope_sd        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 0.3480411</span></span>
-<span><span class="co">#&gt; $ pdisp_mean      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 0.5101291</span></span>
-<span><span class="co">#&gt; $ pdisp_sd        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 0.1079395</span></span></code></pre></div>
+<span><span class="co">#&gt; $ mae_mean        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 7.790802</span></span>
+<span><span class="co">#&gt; $ mae_sd          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 1.891538</span></span>
+<span><span class="co">#&gt; $ corr_spear_mean <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 0.3807354</span></span>
+<span><span class="co">#&gt; $ corr_spear_sd   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 0.2012919</span></span>
+<span><span class="co">#&gt; $ corr_pear_mean  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 0.318584</span></span>
+<span><span class="co">#&gt; $ corr_pear_sd    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 0.143579</span></span>
+<span><span class="co">#&gt; $ inter_mean      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 2.312547</span></span>
+<span><span class="co">#&gt; $ inter_sd        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 1.430307</span></span>
+<span><span class="co">#&gt; $ slope_mean      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 0.6831121</span></span>
+<span><span class="co">#&gt; $ slope_sd        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 0.4061176</span></span>
+<span><span class="co">#&gt; $ pdisp_mean      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 0.4913388</span></span>
+<span><span class="co">#&gt; $ pdisp_sd        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 0.1096767</span></span></code></pre></div>
 <p>“all_combinations”: performance for every hyper-parameter
 combination.</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">mraf</span><span class="op">$</span><span class="va">all_combinations</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rspatial.github.io/terra/reference/headtail.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   comb_id mtry ntree model mae_mean   mae_sd corr_spear_mean corr_spear_sd</span></span>
-<span><span class="co">#&gt; 1  comb_1    1   100   raf 7.879923 1.994658       0.3777350     0.1991773</span></span>
-<span><span class="co">#&gt; 2  comb_2    2   100   raf 7.817054 1.942683       0.3818128     0.1755735</span></span>
-<span><span class="co">#&gt; 3  comb_3    3   100   raf 7.755626 1.884941       0.3610172     0.2023806</span></span>
-<span><span class="co">#&gt; 4  comb_4    4   100   raf 7.709753 1.853860       0.3994898     0.1900201</span></span>
-<span><span class="co">#&gt; 5  comb_5    5   100   raf 7.581052 1.894581       0.4047669     0.1911419</span></span>
-<span><span class="co">#&gt; 6  comb_6    6   100   raf 7.581052 1.894581       0.4047669     0.1911419</span></span>
+<span><span class="co">#&gt; 1  comb_1    1   100   raf 7.850331 2.039432       0.3677618     0.1918322</span></span>
+<span><span class="co">#&gt; 2  comb_2    2   100   raf 7.835086 1.828213       0.3836780     0.2003848</span></span>
+<span><span class="co">#&gt; 3  comb_3    3   100   raf 7.662404 1.935277       0.4051191     0.1778125</span></span>
+<span><span class="co">#&gt; 4  comb_4    4   100   raf 7.910588 1.988897       0.3592797     0.2033749</span></span>
+<span><span class="co">#&gt; 5  comb_5    5   100   raf 7.734838 2.072123       0.4029587     0.1714781</span></span>
+<span><span class="co">#&gt; 6  comb_6    6   100   raf 7.734838 2.072123       0.4029587     0.1714781</span></span>
 <span><span class="co">#&gt;   corr_pear_mean corr_pear_sd inter_mean  inter_sd slope_mean  slope_sd</span></span>
-<span><span class="co">#&gt; 1      0.3419217    0.1456207   1.002681 2.7823673  0.8673265 0.6257408</span></span>
-<span><span class="co">#&gt; 2      0.3126395    0.1321951   2.622964 1.4231532  0.6678264 0.4199777</span></span>
-<span><span class="co">#&gt; 3      0.3099935    0.1407401   2.728000 0.8643917  0.6534981 0.3612145</span></span>
-<span><span class="co">#&gt; 4      0.3000989    0.1553253   3.039585 1.1707461  0.5932970 0.3619571</span></span>
-<span><span class="co">#&gt; 5      0.3099383    0.1677273   3.009371 1.1492067  0.5874383 0.3389303</span></span>
-<span><span class="co">#&gt; 6      0.3099383    0.1677273   3.009371 1.1492067  0.5874383 0.3389303</span></span>
+<span><span class="co">#&gt; 1      0.3330448    0.1361500   1.677208 1.5939558  0.7872240 0.4598093</span></span>
+<span><span class="co">#&gt; 2      0.3163061    0.1470123   2.130081 1.8461143  0.6965336 0.4493598</span></span>
+<span><span class="co">#&gt; 3      0.3132421    0.1453917   2.694446 1.0288803  0.6396298 0.3421318</span></span>
+<span><span class="co">#&gt; 4      0.2707336    0.1664333   3.664373 1.0076005  0.5104461 0.3514737</span></span>
+<span><span class="co">#&gt; 5      0.3103763    0.1412037   3.238420 0.6038863  0.5637367 0.2761831</span></span>
+<span><span class="co">#&gt; 6      0.3103763    0.1412037   3.238420 0.6038863  0.5637367 0.2761831</span></span>
 <span><span class="co">#&gt;   pdisp_mean   pdisp_sd</span></span>
-<span><span class="co">#&gt; 1  0.4488406 0.13373204</span></span>
-<span><span class="co">#&gt; 2  0.5095975 0.13604188</span></span>
-<span><span class="co">#&gt; 3  0.4928913 0.11587233</span></span>
-<span><span class="co">#&gt; 4  0.5288956 0.12081622</span></span>
-<span><span class="co">#&gt; 5  0.5341898 0.07949349</span></span>
-<span><span class="co">#&gt; 6  0.5341898 0.07949349</span></span></code></pre></div>
+<span><span class="co">#&gt; 1  0.4511705 0.11158928</span></span>
+<span><span class="co">#&gt; 2  0.4891603 0.12524883</span></span>
+<span><span class="co">#&gt; 3  0.5023741 0.09072948</span></span>
+<span><span class="co">#&gt; 4  0.5496524 0.12521564</span></span>
+<span><span class="co">#&gt; 5  0.5611242 0.11453501</span></span>
+<span><span class="co">#&gt; 6  0.5611242 0.11453501</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="glm">GLM<a class="anchor" aria-label="anchor" href="#glm"></a>
@@ -650,7 +650,7 @@ packages.</p>
 <span><span class="co">#&gt; A `luz_module_fitted`</span></span>
 <span><span class="co">#&gt; ── Time ────────────────────────────────────────────────────────────────────────</span></span>
 <span><span class="co">#&gt; • Total time: 2.2s</span></span>
-<span><span class="co">#&gt; • Avg time per training epoch: 122ms</span></span>
+<span><span class="co">#&gt; • Avg time per training epoch: 120ms</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; ── Results ─────────────────────────────────────────────────────────────────────</span></span>
 <span><span class="co">#&gt; Metrics observed in the last epoch.</span></span>
@@ -674,12 +674,14 @@ packages.</p>
 <p>In <em>adm</em> is possible to quick summarize several models
 evalutions in one dataframe, using <em>adm_summarize</em> function:</p>
 <div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/adm_summarize.html">adm_summarize</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">mdnn</span>, <span class="va">mraf</span>, <span class="va">mglm</span><span class="op">)</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">models_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">mraf</span>, <span class="va">mglm</span><span class="op">)</span></span>
+<span><span class="kw">if</span> <span class="op">(</span><span class="va">has_torch</span><span class="op">)</span> <span class="va">models_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">mdnn</span><span class="op">)</span>, <span class="va">models_list</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/adm_summarize.html">adm_summarize</a></span><span class="op">(</span><span class="va">models_list</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 3 × 14</span></span></span>
 <span><span class="co">#&gt;   model_ID model mae_mean mae_sd corr_spear_mean corr_spear_sd corr_pear_mean</span></span>
 <span><span class="co">#&gt;      <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>           <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>        1 dnn      0.579  0.176           0.404         0.125          0.321</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>        2 raf      7.73   1.91            0.386         0.188          0.316</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>        2 raf      7.79   1.89            0.381         0.201          0.319</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>        3 glm      7.41   2.62            0.505         0.167          0.428</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 7 more variables: corr_pear_sd &lt;dbl&gt;, inter_mean &lt;dbl&gt;, inter_sd &lt;dbl&gt;,</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;">#   slope_mean &lt;dbl&gt;, slope_sd &lt;dbl&gt;, pdisp_mean &lt;dbl&gt;, pdisp_sd &lt;dbl&gt;</span></span></span></code></pre></div>
@@ -735,8 +737,8 @@ the original scale, we need to use the “invert_transform” argument in
 learn more about it, visit <em>adm_transform</em> documentation. Let’s
 visualize the predictions:</p>
 <div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">3</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">pred_dnn</span><span class="op">$</span><span class="va">dnn</span>, main <span class="op">=</span> <span class="st">"DNN"</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span> <span class="op">+</span> <span class="va">has_torch</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="kw">if</span> <span class="op">(</span><span class="va">has_torch</span><span class="op">)</span> <span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">pred_dnn</span><span class="op">$</span><span class="va">dnn</span>, main <span class="op">=</span> <span class="st">"DNN"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">preds</span><span class="op">$</span><span class="va">raf</span>, main <span class="op">=</span> <span class="st">"RAF"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">preds</span><span class="op">$</span><span class="va">glm</span>, main <span class="op">=</span> <span class="st">"GLM"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="v01_modelling_workflow_files/figure-html/unnamed-chunk-4-1.png" class="r-plt" alt="" width="700"></p>
@@ -754,7 +756,8 @@ one predictor. It can provide very relevant information about residuals
 and model extrapolation:</p>
 <div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># PDP for DNN model</span></span>
-<span><span class="va">pdp_dnn</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/p_abund_pdp.html">p_abund_pdp</a></span><span class="op">(</span></span>
+<span><span class="kw">if</span> <span class="op">(</span><span class="va">has_torch</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">pdp_dnn</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/p_abund_pdp.html">p_abund_pdp</a></span><span class="op">(</span></span>
 <span>  model <span class="op">=</span> <span class="va">mdnn</span>, <span class="co"># the output of tune_abund_ or fit_abund_</span></span>
 <span>  predictors <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"PC1"</span><span class="op">)</span>,</span>
 <span>  resolution <span class="op">=</span> <span class="fl">100</span>,</span>
@@ -773,6 +776,7 @@ and model extrapolation:</p>
 <span>  alpha <span class="op">=</span> <span class="fl">0.2</span>,</span>
 <span>  theme <span class="op">=</span> <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_classic</a></span><span class="op">(</span><span class="op">)</span> <span class="co"># a ggplot2 theme</span></span>
 <span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
 <span><span class="co">#&gt; Warning: Some torch operators might not yet be implemented for the MPS device. A</span></span>
 <span><span class="co">#&gt; temporary fix is to set the `PYTORCH_ENABLE_MPS_FALLBACK=1` to use the CPU as a</span></span>
 <span><span class="co">#&gt; fall back for those operators:</span></span>
@@ -787,7 +791,6 @@ and model extrapolation:</p>
 <span><span class="co">#&gt;   `usethis::edit_r_environ()`.</span></span>
 <span><span class="co">#&gt; <span style="color: #BB0000;">✖</span> Using `Sys.setenv()` doesn't work because the env var must be set before R</span></span>
 <span><span class="co">#&gt;   starts.</span></span>
-<span></span>
 <span><span class="co"># PDP for GLM model</span></span>
 <span><span class="va">pdp_glm</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/p_abund_pdp.html">p_abund_pdp</a></span><span class="op">(</span></span>
 <span>  model <span class="op">=</span> <span class="va">mglm</span>,</span>
@@ -820,7 +823,7 @@ and model extrapolation:</p>
 <span>  theme <span class="op">=</span> <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_classic</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">pdp_dnn</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw">if</span> <span class="op">(</span><span class="va">has_torch</span><span class="op">)</span> <span class="va">pdp_dnn</span></span></code></pre></div>
 <p><img src="v01_modelling_workflow_files/figure-html/all%20pdp-1.png" class="r-plt" alt="" width="700"></p>
 <div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">pdp_raf</span></span></code></pre></div>
@@ -836,7 +839,8 @@ the first and third PC. Note that for <code>p_abund_pdp</code> and
 all variables or variables pair combinations, respectively.</p>
 <div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># BPDP for DNN</span></span>
-<span><span class="va">bpdp_dnn</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/p_abund_bpdp.html">p_abund_bpdp</a></span><span class="op">(</span></span>
+<span><span class="kw">if</span> <span class="op">(</span><span class="va">has_torch</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">bpdp_dnn</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/p_abund_bpdp.html">p_abund_bpdp</a></span><span class="op">(</span></span>
 <span>  model <span class="op">=</span> <span class="va">mdnn</span>,</span>
 <span>  predictors <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"PC1"</span>, <span class="st">"PC3"</span><span class="op">)</span>, <span class="co"># a pair of predictors</span></span>
 <span>  resolution <span class="op">=</span> <span class="fl">100</span>,</span>
@@ -864,6 +868,7 @@ all variables or variables pair combinations, respectively.</p>
 <span>  color_training_boundaries <span class="op">=</span> <span class="st">"white"</span>,</span>
 <span>  theme <span class="op">=</span> <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_classic</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
 <span><span class="co">#&gt; Warning: Some torch operators might not yet be implemented for the MPS device. A</span></span>
 <span><span class="co">#&gt; temporary fix is to set the `PYTORCH_ENABLE_MPS_FALLBACK=1` to use the CPU as a</span></span>
 <span><span class="co">#&gt; fall back for those operators:</span></span>
@@ -871,7 +876,6 @@ all variables or variables pair combinations, respectively.</p>
 <span><span class="co">#&gt;   `usethis::edit_r_environ()`.</span></span>
 <span><span class="co">#&gt; <span style="color: #BB0000;">✖</span> Using `Sys.setenv()` doesn't work because the env var must be set before R</span></span>
 <span><span class="co">#&gt;   starts.</span></span>
-<span></span>
 <span><span class="co"># BPDP for GLM</span></span>
 <span><span class="va">bpdp_glm</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/p_abund_bpdp.html">p_abund_bpdp</a></span><span class="op">(</span></span>
 <span>  model <span class="op">=</span> <span class="va">mglm</span>,</span>
@@ -922,7 +926,7 @@ all variables or variables pair combinations, respectively.</p>
 <span>  theme <span class="op">=</span> <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_classic</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">bpdp_dnn</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw">if</span> <span class="op">(</span><span class="va">has_torch</span><span class="op">)</span> <span class="va">bpdp_dnn</span></span></code></pre></div>
 <p><img src="v01_modelling_workflow_files/figure-html/all%20bpdp-1.png" class="r-plt" alt="" width="700"></p>
 <div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">bpdp_raf</span></span></code></pre></div>
@@ -949,7 +953,7 @@ fitting, and validation to model prediction and exploration.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer>

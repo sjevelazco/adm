@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">adm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.5.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -87,6 +87,10 @@
 
 <dt id="arg-partition">partition<a class="anchor" aria-label="anchor" href="#arg-partition"></a></dt>
 <dd><p>character. Column name with training and validation partition groups.</p></dd>
+
+
+<dt id="arg-hold-out-set">hold_out_set<a class="anchor" aria-label="anchor" href="#arg-hold-out-set"></a></dt>
+<dd><p>tibble or data.frame. Optional hold-out dataset, never used during training, with the response and predictor columns. If provided, performance metrics are also calculated on it. Default NULL</p></dd>
 
 
 <dt id="arg-predict-part">predict_part<a class="anchor" aria-label="anchor" href="#arg-predict-part"></a></dt>

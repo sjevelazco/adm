@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">adm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.5.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -55,6 +55,42 @@
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
+    <div class="section level2">
+    <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
+
+
+<dl><dt id="arg-data">data<a class="anchor" aria-label="anchor" href="#arg-data"></a></dt>
+<dd><p>data.frame or tibble. Database with response, coordinates, and partition values</p></dd>
+
+
+<dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
+<dd><p>character. Column name with spatial x coordinates</p></dd>
+
+
+<dt id="arg-y">y<a class="anchor" aria-label="anchor" href="#arg-y"></a></dt>
+<dd><p>character. Column name with spatial y coordinates</p></dd>
+
+
+<dt id="arg-response">response<a class="anchor" aria-label="anchor" href="#arg-response"></a></dt>
+<dd><p>character. Column name with species abundance</p></dd>
+
+
+<dt id="arg-folds">folds<a class="anchor" aria-label="anchor" href="#arg-folds"></a></dt>
+<dd><p>vector. Values of the partition column (folds) for which samples will be built</p></dd>
+
+
+<dt id="arg-partition">partition<a class="anchor" aria-label="anchor" href="#arg-partition"></a></dt>
+<dd><p>character. Column name with the partition groups</p></dd>
+
+
+<dt id="arg-rasters">rasters<a class="anchor" aria-label="anchor" href="#arg-rasters"></a></dt>
+<dd><p>SpatRaster. Raster with environmental variables</p></dd>
+
+
+<dt id="arg-crop-size">crop_size<a class="anchor" aria-label="anchor" href="#arg-crop-size"></a></dt>
+<dd><p>numeric. Number of cells in each direction of a focal cell (see <code><a href="cnn_make_samples.html">cnn_make_samples</a></code>)</p></dd>
+
+</dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p>a list of arrays</p>

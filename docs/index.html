@@ -5,12 +5,12 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Tools for Constructing, Predicting, and Post-Processing Abundance-based Species Distribution Models • adm</title>
+<title>Tools for Constructing, Predicting, and Post-Processing Abundance-Based Species Distribution Models • adm</title>
 <script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
 <script src="deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Tools for Constructing, Predicting, and Post-Processing Abundance-based Species Distribution Models">
+<script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Tools for Constructing, Predicting, and Post-Processing Abundance-Based Species Distribution Models">
 <meta name="description" content="Assist in the construction of abundance-based species distribution model workflow by incorporating comprehensive tools for data preparation, model fitting, prediction, and exploration.">
 <meta property="og:description" content="Assist in the construction of abundance-based species distribution model workflow by incorporating comprehensive tools for data preparation, model fitting, prediction, and exploration.">
 </head>
@@ -22,7 +22,7 @@
 
     <a class="navbar-brand me-2" href="index.html">adm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.5.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -54,7 +54,7 @@
   <main id="main" class="col-md-9"><div class="section level1">
 <div class="page-header"><h1 id="adm---abundance-based-species-distribution-models-">adm - Abundance-based species distribution models <img src="reference/figures/adm_logo.png" align="right" style="height:168px;"><a class="anchor" aria-label="anchor" href="#adm---abundance-based-species-distribution-models-"></a>
 </h1></div>
-<p><a href="http://www.gnu.org/licenses/gpl-3.0.html" class="external-link"><img src="https://img.shields.io/badge/license-GPL%20%28%3E=%203%29-lightgrey.svg?style=flat" alt="License"></a> <a href="https://github.com/sjevelazco/adm/actions/workflows/R-CMD-check.yaml" class="external-link"><img src="https://github.com/sjevelazco/adm/actions/workflows/R-CMD-check.yaml/badge.svg" alt="R-CMD-check"></a> <a href="https://codecov.io/gh/sjevelazco/adm" class="external-link"><img src="https://codecov.io/gh/sjevelazco/adm/graph/badge.svg?token=cKRmbNhn0A" alt="Codecov test coverage"></a> <a href="https://www.repostatus.org/#active" class="external-link"><img src="https://www.repostatus.org/badges/latest/active.svg"></a> <a href="https://doi.org/10.1111/2041-210X.70074" class="external-link"><img src="https://img.shields.io/badge/DOI-10.1111%2F2041--210X.70074-blue" alt="DOI"></a> <a href="https://deepwiki.com/sjevelazco/adm" class="external-link"><img src="https://deepwiki.com/badge.svg" alt="Ask DeepWiki"></a></p>
+<p><a href="http://www.gnu.org/licenses/gpl-3.0.html" class="external-link"><img src="https://img.shields.io/badge/license-GPL%20%28%3E=%203%29-lightgrey.svg?style=flat" alt="License"></a> <a href="https://github.com/sjevelazco/adm/actions/workflows/R-CMD-check.yaml" class="external-link"><img src="https://github.com/sjevelazco/adm/actions/workflows/R-CMD-check.yaml/badge.svg" alt="R-CMD-check"></a> <a href="https://app.codecov.io/gh/sjevelazco/adm" class="external-link"><img src="https://codecov.io/gh/sjevelazco/adm/graph/badge.svg?token=cKRmbNhn0A" alt="Codecov test coverage"></a> <a href="https://www.repostatus.org/#active" class="external-link"><img src="https://www.repostatus.org/badges/latest/active.svg"></a> <a href="https://doi.org/10.1111/2041-210X.70074" class="external-link"><img src="https://img.shields.io/badge/DOI-10.1111%2F2041--210X.70074-blue" alt="DOI"></a></p>
 <hr>
 <div class="section level3">
 <h3 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
@@ -65,7 +65,7 @@
 <h3 id="structure-of-adm">Structure of adm<a class="anchor" aria-label="anchor" href="#structure-of-adm"></a>
 </h3>
 <p><strong><em>adm</em></strong> functions are grouped in three categories: modeling, post-modeling, and miscellaneous tools</p>
-<p><a href="https://sjevelazco.github.io/adm"><img src="https://raw.githubusercontent.com/sjevelazco/adm/main/man/figures/adm.png" align="centre" height="450"></a></p>
+<p><a href="https://sjevelazco.github.io/adm/"><img src="https://raw.githubusercontent.com/sjevelazco/adm/main/man/figures/adm.png" align="centre" height="450"></a></p>
 <div class="section level4">
 <h4 id="i-modeling">i) <strong>modeling</strong>
 <a class="anchor" aria-label="anchor" href="#i-modeling"></a>

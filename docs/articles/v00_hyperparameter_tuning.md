@@ -179,24 +179,22 @@ construct the hyperparameter grid, we can use the *expand.grid* and
 for each hyperparameter. Below is an example with Random Forest
 hyperparameters, but the same approach can be used for all algorithms:
 
-``` r
-
-# Put each value of the hyperparameter in a vector, those in a list, and use expand.grid
-raf_grid <- expand.grid(
-  list(
-    mtry = c(1, 2, 3),
-    ntree = c(100, 200, 300, 400, 500)
-  )
-)
-head(raf_grid)
-#>   mtry ntree
-#> 1    1   100
-#> 2    2   100
-#> 3    3   100
-#> 4    1   200
-#> 5    2   200
-#> 6    3   200
-```
+\
+`# Put each value of the hyperparameter in a vector, those in a list, and use expand.grid`\
+`raf_grid`` ``<-`` `[`expand.grid`](https://rdrr.io/r/base/expand.grid.html)`(`\
+`  `[`list`](https://rdrr.io/r/base/list.html)`(`\
+`    mtry ``=`` `[`c`](https://rdrr.io/r/base/c.html)`(``1``, ``2``, ``3``)``,`\
+`    ntree ``=`` `[`c`](https://rdrr.io/r/base/c.html)`(``100``, ``200``, ``300``, ``400``, ``500``)`\
+`  ``)`\
+`)`\
+[`head`](https://rdrr.io/r/utils/head.html)`(``raf_grid``)`\
+`#>   mtry ntree`\
+`#> 1    1   100`\
+`#> 2    2   100`\
+`#> 3    3   100`\
+`#> 4    1   200`\
+`#> 5    2   200`\
+`#> 6    3   200`
 
 This create a data.frame with 25 rows and 2 columns, where each row is a
 combination of the hyperparameters. This object can be passed to the
@@ -209,47 +207,45 @@ Each row is a combination of the hyperparameters values.
 To use the grid, we can pass it to the *tune_abund* function as the
 *grid* argument:
 
-``` r
-
-library(adm)
-#> Registered S3 method overwritten by 'bit':
-#>   method   from  
-#>   print.ri gamlss
-library(dplyr)
-#> 
-#> Attaching package: 'dplyr'
-#> The following objects are masked from 'package:stats':
-#> 
-#>     filter, lag
-#> The following objects are masked from 'package:base':
-#> 
-#>     intersect, setdiff, setequal, union
-
-# Load some data
-df <- adm::sppabund
-df <- df %>% filter(species == "Species one")
-
-raf_adm <- adm::tune_abund_raf(
-  data = df,
-  response = "ind_ha",
-  metric = c("mae"),
-  predictors = c("bio1", "bio12", "bio15"),
-  partition = ".part1",
-  grid = raf_grid # pass the grid here
-)
-#> Using provided grid.
-#> Searching for optimal hyperparameters...
-#> 
-#> Fitting the best model...
-#> Formula used for model fitting:
-#> ind_ha ~ bio1 + bio12 + bio15
-#> Replica number: 1/1
-#> -- Partition number 1/3
-#> -- Partition number 2/3
-#> -- Partition number 3/3
-#> The best model was achieved with: 
-#>  mtry = 1 and ntree = 300
-```
+\
+[`library`](https://rdrr.io/r/base/library.html)`(`[`adm`](https://sjevelazco.github.io/adm/)`)`\
+`#> Registered S3 method overwritten by 'bit':`\
+`#>   method   from  `\
+`#>   print.ri gamlss`\
+[`library`](https://rdrr.io/r/base/library.html)`(`[`dplyr`](https://dplyr.tidyverse.org)`)`\
+`#> `\
+`#> Attaching package: 'dplyr'`\
+`#> The following objects are masked from 'package:stats':`\
+`#> `\
+`#>     filter, lag`\
+`#> The following objects are masked from 'package:base':`\
+`#> `\
+`#>     intersect, setdiff, setequal, union`\
+\
+`# Load some data`\
+`df`` ``<-`` ``adm``::`[`sppabund`](https://sjevelazco.github.io/adm/reference/sppabund.md)\
+`df`` ``<-`` ``df`` `[`%>%`](https://magrittr.tidyverse.org/reference/pipe.html)` `[`filter`](https://dplyr.tidyverse.org/reference/filter.html)`(``species`` ``==`` ``"Species one"``)`\
+\
+`raf_adm`` ``<-`` ``adm``::`[`tune_abund_raf`](https://sjevelazco.github.io/adm/reference/tune_abund_raf.md)`(`\
+`  data ``=`` ``df``,`\
+`  response ``=`` ``"ind_ha"``,`\
+`  metric ``=`` `[`c`](https://rdrr.io/r/base/c.html)`(``"mae"``)``,`\
+`  predictors ``=`` `[`c`](https://rdrr.io/r/base/c.html)`(``"bio1"``, ``"bio12"``, ``"bio15"``)``,`\
+`  partition ``=`` ``".part1"``,`\
+`  grid ``=`` ``raf_grid`` ``# pass the grid here`\
+`)`\
+`#> Using provided grid.`\
+`#> Searching for optimal hyperparameters...`\
+`#> `\
+`#> Fitting the best model...`\
+`#> Formula used for model fitting:`\
+`#> ind_ha ~ bio1 + bio12 + bio15`\
+`#> Replica number: 1/1`\
+`#> -- Partition number 1/3`\
+`#> -- Partition number 2/3`\
+`#> -- Partition number 3/3`\
+`#> The best model was achieved with: `\
+`#>  mtry = 1 and ntree = 500`
 
 ### Conclusion
 

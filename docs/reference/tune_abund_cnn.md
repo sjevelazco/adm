@@ -61,6 +61,12 @@ tune_abund_cnn(
 
   character. Path to the raster file of environmental variables.
 
+- samples_list:
+
+  list. Optional list of pre-computed samples (see
+  [`get_partition_samples`](https://sjevelazco.github.io/adm/reference/get_partition_samples.md)),
+  used instead of extracting them from `rasters`. Default NULL
+
 - sample_size:
 
   numeric. The dimension, in pixels, of raster samples. See

@@ -16,16 +16,16 @@ Source:
 de Oliveira Junior, A.C.; Velazco, S.J.E. (2025). adm: an R package for
 constructing abundance-based species distribution models Methods in
 Ecology and Evolution, 16(7) 1404-1412,
-doi:http://dx.doi.org/10.1111/2041-210X.70074
+doi:https://doi.org/10.1111/2041-210X.70074
 
-    @Article{,
-      title = {adm: an R package for constructing abundance-based species distribution models},
-      author = {Santiago J.E. Velazco and Admir C. {de Oliveira Junior}},
-      journal = {Methods in Ecology and Evolution},
-      year = {2025},
-      volume = {16},
-      number = {7},
-      pages = {1404-1412},
-      doi = {http://dx.doi.org/10.1111/2041-210X.70074},
-      url = {https://besjournals.onlinelibrary.wiley.com/doi/10.1111/2041-210X.70074},
-    }
+@Article{,\
+  title = {adm: an R package for constructing abundance-based species distribution models},\
+  author = {Santiago J.E. Velazco and Admir C. {de Oliveira Junior}},\
+  journal = {Methods in Ecology and Evolution},\
+  year = {2025},\
+  volume = {16},\
+  number = {7},\
+  pages = {1404-1412},\
+  doi = {10.1111/2041-210X.70074},\
+  url = {https://besjournals.onlinelibrary.wiley.com/doi/full/10.1111/2041-210X.70074},\
+}

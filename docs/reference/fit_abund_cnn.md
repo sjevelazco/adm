@@ -79,6 +79,12 @@ fit_abund_cnn(
 
   character. Column name with training and validation partition groups.
 
+- hold_out_set:
+
+  tibble or data.frame. Optional hold-out dataset, never used during
+  training, with the response and predictor columns. If provided,
+  performance metrics are also calculated on it. Default NULL
+
 - predict_part:
 
   logical. Save predicted abundance for testing data. Default = FALSE
@@ -87,6 +93,10 @@ fit_abund_cnn(
 
   numeric. The size of the step taken during the optimization process.
   Default = 0.01
+
+- weight_decay:
+
+  numeric. Weight decay (L2 penalty) used by the optimizer. Default 0
 
 - n_epochs:
 
@@ -110,10 +120,24 @@ fit_abund_cnn(
   numerical. The same as validation_patience, but in the final model
   fitting process. Default 5
 
+- optimizer:
+
+  a torch optimizer generator. Default torch::optim_adamw
+
+- loss_function:
+
+  a torch loss function generator. Default torch::nn_l1_loss
+
 - custom_architecture:
 
   a Torch nn_module_generator object. A neural network architecture to
   be used instead of the internal default one. Default NULL
+
+- samples_list:
+
+  list. Optional list of pre-computed samples (see
+  [`get_partition_samples`](https://sjevelazco.github.io/adm/reference/get_partition_samples.md)),
+  used instead of extracting them from `rasters`. Default NULL
 
 - verbose:
 
