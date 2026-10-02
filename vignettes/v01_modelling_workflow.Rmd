@@ -2,7 +2,7 @@
 title: "1. Modeling workflow with adm"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{v01_modelling_workflow}
+  %\VignetteIndexEntry{1. Modeling workflow with adm}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
 editor_options: 
@@ -20,6 +20,11 @@ knitr::opts_chunk$set(
 ```{r dependencies, include=FALSE}
 library(knitr)
 # devtools::install_github('sjevelazco/adm')
+
+# DNN chunks need torch with its libtorch backend, which may not be installed
+has_torch <- requireNamespace("torch", quietly = TRUE) &&
+  requireNamespace("luz", quietly = TRUE) &&
+  torch::torch_is_installed()
 ```
 
 ## Introduction
@@ -307,7 +312,7 @@ To filter this list, users can use *select_arch_list* to reduce it, sampling the
 This is highly recommended.
 Let's create and select some architectures:
 
-```{r dnn architectures}
+```{r dnn architectures, eval=has_torch}
 archs <- adm::generate_arch_list(
   type = "dnn",
   number_of_features = 5, # input/predictor variables
@@ -334,7 +339,7 @@ archs$arch_list %>% length()
 
 However, for the sake of brevity in this tutorial, we will manually reduce even more our architectures list to just a few:
 
-```{r reducing arch list}
+```{r reducing arch list, eval=has_torch}
 archs$arch_list <- archs$arch_list[seq(from = 1, to = length(archs), by = 10)]
 
 length(archs$arch_list)
@@ -344,7 +349,7 @@ Now we can construct the grid with hyper-parameters combinations.
 Note that hyper-parameters values will be tested for each architecture.
 Therefore user needs to be careful with grid and architecture list sizes.
 
-```{r dnn_grid}
+```{r dnn_grid, eval=has_torch}
 dnn_grid <- expand.grid(
   batch_size = c(64),
   validation_patience = c(5),
@@ -358,7 +363,7 @@ nrow(dnn_grid)
 
 Now we can use the architectures generated and the grid created within the *tune_abund_dnn* function:
 
-```{r dnn_tuning}
+```{r dnn_tuning, eval=has_torch}
 mdnn <- tune_abund_dnn(
   data = species_data,
   response = "ind_ha_zscore", # using the transformed response
@@ -377,7 +382,7 @@ mdnn <- tune_abund_dnn(
 Again, the output is very similar as before, because they are standardize for all *tune_abund\_* functions.
 Now, the "model" element is a "luz_module_fitted" from *torch* and *luz* packages.
 
-```{r mdnn model}
+```{r mdnn model, eval=has_torch}
 class(mdnn$model)
 mdnn$model
 ```
@@ -387,7 +392,9 @@ mdnn$model
 In *adm* is possible to quick summarize several models evalutions in one dataframe, using *adm_summarize* function:
 
 ```{r}
-adm_summarize(list(mdnn, mraf, mglm))
+models_list <- list(mraf, mglm)
+if (has_torch) models_list <- c(list(mdnn), models_list)
+adm_summarize(models_list)
 ```
 
 ## Predicting models
@@ -413,7 +420,7 @@ preds <- adm::adm_predict(
 To predict DNN, we need to pay attention to some detail.
 As we trained the DNN with tranformed response, if we want it to predict in the original scale, we need to use the "invert_transform" argument in *adm_predict*:
 
-```{r dnn pred}
+```{r dnn pred, eval=has_torch}
 pred_dnn <- adm_predict(
   models = mdnn,
   pred = cretusa_predictors,
@@ -433,8 +440,8 @@ To learn more about it, visit *adm_transform* documentation.
 Let's visualize the predictions:
 
 ```{r}
-par(mfrow = c(1, 3))
-plot(pred_dnn$dnn, main = "DNN")
+par(mfrow = c(1, 2 + has_torch))
+if (has_torch) plot(pred_dnn$dnn, main = "DNN")
 plot(preds$raf, main = "RAF")
 plot(preds$glm, main = "GLM")
 par(mfrow = c(1, 1))
@@ -450,7 +457,8 @@ It can provide very relevant information about residuals and model extrapolation
 
 ```{r models pdp}
 # PDP for DNN model
-pdp_dnn <- p_abund_pdp(
+if (has_torch) {
+  pdp_dnn <- p_abund_pdp(
   model = mdnn, # the output of tune_abund_ or fit_abund_
   predictors = c("PC1"),
   resolution = 100,
@@ -469,7 +477,7 @@ pdp_dnn <- p_abund_pdp(
   alpha = 0.2,
   theme = ggplot2::theme_classic() # a ggplot2 theme
 )
-
+}
 # PDP for GLM model
 pdp_glm <- p_abund_pdp(
   model = mglm,
@@ -504,7 +512,7 @@ pdp_raf <- p_abund_pdp(
 ```
 
 ```{r all pdp}
-pdp_dnn
+if (has_torch) pdp_dnn
 pdp_raf
 pdp_glm
 ```
@@ -516,7 +524,8 @@ If "predictors" argument is NULL, functions plot all variables or variables pair
 
 ```{r bpdp dnn}
 # BPDP for DNN
-bpdp_dnn <- p_abund_bpdp(
+if (has_torch) {
+  bpdp_dnn <- p_abund_bpdp(
   model = mdnn,
   predictors = c("PC1", "PC3"), # a pair of predictors
   resolution = 100,
@@ -544,7 +553,7 @@ bpdp_dnn <- p_abund_bpdp(
   color_training_boundaries = "white",
   theme = ggplot2::theme_classic()
 )
-
+}
 # BPDP for GLM
 bpdp_glm <- p_abund_bpdp(
   model = mglm,
@@ -597,7 +606,7 @@ bpdp_raf <- p_abund_bpdp(
 ```
 
 ```{r all bpdp}
-bpdp_dnn
+if (has_torch) bpdp_dnn
 bpdp_raf
 bpdp_glm
 ```

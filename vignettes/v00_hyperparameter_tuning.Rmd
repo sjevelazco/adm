@@ -2,7 +2,7 @@
 title: "0. Hyperparameter tuning with adm"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{v00_hyperparameter_tuning}
+  %\VignetteIndexEntry{0. Hyperparameter tuning with adm}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
 editor_options: 
