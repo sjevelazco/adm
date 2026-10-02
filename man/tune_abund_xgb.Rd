@@ -72,9 +72,6 @@ the grid with the default values.}
 \item{n_cores}{numeric. Number of cores used in parallel processing.}
 
 \item{verbose}{logical. If FALSE, disables all console messages. Default TRUE}
-
-\item{hold_out_evaluation}{logical. If \code{TRUE}, performance metrics will
-also be calculated for the \code{hold_out_set}.}
 }
 \value{
 A list object with:

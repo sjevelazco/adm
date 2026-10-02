@@ -36,6 +36,8 @@ fit_abund_dnn(
 
 \item{partition}{character. Column name with training and validation partition groups.}
 
+\item{hold_out_set}{tibble or data.frame. Optional hold-out dataset, never used during training, with the response and predictor columns. If provided, performance metrics are also calculated on it. Default NULL}
+
 \item{predict_part}{logical. Save predicted abundance for testing data. Default = FALSE}
 
 \item{learning_rate}{numeric. The size of the step taken during the optimization process. Default = 0.01}

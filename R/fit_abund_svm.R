@@ -7,6 +7,7 @@
 #' @param fit_formula formula. A formula object with response and predictor variables (e.g. formula(abund ~ temp + precipt + sand + landform)). Note that the variables used here must be consistent with those used in response, predictors, and predictors_f arguments. Default NULL
 #' @param partition character. Column name with training and validation partition groups.
 #' @param predict_part logical. Save predicted abundance for testing data. Default is FALSE.
+#' @param hold_out_set tibble or data.frame. Optional hold-out dataset, never used during training, with the response and predictor columns. If provided, performance metrics are also calculated on it. Default NULL
 #' @param kernel character. A string defining the kernel used in the algorithm. Default is "rbfdot".
 #' @param sigma numeric or character. Either "automatic" (recommended) or the inverse kernel width for the Radial Basis kernel function "rbfdot" and the Laplacian kernel "laplacedot". Default is "automatic".
 #' @param C numeric. Cost of constraints violation. Default is 1.

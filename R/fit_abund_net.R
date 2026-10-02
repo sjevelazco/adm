@@ -7,6 +7,7 @@
 #' @param fit_formula formula. A formula object with response and predictor variables (e.g. formula(abund ~ temp + precipt + sand + landform)). Note that the variables used here must be consistent with those used in response, predictors, and predictors_f arguments. Default NULL
 #' @param partition character. Column name with training and validation partition groups.
 #' @param predict_part logical. Save predicted abundance for testing data. Default is FALSE.
+#' @param hold_out_set tibble or data.frame. Optional hold-out dataset, never used during training, with the response and predictor columns. If provided, performance metrics are also calculated on it. Default NULL
 #' @param size numerical. The size of the hidden layer.
 #' @param decay numerial. Value for weight decay. Default 0.
 #' @param verbose logical. If FALSE, disables all console messages. Default TRUE

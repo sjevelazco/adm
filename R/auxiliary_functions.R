@@ -228,6 +228,15 @@ res_calculate <-
 
 #' Construct CNN samples list to use with tune_abund_cnn and fit_abund_cnn
 #'
+#' @param data data.frame or tibble. Database with response, coordinates, and partition values
+#' @param x character. Column name with spatial x coordinates
+#' @param y character. Column name with spatial y coordinates
+#' @param response character. Column name with species abundance
+#' @param folds vector. Values of the partition column (folds) for which samples will be built
+#' @param partition character. Column name with the partition groups
+#' @param rasters SpatRaster. Raster with environmental variables
+#' @param crop_size numeric. Number of cells in each direction of a focal cell (see \code{\link{cnn_make_samples}})
+#'
 #' @returns a list of arrays
 #' @export
 get_partition_samples <- function(

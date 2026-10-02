@@ -75,9 +75,6 @@ and early stopping. This data is never used during the training phase.}
 if partition = NULL, no early stopping is performed.}
 
 \item{verbose}{logical. If FALSE, disables all console messages. Default TRUE.}
-
-\item{hold_out_evaluation}{logical. If \code{TRUE}, performance metrics will
-also be calculated for the \code{hold_out_set}.}
 }
 \value{
 A list object with:

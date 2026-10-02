@@ -8,8 +8,6 @@
 #' @param predict_part logical. Save predicted abundance for testing data. Default = FALSE.
 #' @param hold_out_set tibble or data.frame. A hold-out dataset used for evaluation
 #' and early stopping. This data is never used during the training phase.
-#' @param hold_out_evaluation logical. If \code{TRUE}, performance metrics will
-#' also be calculated for the \code{hold_out_set}.
 #' @param nrounds integer. Max number of boosting iterations. Default is 100.
 #' @param max_depth integer. The maximum depth of each tree. Default 5
 #' @param learning_rate numeric. The learning rate of the algorithm. Default 0.1
