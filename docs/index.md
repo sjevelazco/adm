@@ -29,7 +29,7 @@ post-modeling, and miscellaneous tools
 
 #### i) **modeling**
 
-Functions to tune, fit, and validate models with nine different
+Functions to tune, fit, and validate models with ten different
 algorithms, with a suite of possible model-specific hyperparameters
 
 ***Fit and validate models without hyperparameters tuning***
@@ -51,6 +51,9 @@ algorithms, with a suite of possible model-specific hyperparameters
 
 - [`fit_abund_net()`](https://sjevelazco.github.io/adm/reference/fit_abund_net.md)
   Fit and validate Artificial Neural Network models
+
+- [`fit_abund_qrf()`](https://sjevelazco.github.io/adm/reference/fit_abund_qrf.md)
+  Fit and validate Quantile Regression Random Forest models
 
 - [`fit_abund_raf()`](https://sjevelazco.github.io/adm/reference/fit_abund_raf.md)
   Fit and validate Random Forests models
@@ -87,6 +90,10 @@ algorithms, with a suite of possible model-specific hyperparameters
   Fit and validate Shallow Neural Networks models with exploration of
   hyper-parameters that optimize performance
 
+- [`tune_abund_qrf()`](https://sjevelazco.github.io/adm/reference/tune_abund_qrf.md)
+  Fit and validate Quantile Regression Random Forest models with
+  exploration of hyper-parameters that optimize performance
+
 - [`tune_abund_raf()`](https://sjevelazco.github.io/adm/reference/tune_abund_raf.md)
   Fit and validate Random Forest models with exploration of
   hyperparameters that optimize performance
@@ -112,6 +119,9 @@ environmental predictors
 
 - [`adm_predict()`](https://sjevelazco.github.io/adm/reference/adm_predict.md)
   Spatial predictions from individual and ensemble models
+
+- [`adm_uncertainty()`](https://sjevelazco.github.io/adm/reference/adm_uncertainty.md)
+  Spatial uncertainty of model predictions based on bootstrap resampling
 
 - [`p_abund_bpdp()`](https://sjevelazco.github.io/adm/reference/p_abund_bpdp.md)
   Bivariate partial dependence plots for abundance-based distribution
@@ -162,6 +172,10 @@ handling, transformations, and hyperparameter selection.
 
 - [`generate_dnn_architecture()`](https://sjevelazco.github.io/adm/reference/generate_dnn_architecture.md)
   Generate architectures for Deep Neural Network
+
+- [`get_partition_samples()`](https://sjevelazco.github.io/adm/reference/get_partition_samples.md)
+  Construct lists of Convolutional Neural Network samples by partition
+  fold
 
 - [`model_selection()`](https://sjevelazco.github.io/adm/reference/model_selection.md)
   Best hyper-parameters selection

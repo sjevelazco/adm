@@ -1,6 +1,6 @@
 # Changelog
 
-## adm (development version)
+## adm 0.5.0
 
 ### Bug fixes
 
@@ -42,8 +42,6 @@
   index entries.
 - Declared global variables to avoid R CMD check notes; updated the
   package title, CITATION, and README links.
-
-## adm 0.5.0
 
 ## adm 0.0.2
 
