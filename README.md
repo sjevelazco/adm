@@ -16,7 +16,7 @@ This package aims to support the construction of Abundance-based species distrib
 
 #### i) **modeling**
 
-Functions to tune, fit, and validate models with nine different algorithms, with a suite of possible model-specific hyperparameters
+Functions to tune, fit, and validate models with ten different algorithms, with a suite of possible model-specific hyperparameters
 
 ***Fit and validate models without hyperparameters tuning***
 
@@ -31,6 +31,8 @@ Functions to tune, fit, and validate models with nine different algorithms, with
 -   `fit_abund_glm()` Fit and validate Generalized Linear Models
 
 -   `fit_abund_net()` Fit and validate Artificial Neural Network models
+
+-   `fit_abund_qrf()` Fit and validate Quantile Regression Random Forest models
 
 -   `fit_abund_raf()` Fit and validate Random Forests models
 
@@ -52,6 +54,8 @@ Functions to tune, fit, and validate models with nine different algorithms, with
 
 -   `tune_abund_net()` Fit and validate Shallow Neural Networks models with exploration of hyper-parameters that optimize performance
 
+-   `tune_abund_qrf()` Fit and validate Quantile Regression Random Forest models with exploration of hyper-parameters that optimize performance
+
 -   `tune_abund_raf()` Fit and validate Random Forest models with exploration of hyperparameters that optimize performance
 
 -   `tune_abund_svm()` Fit and validate Support Vector Machine models with exploration of hyper-parameters that optimize performance
@@ -67,6 +71,8 @@ Modeling evaluation
 Functions to predict abundance across space and construct partial dependence plots to explore the relationships between abundance and environmental predictors
 
 -   `adm_predict()` Spatial predictions from individual and ensemble models
+
+-   `adm_uncertainty()` Spatial uncertainty of model predictions based on bootstrap resampling
 
 -   `p_abund_bpdp()` Bivariate partial dependence plots for abundance-based distribution models
 
@@ -99,6 +105,8 @@ Extra functions to support the modeling workflow, including data handling, trans
 -   `generate_cnn_architecture()` Generate architectures for Convolutional Neural Network
 
 -   `generate_dnn_architecture()` Generate architectures for Deep Neural Network
+
+-   `get_partition_samples()` Construct lists of Convolutional Neural Network samples by partition fold
 
 -   `model_selection()` Best hyper-parameters selection
 

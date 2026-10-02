@@ -70,7 +70,7 @@
 <h4 id="i-modeling">i) <strong>modeling</strong>
 <a class="anchor" aria-label="anchor" href="#i-modeling"></a>
 </h4>
-<p>Functions to tune, fit, and validate models with nine different algorithms, with a suite of possible model-specific hyperparameters</p>
+<p>Functions to tune, fit, and validate models with ten different algorithms, with a suite of possible model-specific hyperparameters</p>
 <p><strong><em>Fit and validate models without hyperparameters tuning</em></strong></p>
 <ul>
 <li><p><code><a href="reference/fit_abund_cnn.html">fit_abund_cnn()</a></code> Fit and validate Convolutional Neural Network Model</p></li>
@@ -79,6 +79,7 @@
 <li><p><code><a href="reference/fit_abund_gbm.html">fit_abund_gbm()</a></code> Fit and validate Generalized Boosted Regression models</p></li>
 <li><p><code><a href="reference/fit_abund_glm.html">fit_abund_glm()</a></code> Fit and validate Generalized Linear Models</p></li>
 <li><p><code><a href="reference/fit_abund_net.html">fit_abund_net()</a></code> Fit and validate Artificial Neural Network models</p></li>
+<li><p><code><a href="reference/fit_abund_qrf.html">fit_abund_qrf()</a></code> Fit and validate Quantile Regression Random Forest models</p></li>
 <li><p><code><a href="reference/fit_abund_raf.html">fit_abund_raf()</a></code> Fit and validate Random Forests models</p></li>
 <li><p><code><a href="reference/fit_abund_svm.html">fit_abund_svm()</a></code> Fit and validate Support Vector Machine models</p></li>
 <li><p><code><a href="reference/fit_abund_xgb.html">fit_abund_xgb()</a></code> Fit and validate Extreme Gradient Boosting models</p></li>
@@ -91,6 +92,7 @@
 <li><p><code><a href="reference/tune_abund_gbm.html">tune_abund_gbm()</a></code> Fit and validate Generalized Boosted Regression models with exploration of hyper-parameters that optimize performance</p></li>
 <li><p><code><a href="reference/tune_abund_glm.html">tune_abund_glm()</a></code> Fit and validate Generalized Linear Models with exploration of hyper-parameters that optimize performance</p></li>
 <li><p><code><a href="reference/tune_abund_net.html">tune_abund_net()</a></code> Fit and validate Shallow Neural Networks models with exploration of hyper-parameters that optimize performance</p></li>
+<li><p><code><a href="reference/tune_abund_qrf.html">tune_abund_qrf()</a></code> Fit and validate Quantile Regression Random Forest models with exploration of hyper-parameters that optimize performance</p></li>
 <li><p><code><a href="reference/tune_abund_raf.html">tune_abund_raf()</a></code> Fit and validate Random Forest models with exploration of hyperparameters that optimize performance</p></li>
 <li><p><code><a href="reference/tune_abund_svm.html">tune_abund_svm()</a></code> Fit and validate Support Vector Machine models with exploration of hyper-parameters that optimize performance</p></li>
 <li><p><code><a href="reference/tune_abund_xgb.html">tune_abund_xgb()</a></code> Fit and validate Extreme Gradient Boosting models with exploration of hyper-parameters that optimize performance</p></li>
@@ -108,6 +110,7 @@
 <p>Functions to predict abundance across space and construct partial dependence plots to explore the relationships between abundance and environmental predictors</p>
 <ul>
 <li><p><code><a href="reference/adm_predict.html">adm_predict()</a></code> Spatial predictions from individual and ensemble models</p></li>
+<li><p><code><a href="reference/adm_uncertainty.html">adm_uncertainty()</a></code> Spatial uncertainty of model predictions based on bootstrap resampling</p></li>
 <li><p><code><a href="reference/p_abund_bpdp.html">p_abund_bpdp()</a></code> Bivariate partial dependence plots for abundance-based distribution models</p></li>
 <li><p><code><a href="reference/p_abund_pdp.html">p_abund_pdp()</a></code> Partial dependent plots for abundance-based distribution models</p></li>
 <li><p><code><a href="reference/data_abund_bpdp.html">data_abund_bpdp()</a></code> Calculate data to construct bivariate partial dependence plots</p></li>
@@ -130,6 +133,7 @@
 <li><p><code><a href="reference/generate_arch_list.html">generate_arch_list()</a></code> Generate architecture list for Deep Neural Network and Convolutional Neural Network</p></li>
 <li><p><code><a href="reference/generate_cnn_architecture.html">generate_cnn_architecture()</a></code> Generate architectures for Convolutional Neural Network</p></li>
 <li><p><code><a href="reference/generate_dnn_architecture.html">generate_dnn_architecture()</a></code> Generate architectures for Deep Neural Network</p></li>
+<li><p><code><a href="reference/get_partition_samples.html">get_partition_samples()</a></code> Construct lists of Convolutional Neural Network samples by partition fold</p></li>
 <li><p><code><a href="reference/model_selection.html">model_selection()</a></code> Best hyper-parameters selection</p></li>
 <li><p><code><a href="reference/res_calculate.html">res_calculate()</a></code> Calculate the output resolution of a layer</p></li>
 <li><p><code><a href="reference/select_arch_list.html">select_arch_list()</a></code> Select architectures for Convolutional Neural Network or Deep Neural Network</p></li>
