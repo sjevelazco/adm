@@ -605,3 +605,16 @@ replica_perf_register <- function(
 
   return(replica_training_lists)
 }
+
+#' xgb_feature_names
+#'
+#' Feature names of an xgb.Booster; \code{$feature_names} is not available in
+#' recent xgboost versions, where \code{variable.names()} must be used.
+#' @noRd
+xgb_feature_names <- function(model) {
+  nms <- model$feature_names
+  if (is.null(nms)) {
+    nms <- stats::variable.names(model)
+  }
+  nms
+}
