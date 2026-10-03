@@ -25,6 +25,10 @@ jobs:
           extra-packages: any::covr, any::xml2
           needs: coverage
 
+      - name: Install libtorch (needed by the DNN and CNN tests)
+        run: torch::install_torch()
+        shell: Rscript {0}
+
       - name: Test coverage
         run: |
           cov <- covr::package_coverage(quiet = FALSE)
