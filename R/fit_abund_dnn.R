@@ -116,6 +116,7 @@ fit_abund_dnn <-
     if (!is.null(predictors_f)) {
       warning("Categorical variables aren't available for DNN and will be ignored.")
       predictors_f <- NULL
+      variables <- dplyr::bind_rows(c(c = predictors))
     }
 
     # Adequate database
@@ -322,9 +323,9 @@ fit_abund_dnn <-
           }
 
           if (hold_out_evaluation) {
-            pred_ho <-
-              suppressMessages(stats::predict(model, newdata = hold_out_set[, c(predictors, predictors_f)], type = "response"))
-            observed_ho <- hold_out_set[, response]
+            ho_set <- create_dataset(hold_out_set[, c(predictors, response)], response)
+            pred_ho <- predict(fitted, ho_set) %>% as.numeric()
+            observed_ho <- hold_out_set[[response]]
           } else {
             pred_ho <- observed_ho <- NULL
           }
@@ -397,9 +398,9 @@ fit_abund_dnn <-
 
       # evaluate full model with hold-out set
       if (hold_out_evaluation) {
-        pred <-
-          suppressMessages(predict(full_model, newdata = hold_out_set[, c(predictors, predictors_f)], type = "response"))
-        observed <- hold_out_set[, response]
+        ho_set <- create_dataset(hold_out_set[, c(predictors, response)], response)
+        pred <- predict(full_model, ho_set) %>% as.numeric()
+        observed <- hold_out_set[[response]]
 
         hold_out_perf <- adm_eval(obs = observed, pred = pred)
       } else {

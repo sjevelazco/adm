@@ -195,7 +195,7 @@ fit_abund_net <-
 
           if (hold_out_evaluation) {
             pred_ho <-
-              suppressMessages(stats::predict(model, newdata = hold_out_set[, c(predictors, predictors_f)], type = "response"))
+              suppressMessages(stats::predict(model, newdata = hold_out_set[, c(predictors, predictors_f)], type = "raw"))
             observed_ho <- hold_out_set[, response]
           } else {
             pred_ho <- observed_ho <- NULL
@@ -235,7 +235,7 @@ fit_abund_net <-
       # evaluate full model with hold-out set
       if (hold_out_evaluation) {
         pred <-
-          suppressMessages(stats::predict(full_model, newdata = hold_out_set[, c(predictors, predictors_f)], type = "response"))
+          suppressMessages(stats::predict(full_model, newdata = hold_out_set[, c(predictors, predictors_f)], type = "raw"))
         observed <- hold_out_set[, response]
 
         hold_out_perf <- adm_eval(obs = observed, pred = pred)

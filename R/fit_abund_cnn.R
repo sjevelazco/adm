@@ -159,6 +159,9 @@ fit_abund_cnn <-
       response
     )
     hold_out_evaluation <- !is.null(hold_out_set)
+    if (hold_out_evaluation) {
+      stop("hold_out_set is not yet supported for CNN models.")
+    }
 
     # Get cropsize
     if (!is.vector(sample_size)) {
@@ -252,8 +255,19 @@ fit_abund_cnn <-
 
     # Fit models
     if (is.null(partition) || !any(nzchar(partition, keepNA = FALSE))) {
-      set.seed(13)
-      # TODO check full_model here
+      # Samples of all observations
+      if (is.null(samples_list)) {
+        full_samples <- cnn_make_samples(data, x, y, response, rasters, size = crop_size)
+      } else {
+        full_samples <- list(
+          predictors = unlist(lapply(samples_list, function(s) s$predictors), recursive = FALSE),
+          response = unlist(lapply(samples_list, function(s) s$response), recursive = FALSE)
+        )
+      }
+
+      full_dataloader <- create_dataset(full_samples) %>%
+        torch::dataloader(batch_size = batch_size, shuffle = TRUE)
+
       set.seed(13)
       suppressMessages(
         full_model <- net %>%
@@ -273,8 +287,27 @@ fit_abund_cnn <-
             )
           )
       )
+      variables <- dplyr::bind_cols(
+        data.frame(
+          model = "cnn",
+          response = response
+        ),
+        variables
+      ) %>% dplyr::as_tibble()
+
       result <- list(
-        model = full_model
+        model = full_model,
+        predictors = variables,
+        metadata = get_metadata(
+          "cnn",
+          list(
+            lr = learning_rate,
+            weight_decay = weight_decay,
+            loss = loss_function(),
+            optimizer = optimizer,
+            partition = NULL
+          )
+        )
       )
       return(result)
     } else {

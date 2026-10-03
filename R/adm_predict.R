@@ -302,7 +302,7 @@ adm_predict <-
           r[!is.na(r)] <- NA
 
           # Test factor levels TODO
-          f_n2 <- m[[i]]$feature_names # training var names
+          f_n2 <- xgb_feature_names(m[[i]]) # training var names
           f_names <- which(sapply(pred_df, class) == "factor") %>% names()
 
           if (length(f_names) > 0) {
@@ -757,7 +757,7 @@ adm_predict <-
         "randomforest",
         "ksvm",
         "xgb.booster",
-        "quantregForest"
+        "quantregforest"
       ),
       names = c(
         "dnn",

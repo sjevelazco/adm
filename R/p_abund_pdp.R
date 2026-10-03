@@ -193,7 +193,7 @@ p_abund_pdp <-
 
     if (class(model)[1] %in% "xgb.Booster") {
       if (!is.null(training_data)) {
-        v <- training_data[model$feature_names] %>% sapply(class)
+        v <- training_data[xgb_feature_names(model)] %>% sapply(class)
       } else {
         stop("Training data needed.")
       }
