@@ -12,6 +12,7 @@ grid_0 <- expand.grid(
 
 
 test_that("tune_abund_gbm and fit_abund_gbm", {
+  skip_on_cran()
   set.seed(1)
   tuned_ <- tune_abund_gbm(
     data = some_sp,

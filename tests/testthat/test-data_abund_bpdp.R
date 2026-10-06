@@ -160,6 +160,7 @@ some_sp <-
 # })
 
 test_that("data_abund_bpdp for gam", {
+  skip_on_cran()
   set.seed(1)
   suppressMessages(
     m <- fit_abund_gam(
