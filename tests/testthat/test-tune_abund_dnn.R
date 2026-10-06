@@ -16,6 +16,7 @@ some_sp <- some_sp[sort(sample(nrow(some_sp), 150)), ]
 # Architecture
 
 test_that("tune_abund_dnn and fit_abund_dnn", {
+  skip_on_cran()
   if (!torch::torch_is_installed()) {
     skip()
   }

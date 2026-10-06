@@ -13,6 +13,7 @@ grid_0 <- expand.grid(
 
 
 test_that("tune_abund_raf", {
+  skip_on_cran()
   set.seed(123)
   tuned_ <- tune_abund_raf(
     data = some_sp,

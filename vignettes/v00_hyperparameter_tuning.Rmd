@@ -222,14 +222,14 @@ Below is an example with Random Forest hyperparameters, but the same approach ca
 # Put each value of the hyperparameter in a vector, those in a list, and use expand.grid
 raf_grid <- expand.grid(
   list(
-    mtry = c(1, 2, 3),
-    ntree = c(100, 200, 300, 400, 500)
+    mtry = c(1, 2),
+    ntree = c(100, 200, 300)
   )
 )
 head(raf_grid)
 ```
 
-This create a data.frame with 25 rows and 2 columns, where each row is a combination of the hyperparameters.
+This create a data.frame with 6 rows and 2 columns, where each row is a combination of the hyperparameters.
 This object can be passed to the *tune_abund* functions as the *grid* argument (see how below).
 Any grid created this way will have the same number of rows as the product of the number of values for each hyperparameter, e.g., if we have 3 values for *mtry* and 4 values for *ntree*, the grid will have 3 x 4 = 12 rows.
 Each row is a combination of the hyperparameters values.
