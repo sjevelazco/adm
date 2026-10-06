@@ -140,18 +140,18 @@ This is done creating a grid which will guide the values exploration, what can b
 
 ```{r RAF grid construction}
 raf_grid <- expand.grid(
-  mtry = seq(from = 1, to = 7, by = 1),
-  ntree = seq(from = 100, to = 1000, by = 100)
+  mtry = c(2, 4),
+  ntree = c(100, 300)
 )
 head(raf_grid)
-nrow(raf_grid) # 70 combinations of these two hyper-paramenters
+nrow(raf_grid) # 4 combinations of these two hyper-parameters
 ```
 
 For RAF, "mtry" determines the number of variables randomly sampled as candidates at each split.
-We setted it values to {1, 2, ..., 6, 7}.
+We set its values to {2, 4}.
 "ntree" determine the number of decision trees to grow.
-We set its values to {100, 200, ..., 900, 1000}.
-The grid combines every possible pair of values, totalizing 70 combinations (number of rows in "raf_grid").
+We set its values to {100, 300}.
+The grid combines every possible pair of values, totalizing 4 combinations (number of rows in "raf_grid").
 Now we can use this grid with *tune_abund_raf* to tune and validate a RAF model:
 
 ```{r RAF tuning}
@@ -245,32 +245,18 @@ fm <- system.file("external/families_bank.txt", package = "adm") %>%
 fm
 ```
 
-In this example, we selected some suitable distributions for use.
+In this example, we selected a few suitable distributions for use (to keep this vignette fast; in a real analysis, explore more of them).
 Now, we can construct the grid:
 
 ```{r glm_grid}
 glm_grid <- list(
   distribution = c(
     "NO",
-    "NOF",
-    "RG",
     "TF",
-    "ZAIG",
-    "LQNO",
-    "DEL",
-    "PIG",
-    "WARING",
-    "YULE",
-    "ZALG",
-    "ZIP",
-    "BNB",
-    "DBURR12",
-    "ZIBNB",
-    "LO",
-    "PO"
+    "PIG"
   ),
-  poly = c(1, 2, 3),
-  inter_order = c(0, 1, 2)
+  poly = c(1, 2),
+  inter_order = c(0, 1)
 ) %>%
   expand.grid()
 # Note that in `distribution` argument it is necessary use the acronyms of `family_call` column
