@@ -338,21 +338,21 @@ used for all algorithms:</p>
 <code class="sourceCode R"><span><span class="co"># Put each value of the hyperparameter in a vector, those in a list, and use expand.grid</span></span>
 <span><span class="va">raf_grid</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/expand.grid.html" class="external-link">expand.grid</a></span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
-<span>    mtry <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">3</span><span class="op">)</span>,</span>
-<span>    ntree <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">100</span>, <span class="fl">200</span>, <span class="fl">300</span>, <span class="fl">400</span>, <span class="fl">500</span><span class="op">)</span></span>
+<span>    mtry <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span>,</span>
+<span>    ntree <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">100</span>, <span class="fl">200</span>, <span class="fl">300</span><span class="op">)</span></span>
 <span>  <span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">raf_grid</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   mtry ntree</span></span>
 <span><span class="co">#&gt; 1    1   100</span></span>
 <span><span class="co">#&gt; 2    2   100</span></span>
-<span><span class="co">#&gt; 3    3   100</span></span>
-<span><span class="co">#&gt; 4    1   200</span></span>
-<span><span class="co">#&gt; 5    2   200</span></span>
-<span><span class="co">#&gt; 6    3   200</span></span></code></pre></div>
-<p>This create a data.frame with 25 rows and 2 columns, where each row
-is a combination of the hyperparameters. This object can be passed to
-the <em>tune_abund</em> functions as the <em>grid</em> argument (see how
+<span><span class="co">#&gt; 3    1   200</span></span>
+<span><span class="co">#&gt; 4    2   200</span></span>
+<span><span class="co">#&gt; 5    1   300</span></span>
+<span><span class="co">#&gt; 6    2   300</span></span></code></pre></div>
+<p>This create a data.frame with 6 rows and 2 columns, where each row is
+a combination of the hyperparameters. This object can be passed to the
+<em>tune_abund</em> functions as the <em>grid</em> argument (see how
 below). Any grid created this way will have the same number of rows as
 the product of the number of values for each hyperparameter, e.g., if we
 have 3 values for <em>mtry</em> and 4 values for <em>ntree</em>, the
@@ -398,7 +398,7 @@ as the <em>grid</em> argument:</p>
 <span><span class="co">#&gt; -- Partition number 2/3</span></span>
 <span><span class="co">#&gt; -- Partition number 3/3</span></span>
 <span><span class="co">#&gt; The best model was achieved with: </span></span>
-<span><span class="co">#&gt;  mtry = 1 and ntree = 500</span></span></code></pre></div>
+<span><span class="co">#&gt;  mtry = 1 and ntree = 300</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="conclusion">Conclusion<a class="anchor" aria-label="anchor" href="#conclusion"></a>

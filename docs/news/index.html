@@ -45,13 +45,22 @@
 <li>
 <code>fit_abund_glm</code> and <code>fit_abund_gam</code> no longer fail when <code>hold_out_set</code> is used (<code>object 'train_set' not found</code>).</li>
 <li>
+<code>fit_abund_net</code> no longer fails when <code>hold_out_set</code> is used (nnet predictions require <code>type = "raw"</code>).</li>
+<li>
+<code>fit_abund_dnn</code> now evaluates <code>hold_out_set</code> correctly and no longer builds a mismatched default network when <code>predictors_f</code> is supplied (categorical predictors are ignored, with a warning).</li>
+<li>
+<code>fit_abund_cnn</code> now works without a partition; using <code>hold_out_set</code> with CNN models now gives an informative error because it is not yet supported.</li>
+<li>
+<code>adm_predict</code> now names the predictions of quantile regression forests <code>qrf</code> (they were named <code>NA</code>), and <code>p_abund_pdp</code>/<code>adm_predict</code> no longer rely on <code>$feature_names</code>, which recent xgboost versions do not provide.</li>
+<li>
 <code>adm_uncertainty</code> now accepts <code>...</code> (as documented), so the extra arguments needed for CNN models (<code>x</code>, <code>y</code>, <code>rasters</code>, <code>sample_size</code>, <code>custom_architecture</code>) can be passed.</li>
 </ul></div>
 <div class="section level3">
 <h3 id="testing-0-5-0">Testing<a class="anchor" aria-label="anchor" href="#testing-0-5-0"></a></h3>
-<ul><li>New tests for <code>fit_abund_*</code> (RAF, GLM, GAM, NET, SVM, GBM, XGB, QRF), <code>adm_uncertainty</code>, <code>model_selection</code>, <code>data_abund_pdp</code>, <code>p_abund_pdp</code>, <code>p_abund_bpdp</code>, <code>generate_dnn_architecture</code>, <code>generate_cnn_architecture</code>, <code>res_calculate</code>, <code>family_selector</code>, <code>croppin_hood</code>, <code>cnn_make_samples</code> and <code>get_partition_samples</code>.</li>
+<ul><li>New tests for <code>fit_abund_*</code> (all algorithms, including no-partition, hold-out and DNN/CNN paths), <code>tune_abund_qrf</code>, <code>adm_transform</code> (inverse and raster), <code>adm_predict</code>, <code>adm_uncertainty</code>, <code>model_selection</code>, <code>data_abund_pdp</code>, <code>p_abund_pdp</code>, <code>p_abund_bpdp</code>, <code>generate_dnn_architecture</code>, <code>generate_cnn_architecture</code>, <code>res_calculate</code>, <code>family_selector</code>, <code>croppin_hood</code>, <code>cnn_make_samples</code> and <code>get_partition_samples</code>.</li>
+<li>The slow <code>tune_abund_*</code> tests (all but the XGB one and the error checks), the DNN/CNN prediction tests and the slowest <code>data_abund_bpdp</code> test are skipped on CRAN, and the vignette grids were reduced, to keep check time low.</li>
 <li>The DNN/CNN tuning and prediction tests were shortened (smaller data, networks and epochs) and the heaviest ones are skipped on CRAN, reducing the test time from about 16 to 2 minutes.</li>
-<li>The test-coverage workflow now uploads the <code>covr</code> report (<code>cobertura.xml</code>) to Codecov explicitly; previously the wrong file was uploaded and coverage was reported as 0.</li>
+<li>The test-coverage workflow installs libtorch so the DNN/CNN tests run, and now uploads the <code>covr</code> report (<code>cobertura.xml</code>) to Codecov explicitly; previously the wrong file was uploaded and coverage was reported as 0.</li>
 </ul></div>
 <div class="section level3">
 <h3 id="documentation-and-cran-preparation-0-5-0">Documentation and CRAN preparation<a class="anchor" aria-label="anchor" href="#documentation-and-cran-preparation-0-5-0"></a></h3>

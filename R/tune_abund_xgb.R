@@ -224,33 +224,32 @@ tune_abund_xgb <-
       i = 1:nrow(grid),
       .export = c("fit_abund_xgb", "adm_eval"),
       .packages = c("dplyr")
-    ) %dopar%
-      {
-        model <-
-          fit_abund_xgb(
-            data = data,
-            response = response,
-            predictors = predictors,
-            predictors_f = predictors_f,
-            partition = partition,
-            predict_part = predict_part,
-            max_depth = grid[i, "max_depth"],
-            learning_rate = grid[i, "learning_rate"],
-            min_split_loss = grid[i, "min_split_loss"],
-            colsample_bytree = grid[i, "colsample_bytree"],
-            min_child_weight = grid[i, "min_child_weight"],
-            subsample = grid[i, "subsample"],
-            objective = objective,
-            nrounds = grid[i, "nrounds"],
-            verbose = verbose,
-            hold_out_set = hold_out_set,
-            early_stopping = early_stopping
-          )
+    ) %dopar% {
+      model <-
+        fit_abund_xgb(
+          data = data,
+          response = response,
+          predictors = predictors,
+          predictors_f = predictors_f,
+          partition = partition,
+          predict_part = predict_part,
+          max_depth = grid[i, "max_depth"],
+          learning_rate = grid[i, "learning_rate"],
+          min_split_loss = grid[i, "min_split_loss"],
+          colsample_bytree = grid[i, "colsample_bytree"],
+          min_child_weight = grid[i, "min_child_weight"],
+          subsample = grid[i, "subsample"],
+          objective = objective,
+          nrounds = grid[i, "nrounds"],
+          verbose = verbose,
+          hold_out_set = hold_out_set,
+          early_stopping = early_stopping
+        )
 
-        l <- list(cbind(grid[i, ], model$performance))
-        names(l) <- grid[i, "comb_id"]
-        l
-      }
+      l <- list(cbind(grid[i, ], model$performance))
+      names(l) <- grid[i, "comb_id"]
+      l
+    }
     parallel::stopCluster(cl)
 
     hyper_combinations <- lapply(hyper_combinations, function(x) {
