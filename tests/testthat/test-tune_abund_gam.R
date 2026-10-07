@@ -71,6 +71,7 @@ test_that("test errors", {
 })
 
 test_that("incomplete grid", {
+  skip_on_cran()
   tuned_ <- tune_abund_gam(
     data = some_sp,
     response = "ind_ha",

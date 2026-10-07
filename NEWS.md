@@ -11,7 +11,7 @@
 
 ## Testing
 -  New tests for `fit_abund_*` (all algorithms, including no-partition, hold-out and DNN/CNN paths), `tune_abund_qrf`, `adm_transform` (inverse and raster), `adm_predict`, `adm_uncertainty`, `model_selection`, `data_abund_pdp`, `p_abund_pdp`, `p_abund_bpdp`, `generate_dnn_architecture`, `generate_cnn_architecture`, `res_calculate`, `family_selector`, `croppin_hood`, `cnn_make_samples` and `get_partition_samples`.
--  The `tune_abund_*` tests and the slowest `data_abund_bpdp` test are skipped on CRAN, and the vignette grids were reduced, to keep check time low.
+-  The slow `tune_abund_*` tests (all but the XGB one and the error checks), the DNN/CNN prediction tests and the slowest `data_abund_bpdp` test are skipped on CRAN, and the vignette grids were reduced, to keep check time low.
 -  The DNN/CNN tuning and prediction tests were shortened (smaller data, networks and epochs) and the heaviest ones are skipped on CRAN, reducing the test time from about 16 to 2 minutes.
 -  The test-coverage workflow installs libtorch so the DNN/CNN tests run, and now uploads the `covr` report (`cobertura.xml`) to Codecov explicitly; previously the wrong file was uploaded and coverage was reported as 0.
 

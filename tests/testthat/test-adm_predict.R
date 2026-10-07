@@ -285,6 +285,7 @@ test_that("predic CNN", {
 
 #### predict DNN ####
 test_that("predic DNN", {
+  skip_on_cran()
   if (!torch::torch_is_installed()) {
     skip()
   }

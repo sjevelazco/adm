@@ -54,6 +54,7 @@ test_that("select_arch_list for dnn, min_max FALSE", {
 })
 
 test_that("select_arch_list for cnn", {
+  skip_on_cran()
   if (!torch::torch_is_installed()) {
     skip()
   }
@@ -86,6 +87,7 @@ test_that("select_arch_list for cnn", {
 })
 
 test_that("select_arch_list for cnn dropout", {
+  skip_on_cran()
   if (!torch::torch_is_installed()) {
     skip()
   }
