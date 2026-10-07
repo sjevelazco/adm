@@ -104,8 +104,7 @@ tune_abund_qrf <-
     grid_dict <- list(
       mtry = seq(
         from = 1,
-        to = switch(
-          framework,
+        to = switch(framework,
           "grf" = {
             length(c(predictors))
           },
@@ -150,29 +149,28 @@ tune_abund_qrf <-
       i = 1:nrow(grid),
       .export = c("fit_abund_qrf", "adm_eval"),
       .packages = c("dplyr", "adm")
-    ) %dopar%
-      {
-        model <-
-          fit_abund_qrf(
-            data = data,
-            response = response,
-            predictors = predictors,
-            predictors_f = predictors_f,
-            fit_formula = fit_formula,
-            partition = partition,
-            predict_part = predict_part,
-            framework = framework,
-            train_quantiles = train_quantiles,
-            eval_quantile = eval_quantile,
-            mtry = grid[i, "mtry"],
-            ntree = grid[i, "ntree"],
-            nodesize = grid[i, "nodesize"],
-            verbose = verbose
-          )
-        l <- list(cbind(grid[i, ], model$performance))
-        names(l) <- grid[i, "comb_id"]
-        l
-      }
+    ) %dopar% {
+      model <-
+        fit_abund_qrf(
+          data = data,
+          response = response,
+          predictors = predictors,
+          predictors_f = predictors_f,
+          fit_formula = fit_formula,
+          partition = partition,
+          predict_part = predict_part,
+          framework = framework,
+          train_quantiles = train_quantiles,
+          eval_quantile = eval_quantile,
+          mtry = grid[i, "mtry"],
+          ntree = grid[i, "ntree"],
+          nodesize = grid[i, "nodesize"],
+          verbose = verbose
+        )
+      l <- list(cbind(grid[i, ], model$performance))
+      names(l) <- grid[i, "comb_id"]
+      l
+    }
     parallel::stopCluster(cl)
 
     hyper_combinations <- lapply(hyper_combinations, function(x) {

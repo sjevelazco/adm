@@ -13,8 +13,6 @@ set.seed(1)
 some_sp <- some_sp[sort(sample(nrow(some_sp), 200)), ]
 
 
-
-
 test_that("tune_abund_cnn and fit_abund_cnn", {
   skip_on_cran()
   if (!torch::torch_is_installed()) {

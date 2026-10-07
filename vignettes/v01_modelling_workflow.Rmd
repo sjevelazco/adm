@@ -445,24 +445,24 @@ It can provide very relevant information about residuals and model extrapolation
 # PDP for DNN model
 if (has_torch) {
   pdp_dnn <- p_abund_pdp(
-  model = mdnn, # the output of tune_abund_ or fit_abund_
-  predictors = c("PC1"),
-  resolution = 100,
-  resid = TRUE, # plot residuals
-  training_data = species_data,
-  invert_transform = c(
-    method = "zscore", # same as before
-    a = mean(species_data$ind_ha),
-    b = sd(species_data$ind_ha)
-  ),
-  response_name = "ind/ha", # this argument is for aesthetic only, and determines the name of y axis
-  projection_data = cretusa_predictors, # to visualize extrapolation
-  rug = TRUE, # rug plot of the predictor
-  colorl = c("#462777", "#6DCC57"), # projection and training values, respectively
-  colorp = "black", # residuals colors
-  alpha = 0.2,
-  theme = ggplot2::theme_classic() # a ggplot2 theme
-)
+    model = mdnn, # the output of tune_abund_ or fit_abund_
+    predictors = c("PC1"),
+    resolution = 100,
+    resid = TRUE, # plot residuals
+    training_data = species_data,
+    invert_transform = c(
+      method = "zscore", # same as before
+      a = mean(species_data$ind_ha),
+      b = sd(species_data$ind_ha)
+    ),
+    response_name = "ind/ha", # this argument is for aesthetic only, and determines the name of y axis
+    projection_data = cretusa_predictors, # to visualize extrapolation
+    rug = TRUE, # rug plot of the predictor
+    colorl = c("#462777", "#6DCC57"), # projection and training values, respectively
+    colorp = "black", # residuals colors
+    alpha = 0.2,
+    theme = ggplot2::theme_classic() # a ggplot2 theme
+  )
 }
 # PDP for GLM model
 pdp_glm <- p_abund_pdp(
@@ -512,33 +512,33 @@ If "predictors" argument is NULL, functions plot all variables or variables pair
 # BPDP for DNN
 if (has_torch) {
   bpdp_dnn <- p_abund_bpdp(
-  model = mdnn,
-  predictors = c("PC1", "PC3"), # a pair of predictors
-  resolution = 100,
-  training_data = species_data,
-  projection_data = cretusa_predictors,
-  training_boundaries = "convexh", # the shape in which the training boundaries are drawn. Outside of it, its extrapolations
-  invert_transform = c(
-    method = "zscore", # same as before
-    a = mean(species_data$ind_ha),
-    b = sd(species_data$ind_ha)
-  ),
-  response_name = "ind/ha",
-  color_gradient = c(
-    "#000004",
-    "#1B0A40",
-    "#4A0C69",
-    "#781B6C",
-    "#A42C5F",
-    "#CD4345",
-    "#EC6824",
-    "#FA990B",
-    "#F7CF3D",
-    "#FCFFA4"
-  ), # gradient for response variable
-  color_training_boundaries = "white",
-  theme = ggplot2::theme_classic()
-)
+    model = mdnn,
+    predictors = c("PC1", "PC3"), # a pair of predictors
+    resolution = 100,
+    training_data = species_data,
+    projection_data = cretusa_predictors,
+    training_boundaries = "convexh", # the shape in which the training boundaries are drawn. Outside of it, its extrapolations
+    invert_transform = c(
+      method = "zscore", # same as before
+      a = mean(species_data$ind_ha),
+      b = sd(species_data$ind_ha)
+    ),
+    response_name = "ind/ha",
+    color_gradient = c(
+      "#000004",
+      "#1B0A40",
+      "#4A0C69",
+      "#781B6C",
+      "#A42C5F",
+      "#CD4345",
+      "#EC6824",
+      "#FA990B",
+      "#F7CF3D",
+      "#FCFFA4"
+    ), # gradient for response variable
+    color_training_boundaries = "white",
+    theme = ggplot2::theme_classic()
+  )
 }
 # BPDP for GLM
 bpdp_glm <- p_abund_bpdp(

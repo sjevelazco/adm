@@ -183,20 +183,20 @@ hyperparameters, but the same approach can be used for all algorithms:
 `# Put each value of the hyperparameter in a vector, those in a list, and use expand.grid`\
 `raf_grid`` ``<-`` `[`expand.grid`](https://rdrr.io/r/base/expand.grid.html)`(`\
 `  `[`list`](https://rdrr.io/r/base/list.html)`(`\
-`    mtry ``=`` `[`c`](https://rdrr.io/r/base/c.html)`(``1``, ``2``, ``3``)``,`\
-`    ntree ``=`` `[`c`](https://rdrr.io/r/base/c.html)`(``100``, ``200``, ``300``, ``400``, ``500``)`\
+`    mtry ``=`` `[`c`](https://rdrr.io/r/base/c.html)`(``1``, ``2``)``,`\
+`    ntree ``=`` `[`c`](https://rdrr.io/r/base/c.html)`(``100``, ``200``, ``300``)`\
 `  ``)`\
 `)`\
 [`head`](https://rdrr.io/r/utils/head.html)`(``raf_grid``)`\
 `#>   mtry ntree`\
 `#> 1    1   100`\
 `#> 2    2   100`\
-`#> 3    3   100`\
-`#> 4    1   200`\
-`#> 5    2   200`\
-`#> 6    3   200`
+`#> 3    1   200`\
+`#> 4    2   200`\
+`#> 5    1   300`\
+`#> 6    2   300`
 
-This create a data.frame with 25 rows and 2 columns, where each row is a
+This create a data.frame with 6 rows and 2 columns, where each row is a
 combination of the hyperparameters. This object can be passed to the
 *tune_abund* functions as the *grid* argument (see how below). Any grid
 created this way will have the same number of rows as the product of the
@@ -245,7 +245,7 @@ To use the grid, we can pass it to the *tune_abund* function as the
 `#> -- Partition number 2/3`\
 `#> -- Partition number 3/3`\
 `#> The best model was achieved with: `\
-`#>  mtry = 1 and ntree = 500`
+`#>  mtry = 1 and ntree = 300`
 
 ### Conclusion
 

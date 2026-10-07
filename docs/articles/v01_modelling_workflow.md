@@ -170,27 +170,24 @@ function:
 
 \
 `raf_grid`` ``<-`` `[`expand.grid`](https://rdrr.io/r/base/expand.grid.html)`(`\
-`  mtry ``=`` `[`seq`](https://rdrr.io/r/base/seq.html)`(``from ``=`` ``1``, to ``=`` ``7``, by ``=`` ``1``)``,`\
-`  ntree ``=`` `[`seq`](https://rdrr.io/r/base/seq.html)`(``from ``=`` ``100``, to ``=`` ``1000``, by ``=`` ``100``)`\
+`  mtry ``=`` `[`c`](https://rdrr.io/r/base/c.html)`(``2``, ``4``)``,`\
+`  ntree ``=`` `[`c`](https://rdrr.io/r/base/c.html)`(``100``, ``300``)`\
 `)`\
 [`head`](https://rspatial.github.io/terra/reference/headtail.html)`(``raf_grid``)`\
 `#>   mtry ntree`\
-`#> 1    1   100`\
-`#> 2    2   100`\
-`#> 3    3   100`\
-`#> 4    4   100`\
-`#> 5    5   100`\
-`#> 6    6   100`\
-[`nrow`](https://rspatial.github.io/terra/reference/dimensions.html)`(``raf_grid``)`` ``# 70 combinations of these two hyper-paramenters`\
-`#> [1] 70`
+`#> 1    2   100`\
+`#> 2    4   100`\
+`#> 3    2   300`\
+`#> 4    4   300`\
+[`nrow`](https://rspatial.github.io/terra/reference/dimensions.html)`(``raf_grid``)`` ``# 4 combinations of these two hyper-parameters`\
+`#> [1] 4`
 
 For RAF, “mtry” determines the number of variables randomly sampled as
-candidates at each split. We setted it values to {1, 2, …, 6, 7}.
-“ntree” determine the number of decision trees to grow. We set its
-values to {100, 200, …, 900, 1000}. The grid combines every possible
-pair of values, totalizing 70 combinations (number of rows in
-“raf_grid”). Now we can use this grid with *tune_abund_raf* to tune and
-validate a RAF model:
+candidates at each split. We set its values to {2, 4}. “ntree” determine
+the number of decision trees to grow. We set its values to {100, 300}.
+The grid combines every possible pair of values, totalizing 4
+combinations (number of rows in “raf_grid”). Now we can use this grid
+with *tune_abund_raf* to tune and validate a RAF model:
 
 \
 `mraf`` ``<-`` `[`tune_abund_raf`](https://sjevelazco.github.io/adm/reference/tune_abund_raf.md)`(`\
@@ -209,7 +206,7 @@ validate a RAF model:
 `#> `\
 `#> Fitting the best model...`\
 `#> The best model was achieved with: `\
-`#>  mtry = 2 and ntree = 800`
+`#>  mtry = 2 and ntree = 100`
 
 The function returns a list with the following elements:
 
@@ -229,11 +226,11 @@ The function returns a list with the following elements:
 `#> Call:`\
 `#>  randomForest(formula = formula1, data = data, mtry = mtry, ntree = ntree,      importance = FALSE) `\
 `#>                Type of random forest: regression`\
-`#>                      Number of trees: 800`\
+`#>                      Number of trees: 100`\
 `#> No. of variables tried at each split: 2`\
 `#> `\
-`#>           Mean of squared residuals: 144.7283`\
-`#>                     % Var explained: 23.46`
+`#>           Mean of squared residuals: 150.5632`\
+`#>                     % Var explained: 20.37`
 
 “predictors”: a tibble containing relevant informations about the model
 fitted.
@@ -252,7 +249,7 @@ fitted.
 `#> ``# A tibble: 1 × 13`\
 `#>   model mae_mean mae_sd corr_spear_mean corr_spear_sd corr_pear_mean`\
 `#>   ``<chr>``    ``<dbl>``  ``<dbl>``           ``<dbl>``         ``<dbl>``          ``<dbl>`\
-`#> ``1`` raf       7.79   1.89           0.381         0.201          0.319`\
+`#> ``1`` raf       7.84   1.83           0.384         0.200          0.316`\
 `#> ``# ℹ 7 more variables: corr_pear_sd <dbl>, inter_mean <dbl>, inter_sd <dbl>,`\
 `#> ``#   slope_mean <dbl>, slope_sd <dbl>, pdisp_mean <dbl>, pdisp_sd <dbl>`
 
@@ -261,11 +258,11 @@ fitted.
 \
 `mraf``$``performance_part`\
 `#> ``# A tibble: 3 × 9`\
-`#>   replica partition model   mae corr_spear corr_pear inter slope pdisp`\
-`#>   ``<chr>``   ``<chr>``     ``<chr>`` ``<dbl>``      ``<dbl>``     ``<dbl>`` ``<dbl>`` ``<dbl>`` ``<dbl>`\
-`#> ``1`` 1       1         raf    9.90      0.590     0.470 0.684 1.15  0.409`\
-`#> ``2`` 1       2         raf    7.23      0.364     0.302 2.89  0.491 0.616`\
-`#> ``3`` 1       3         raf    6.24      0.188     0.184 3.36  0.409 0.450`
+`#>   replica partition model   mae corr_spear corr_pear    inter slope pdisp`\
+`#>   ``<chr>``   ``<chr>``     ``<chr>`` ``<dbl>``      ``<dbl>``     ``<dbl>``    ``<dbl>`` ``<dbl>`` ``<dbl>`\
+`#> ``1`` 1       1         raf    9.85      0.594     0.478 -``0.001``10`` 1.22  0.393`\
+`#> ``2`` 1       2         raf    7.39      0.362     0.281  3.24    0.445 0.631`\
+`#> ``3`` 1       3         raf    6.27      0.195     0.190  3.15    0.429 0.443`
 
 “predicted_part”: predictions for each partition.
 
@@ -274,12 +271,12 @@ fitted.
 `#> ``# A tibble: 6 × 4`\
 `#>   replica partition observed predicted`\
 `#>   ``<chr>``   ``<chr>``        ``<int>``     ``<dbl>`\
-`#> ``1`` 1       1               10     1.93 `\
-`#> ``2`` 1       1               10     2.55 `\
-`#> ``3`` 1       1                0     0.304`\
-`#> ``4`` 1       1               10    10.5  `\
-`#> ``5`` 1       1               10    11.1  `\
-`#> ``6`` 1       1               10     9.03`
+`#> ``1`` 1       1               10     2.47 `\
+`#> ``2`` 1       1               10     3.02 `\
+`#> ``3`` 1       1                0     0.627`\
+`#> ``4`` 1       1               10    10.4  `\
+`#> ``5`` 1       1               10    10.8  `\
+`#> ``6`` 1       1               10     9.13`
 
 “optimal_combination”: the set of hyperparameters values considered the
 best given the metrics and its performance.
@@ -288,48 +285,42 @@ best given the metrics and its performance.
 `mraf``$``optimal_combination`` `[`%>%`](https://magrittr.tidyverse.org/reference/pipe.html)` ``dplyr``::`[`glimpse`](https://pillar.r-lib.org/reference/glimpse.html)`(``)`\
 `#> Rows: 1`\
 `#> Columns: 16`\
-`#> $ comb_id         ``<chr>`` "comb_51"`\
+`#> $ comb_id         ``<chr>`` "comb_1"`\
 `#> $ mtry            ``<dbl>`` 2`\
-`#> $ ntree           ``<dbl>`` 800`\
+`#> $ ntree           ``<dbl>`` 100`\
 `#> $ model           ``<chr>`` "raf"`\
-`#> $ mae_mean        ``<dbl>`` 7.790802`\
-`#> $ mae_sd          ``<dbl>`` 1.891538`\
-`#> $ corr_spear_mean ``<dbl>`` 0.3807354`\
-`#> $ corr_spear_sd   ``<dbl>`` 0.2012919`\
-`#> $ corr_pear_mean  ``<dbl>`` 0.318584`\
-`#> $ corr_pear_sd    ``<dbl>`` 0.143579`\
-`#> $ inter_mean      ``<dbl>`` 2.312547`\
-`#> $ inter_sd        ``<dbl>`` 1.430307`\
-`#> $ slope_mean      ``<dbl>`` 0.6831121`\
-`#> $ slope_sd        ``<dbl>`` 0.4061176`\
-`#> $ pdisp_mean      ``<dbl>`` 0.4913388`\
-`#> $ pdisp_sd        ``<dbl>`` 0.1096767`
+`#> $ mae_mean        ``<dbl>`` 7.835086`\
+`#> $ mae_sd          ``<dbl>`` 1.828213`\
+`#> $ corr_spear_mean ``<dbl>`` 0.383678`\
+`#> $ corr_spear_sd   ``<dbl>`` 0.2003848`\
+`#> $ corr_pear_mean  ``<dbl>`` 0.3163061`\
+`#> $ corr_pear_sd    ``<dbl>`` 0.1470123`\
+`#> $ inter_mean      ``<dbl>`` 2.130081`\
+`#> $ inter_sd        ``<dbl>`` 1.846114`\
+`#> $ slope_mean      ``<dbl>`` 0.6965336`\
+`#> $ slope_sd        ``<dbl>`` 0.4493598`\
+`#> $ pdisp_mean      ``<dbl>`` 0.4891603`\
+`#> $ pdisp_sd        ``<dbl>`` 0.1252488`
 
 “all_combinations”: performance for every hyper-parameter combination.
 
 \
 `mraf``$``all_combinations`` `[`%>%`](https://magrittr.tidyverse.org/reference/pipe.html)` `[`head`](https://rspatial.github.io/terra/reference/headtail.html)`(``)`\
 `#>   comb_id mtry ntree model mae_mean   mae_sd corr_spear_mean corr_spear_sd`\
-`#> 1  comb_1    1   100   raf 7.850331 2.039432       0.3677618     0.1918322`\
-`#> 2  comb_2    2   100   raf 7.835086 1.828213       0.3836780     0.2003848`\
-`#> 3  comb_3    3   100   raf 7.662404 1.935277       0.4051191     0.1778125`\
-`#> 4  comb_4    4   100   raf 7.910588 1.988897       0.3592797     0.2033749`\
-`#> 5  comb_5    5   100   raf 7.734838 2.072123       0.4029587     0.1714781`\
-`#> 6  comb_6    6   100   raf 7.734838 2.072123       0.4029587     0.1714781`\
-`#>   corr_pear_mean corr_pear_sd inter_mean  inter_sd slope_mean  slope_sd`\
-`#> 1      0.3330448    0.1361500   1.677208 1.5939558  0.7872240 0.4598093`\
-`#> 2      0.3163061    0.1470123   2.130081 1.8461143  0.6965336 0.4493598`\
-`#> 3      0.3132421    0.1453917   2.694446 1.0288803  0.6396298 0.3421318`\
-`#> 4      0.2707336    0.1664333   3.664373 1.0076005  0.5104461 0.3514737`\
-`#> 5      0.3103763    0.1412037   3.238420 0.6038863  0.5637367 0.2761831`\
-`#> 6      0.3103763    0.1412037   3.238420 0.6038863  0.5637367 0.2761831`\
-`#>   pdisp_mean   pdisp_sd`\
-`#> 1  0.4511705 0.11158928`\
-`#> 2  0.4891603 0.12524883`\
-`#> 3  0.5023741 0.09072948`\
-`#> 4  0.5496524 0.12521564`\
-`#> 5  0.5611242 0.11453501`\
-`#> 6  0.5611242 0.11453501`
+`#> 1  comb_1    2   100   raf 7.835086 1.828213       0.3836780     0.2003848`\
+`#> 2  comb_2    4   100   raf 7.910588 1.988897       0.3592797     0.2033749`\
+`#> 3  comb_3    2   300   raf 7.834701 1.875159       0.3757081     0.1983759`\
+`#> 4  comb_4    4   300   raf 7.753951 1.980398       0.3789300     0.1930393`\
+`#>   corr_pear_mean corr_pear_sd inter_mean inter_sd slope_mean  slope_sd`\
+`#> 1      0.3163061    0.1470123   2.130081 1.846114  0.6965336 0.4493598`\
+`#> 2      0.2707336    0.1664333   3.664373 1.007601  0.5104461 0.3514737`\
+`#> 3      0.3135883    0.1440350   2.372848 1.609151  0.6766354 0.4353365`\
+`#> 4      0.2970138    0.1489508   3.184253 0.830947  0.5748996 0.3176335`\
+`#>   pdisp_mean  pdisp_sd`\
+`#> 1  0.4891603 0.1252488`\
+`#> 2  0.5496524 0.1252156`\
+`#> 3  0.4988350 0.1264250`\
+`#> 4  0.5307853 0.1113435`
 
 ### GLM
 
@@ -379,32 +370,19 @@ details about family distributions see
 `#> ``# ℹ 3 more variables: one_restricted <int>, accepts_one <int>,`\
 `#> ``#   accepts_negatives <int>`
 
-In this example, we selected some suitable distributions for use. Now,
+In this example, we selected a few suitable distributions for use (to
+keep this vignette fast; in a real analysis, explore more of them). Now,
 we can construct the grid:
 
 \
 `glm_grid`` ``<-`` `[`list`](https://rdrr.io/r/base/list.html)`(`\
 `  distribution ``=`` `[`c`](https://rdrr.io/r/base/c.html)`(`\
 `    ``"NO"``,`\
-`    ``"NOF"``,`\
-`    ``"RG"``,`\
 `    ``"TF"``,`\
-`    ``"ZAIG"``,`\
-`    ``"LQNO"``,`\
-`    ``"DEL"``,`\
-`    ``"PIG"``,`\
-`    ``"WARING"``,`\
-`    ``"YULE"``,`\
-`    ``"ZALG"``,`\
-`    ``"ZIP"``,`\
-`    ``"BNB"``,`\
-`    ``"DBURR12"``,`\
-`    ``"ZIBNB"``,`\
-`    ``"LO"``,`\
-`    ``"PO"`\
+`    ``"PIG"`\
 `  ``)``,`\
-`  poly ``=`` `[`c`](https://rdrr.io/r/base/c.html)`(``1``, ``2``, ``3``)``,`\
-`  inter_order ``=`` `[`c`](https://rdrr.io/r/base/c.html)`(``0``, ``1``, ``2``)`\
+`  poly ``=`` `[`c`](https://rdrr.io/r/base/c.html)`(``1``, ``2``)``,`\
+`  inter_order ``=`` `[`c`](https://rdrr.io/r/base/c.html)`(``0``, ``1``)`\
 `)`` `[`%>%`](https://magrittr.tidyverse.org/reference/pipe.html)\
 `  `[`expand.grid`](https://rdrr.io/r/base/expand.grid.html)`(``)`\
 `` # Note that in `distribution` argument it is necessary use the acronyms of `family_call` column ``
@@ -625,8 +603,8 @@ is a “luz_module_fitted” from *torch* and *luz* packages.
 `mdnn``$``model`\
 `` #> A `luz_module_fitted` ``\
 `#> ── Time ────────────────────────────────────────────────────────────────────────`\
-`#> • Total time: 2.2s`\
-`#> • Avg time per training epoch: 120ms`\
+`#> • Total time: 2s`\
+`#> • Avg time per training epoch: 112ms`\
 `#> `\
 `#> ── Results ─────────────────────────────────────────────────────────────────────`\
 `#> Metrics observed in the last epoch.`\
@@ -657,7 +635,7 @@ dataframe, using *adm_summarize* function:
 `#>   model_ID model mae_mean mae_sd corr_spear_mean corr_spear_sd corr_pear_mean`\
 `#>      ``<int>`` ``<chr>``    ``<dbl>``  ``<dbl>``           ``<dbl>``         ``<dbl>``          ``<dbl>`\
 `#> ``1``        1 dnn      0.579  0.176           0.404         0.125          0.321`\
-`#> ``2``        2 raf      7.79   1.89            0.381         0.201          0.319`\
+`#> ``2``        2 raf      7.84   1.83            0.384         0.200          0.316`\
 `#> ``3``        3 glm      7.41   2.62            0.505         0.167          0.428`\
 `#> ``# ℹ 7 more variables: corr_pear_sd <dbl>, inter_mean <dbl>, inter_sd <dbl>,`\
 `#> ``#   slope_mean <dbl>, slope_sd <dbl>, pdisp_mean <dbl>, pdisp_sd <dbl>`
@@ -739,24 +717,24 @@ extrapolation:
 `# PDP for DNN model`\
 `if`` ``(``has_torch``)`` ``{`\
 `  ``pdp_dnn`` ``<-`` `[`p_abund_pdp`](https://sjevelazco.github.io/adm/reference/p_abund_pdp.md)`(`\
-`  model ``=`` ``mdnn``, ``# the output of tune_abund_ or fit_abund_`\
-`  predictors ``=`` `[`c`](https://rdrr.io/r/base/c.html)`(``"PC1"``)``,`\
-`  resolution ``=`` ``100``,`\
-`  resid ``=`` ``TRUE``, ``# plot residuals`\
-`  training_data ``=`` ``species_data``,`\
-`  invert_transform ``=`` `[`c`](https://rdrr.io/r/base/c.html)`(`\
-`    method ``=`` ``"zscore"``, ``# same as before`\
-`    a ``=`` `[`mean`](https://rspatial.github.io/terra/reference/summarize-generics.html)`(``species_data``$``ind_ha``)``,`\
-`    b ``=`` `[`sd`](https://rdrr.io/r/stats/sd.html)`(``species_data``$``ind_ha``)`\
-`  ``)``,`\
-`  response_name ``=`` ``"ind/ha"``, ``# this argument is for aesthetic only, and determines the name of y axis`\
-`  projection_data ``=`` ``cretusa_predictors``, ``# to visualize extrapolation`\
-`  rug ``=`` ``TRUE``, ``# rug plot of the predictor`\
-`  colorl ``=`` `[`c`](https://rdrr.io/r/base/c.html)`(``"#462777"``, ``"#6DCC57"``)``, ``# projection and training values, respectively`\
-`  colorp ``=`` ``"black"``, ``# residuals colors`\
-`  alpha ``=`` ``0.2``,`\
-`  theme ``=`` ``ggplot2``::`[`theme_classic`](https://ggplot2.tidyverse.org/reference/ggtheme.html)`(``)`` ``# a ggplot2 theme`\
-`)`\
+`    model ``=`` ``mdnn``, ``# the output of tune_abund_ or fit_abund_`\
+`    predictors ``=`` `[`c`](https://rdrr.io/r/base/c.html)`(``"PC1"``)``,`\
+`    resolution ``=`` ``100``,`\
+`    resid ``=`` ``TRUE``, ``# plot residuals`\
+`    training_data ``=`` ``species_data``,`\
+`    invert_transform ``=`` `[`c`](https://rdrr.io/r/base/c.html)`(`\
+`      method ``=`` ``"zscore"``, ``# same as before`\
+`      a ``=`` `[`mean`](https://rspatial.github.io/terra/reference/summarize-generics.html)`(``species_data``$``ind_ha``)``,`\
+`      b ``=`` `[`sd`](https://rdrr.io/r/stats/sd.html)`(``species_data``$``ind_ha``)`\
+`    ``)``,`\
+`    response_name ``=`` ``"ind/ha"``, ``# this argument is for aesthetic only, and determines the name of y axis`\
+`    projection_data ``=`` ``cretusa_predictors``, ``# to visualize extrapolation`\
+`    rug ``=`` ``TRUE``, ``# rug plot of the predictor`\
+`    colorl ``=`` `[`c`](https://rdrr.io/r/base/c.html)`(``"#462777"``, ``"#6DCC57"``)``, ``# projection and training values, respectively`\
+`    colorp ``=`` ``"black"``, ``# residuals colors`\
+`    alpha ``=`` ``0.2``,`\
+`    theme ``=`` ``ggplot2``::`[`theme_classic`](https://ggplot2.tidyverse.org/reference/ggtheme.html)`(``)`` ``# a ggplot2 theme`\
+`  ``)`\
 `}`\
 `#> Warning: Some torch operators might not yet be implemented for the MPS device. A`\
 `` #> temporary fix is to set the `PYTORCH_ENABLE_MPS_FALLBACK=1` to use the CPU as a ``\
@@ -830,33 +808,33 @@ combinations, respectively.
 `# BPDP for DNN`\
 `if`` ``(``has_torch``)`` ``{`\
 `  ``bpdp_dnn`` ``<-`` `[`p_abund_bpdp`](https://sjevelazco.github.io/adm/reference/p_abund_bpdp.md)`(`\
-`  model ``=`` ``mdnn``,`\
-`  predictors ``=`` `[`c`](https://rdrr.io/r/base/c.html)`(``"PC1"``, ``"PC3"``)``, ``# a pair of predictors`\
-`  resolution ``=`` ``100``,`\
-`  training_data ``=`` ``species_data``,`\
-`  projection_data ``=`` ``cretusa_predictors``,`\
-`  training_boundaries ``=`` ``"convexh"``, ``# the shape in which the training boundaries are drawn. Outside of it, its extrapolations`\
-`  invert_transform ``=`` `[`c`](https://rdrr.io/r/base/c.html)`(`\
-`    method ``=`` ``"zscore"``, ``# same as before`\
-`    a ``=`` `[`mean`](https://rspatial.github.io/terra/reference/summarize-generics.html)`(``species_data``$``ind_ha``)``,`\
-`    b ``=`` `[`sd`](https://rdrr.io/r/stats/sd.html)`(``species_data``$``ind_ha``)`\
-`  ``)``,`\
-`  response_name ``=`` ``"ind/ha"``,`\
-`  color_gradient ``=`` `[`c`](https://rdrr.io/r/base/c.html)`(`\
-`    ``"#000004"``,`\
-`    ``"#1B0A40"``,`\
-`    ``"#4A0C69"``,`\
-`    ``"#781B6C"``,`\
-`    ``"#A42C5F"``,`\
-`    ``"#CD4345"``,`\
-`    ``"#EC6824"``,`\
-`    ``"#FA990B"``,`\
-`    ``"#F7CF3D"``,`\
-`    ``"#FCFFA4"`\
-`  ``)``, ``# gradient for response variable`\
-`  color_training_boundaries ``=`` ``"white"``,`\
-`  theme ``=`` ``ggplot2``::`[`theme_classic`](https://ggplot2.tidyverse.org/reference/ggtheme.html)`(``)`\
-`)`\
+`    model ``=`` ``mdnn``,`\
+`    predictors ``=`` `[`c`](https://rdrr.io/r/base/c.html)`(``"PC1"``, ``"PC3"``)``, ``# a pair of predictors`\
+`    resolution ``=`` ``100``,`\
+`    training_data ``=`` ``species_data``,`\
+`    projection_data ``=`` ``cretusa_predictors``,`\
+`    training_boundaries ``=`` ``"convexh"``, ``# the shape in which the training boundaries are drawn. Outside of it, its extrapolations`\
+`    invert_transform ``=`` `[`c`](https://rdrr.io/r/base/c.html)`(`\
+`      method ``=`` ``"zscore"``, ``# same as before`\
+`      a ``=`` `[`mean`](https://rspatial.github.io/terra/reference/summarize-generics.html)`(``species_data``$``ind_ha``)``,`\
+`      b ``=`` `[`sd`](https://rdrr.io/r/stats/sd.html)`(``species_data``$``ind_ha``)`\
+`    ``)``,`\
+`    response_name ``=`` ``"ind/ha"``,`\
+`    color_gradient ``=`` `[`c`](https://rdrr.io/r/base/c.html)`(`\
+`      ``"#000004"``,`\
+`      ``"#1B0A40"``,`\
+`      ``"#4A0C69"``,`\
+`      ``"#781B6C"``,`\
+`      ``"#A42C5F"``,`\
+`      ``"#CD4345"``,`\
+`      ``"#EC6824"``,`\
+`      ``"#FA990B"``,`\
+`      ``"#F7CF3D"``,`\
+`      ``"#FCFFA4"`\
+`    ``)``, ``# gradient for response variable`\
+`    color_training_boundaries ``=`` ``"white"``,`\
+`    theme ``=`` ``ggplot2``::`[`theme_classic`](https://ggplot2.tidyverse.org/reference/ggtheme.html)`(``)`\
+`  ``)`\
 `}`\
 `#> Warning: Some torch operators might not yet be implemented for the MPS device. A`\
 `` #> temporary fix is to set the `PYTORCH_ENABLE_MPS_FALLBACK=1` to use the CPU as a ``\

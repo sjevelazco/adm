@@ -10,23 +10,42 @@
   other `fit_abund_*` functions do.
 - `fit_abund_glm` and `fit_abund_gam` no longer fail when `hold_out_set`
   is used (`object 'train_set' not found`).
+- `fit_abund_net` no longer fails when `hold_out_set` is used (nnet
+  predictions require `type = "raw"`).
+- `fit_abund_dnn` now evaluates `hold_out_set` correctly and no longer
+  builds a mismatched default network when `predictors_f` is supplied
+  (categorical predictors are ignored, with a warning).
+- `fit_abund_cnn` now works without a partition; using `hold_out_set`
+  with CNN models now gives an informative error because it is not yet
+  supported.
+- `adm_predict` now names the predictions of quantile regression forests
+  `qrf` (they were named `NA`), and `p_abund_pdp`/`adm_predict` no
+  longer rely on `$feature_names`, which recent xgboost versions do not
+  provide.
 - `adm_uncertainty` now accepts `...` (as documented), so the extra
   arguments needed for CNN models (`x`, `y`, `rasters`, `sample_size`,
   `custom_architecture`) can be passed.
 
 ### Testing
 
-- New tests for `fit_abund_*` (RAF, GLM, GAM, NET, SVM, GBM, XGB, QRF),
-  `adm_uncertainty`, `model_selection`, `data_abund_pdp`, `p_abund_pdp`,
-  `p_abund_bpdp`, `generate_dnn_architecture`,
-  `generate_cnn_architecture`, `res_calculate`, `family_selector`,
-  `croppin_hood`, `cnn_make_samples` and `get_partition_samples`.
+- New tests for `fit_abund_*` (all algorithms, including no-partition,
+  hold-out and DNN/CNN paths), `tune_abund_qrf`, `adm_transform`
+  (inverse and raster), `adm_predict`, `adm_uncertainty`,
+  `model_selection`, `data_abund_pdp`, `p_abund_pdp`, `p_abund_bpdp`,
+  `generate_dnn_architecture`, `generate_cnn_architecture`,
+  `res_calculate`, `family_selector`, `croppin_hood`, `cnn_make_samples`
+  and `get_partition_samples`.
+- The slow `tune_abund_*` tests (all but the XGB one and the error
+  checks), the DNN/CNN prediction tests and the slowest
+  `data_abund_bpdp` test are skipped on CRAN, and the vignette grids
+  were reduced, to keep check time low.
 - The DNN/CNN tuning and prediction tests were shortened (smaller data,
   networks and epochs) and the heaviest ones are skipped on CRAN,
   reducing the test time from about 16 to 2 minutes.
-- The test-coverage workflow now uploads the `covr` report
-  (`cobertura.xml`) to Codecov explicitly; previously the wrong file was
-  uploaded and coverage was reported as 0.
+- The test-coverage workflow installs libtorch so the DNN/CNN tests run,
+  and now uploads the `covr` report (`cobertura.xml`) to Codecov
+  explicitly; previously the wrong file was uploaded and coverage was
+  reported as 0.
 
 ### Documentation and CRAN preparation
 

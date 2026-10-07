@@ -90,8 +90,10 @@ test_that("fit_abund_xgb", {
   ))
   check_fit(m, "xgb")
   expect_warning(
-    fit_abund_xgb(test_sp, "ind_ha", test_pred, predictors_f = "eco",
-      partition = ".part1", nrounds = 5, verbose = FALSE),
+    fit_abund_xgb(test_sp, "ind_ha", test_pred,
+      predictors_f = "eco",
+      partition = ".part1", nrounds = 5, verbose = FALSE
+    ),
     "Categorical"
   )
 })

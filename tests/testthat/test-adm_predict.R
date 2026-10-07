@@ -266,8 +266,10 @@ test_that("predic CNN", {
   # Predict on a small window to keep the test fast
   small_env <- terra::crop(
     envar,
-    terra::ext(terra::xmin(envar), terra::xmin(envar) + 15 * terra::res(envar)[1],
-               terra::ymax(envar) - 15 * terra::res(envar)[2], terra::ymax(envar))
+    terra::ext(
+      terra::xmin(envar), terra::xmin(envar) + 15 * terra::res(envar)[1],
+      terra::ymax(envar) - 15 * terra::res(envar)[2], terra::ymax(envar)
+    )
   )
   prd <- adm_predict(
     m,
