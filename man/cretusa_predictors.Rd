@@ -9,15 +9,19 @@ A raster in tif format with the first principal components.
 \usage{
 cretusa_predictors()
 }
+\value{
+A \code{SpatRaster} (see \code{\link[terra]{rast}}) with the first
+principal components (PC1, PC2, ...) read from the raster file shipped with the
+package (\code{external/cretusa_predictors.tif}).
+}
 \description{
 A raster with principal components derived by a principal component analysis based
 on climatic (from Chelsa: chelsa-climate.org) and edaphic (from SoilGrids: soilgrids.org) variables.
 }
 \examples{
-\dontrun{
+\donttest{
 require(terra)
-envar <- system.file("external/cretusa_predictors.tif", package = "adm")
-envar <- terra::rast(envar)
-plot(envar)
+predictors <- adm::cretusa_predictors()
+plot(predictors)
 }
 }
