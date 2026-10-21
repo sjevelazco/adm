@@ -35,7 +35,7 @@ This function calculate metric related to the accuracy, discrimination, and prec
   Further details see Waldock et al. (2022)
 }
 \examples{
-\dontrun{
+\donttest{
 pred_a <- c(
   3, 2, 0, 0, 2, 5, 1, 3, 1, 2, 1, 1, 2, 5, 4,
   1, 2, 5, 3, 3, 4, 3, 2, 0, 2, 1, 2, 2, 1, 4,

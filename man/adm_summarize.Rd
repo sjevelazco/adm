@@ -16,7 +16,7 @@ A tibble object with combined model performance for all input models. Models fit
 Merge model performance tables
 }
 \examples{
-\dontrun{
+\donttest{
 require(dplyr)
 require(terra)
 
@@ -27,7 +27,7 @@ envar <- terra::rast(envar)
 # Species abundance data, coordinates, and partition
 some_sp <- sppabund \%>\%
   dplyr::filter(species == "Species one") \%>\%
-  dplyr::select(species, ind_ha, x, y, .part)
+  dplyr::select(species, ind_ha, x, y, .part1)
 some_sp
 
 # Extract data
@@ -44,7 +44,7 @@ m_raf <- fit_abund_raf(
   data = some_sp,
   response = "ind_ha",
   predictors = c("elevation", "sand", "bio3", "bio12"),
-  partition = ".part",
+  partition = ".part1",
 )
 
 # Fit SVM
@@ -52,7 +52,7 @@ m_svm <- fit_abund_svm(
   data = some_sp,
   response = "ind_ha",
   predictors = c("elevation", "sand", "bio3", "bio12"),
-  partition = ".part"
+  partition = ".part1"
 )
 
 # XGB
@@ -60,7 +60,7 @@ m_xbg <- fit_abund_xgb(
   data = some_sp,
   response = "ind_ha",
   predictors = c("elevation", "sand", "bio3", "bio12"),
-  partition = ".part"
+  partition = ".part1"
 )
 
 

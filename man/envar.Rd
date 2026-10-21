@@ -19,14 +19,18 @@ A raster in tif format with the following variables.
 \usage{
 envar()
 }
+\value{
+A \code{SpatRaster} (see \code{\link[terra]{rast}}) with eight layers
+(bio1, bio12, bio15, bio3, cfvo, elevation, sand, and eco) read from the
+raster file shipped with the package (\code{external/envar.tif}).
+}
 \description{
 A raster with climatic (from Chelsa: chelsa-climate.org), edaphic (from SoilGrids: soilgrids.org), and ecoregion data (from WWF https://www.worldwildlife.org/publications/terrestrial-ecoregions-of-the-world).
 }
 \examples{
-\dontrun{
+\donttest{
 require(terra)
-envar <- system.file("external/envar.tif", package = "adm")
-envar <- terra::rast(envar)
+envar <- adm::envar()
 plot(envar)
 }
 }

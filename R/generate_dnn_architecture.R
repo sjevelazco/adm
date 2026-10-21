@@ -21,7 +21,8 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
+#' require(dplyr)
 #' # Generate a Deep Neural Network with:
 #' dnn_arch <- generate_dnn_architecture(
 #'   number_of_features = 8, # eight input variables
@@ -123,7 +124,6 @@ generate_dnn_architecture <-
     arch <- sub("layer_definition", layers_definition, arch)
     arch <- sub("foward_definition", foward_definition, arch)
 
-    torch::torch_manual_seed(13)
 
     net <- eval(parse(text = arch))
 

@@ -71,7 +71,7 @@ A list object with:
 Fit and validate Generalized Linear Models
 }
 \examples{
-\dontrun{
+\donttest{
 require(terra)
 require(dplyr)
 require(gamlss)
@@ -101,7 +101,7 @@ glm_1 <- fit_abund_glm(
   response = "ind_ha",
   predictors = c("bio12", "elevation", "sand"),
   predictors_f = c("eco"),
-  partition = ".part",
+  partition = ".part1",
   distribution = "ZAGA",
   poly = 0,
   inter_order = 0,
@@ -116,7 +116,7 @@ glm_2 <- fit_abund_glm(
   response = "ind_ha",
   predictors = c("bio12", "elevation", "sand"),
   predictors_f = c("eco"),
-  partition = ".part",
+  partition = ".part1",
   distribution = "ZAGA",
   poly = 2,
   inter_order = 1,
@@ -131,7 +131,7 @@ glm_3 <- fit_abund_glm(
   response = "ind_ha",
   predictors = c("bio12", "elevation", "sand"),
   predictors_f = c("eco"),
-  partition = ".part",
+  partition = ".part1",
   distribution = "ZAGA",
   poly = 3,
   inter_order = 2,
@@ -146,7 +146,7 @@ glm_4 <- fit_abund_glm(
   response = "ind_ha",
   predictors = c("bio12", "elevation", "sand"),
   predictors_f = c("eco"),
-  partition = ".part",
+  partition = ".part1",
   distribution = "ZAGA",
   fit_formula = ind_ha ~ bio12 + elevation + sand + eco,
   sigma_formula = ind_ha ~ bio12 + elevation + sand,

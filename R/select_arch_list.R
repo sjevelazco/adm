@@ -19,17 +19,18 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
+#' require(dplyr)
 #' # Generate some big list of architectures combining all argument values
 #' big_arch_list <- generate_arch_list(
 #'   type = "dnn",
 #'   number_of_features = 4,
 #'   number_of_outputs = 1,
-#'   n_layers = seq(from = 2, to = 6, by = 1),
-#'   n_neurons = c(8, 16, 32, 64)
+#'   n_layers = seq(from = 2, to = 4, by = 1),
+#'   n_neurons = c(8, 16, 32)
 #' )
 #'
-#' length(big_arch_list$arch_list) # 5456 architectures!
+#' length(big_arch_list$arch_list) # number of architectures generated
 #'
 #' # It can be reduced sampling network architectures by its parameters number
 #'
@@ -40,7 +41,7 @@
 #'   min_max = TRUE # Keep the network with the minimum and maximum number of parameters
 #' )
 #'
-#' length(reduced_arch_list$arch_list) # from 5456 to 92 architectures!!
+#' length(reduced_arch_list$arch_list) # reduced number of architectures
 #'
 #' # See architectures names, deepness and number of parameters
 #' reduced_arch_list$changes

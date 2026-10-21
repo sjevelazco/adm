@@ -48,7 +48,7 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' require(dplyr)
 #' require(terra)
 #'
@@ -66,7 +66,7 @@
 #'   response = "ind_ha",
 #'   predictors = c("bio12", "elevation", "sand"),
 #'   predictors_f = c("eco"),
-#'   partition = ".part",
+#'   partition = ".part1",
 #'   distribution = "ZAIG",
 #'   poly = 3,
 #'   inter_order = 0,
@@ -204,7 +204,7 @@ data_abund_pdp <-
         }
       }
 
-      randompoints <- terra::spatSample(training_raster, resolution, xy = T) %>%
+      randompoints <- terra::spatSample(training_raster, resolution, xy = TRUE) %>%
         dplyr::select(x, y) %>%
         dplyr::bind_cols(suit_c)
 
@@ -238,7 +238,6 @@ data_abund_pdp <-
     #### cnn ####
     if (class(model)[1] == "luz_module_fitted" & variables[["model"]] == "cnn") {
       model$model$eval()
-      torch::torch_manual_seed(13)
 
       create_dataset <- torch::dataset(
         "dataset",
@@ -289,7 +288,6 @@ data_abund_pdp <-
     #### dnn ####
     if (class(model)[1] == "luz_module_fitted" & variables[["model"]] == "dnn") {
       model$model$eval()
-      torch::torch_manual_seed(13)
 
       create_dataset <- torch::dataset(
         "dataset",

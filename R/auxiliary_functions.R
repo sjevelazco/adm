@@ -22,7 +22,8 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
+#' require(dplyr)
 #' require(terra)
 #'
 #' # Datasbase with species abundance and x and y coordinates
@@ -114,7 +115,7 @@ croppin_hood <- function(
 #' @export
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' data(sppabund)
 #'
 #' family_selector(data = sppabund, response = "ind_ha")
@@ -206,7 +207,7 @@ family_selector <- function(data, response) {
 #' @export
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'
 #' # Calculating output resolution for a convolution layer
 #' res_calculate(type = "layer", in_res = 12, kernel_size = 2, stride = 2, padding = 0)

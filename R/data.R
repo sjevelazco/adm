@@ -19,7 +19,7 @@
 #'   \item{.part1 ... .part3}{repeate k-folds}
 #' }
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' require(dplyr)
 #' data("sppabund")
 #' sppabund
@@ -42,7 +42,7 @@
 #' }
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' require(dplyr)
 #' data("cretusa_data")
 #' cretusa_data
@@ -65,18 +65,20 @@
 #'   \item{eco}{Terrestrial ecoregion}
 #' }
 #'
+#' @return A \code{SpatRaster} (see \code{\link[terra]{rast}}) with eight layers
+#' (bio1, bio12, bio15, bio3, cfvo, elevation, sand, and eco) read from the
+#' raster file shipped with the package (\code{external/envar.tif}).
+#'
 #' @export
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' require(terra)
-#' envar <- system.file("external/envar.tif", package = "adm")
-#' envar <- terra::rast(envar)
+#' envar <- adm::envar()
 #' plot(envar)
 #' }
 envar <- function() {
-  # x <- system.file("external/envar.tif", package = "adm")
-  # return(terra::rast(x))
+  terra::rast(system.file("external/envar.tif", package = "adm"))
 }
 
 #' Raster with Principal Component
@@ -86,16 +88,18 @@ envar <- function() {
 #'
 #' @format A raster in tif format with the first principal components.
 #'
+#' @return A \code{SpatRaster} (see \code{\link[terra]{rast}}) with the first
+#' principal components (PC1, PC2, ...) read from the raster file shipped with the
+#' package (\code{external/cretusa_predictors.tif}).
+#'
 #' @export
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' require(terra)
-#' envar <- system.file("external/cretusa_predictors.tif", package = "adm")
-#' envar <- terra::rast(envar)
-#' plot(envar)
+#' predictors <- adm::cretusa_predictors()
+#' plot(predictors)
 #' }
 cretusa_predictors <- function() {
-  # x <- system.file("external/cretusa_predictors.tif", package = "adm")
-  # return(terra::rast(x))
+  terra::rast(system.file("external/cretusa_predictors.tif", package = "adm"))
 }

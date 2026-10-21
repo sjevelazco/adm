@@ -23,7 +23,7 @@ shrub native to northeastern Argentina, Paraguay, Bolivia,
 and central Brazil.
 }
 \examples{
-\dontrun{
+\donttest{
 require(dplyr)
 data("cretusa_data")
 cretusa_data

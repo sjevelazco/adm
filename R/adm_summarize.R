@@ -9,7 +9,7 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' require(dplyr)
 #' require(terra)
 #'
@@ -20,7 +20,7 @@
 #' # Species abundance data, coordinates, and partition
 #' some_sp <- sppabund %>%
 #'   dplyr::filter(species == "Species one") %>%
-#'   dplyr::select(species, ind_ha, x, y, .part)
+#'   dplyr::select(species, ind_ha, x, y, .part1)
 #' some_sp
 #'
 #' # Extract data
@@ -37,7 +37,7 @@
 #'   data = some_sp,
 #'   response = "ind_ha",
 #'   predictors = c("elevation", "sand", "bio3", "bio12"),
-#'   partition = ".part",
+#'   partition = ".part1",
 #' )
 #'
 #' # Fit SVM
@@ -45,7 +45,7 @@
 #'   data = some_sp,
 #'   response = "ind_ha",
 #'   predictors = c("elevation", "sand", "bio3", "bio12"),
-#'   partition = ".part"
+#'   partition = ".part1"
 #' )
 #'
 #' # XGB
@@ -53,7 +53,7 @@
 #'   data = some_sp,
 #'   response = "ind_ha",
 #'   predictors = c("elevation", "sand", "bio3", "bio12"),
-#'   partition = ".part"
+#'   partition = ".part1"
 #' )
 #'
 #'

@@ -41,7 +41,7 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' require(dplyr)
 #' require(gamlss)
 #'
@@ -61,15 +61,19 @@
 #' some_sp <-
 #'   balance_dataset(some_sp, response = "ind_ha", absence_ratio = 0.2)
 #'
+#' # A small subset keeps this example fast
+#' set.seed(1)
+#' some_sp <- some_sp[sort(sample(nrow(some_sp), 150)), ]
+#'
 #' # Explore different family distributions
 #' suitable_distributions <- family_selector(data = some_sp, response = "ind_ha")
 #' suitable_distributions
 #'
 #' # Create a grid
 #' glm_grid <- expand.grid(
-#'   poly = c(2, 3),
-#'   inter_order = c(1, 2),
-#'   distribution = suitable_distributions$family_call,
+#'   poly = c(1, 2),
+#'   inter_order = 1,
+#'   distribution = c("NO", "TF"),
 #'   stringsAsFactors = FALSE
 #' )
 #'
@@ -82,11 +86,11 @@
 #'   sigma_formula = formula("ind_ha ~ bio12 + elevation"),
 #'   nu_formula = formula("ind_ha ~ bio12 + elevation"),
 #'   predictors_f = c("eco"),
-#'   partition = ".part",
+#'   partition = ".part1",
 #'   predict_part = TRUE,
 #'   metrics = c("corr_pear", "mae"),
 #'   grid = glm_grid,
-#'   n_cores = 3
+#'   n_cores = 1
 #' )
 #'
 #' tuned_glm
@@ -151,7 +155,7 @@ tune_abund_glm <-
           error = function(e) {}
         )
       },
-      add = T
+      add = TRUE
     )
     hyper_combinations <- foreach::foreach(
       i = 1:nrow(grid),

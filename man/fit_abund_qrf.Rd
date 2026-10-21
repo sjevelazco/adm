@@ -64,7 +64,7 @@ A list object with:
 Fit and validate Quantile Regression Random Forests models
 }
 \examples{
-\dontrun{
+\donttest{
 require(terra)
 require(dplyr)
 

@@ -80,7 +80,7 @@ Create bivariate partial dependence plots to explore the marginal effect of
 predictors on modeled abundance
 }
 \examples{
-\dontrun{
+\donttest{
 require(terra)
 require(dplyr)
 
@@ -97,7 +97,7 @@ mglm <- fit_abund_glm(
   response = "ind_ha",
   predictors = c("bio12", "elevation", "sand"),
   predictors_f = c("eco"),
-  partition = ".part",
+  partition = ".part1",
   distribution = "ZAIG",
   poly = 3,
   inter_order = 0,

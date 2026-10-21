@@ -64,7 +64,7 @@ A list object with:
 Fit and validate Generalized Boosted Regression models
 }
 \examples{
-\dontrun{
+\donttest{
 require(terra)
 require(dplyr)
 
@@ -90,7 +90,7 @@ mgbm <- fit_abund_gbm(
   response = "ind_ha",
   predictors = c("bio12", "elevation", "sand"),
   predictors_f = c("eco"),
-  partition = ".part",
+  partition = ".part1",
   distribution = "gaussian",
   n.trees = 100,
   interaction.depth = 5,

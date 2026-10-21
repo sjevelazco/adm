@@ -37,7 +37,7 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' require(terra)
 #' require(dplyr)
 #' require(gamlss)
@@ -67,7 +67,7 @@
 #'   response = "ind_ha",
 #'   predictors = c("bio12", "elevation", "sand"),
 #'   predictors_f = c("eco"),
-#'   partition = ".part",
+#'   partition = ".part1",
 #'   distribution = "ZAGA",
 #'   poly = 0,
 #'   inter_order = 0,
@@ -82,7 +82,7 @@
 #'   response = "ind_ha",
 #'   predictors = c("bio12", "elevation", "sand"),
 #'   predictors_f = c("eco"),
-#'   partition = ".part",
+#'   partition = ".part1",
 #'   distribution = "ZAGA",
 #'   poly = 2,
 #'   inter_order = 1,
@@ -97,7 +97,7 @@
 #'   response = "ind_ha",
 #'   predictors = c("bio12", "elevation", "sand"),
 #'   predictors_f = c("eco"),
-#'   partition = ".part",
+#'   partition = ".part1",
 #'   distribution = "ZAGA",
 #'   poly = 3,
 #'   inter_order = 2,
@@ -112,7 +112,7 @@
 #'   response = "ind_ha",
 #'   predictors = c("bio12", "elevation", "sand"),
 #'   predictors_f = c("eco"),
-#'   partition = ".part",
+#'   partition = ".part1",
 #'   distribution = "ZAGA",
 #'   fit_formula = ind_ha ~ bio12 + elevation + sand + eco,
 #'   sigma_formula = ind_ha ~ bio12 + elevation + sand,
@@ -234,7 +234,6 @@ fit_abund_glm <-
 
     # Fit models
     if (is.null(partition) || !any(nzchar(partition, keepNA = FALSE))) {
-      set.seed(13)
       full_model <- gamlss::gamlss(
         formula = formula1,
         family = distribution,
@@ -309,7 +308,6 @@ fit_abund_glm <-
           train_set <- data[data[, p_names[h]] != folds[j], ]
           test_set <- data[data[, p_names[h]] == folds[j], ]
 
-          set.seed(13)
           model <- gamlss::gamlss(
             formula = formula1,
             family = family,
@@ -351,7 +349,6 @@ fit_abund_glm <-
 
 
       # fit final model with all data
-      set.seed(13)
       full_model <- gamlss::gamlss(
         formula = formula1,
         family = family,

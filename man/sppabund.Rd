@@ -29,7 +29,7 @@ sppabund
 A data set containing species abundance of three species, partition folds, and environmental variables.
 }
 \examples{
-\dontrun{
+\donttest{
 require(dplyr)
 data("sppabund")
 sppabund

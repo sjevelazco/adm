@@ -1,6 +1,6 @@
 Package: adm
 Type: Package
-Title: Tools for Constructing, Predicting, and Post-Processing Abundance-Based Species Distribution Models
+Title: Constructing, Predicting, and Post-Processing Abundance-Based Species Distribution Models
 Version: 0.5.0
 Authors@R: c(person(given = "Admir Cesar", family = "de Oliveira Junior", role = c("aut", "cre"),
            email = "admircjunior@gmail.com",
@@ -33,8 +33,9 @@ Imports:
     utils,
     xgboost
 Description: Assist in the construction of abundance-based species distribution model workflow
-    by incorporating comprehensive tools for data preparation, model fitting, 
-    prediction, and exploration.
+    by incorporating comprehensive tools for data preparation, model fitting,
+    prediction, and exploration. The package is described in
+    de Oliveira Junior and Velazco (2025) <doi:10.1111/2041-210X.70074>.
 License: GPL (>= 3)
 Encoding: UTF-8
 LazyData: true

@@ -19,7 +19,7 @@ or not discrete)
 Select probability distribution available in gamlss.dist suited for a given response variables (e.g., count, zero-inflated) used to fit GAM and GLM models. See \link[gamlss.dist]{gamlss.family} for more details.
 }
 \examples{
-\dontrun{
+\donttest{
 data(sppabund)
 
 family_selector(data = sppabund, response = "ind_ha")

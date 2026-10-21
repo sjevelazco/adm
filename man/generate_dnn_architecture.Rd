@@ -41,7 +41,8 @@ A list containing:
 Generate architectures for Deep Neural Network
 }
 \examples{
-\dontrun{
+\donttest{
+require(dplyr)
 # Generate a Deep Neural Network with:
 dnn_arch <- generate_dnn_architecture(
   number_of_features = 8, # eight input variables

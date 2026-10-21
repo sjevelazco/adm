@@ -42,7 +42,7 @@ of in_res by kernel_size.
 }
 }
 \examples{
-\dontrun{
+\donttest{
 
 # Calculating output resolution for a convolution layer
 res_calculate(type = "layer", in_res = 12, kernel_size = 2, stride = 2, padding = 0)

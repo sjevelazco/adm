@@ -89,7 +89,7 @@ A list object with:
 Fit and validate Extreme Gradient Boosting models with exploration of hyper-parameters that optimize performance
 }
 \examples{
-\dontrun{
+\donttest{
 require(dplyr)
 # Database with species abundance and x and y coordinates
 data("sppabund")
@@ -103,15 +103,19 @@ some_sp$ind_ha \%>\% hist()
 # Here we balance number of absences
 some_sp <-
   balance_dataset(some_sp, response = "ind_ha", absence_ratio = 0.2)
+
+# A small subset keeps this example fast
+set.seed(1)
+some_sp <- some_sp[sort(sample(nrow(some_sp), 200)), ]
 # Create a grid
 xgb_grid <- expand.grid(
-  nrounds = c(100, 300),
-  max_depth = c(4, 6, 8),
-  learning_rate = c(0.2, 0.5),
-  min_split_loss = c(1, 5, 10),
-  colsample_bytree = c(0.5, 1),
-  min_child_weight = c(0.5, 1, 2),
-  subsample = c(0.5, 1),
+  nrounds = c(20, 50),
+  max_depth = c(4, 6),
+  learning_rate = 0.3,
+  min_split_loss = 1,
+  colsample_bytree = 1,
+  min_child_weight = 1,
+  subsample = 0.5,
   stringsAsFactors = FALSE
 )
 # Tune a XGB model
@@ -120,12 +124,12 @@ tuned_xgb <- tune_abund_xgb(
   response = "ind_ha",
   predictors = c("bio12", "elevation", "sand"),
   predictors_f = c("eco"),
-  partition = ".part",
+  partition = ".part1",
   predict_part = TRUE,
   metrics = c("corr_pear", "mae"),
   grid = xgb_grid,
   objective = "reg:squarederror",
-  n_cores = 3
+  n_cores = 1
 )
 tuned_xgb
 }

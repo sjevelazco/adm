@@ -31,7 +31,7 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' require(dplyr)
 #'
 #' # Database with species abundance and x and y coordinates
@@ -56,7 +56,7 @@
 #'   response = "ind_ha",
 #'   predictors = c("bio12", "elevation", "sand"),
 #'   predictors_f = c("eco"),
-#'   partition = ".part",
+#'   partition = ".part1",
 #'   size = 32,
 #'   decay = 0.1,
 #'   predict_part = TRUE
@@ -104,7 +104,6 @@ fit_abund_net <-
 
     # Fit models
     if (is.null(partition) || !any(nzchar(partition, keepNA = FALSE))) {
-      set.seed(13)
       full_model <- nnet::nnet(
         formula1,
         data = data,
@@ -177,7 +176,6 @@ fit_abund_net <-
           train_set <- data[data[, p_names[h]] != folds[j], ]
           test_set <- data[data[, p_names[h]] == folds[j], ]
 
-          set.seed(13)
           model <- nnet::nnet(
             formula1,
             data = train_set,
@@ -219,7 +217,6 @@ fit_abund_net <-
       }
 
       # fit final model with all data
-      set.seed(13)
       full_model <- nnet::nnet(
         formula1,
         data = data,

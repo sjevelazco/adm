@@ -39,7 +39,7 @@ This function transforms the data in a tibble or SpatRaster object on the method
 The available methods are "01", "zscore", "log", and "round".
 }
 \examples{
-\dontrun{
+\donttest{
 require(dplyr)
 require(terra)
 
@@ -205,8 +205,8 @@ envar_inverted <- adm_transform(
   method = "01",
   inverse = TRUE,
   t_terms = c(
-    a = terra::global(envar, min, na.rm = T),
-    b = terra::global(envar, max, na.rm = T)
+    a = terra::global(envar, min, na.rm = TRUE),
+    b = terra::global(envar, max, na.rm = TRUE)
   )
 )
 envar_inverted

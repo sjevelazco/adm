@@ -51,7 +51,7 @@ small models approach), or models constructed with fit_ensemble function. It can
 continuous or continuous and binary predictions for one or more thresholds
 }
 \examples{
-\dontrun{
+\donttest{
 require(dplyr)
 require(terra)
 
@@ -59,13 +59,12 @@ data("sppabund")
 envar <- system.file("external/envar.tif", package = "adm")
 envar <- terra::rast(envar)
 
-# Extract data
+# Species abundance data, coordinates, and partition
 some_sp <- sppabund \%>\%
   dplyr::filter(species == "Species one") \%>\%
-  dplyr::select(species, ind_ha, x, y)
+  dplyr::select(species, ind_ha, x, y, .part1)
 
-some_sp
-
+# Extract environmental data
 some_sp <-
   adm_extract(
     data = some_sp,
@@ -74,58 +73,24 @@ some_sp <-
     env_layer = envar
   )
 
-# Partition
-some_sp <- flexsdm::part_random(
-  data = some_sp,
-  pr_ab = "ind_ha",
-  method = c(method = "rep_kfold", folds = 3, replicates = 3)
-)
-
-
-## \%######################################################\%##
-#                                                          #
-####          Create different type of models           ####
-#                                                          #
-## \%######################################################\%##
 # Fit some models
-# require(gamlss)
-# m1 <- gamlss::fitDist(some_sp$ind_ha, type="realline")
-# m1$fits
-# m1$failed
-#
-# m1 <- gamlss(ind_ha ~ pb(elevation) + pb(sand) + pb(bio3) + pb(bio12), family=NO, data=some_sp)
-# choosen_dist <- gamlss::chooseDist(m1, parallel="multicore", ncpus=4, type="realAll")
-
 mgam <- fit_abund_gam(
-  data = some_sp \%>\% dplyr::mutate(ind_ha = round(ind_ha)),
+  data = some_sp,
   response = "ind_ha",
   predictors = c("elevation", "sand", "bio3", "bio12"),
-  predictors_f = "eco",
-  partition = ".part",
-  distribution = gamlss.dist::PO()
+  partition = ".part1",
+  distribution = "NO",
+  verbose = FALSE
 )
 
 mraf <- fit_abund_raf(
   data = some_sp,
   response = "ind_ha",
   predictors = c("elevation", "sand", "bio3", "bio12"),
-  partition = ".part",
+  partition = ".part1",
+  ntree = 100,
+  verbose = FALSE
 )
-
-mgbm <- fit_abund_gbm(
-  data = some_sp,
-  response = "ind_ha",
-  predictors = c("elevation", "sand", "bio3", "bio12"),
-  partition = ".part",
-  distribution =
-  )
-
-
-## \%######################################################\%##
-#                                                          #
-####                        Predict models               ####
-#                                                          #
-## \%######################################################\%##
 
 # adm_predict can be used for predict one or more models fitted with fit_ or tune_ functions
 
@@ -135,44 +100,29 @@ ind_p <- adm_predict(
   pred = envar,
   training_data = some_sp,
   nchunk = 1,
-  predict_area = NULL,
-  invert_transform = NULL,
-  transform_negative = FALSE,
-  sample_size = NULL
+  transform_negative = TRUE
 )
+plot(ind_p$gam)
 
 # a list of models
 list_p <- adm_predict(
-  models = list(mgam, mraf, mgbm),
+  models = list(mgam, mraf),
   pred = envar,
   training_data = some_sp,
   nchunk = 1,
-  predict_area = NULL,
-  invert_transform = NULL,
-  transform_negative = FALSE,
-  sample_size = NULL
+  transform_negative = TRUE
 )
+list_p
 
-## \%######################################################\%##
-#                                                          #
-####              Predict model using chunks            ####
-#                                                          #
-## \%######################################################\%##
 # Predicting models in chunks helps reduce memory requirements in
 # cases where models are predicted for large scales and high resolution
-
 ind_p <- adm_predict(
   models = mraf,
   pred = envar,
   training_data = some_sp,
   nchunk = 4,
-  predict_area = NULL,
-  invert_transform = NULL,
-  transform_negative = FALSE,
+  transform_negative = TRUE
 )
-ind_p
-ind_p$raf
 plot(ind_p$raf)
 }
-
 }

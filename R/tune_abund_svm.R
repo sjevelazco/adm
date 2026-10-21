@@ -38,7 +38,7 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' require(dplyr)
 #'
 #' # Database with species abundance and x and y coordinates
@@ -57,10 +57,14 @@
 #' some_sp <-
 #'   balance_dataset(some_sp, response = "ind_ha", absence_ratio = 0.2)
 #'
+#' # A small subset keeps this example fast
+#' set.seed(1)
+#' some_sp <- some_sp[sort(sample(nrow(some_sp), 200)), ]
+#'
 #' # Create a grid
 #' svm_grid <- expand.grid(
 #'   sigma = "automatic",
-#'   C = c(0.5, 1, 2),
+#'   C = c(0.5, 1),
 #'   kernel = c("rbfdot", "laplacedot"),
 #'   stringsAsFactors = FALSE
 #' )
@@ -71,11 +75,11 @@
 #'   response = "ind_ha",
 #'   predictors = c("bio12", "elevation", "sand"),
 #'   predictors_f = c("eco"),
-#'   partition = ".part",
+#'   partition = ".part1",
 #'   predict_part = TRUE,
 #'   metrics = c("corr_pear", "mae"),
 #'   grid = svm_grid,
-#'   n_cores = 3
+#'   n_cores = 1
 #' )
 #'
 #' tuned_svm
@@ -129,7 +133,7 @@ tune_abund_svm <-
           error = function(e) {}
         )
       },
-      add = T
+      add = TRUE
     )
     hyper_combinations <- foreach::foreach(i = 1:nrow(grid), .export = c("fit_abund_svm", "adm_eval"), .packages = c("dplyr")) %dopar% {
       model <-

@@ -38,7 +38,7 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' require(terra)
 #' require(dplyr)
 #'
@@ -64,7 +64,7 @@
 #'   response = "ind_ha",
 #'   predictors = c("bio12", "elevation", "sand"),
 #'   predictors_f = c("eco"),
-#'   partition = ".part",
+#'   partition = ".part1",
 #'   mtry = 3,
 #'   ntree = 500,
 #'   predict_part = TRUE
@@ -112,7 +112,6 @@ fit_abund_raf <-
 
     # Fit models
     if (is.null(partition) || !any(nzchar(partition, keepNA = FALSE))) {
-      set.seed(13)
       suppressWarnings(
         full_model <- randomForest::randomForest(
           formula1,
@@ -181,7 +180,6 @@ fit_abund_raf <-
           train_set <- data[data[, p_names[h]] != folds[j], ]
           test_set <- data[data[, p_names[h]] == folds[j], ]
 
-          set.seed(13)
           model <- randomForest::randomForest(
             formula1,
             data = train_set,
@@ -219,7 +217,6 @@ fit_abund_raf <-
       }
 
       # fit final model with all data
-      set.seed(13)
       full_model <- randomForest::randomForest(
         formula1,
         data = data,

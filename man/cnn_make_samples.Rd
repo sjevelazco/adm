@@ -41,7 +41,7 @@ This function creates an array of input images and associated responses
 which can be utilized to train a Convolutional Neural Network.
 }
 \examples{
-\dontrun{
+\donttest{
 require(dplyr)
 require(terra)
 

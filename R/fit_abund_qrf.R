@@ -40,7 +40,7 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' require(terra)
 #' require(dplyr)
 #'
@@ -105,7 +105,6 @@ fit_abund_qrf <-
 
     # Fit models
     if (is.null(partition) || !any(nzchar(partition, keepNA = FALSE))) {
-      set.seed(13)
       full_model <- switch(framework,
         "grf" = {
           grf::quantile_forest(
@@ -182,7 +181,6 @@ fit_abund_qrf <-
           train_set <- data[data[, p_names[h]] != folds[j], ]
           test_set <- data[data[, p_names[h]] == folds[j], ]
 
-          set.seed(13)
 
           model <- switch(framework,
             "grf" = {
@@ -251,7 +249,6 @@ fit_abund_qrf <-
       }
 
       # fit final model with all data
-      set.seed(13)
       full_model <- switch(framework,
         "grf" = {
           grf::quantile_forest(

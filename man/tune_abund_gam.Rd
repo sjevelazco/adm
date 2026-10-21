@@ -66,7 +66,7 @@ A list object with:
 Fit and validate Generalized Additive Models with exploration of hyper-parameters that optimize performance
 }
 \examples{
-\dontrun{
+\donttest{
 require(dplyr)
 require(gamlss)
 
@@ -82,12 +82,16 @@ some_sp$ind_ha \%>\% hist()
 # Here we balance number of absences
 some_sp <-
   balance_dataset(some_sp, response = "ind_ha", absence_ratio = 0.2)
+
+# A small subset keeps this example fast
+set.seed(1)
+some_sp <- some_sp[sort(sample(nrow(some_sp), 200)), ]
 # Explore different family distributions
 suitable_distributions <- family_selector(data = some_sp, response = "ind_ha")
 suitable_distributions
 # Create a grid
 gam_grid <- expand.grid(
-  distribution = suitable_distributions$family_call,
+  distribution = c("NO", "TF"),
   stringsAsFactors = FALSE
 )
 # Tune a GAM model
@@ -99,11 +103,11 @@ tuned_gam <- tune_abund_gam(
   sigma_formula = formula("ind_ha ~ bio12 + elevation"),
   nu_formula = formula("ind_ha ~ bio12 + elevation"),
   predictors_f = c("eco"),
-  partition = ".part",
+  partition = ".part1",
   predict_part = TRUE,
   metrics = c("corr_pear", "mae"),
   grid = gam_grid,
-  n_cores = 3
+  n_cores = 1
 )
 
 tuned_gam

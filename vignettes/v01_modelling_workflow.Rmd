@@ -426,11 +426,11 @@ To learn more about it, visit *adm_transform* documentation.
 Let's visualize the predictions:
 
 ```{r}
-par(mfrow = c(1, 2 + has_torch))
+oldpar <- par(mfrow = c(1, 2 + has_torch))
 if (has_torch) plot(pred_dnn$dnn, main = "DNN")
 plot(preds$raf, main = "RAF")
 plot(preds$glm, main = "GLM")
-par(mfrow = c(1, 1))
+par(oldpar)
 ```
 
 ## Exploring models

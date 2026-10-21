@@ -33,7 +33,7 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' require(terra)
 #' require(dplyr)
 #'
@@ -59,7 +59,7 @@
 #'   response = "ind_ha",
 #'   predictors = c("bio12", "elevation", "sand"),
 #'   predictors_f = c("eco"),
-#'   partition = ".part",
+#'   partition = ".part1",
 #'   distribution = "gaussian",
 #'   n.trees = 100,
 #'   interaction.depth = 5,
@@ -113,7 +113,6 @@ fit_abund_gbm <-
 
     # Fit models
     if (is.null(partition) || !any(nzchar(partition, keepNA = FALSE))) {
-      set.seed(13)
       full_model <- gbm::gbm(
         formula = formula1,
         data = data,
@@ -185,7 +184,6 @@ fit_abund_gbm <-
           train_set <- data[data[, p_names[h]] != folds[j], ]
           test_set <- data[data[, p_names[h]] == folds[j], ]
 
-          set.seed(13)
 
           model <- gbm::gbm(
             formula = formula1,
@@ -227,7 +225,6 @@ fit_abund_gbm <-
       }
 
       # fit final model with all data
-      set.seed(13)
       full_model <- gbm::gbm(
         formula = formula1,
         data = data,
