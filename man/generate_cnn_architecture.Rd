@@ -62,7 +62,8 @@ A list containing:
 Generate architectures for Convolutional Neural Network
 }
 \examples{
-\dontrun{
+\donttest{
+require(dplyr)
 # Generate a Conclutional Neural Network with:
 cnn_arch <- generate_cnn_architecture(
   number_of_features = 7, # seven input variables

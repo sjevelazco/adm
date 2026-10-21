@@ -38,7 +38,7 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' require(dplyr)
 #'
 #' # Database with species abundance and x and y coordinates
@@ -57,10 +57,14 @@
 #' some_sp <-
 #'   balance_dataset(some_sp, response = "ind_ha", absence_ratio = 0.2)
 #'
+#' # A small subset keeps this example fast
+#' set.seed(1)
+#' some_sp <- some_sp[sort(sample(nrow(some_sp), 200)), ]
+#'
 #' # Create a grid
 #' net_grid <- expand.grid(
-#'   size = seq(from = 8, to = 32, by = 6),
-#'   decay = seq(from = 0, to = 0.4, by = 0.01),
+#'   size = c(4, 8),
+#'   decay = c(0, 0.1),
 #'   stringsAsFactors = FALSE
 #' )
 #'
@@ -70,11 +74,11 @@
 #'   response = "ind_ha",
 #'   predictors = c("bio12", "elevation", "sand"),
 #'   predictors_f = c("eco"),
-#'   partition = ".part",
+#'   partition = ".part1",
 #'   predict_part = TRUE,
 #'   metrics = c("corr_pear", "mae"),
 #'   grid = net_grid,
-#'   n_cores = 3
+#'   n_cores = 1
 #' )
 #'
 #' tuned_net
@@ -127,7 +131,7 @@ tune_abund_net <-
           error = function(e) {}
         )
       },
-      add = T
+      add = TRUE
     )
     hyper_combinations <- foreach::foreach(i = 1:nrow(grid), .export = c("fit_abund_net", "adm_eval", "adapt_df"), .packages = c("dplyr")) %dopar% {
       model <-

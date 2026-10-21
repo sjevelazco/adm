@@ -24,7 +24,8 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
+#' require(dplyr)
 #' require(terra)
 #'
 #' # Datasbase with species abundance and x and y coordinates

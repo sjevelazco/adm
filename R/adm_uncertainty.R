@@ -22,7 +22,7 @@
 #' @seealso \code{\link{adm_predict}}
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' require(terra)
 #' require(dplyr)
 #'
@@ -53,7 +53,7 @@
 #'   response = "ind_ha",
 #'   pred = cretusa_predictors[[c("PC1", "PC2", "PC3")]],
 #'   iteration = 10,
-#'   n_cores = 2
+#'   n_cores = 1
 #' )
 #'
 #' plot(unc)
@@ -100,7 +100,6 @@ adm_uncertainty <- function(
   # ) %dopar% {
   r_list <- list()
   for (ii in 1:iteration) {
-    set.seed(ii)
 
     # Bootstrap sample
     db <- training_data %>%

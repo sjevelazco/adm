@@ -31,7 +31,8 @@ in 'env_layer'
 The function extracts environmental data at the given x and y coordinates
 }
 \examples{
-\dontrun{
+\donttest{
+require(dplyr)
 require(terra)
 
 # Datasbase with species abundance and x and y coordinates

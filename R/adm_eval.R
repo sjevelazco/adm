@@ -34,7 +34,7 @@
 #'   \item Waldock, C., Stuart-Smith, R.D., Albouy, C., Cheung, W.W.L., Edgar, G.J., Mouillot, D., Tjiputra, J., Pellissier, L., 2022. A quantitative review of abundance-based species distribution models. Ecography https://doi.org/10.1111/ecog.05694 }
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' pred_a <- c(
 #'   3, 2, 0, 0, 2, 5, 1, 3, 1, 2, 1, 1, 2, 5, 4,
 #'   1, 2, 5, 3, 3, 4, 3, 2, 0, 2, 1, 2, 2, 1, 4,

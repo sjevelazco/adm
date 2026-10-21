@@ -58,7 +58,7 @@ A list object with:
 Fit and validate Support Vector Machine models
 }
 \examples{
-\dontrun{
+\donttest{
 require(terra)
 require(dplyr)
 
@@ -84,7 +84,7 @@ msvm <- fit_abund_svm(
   response = "ind_ha",
   predictors = c("bio12", "elevation", "sand"),
   predictors_f = c("eco"),
-  partition = ".part",
+  partition = ".part1",
   kernel = "rbfdot",
   sigma = "automatic",
   C = 1,

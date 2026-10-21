@@ -76,7 +76,8 @@ A list object with:
 Fit and validate Deep Neural Network model
 }
 \examples{
-\dontrun{
+\donttest{
+if (torch::torch_is_installed()) {
 require(dplyr)
 
 # Database with species abundance and x and y coordinates
@@ -95,13 +96,17 @@ some_sp$ind_ha \%>\% hist()
 some_sp <-
   balance_dataset(some_sp, response = "ind_ha", absence_ratio = 0.2)
 
+# A small subset keeps this example fast
+set.seed(1)
+some_sp <- some_sp[sort(sample(nrow(some_sp), 150)), ]
+
 # Generate a architecture
 dnn_arch <- generate_dnn_architecture(
   number_of_features = 3,
   number_of_outputs = 1,
   number_of_hidden_layers = 3,
-  hidden_layers_size = c(8, 16, 8),
-  batch_norm = TRUE
+  hidden_layers_size = c(4, 8, 4),
+  batch_norm = FALSE
 )
 
 # Fit a NET model
@@ -110,17 +115,18 @@ mdnn <- fit_abund_dnn(
   response = "ind_ha",
   predictors = c("bio12", "elevation", "sand"),
   predictors_f = NULL,
-  partition = ".part",
+  partition = ".part1",
   learning_rate = 0.01,
-  n_epochs = 10,
+  n_epochs = 3,
   batch_size = 32,
   validation_patience = 2,
   fitting_patience = 5,
   custom_architecture = dnn_arch,
-  verbose = TRUE,
+  verbose = FALSE,
   predict_part = TRUE
 )
 
 mdnn
+}
 }
 }

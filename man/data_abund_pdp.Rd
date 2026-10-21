@@ -71,7 +71,7 @@ variable, the second column with predicted suitability, and the third
 Calculate data to construct partial dependence plots
 }
 \examples{
-\dontrun{
+\donttest{
 require(dplyr)
 require(terra)
 
@@ -89,7 +89,7 @@ mglm <- fit_abund_glm(
   response = "ind_ha",
   predictors = c("bio12", "elevation", "sand"),
   predictors_f = c("eco"),
-  partition = ".part",
+  partition = ".part1",
   distribution = "ZAIG",
   poly = 3,
   inter_order = 0,

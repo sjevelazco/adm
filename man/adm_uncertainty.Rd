@@ -43,7 +43,7 @@ It refits the model multiple times on resampled data and then calculates the sta
 all iterations.
 }
 \examples{
-\dontrun{
+\donttest{
 require(terra)
 require(dplyr)
 
@@ -74,7 +74,7 @@ unc <- adm_uncertainty(
   response = "ind_ha",
   pred = cretusa_predictors[[c("PC1", "PC2", "PC3")]],
   iteration = 10,
-  n_cores = 2
+  n_cores = 1
 )
 
 plot(unc)

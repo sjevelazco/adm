@@ -35,7 +35,7 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' require(terra)
 #' require(dplyr)
 #' require(gamlss)
@@ -66,7 +66,7 @@
 #'   predictors = c("elevation", "sand", "bio3", "bio12"),
 #'   sigma_formula = ~ elevation + bio3 + bio12,
 #'   predictors_f = NULL,
-#'   partition = ".part",
+#'   partition = ".part1",
 #'   distribution = gamlss.dist::ZAGA()
 #' )
 #'
@@ -149,7 +149,6 @@ fit_abund_gam <-
 
     # Fit models
     if (is.null(partition) || !any(nzchar(partition, keepNA = FALSE))) {
-      set.seed(13)
       suppressWarnings(
         full_model <- gamlss::gamlss(
           formula = formula1,
@@ -224,7 +223,6 @@ fit_abund_gam <-
           train_set <- data[data[, p_names[h]] != folds[j], ]
           test_set <- data[data[, p_names[h]] == folds[j], ]
 
-          set.seed(13)
           model <- gamlss::gamlss(
             formula = formula1,
             family = family,
@@ -266,7 +264,6 @@ fit_abund_gam <-
 
 
       # fit final model with all data
-      set.seed(13)
       full_model <- gamlss::gamlss(
         formula = formula1,
         family = family,

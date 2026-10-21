@@ -32,7 +32,7 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' require(dplyr)
 #' require(terra)
 #'
@@ -198,8 +198,8 @@
 #'   method = "01",
 #'   inverse = TRUE,
 #'   t_terms = c(
-#'     a = terra::global(envar, min, na.rm = T),
-#'     b = terra::global(envar, max, na.rm = T)
+#'     a = terra::global(envar, min, na.rm = TRUE),
+#'     b = terra::global(envar, max, na.rm = TRUE)
 #'   )
 #' )
 #' envar_inverted
@@ -289,8 +289,8 @@ adm_transform <- function(data, variable, method, inverse = FALSE, t_terms = NUL
         x <- ((x - min_) / (max_ - min_))
       } else if (method == "zscore") {
         # zscore transformation
-        mean_ <- terra::global(x, mean, na.rm = T)[[1]]
-        sd_ <- terra::global(x, sd, na.rm = T)[[1]]
+        mean_ <- terra::global(x, mean, na.rm = TRUE)[[1]]
+        sd_ <- terra::global(x, sd, na.rm = TRUE)[[1]]
         x <- (x - mean_) / (sd_)
       } else if (method == "log") {
         # Log transformation

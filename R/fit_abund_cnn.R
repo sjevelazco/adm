@@ -46,7 +46,8 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
+#' if (torch::torch_is_installed()) {
 #' require(terra)
 #' require(dplyr)
 #'
@@ -66,6 +67,10 @@
 #' some_sp <-
 #'   balance_dataset(some_sp, response = "ind_ha", absence_ratio = 0.2)
 #'
+#' # A small subset keeps this example fast
+#' set.seed(1)
+#' some_sp <- some_sp[sort(sample(nrow(some_sp), 150)), ]
+#'
 #' envar <- system.file("external/envar.tif", package = "adm")
 #' envar <- terra::rast(envar)
 #'
@@ -73,18 +78,18 @@
 #' cnn_arch <- generate_cnn_architecture(
 #'   number_of_features = 3,
 #'   number_of_outputs = 1,
-#'   sample_size = c(11, 11),
+#'   sample_size = c(5, 5),
 #'   number_of_conv_layers = 2,
-#'   conv_layers_size = c(14, 28),
+#'   conv_layers_size = c(4, 8),
 #'   conv_layers_kernel = 3,
 #'   conv_layers_stride = 1,
 #'   conv_layers_padding = 0,
 #'   number_of_fc_layers = 1,
-#'   fc_layers_size = c(28),
+#'   fc_layers_size = c(8),
 #'   pooling = NULL,
-#'   batch_norm = TRUE,
+#'   batch_norm = FALSE,
 #'   dropout = 0,
-#'   verbose = T
+#'   verbose = FALSE
 #' )
 #'
 #' # Fit a CNN model
@@ -93,22 +98,23 @@
 #'   response = "ind_ha",
 #'   predictors = c("bio12", "elevation", "sand"),
 #'   predictors_f = NULL,
-#'   partition = ".part",
+#'   partition = ".part1",
 #'   x = "x",
 #'   y = "y",
 #'   rasters = envar,
-#'   sample_size = c(11, 11),
+#'   sample_size = c(5, 5),
 #'   learning_rate = 0.01,
-#'   n_epochs = 100,
+#'   n_epochs = 3,
 #'   batch_size = 32,
 #'   validation_patience = 2,
 #'   fitting_patience = 5,
 #'   custom_architecture = cnn_arch,
-#'   verbose = TRUE,
+#'   verbose = FALSE,
 #'   predict_part = TRUE
 #' )
 #'
 #' mcnn
+#' }
 #' }
 fit_abund_cnn <-
   function(data,
@@ -226,7 +232,6 @@ fit_abund_cnn <-
 
 
     # architecture setup
-    torch::torch_manual_seed(13)
 
     if (!is.null(custom_architecture)) {
       if ("arch" %in% names(custom_architecture)) {
@@ -268,7 +273,6 @@ fit_abund_cnn <-
       full_dataloader <- create_dataset(full_samples) %>%
         torch::dataloader(batch_size = batch_size, shuffle = TRUE)
 
-      set.seed(13)
       suppressMessages(
         full_model <- net %>%
           luz::setup(
@@ -410,7 +414,6 @@ fit_abund_cnn <-
             torch::dataloader(batch_size = batch_size, shuffle = TRUE)
 
           # fit model
-          set.seed(13)
           suppressMessages(
             model <- net %>%
               luz::setup(
@@ -483,7 +486,6 @@ fit_abund_cnn <-
       full_dataloader <- create_dataset(full_data_list) %>%
         torch::dataloader(batch_size = batch_size, shuffle = TRUE)
 
-      set.seed(13)
       suppressMessages(
         full_model <- net %>%
           luz::setup(

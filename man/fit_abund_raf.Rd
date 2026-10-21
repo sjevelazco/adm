@@ -56,7 +56,7 @@ A list object with:
 Fit and validate Random Forests models
 }
 \examples{
-\dontrun{
+\donttest{
 require(terra)
 require(dplyr)
 
@@ -82,7 +82,7 @@ mraf <- fit_abund_raf(
   response = "ind_ha",
   predictors = c("bio12", "elevation", "sand"),
   predictors_f = c("eco"),
-  partition = ".part",
+  partition = ".part1",
   mtry = 3,
   ntree = 500,
   predict_part = TRUE

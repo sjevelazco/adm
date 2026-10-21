@@ -36,7 +36,8 @@ SpatRaster. Croped raster
 Crop rasters for a single spatial point. Function used internally to construct Convolutional Neural Networks
 }
 \examples{
-\dontrun{
+\donttest{
+require(dplyr)
 require(terra)
 
 # Datasbase with species abundance and x and y coordinates

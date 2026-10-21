@@ -53,7 +53,7 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' require(terra)
 #' require(dplyr)
 #'
@@ -79,7 +79,7 @@
 #'   response = "ind_ha",
 #'   predictors = c("bio12", "elevation", "sand"),
 #'   predictors_f = NULL,
-#'   partition = ".part",
+#'   partition = ".part1",
 #'   nrounds = 200,
 #'   max_depth = 5,
 #'   learning_rate = 0.1,
@@ -156,7 +156,6 @@ fit_abund_xgb <-
 
     # Fit models
     if (is.null(partition) || !any(nzchar(partition, keepNA = FALSE))) {
-      set.seed(13)
 
       full_train <- list(
         data = stats::model.matrix(~ . - 1, data = data[, c(predictors, predictors_f)]),

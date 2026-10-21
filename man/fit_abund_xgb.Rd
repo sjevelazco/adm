@@ -90,7 +90,7 @@ A list object with:
 Fit and validate Extreme Gradient Boosting models
 }
 \examples{
-\dontrun{
+\donttest{
 require(terra)
 require(dplyr)
 
@@ -116,7 +116,7 @@ mxgb <- fit_abund_xgb(
   response = "ind_ha",
   predictors = c("bio12", "elevation", "sand"),
   predictors_f = NULL,
-  partition = ".part",
+  partition = ".part1",
   nrounds = 200,
   max_depth = 5,
   learning_rate = 0.1,

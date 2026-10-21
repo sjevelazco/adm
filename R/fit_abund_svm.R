@@ -31,7 +31,7 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' require(terra)
 #' require(dplyr)
 #'
@@ -57,7 +57,7 @@
 #'   response = "ind_ha",
 #'   predictors = c("bio12", "elevation", "sand"),
 #'   predictors_f = c("eco"),
-#'   partition = ".part",
+#'   partition = ".part1",
 #'   kernel = "rbfdot",
 #'   sigma = "automatic",
 #'   C = 1,
@@ -114,7 +114,6 @@ fit_abund_svm <-
 
     # Fit models
     if (is.null(partition) || !any(nzchar(partition, keepNA = FALSE))) {
-      set.seed(13)
       full_model <- kernlab::ksvm(
         formula1,
         data = data,
@@ -181,7 +180,6 @@ fit_abund_svm <-
           train_set <- data[data[, p_names[h]] != folds[j], ]
           test_set <- data[data[, p_names[h]] == folds[j], ]
 
-          set.seed(13)
           model <- kernlab::ksvm(
             formula1,
             data = train_set,
@@ -220,7 +218,6 @@ fit_abund_svm <-
       }
 
       # fit final model with all data
-      set.seed(13)
       full_model <- kernlab::ksvm(
         formula1,
         data = data,

@@ -42,7 +42,8 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
+#' if (torch::torch_is_installed()) {
 #' require(dplyr)
 #'
 #' # Database with species abundance and x and y coordinates
@@ -61,13 +62,18 @@
 #' some_sp <-
 #'   balance_dataset(some_sp, response = "ind_ha", absence_ratio = 0.2)
 #'
+#' # A small subset keeps this example fast
+#' set.seed(1)
+#' some_sp <- some_sp[sort(sample(nrow(some_sp), 120)), ]
+#'
 #' # Generate some architectures
 #' many_archs <- generate_arch_list(
 #'   type = "dnn",
 #'   number_of_features = 3,
 #'   number_of_outputs = 1,
 #'   n_layers = c(2, 3),
-#'   n_neurons = c(6, 12, 16)
+#'   n_neurons = c(6, 12),
+#'   batch_norm = FALSE
 #' ) %>% select_arch_list(
 #'   type = c("dnn"),
 #'   method = "percentile",
@@ -78,11 +84,11 @@
 #' # Create a grid
 #' # Obs.: the grid is tested with every architecture, thus it can get very large.
 #' dnn_grid <- expand.grid(
-#'   learning_rate = c(0.01, 0.005),
-#'   n_epochs = c(50, 100),
+#'   learning_rate = 0.001,
+#'   n_epochs = 3,
 #'   batch_size = c(32),
-#'   validation_patience = c(2, 4),
-#'   fitting_patience = c(2, 4),
+#'   validation_patience = 2,
+#'   fitting_patience = 2,
 #'   stringsAsFactors = FALSE
 #' )
 #'
@@ -91,12 +97,12 @@
 #'   data = some_sp,
 #'   response = "ind_ha",
 #'   predictors = c("bio12", "elevation", "sand"),
-#'   partition = ".part",
+#'   partition = ".part1",
 #'   predict_part = TRUE,
 #'   metrics = c("corr_pear", "mae"),
 #'   grid = dnn_grid,
 #'   architectures = many_archs,
-#'   n_cores = 3
+#'   n_cores = 1
 #' )
 #'
 #' tuned_dnn
@@ -106,23 +112,11 @@
 #'   number_of_features = 3,
 #'   number_of_outputs = 1,
 #'   number_of_hidden_layers = 3,
-#'   hidden_layers_size = c(8, 16, 8),
-#'   batch_norm = TRUE
+#'   hidden_layers_size = c(4, 8, 4),
+#'   batch_norm = FALSE
 #' )
 #'
-#' tuned_dnn_2 <- tune_abund_dnn(
-#'   data = some_sp,
-#'   response = "ind_ha",
-#'   predictors = c("bio12", "elevation", "sand"),
-#'   partition = ".part",
-#'   predict_part = TRUE,
-#'   metrics = c("corr_pear", "mae"),
-#'   grid = dnn_grid,
-#'   architectures = one_arch,
-#'   n_cores = 3
-#' )
-#'
-#' tuned_dnn_2
+#' }
 #' }
 tune_abund_dnn <-
   function(data,
@@ -141,7 +135,6 @@ tune_abund_dnn <-
       stop("Metrics is needed to be defined in 'metric' argument")
     }
 
-    torch::torch_manual_seed(13)
 
     # architectures
     if (is.list(architectures)) {
@@ -262,7 +255,7 @@ tune_abund_dnn <-
           error = function(e) {}
         )
       },
-      add = T
+      add = TRUE
     )
     hyper_combinations <- foreach::foreach(i = 1:nrow(grid), .export = c("fit_abund_dnn", "adm_eval", "adapt_df"), .packages = c("dplyr", "torch")) %dopar% {
       model <-

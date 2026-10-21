@@ -68,7 +68,7 @@ A list object with:
 Fit and validate Generalized Additive Models
 }
 \examples{
-\dontrun{
+\donttest{
 require(terra)
 require(dplyr)
 require(gamlss)
@@ -99,7 +99,7 @@ mgam <- fit_abund_gam(
   predictors = c("elevation", "sand", "bio3", "bio12"),
   sigma_formula = ~ elevation + bio3 + bio12,
   predictors_f = NULL,
-  partition = ".part",
+  partition = ".part1",
   distribution = gamlss.dist::ZAGA()
 )
 

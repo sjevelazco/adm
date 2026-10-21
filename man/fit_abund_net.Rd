@@ -55,7 +55,7 @@ A list object with:
 Fit and validate Artificial Neural Network models
 }
 \examples{
-\dontrun{
+\donttest{
 require(dplyr)
 
 # Database with species abundance and x and y coordinates
@@ -80,7 +80,7 @@ mnet <- fit_abund_net(
   response = "ind_ha",
   predictors = c("bio12", "elevation", "sand"),
   predictors_f = c("eco"),
-  partition = ".part",
+  partition = ".part1",
   size = 32,
   decay = 0.1,
   predict_part = TRUE

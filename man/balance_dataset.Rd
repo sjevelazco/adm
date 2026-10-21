@@ -29,7 +29,7 @@ It randomly removes excess of absence in the database to achieve the specified r
 This function interprets as absence all those data with abundance equal to zero.
 }
 \examples{
-\dontrun{
+\donttest{
 require(dplyr)
 
 data("sppabund")
