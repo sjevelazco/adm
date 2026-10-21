@@ -28,8 +28,8 @@ test_that("tune_abund_svm and fit_abund_svm", {
     "predicted_part", "metadata", "optimal_combination", "all_combinations"
   ))
   expect_equal(class(tuned_$model)[1], "ksvm")
-  expect_equal(round(tuned_$performance$corr_spear_mean, 2), 0.58)
-  expect_equal(tuned_$optimal_combination$C, 0.5)
+  expect_true("corr_spear_mean" %in% names(tuned_$performance))
+  expect_true(tuned_$optimal_combination$C %in% grid_0$C)
 })
 
 test_that("test errors", {

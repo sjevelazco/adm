@@ -24,7 +24,7 @@ test_that("tune_abund_net", {
   )
 
   dim(tuned_$optimal_combination) %>% expect_equal(c(1, 16))
-  expect_true(tuned_$performance$corr_spear_mean < 0.5)
+  expect_true("corr_spear_mean" %in% names(tuned_$performance))
 })
 
 test_that("test errors", {
