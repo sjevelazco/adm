@@ -55,12 +55,14 @@ The function returns integer which is the output resolution.
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
+# \donttest{
 
 # Calculating output resolution for a convolution layer
 res_calculate(type = "layer", in_res = 12, kernel_size = 2, stride = 2, padding = 0)
+#> [1] 6
 
 # Calculating output resolution for a pooling layer
 res_calculate(type = "pooling", in_res = 12, kernel_size = 2)
-} # }
+#> [1] 6
+# }
 ```

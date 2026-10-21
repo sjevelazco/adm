@@ -66,7 +66,8 @@ A list containing:
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
+# \donttest{
+require(dplyr)
 # Generate a Deep Neural Network with:
 dnn_arch <- generate_dnn_architecture(
   number_of_features = 8, # eight input variables
@@ -78,7 +79,64 @@ dnn_arch <- generate_dnn_architecture(
 )
 
 dnn_arch$net() # a torch net
+#> An `nn_module` containing 1,593 parameters.
+#> 
+#> ── Modules ─────────────────────────────────────────────────────────────────────
+#> • linear1: <nn_linear> #72 parameters
+#> • linear2: <nn_linear> #144 parameters
+#> • linear3: <nn_linear> #544 parameters
+#> • linear4: <nn_linear> #528 parameters
+#> • linear5: <nn_linear> #136 parameters
+#> • output: <nn_linear> #9 parameters
+#> • bn1: <nn_batch_norm1d> #16 parameters
+#> • bn2: <nn_batch_norm1d> #32 parameters
+#> • bn3: <nn_batch_norm1d> #64 parameters
+#> • bn4: <nn_batch_norm1d> #32 parameters
+#> • bn5: <nn_batch_norm1d> #16 parameters
 dnn_arch$arch %>% cat() # the torch code to create it
+#> net <- torch::nn_module(
+#>   'neural_net',
+#>   initialize = function() {
+#>     self$linear1<-torch::nn_linear(8,8)
+#>     self$linear2<-torch::nn_linear(8,16)
+#>     self$linear3<-torch::nn_linear(16,32)
+#>     self$linear4<-torch::nn_linear(32,16)
+#>     self$linear5<-torch::nn_linear(16,8)
+#>     self$output<-torch::nn_linear(8,1)
+#>     self$bn1<-torch::nn_batch_norm1d(num_features=8)
+#>     self$bn2<-torch::nn_batch_norm1d(num_features=16)
+#>     self$bn3<-torch::nn_batch_norm1d(num_features=32)
+#>     self$bn4<-torch::nn_batch_norm1d(num_features=16)
+#>     self$bn5<-torch::nn_batch_norm1d(num_features=8)
+#>   },
+#>   forward = function(x) {
+#>     x %>%
+#>       self$linear1() %>%
+#>       torch::nnf_relu() %>%
+#>       self$bn1() %>%
+#>       self$linear2() %>%
+#>       torch::nnf_relu() %>%
+#>       self$bn2() %>%
+#>       self$linear3() %>%
+#>       torch::nnf_relu() %>%
+#>       self$bn3() %>%
+#>       self$linear4() %>%
+#>       torch::nnf_relu() %>%
+#>       self$bn4() %>%
+#>       self$linear5() %>%
+#>       torch::nnf_relu() %>%
+#>       self$bn5() %>%
+#>       self$output()
+#>   }
+#> )
 dnn_arch$arch_dict # and a quick description of its structure
-} # }
+#> $`5_layer_net`
+#>         [,1]
+#> layer_1    8
+#> layer_2   16
+#> layer_3   32
+#> layer_4   16
+#> layer_5    8
+#> 
+# }
 ```

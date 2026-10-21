@@ -99,7 +99,8 @@
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
+<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="co"># Generate a Deep Neural Network with:</span></span></span>
 <span class="r-in"><span><span class="va">dnn_arch</span> <span class="op">&lt;-</span> <span class="fu">generate_dnn_architecture</span><span class="op">(</span></span></span>
 <span class="r-in"><span>  number_of_features <span class="op">=</span> <span class="fl">8</span>, <span class="co"># eight input variables</span></span></span>
@@ -111,9 +112,66 @@
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">dnn_arch</span><span class="op">$</span><span class="fu">net</span><span class="op">(</span><span class="op">)</span> <span class="co"># a torch net</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> An `nn_module` containing 1,593 parameters.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ── Modules ─────────────────────────────────────────────────────────────────────</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> • linear1: &lt;nn_linear&gt; #72 parameters</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> • linear2: &lt;nn_linear&gt; #144 parameters</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> • linear3: &lt;nn_linear&gt; #544 parameters</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> • linear4: &lt;nn_linear&gt; #528 parameters</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> • linear5: &lt;nn_linear&gt; #136 parameters</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> • output: &lt;nn_linear&gt; #9 parameters</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> • bn1: &lt;nn_batch_norm1d&gt; #16 parameters</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> • bn2: &lt;nn_batch_norm1d&gt; #32 parameters</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> • bn3: &lt;nn_batch_norm1d&gt; #64 parameters</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> • bn4: &lt;nn_batch_norm1d&gt; #32 parameters</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> • bn5: &lt;nn_batch_norm1d&gt; #16 parameters</span>
 <span class="r-in"><span><span class="va">dnn_arch</span><span class="op">$</span><span class="va">arch</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="op">)</span> <span class="co"># the torch code to create it</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> net &lt;- torch::nn_module(</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   'neural_net',</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   initialize = function() {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     self$linear1&lt;-torch::nn_linear(8,8)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     self$linear2&lt;-torch::nn_linear(8,16)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     self$linear3&lt;-torch::nn_linear(16,32)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     self$linear4&lt;-torch::nn_linear(32,16)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     self$linear5&lt;-torch::nn_linear(16,8)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     self$output&lt;-torch::nn_linear(8,1)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     self$bn1&lt;-torch::nn_batch_norm1d(num_features=8)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     self$bn2&lt;-torch::nn_batch_norm1d(num_features=16)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     self$bn3&lt;-torch::nn_batch_norm1d(num_features=32)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     self$bn4&lt;-torch::nn_batch_norm1d(num_features=16)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     self$bn5&lt;-torch::nn_batch_norm1d(num_features=8)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   },</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   forward = function(x) {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     x %&gt;%</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       self$linear1() %&gt;%</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       torch::nnf_relu() %&gt;%</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       self$bn1() %&gt;%</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       self$linear2() %&gt;%</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       torch::nnf_relu() %&gt;%</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       self$bn2() %&gt;%</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       self$linear3() %&gt;%</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       torch::nnf_relu() %&gt;%</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       self$bn3() %&gt;%</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       self$linear4() %&gt;%</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       torch::nnf_relu() %&gt;%</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       self$bn4() %&gt;%</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       self$linear5() %&gt;%</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       torch::nnf_relu() %&gt;%</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       self$bn5() %&gt;%</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       self$output()</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> )</span>
 <span class="r-in"><span><span class="va">dnn_arch</span><span class="op">$</span><span class="va">arch_dict</span> <span class="co"># and a quick description of its structure</span></span></span>
-<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $`5_layer_net`</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         [,1]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> layer_1    8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> layer_2   16</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> layer_3   32</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> layer_4   16</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> layer_5    8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

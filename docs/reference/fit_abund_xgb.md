@@ -147,7 +147,7 @@ A list object with:
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
+# \donttest{
 require(terra)
 require(dplyr)
 
@@ -161,7 +161,9 @@ some_sp <- sppabund %>%
 
 # Explore reponse variables
 some_sp$ind_ha %>% range()
+#> [1]   0.0000 285.2941
 some_sp$ind_ha %>% hist()
+
 
 # Here we balance number of absences
 some_sp <-
@@ -173,7 +175,7 @@ mxgb <- fit_abund_xgb(
   response = "ind_ha",
   predictors = c("bio12", "elevation", "sand"),
   predictors_f = NULL,
-  partition = ".part",
+  partition = ".part1",
   nrounds = 200,
   max_depth = 5,
   learning_rate = 0.1,
@@ -184,7 +186,109 @@ mxgb <- fit_abund_xgb(
   objective = "reg:squarederror",
   predict_part = TRUE
 )
+#> Replica number: 1/1
+#> -- Partition number 1/3
+#> -- Partition number 2/3
+#> -- Partition number 3/3
 
 mxgb
-} # }
+#> $model
+#> ##### xgb.Booster
+#> call:
+#>   xgboost::xgb.train(params = list(objective = objective, max_depth = max_depth, 
+#>     learning_rate = learning_rate, min_child_weight = min_child_weight, 
+#>     subsample = subsample, colsample_bytree = colsample_bytree, 
+#>     min_split_loss = min_split_loss, seed = 13), data = dfull, 
+#>     nrounds = ifelse(early_stopping$fm_strategy[[1]] == "hold_out", 
+#>         yes = nrounds, no = early_stop_interpreter(early_stopping, 
+#>             train_observer, nrounds)), evals = fm_evals, verbose = 0, 
+#>     early_stopping_rounds = fm_early_stopping)
+#> # of features: 3 
+#> # of rounds:  16 
+#> 
+#> $predictors
+#> # A tibble: 1 × 5
+#>   model response c1    c2        c3   
+#>   <chr> <chr>    <chr> <chr>     <chr>
+#> 1 xgb   ind_ha   bio12 elevation sand 
+#> 
+#> $performance
+#> # A tibble: 1 × 13
+#>   model mae_mean mae_sd corr_spear_mean corr_spear_sd corr_pear_mean
+#>   <chr>    <dbl>  <dbl>           <dbl>         <dbl>          <dbl>
+#> 1 xgb       22.4   1.91           0.422        0.0338          0.324
+#> # ℹ 7 more variables: corr_pear_sd <dbl>, inter_mean <dbl>, inter_sd <dbl>,
+#> #   slope_mean <dbl>, slope_sd <dbl>, pdisp_mean <dbl>, pdisp_sd <dbl>
+#> 
+#> $performance_part
+#> # A tibble: 3 × 9
+#>   replica partition model   mae corr_spear corr_pear inter slope pdisp
+#>   <chr>   <chr>     <chr> <dbl>      <dbl>     <dbl> <dbl> <dbl> <dbl>
+#> 1 1       1         xgb    21.8      0.446     0.400  1.03 0.929 0.431
+#> 2 1       2         xgb    20.9      0.383     0.243  5.83 0.758 0.320
+#> 3 1       3         xgb    24.6      0.436     0.330  4.84 0.969 0.340
+#> 
+#> $predicted_part
+#> # A tibble: 562 × 4
+#>    replica partition observed predicted
+#>    <chr>   <chr>        <dbl>     <dbl>
+#>  1 1       1             13.3      18.4
+#>  2 1       1             20        15.1
+#>  3 1       1             10        14.4
+#>  4 1       1             23.3      15.7
+#>  5 1       1             10        20.6
+#>  6 1       1             10        26.1
+#>  7 1       1             20        18.1
+#>  8 1       1             10        11.6
+#>  9 1       1             15        15.1
+#> 10 1       1             10        14.3
+#> # ℹ 552 more rows
+#> 
+#> $metadata
+#> $metadata$plataform
+#> [1] "aarch64-apple-darwin23"
+#> 
+#> $metadata$R_version
+#> [1] "R version 4.6.1 (2026-06-24)"
+#> 
+#> $metadata$run_date
+#> [1] "2026-10-21 13:39:17 PDT"
+#> 
+#> $metadata$evals
+#> NULL
+#> 
+#> $metadata$early_stopping_rounds
+#> NULL
+#> 
+#> $metadata$boosted_rounds
+#> [1] 16
+#> 
+#> $metadata$hyperparameters
+#> $metadata$hyperparameters$objective
+#> [1] "reg:squarederror"
+#> 
+#> $metadata$hyperparameters$max_depth
+#> [1] 5
+#> 
+#> $metadata$hyperparameters$learning_rate
+#> [1] 0.1
+#> 
+#> $metadata$hyperparameters$min_child_weight
+#> [1] 2
+#> 
+#> $metadata$hyperparameters$subsample
+#> [1] 0.3
+#> 
+#> $metadata$hyperparameters$colsample_bytree
+#> [1] 0.7
+#> 
+#> $metadata$hyperparameters$min_split_loss
+#> [1] 1
+#> 
+#> 
+#> $metadata$source_function
+#> [1] "fit_abund_xgb"
+#> 
+#> 
+# }
 ```

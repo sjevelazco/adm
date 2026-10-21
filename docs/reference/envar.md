@@ -46,13 +46,21 @@ A raster in tif format with the following variables.
 
   Terrestrial ecoregion
 
+## Value
+
+A `SpatRaster` (see
+[`rast`](https://rspatial.github.io/terra/reference/rast.html)) with
+eight layers (bio1, bio12, bio15, bio3, cfvo, elevation, sand, and eco)
+read from the raster file shipped with the package
+(`external/envar.tif`).
+
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
+# \donttest{
 require(terra)
-envar <- system.file("external/envar.tif", package = "adm")
-envar <- terra::rast(envar)
+envar <- adm::envar()
 plot(envar)
-} # }
+
+# }
 ```

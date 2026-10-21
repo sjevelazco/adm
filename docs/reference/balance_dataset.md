@@ -44,7 +44,7 @@ the response column equal to absence_ratio
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
+# \donttest{
 require(dplyr)
 
 data("sppabund")
@@ -53,6 +53,9 @@ some_sp <- sppabund %>%
   dplyr::select(species, ind_ha, x, y)
 
 table(some_sp$ind_ha > 0)
+#> 
+#> FALSE  TRUE 
+#>   453   448 
 # Note that the dataset is almost balanced
 # However, as an example, let's assume that we want to reduce
 # the number of absences half of the number of presences
@@ -64,6 +67,12 @@ some_sp_2 <- balance_dataset(
 )
 
 table(some_sp$ind_ha > 0)
+#> 
+#> FALSE  TRUE 
+#>   453   448 
 table(some_sp_2$ind_ha > 0)
-} # }
+#> 
+#> FALSE  TRUE 
+#>   224   448 
+# }
 ```

@@ -136,7 +136,7 @@ A ggplot object
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
+# \donttest{
 require(terra)
 require(dplyr)
 
@@ -153,12 +153,18 @@ mglm <- fit_abund_glm(
   response = "ind_ha",
   predictors = c("bio12", "elevation", "sand"),
   predictors_f = c("eco"),
-  partition = ".part",
+  partition = ".part1",
   distribution = "ZAIG",
   poly = 3,
   inter_order = 0,
   predict_part = TRUE
 )
+#> Formula used for model fitting:
+#> ind_ha ~ bio12 + elevation + sand + eco + I(bio12^2) + I(elevation^2) + I(sand^2) + I(bio12^3) + I(elevation^3) + I(sand^3)
+#> Replica number: 1/1
+#> -- Partition number 1/3
+#> -- Partition number 2/3
+#> -- Partition number 3/3
 
 # Bivariate Dependence Plots:
 # In different resolutions
@@ -169,12 +175,14 @@ p_abund_bpdp(
   resolution = 50
 )
 
+
 p_abund_bpdp(
   model = mglm,
   predictors = c("bio12", "sand"),
   training_data = some_sp,
   resolution = 25
 )
+
 
 # With projection and training boundaries
 p_abund_bpdp(
@@ -185,6 +193,7 @@ p_abund_bpdp(
   training_boundaries = "rectangle"
 )
 
+
 p_abund_bpdp(
   model = mglm,
   predictors = c("bio12", "elevation", "sand"),
@@ -192,6 +201,7 @@ p_abund_bpdp(
   projection_data = envar,
   training_boundaries = "convexh"
 )
+
 
 # Customize colors and theme
 p_abund_bpdp(
@@ -208,5 +218,6 @@ p_abund_bpdp(
   color_training_boundaries = "purple",
   theme = ggplot2::theme_dark()
 )
-} # }
+
+# }
 ```

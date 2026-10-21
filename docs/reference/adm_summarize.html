@@ -61,7 +61,7 @@
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="va"><a href="https://rspatial.org/" class="external-link">terra</a></span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
@@ -72,8 +72,22 @@
 <span class="r-in"><span><span class="co"># Species abundance data, coordinates, and partition</span></span></span>
 <span class="r-in"><span><span class="va">some_sp</span> <span class="op">&lt;-</span> <span class="va">sppabund</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span></span>
 <span class="r-in"><span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">species</span> <span class="op">==</span> <span class="st">"Species one"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span></span>
-<span class="r-in"><span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">species</span>, <span class="va">ind_ha</span>, <span class="va">x</span>, <span class="va">y</span>, <span class="va">.part</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">species</span>, <span class="va">ind_ha</span>, <span class="va">x</span>, <span class="va">y</span>, <span class="va">.part1</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">some_sp</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 938 × 5</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    species     ind_ha     x     y .part1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> Species one   10   -<span style="color: #BB0000;">61.2</span> -<span style="color: #BB0000;">25.0</span>      2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> Species one   10   -<span style="color: #BB0000;">60.7</span> -<span style="color: #BB0000;">25.0</span>      3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> Species one   10   -<span style="color: #BB0000;">60.2</span> -<span style="color: #BB0000;">25.0</span>      2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> Species one   13.3 -<span style="color: #BB0000;">60.7</span> -<span style="color: #BB0000;">25.4</span>      1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> Species one   10   -<span style="color: #BB0000;">60.2</span> -<span style="color: #BB0000;">25.9</span>      3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> Species one   10   -<span style="color: #BB0000;">54.0</span> -<span style="color: #BB0000;">26.0</span>      3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> Species one   20   -<span style="color: #BB0000;">53.9</span> -<span style="color: #BB0000;">26.0</span>      1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> Species one   10   -<span style="color: #BB0000;">53.9</span> -<span style="color: #BB0000;">26.0</span>      1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> Species one   10   -<span style="color: #BB0000;">53.9</span> -<span style="color: #BB0000;">26.1</span>      3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> Species one   20   -<span style="color: #BB0000;">53.9</span> -<span style="color: #BB0000;">26.1</span>      2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 928 more rows</span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Extract data</span></span></span>
 <span class="r-in"><span><span class="va">some_sp</span> <span class="op">&lt;-</span></span></span>
@@ -89,30 +103,54 @@
 <span class="r-in"><span>  data <span class="op">=</span> <span class="va">some_sp</span>,</span></span>
 <span class="r-in"><span>  response <span class="op">=</span> <span class="st">"ind_ha"</span>,</span></span>
 <span class="r-in"><span>  predictors <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"elevation"</span>, <span class="st">"sand"</span>, <span class="st">"bio3"</span>, <span class="st">"bio12"</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  partition <span class="op">=</span> <span class="st">".part"</span>,</span></span>
+<span class="r-in"><span>  partition <span class="op">=</span> <span class="st">".part1"</span>,</span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Formula used for model fitting:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ind_ha ~ elevation + sand + bio3 + bio12</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Replica number: 1/1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> -- Partition number 1/3</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> -- Partition number 2/3</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> -- Partition number 3/3</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Fit SVM</span></span></span>
 <span class="r-in"><span><span class="va">m_svm</span> <span class="op">&lt;-</span> <span class="fu"><a href="fit_abund_svm.html">fit_abund_svm</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  data <span class="op">=</span> <span class="va">some_sp</span>,</span></span>
 <span class="r-in"><span>  response <span class="op">=</span> <span class="st">"ind_ha"</span>,</span></span>
 <span class="r-in"><span>  predictors <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"elevation"</span>, <span class="st">"sand"</span>, <span class="st">"bio3"</span>, <span class="st">"bio12"</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  partition <span class="op">=</span> <span class="st">".part"</span></span></span>
+<span class="r-in"><span>  partition <span class="op">=</span> <span class="st">".part1"</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Formula used for model fitting:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ind_ha ~ elevation + sand + bio3 + bio12</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Replica number: 1/1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> -- Partition number 1/3</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> -- Partition number 2/3</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> -- Partition number 3/3</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># XGB</span></span></span>
 <span class="r-in"><span><span class="va">m_xbg</span> <span class="op">&lt;-</span> <span class="fu"><a href="fit_abund_xgb.html">fit_abund_xgb</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  data <span class="op">=</span> <span class="va">some_sp</span>,</span></span>
 <span class="r-in"><span>  response <span class="op">=</span> <span class="st">"ind_ha"</span>,</span></span>
 <span class="r-in"><span>  predictors <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"elevation"</span>, <span class="st">"sand"</span>, <span class="st">"bio3"</span>, <span class="st">"bio12"</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  partition <span class="op">=</span> <span class="st">".part"</span></span></span>
+<span class="r-in"><span>  partition <span class="op">=</span> <span class="st">".part1"</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Replica number: 1/1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> -- Partition number 1/3</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> -- Partition number 2/3</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> -- Partition number 3/3</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">perf</span> <span class="op">&lt;-</span> <span class="fu">adm_summarize</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">m_svm</span>, <span class="va">m_raf</span>, <span class="va">m_xbg</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">perf</span></span></span>
-<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 3 × 14</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   model_ID model mae_mean mae_sd corr_spear_mean corr_spear_sd corr_pear_mean</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>           <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>        1 svm       14.4  0.793           0.616        0.077<span style="text-decoration: underline;">4</span>          0.450</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span>        2 raf       15.9  0.562           0.594        0.063<span style="text-decoration: underline;">2</span>          0.417</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span>        3 xgb       16.7  0.177           0.581        0.082<span style="text-decoration: underline;">9</span>          0.397</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 7 more variables: corr_pear_sd &lt;dbl&gt;, inter_mean &lt;dbl&gt;, inter_sd &lt;dbl&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   slope_mean &lt;dbl&gt;, slope_sd &lt;dbl&gt;, pdisp_mean &lt;dbl&gt;, pdisp_sd &lt;dbl&gt;</span></span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

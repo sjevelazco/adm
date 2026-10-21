@@ -104,7 +104,8 @@ A list containing:
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
+# \donttest{
+require(dplyr)
 # Generate a Conclutional Neural Network with:
 cnn_arch <- generate_cnn_architecture(
   number_of_features = 7, # seven input variables
@@ -123,7 +124,49 @@ cnn_arch <- generate_cnn_architecture(
 )
 
 cnn_arch$net() # a torch net
+#> An `nn_module` containing 99,513 parameters.
+#> 
+#> ── Modules ─────────────────────────────────────────────────────────────────────
+#> • conv1: <nn_conv2d> #896 parameters
+#> • conv2: <nn_conv2d> #3,556 parameters
+#> • linear1: <nn_linear> #94,892 parameters
+#> • output: <nn_linear> #29 parameters
+#> • bn_conv1: <nn_batch_norm2d> #28 parameters
+#> • bn_conv2: <nn_batch_norm2d> #56 parameters
+#> • bn_linear1: <nn_batch_norm1d> #56 parameters
 cnn_arch$arch %>% cat() # the torch code to create it
+#> net <- torch::nn_module(
+#>   'conv_neural_net',
+#>   initialize = function() {
+#>     self$conv1<-torch::nn_conv2d(7,14,3,1,1)
+#>     self$conv2<-torch::nn_conv2d(14,28,3,1,1)
+#>     self$linear1<-torch::nn_linear(3388,28)
+#>     self$output<-torch::nn_linear(28,1)
+#>     self$bn_conv1<-torch::nn_batch_norm2d(num_features=14)
+#>     self$bn_conv2<-torch::nn_batch_norm2d(num_features=28)
+#>     self$bn_linear1<-torch::nn_batch_norm1d(num_features=28)
+#>   },
+#>   forward = function(x) {
+#>     x %>%
+#>       self$conv1() %>%
+#>       torch::nnf_relu() %>%
+#>       self$bn_conv1() %>%
+#>       self$conv2() %>%
+#>       torch::nnf_relu() %>%
+#>       self$bn_conv2() %>%
+#>       torch::torch_flatten(start_dim = 2) %>%
+#>       self$linear1() %>%
+#>       torch::nnf_relu() %>%
+#>       self$bn_linear1() %>%
+#>       self$output()
+#>   }
+#> )
 cnn_arch$arch_dict # and a quick description of its structure
-} # }
+#> $`conv2-fc1-net`
+#>        [,1]
+#> conv_1   14
+#> conv_2   28
+#> fc_1     28
+#> 
+# }
 ```

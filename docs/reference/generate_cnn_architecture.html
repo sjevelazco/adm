@@ -135,7 +135,8 @@
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
+<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="co"># Generate a Conclutional Neural Network with:</span></span></span>
 <span class="r-in"><span><span class="va">cnn_arch</span> <span class="op">&lt;-</span> <span class="fu">generate_cnn_architecture</span><span class="op">(</span></span></span>
 <span class="r-in"><span>  number_of_features <span class="op">=</span> <span class="fl">7</span>, <span class="co"># seven input variables</span></span></span>
@@ -154,9 +155,51 @@
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">cnn_arch</span><span class="op">$</span><span class="fu">net</span><span class="op">(</span><span class="op">)</span> <span class="co"># a torch net</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> An `nn_module` containing 99,513 parameters.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ── Modules ─────────────────────────────────────────────────────────────────────</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> • conv1: &lt;nn_conv2d&gt; #896 parameters</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> • conv2: &lt;nn_conv2d&gt; #3,556 parameters</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> • linear1: &lt;nn_linear&gt; #94,892 parameters</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> • output: &lt;nn_linear&gt; #29 parameters</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> • bn_conv1: &lt;nn_batch_norm2d&gt; #28 parameters</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> • bn_conv2: &lt;nn_batch_norm2d&gt; #56 parameters</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> • bn_linear1: &lt;nn_batch_norm1d&gt; #56 parameters</span>
 <span class="r-in"><span><span class="va">cnn_arch</span><span class="op">$</span><span class="va">arch</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="op">)</span> <span class="co"># the torch code to create it</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> net &lt;- torch::nn_module(</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   'conv_neural_net',</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   initialize = function() {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     self$conv1&lt;-torch::nn_conv2d(7,14,3,1,1)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     self$conv2&lt;-torch::nn_conv2d(14,28,3,1,1)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     self$linear1&lt;-torch::nn_linear(3388,28)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     self$output&lt;-torch::nn_linear(28,1)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     self$bn_conv1&lt;-torch::nn_batch_norm2d(num_features=14)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     self$bn_conv2&lt;-torch::nn_batch_norm2d(num_features=28)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     self$bn_linear1&lt;-torch::nn_batch_norm1d(num_features=28)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   },</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   forward = function(x) {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     x %&gt;%</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       self$conv1() %&gt;%</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       torch::nnf_relu() %&gt;%</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       self$bn_conv1() %&gt;%</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       self$conv2() %&gt;%</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       torch::nnf_relu() %&gt;%</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       self$bn_conv2() %&gt;%</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       torch::torch_flatten(start_dim = 2) %&gt;%</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       self$linear1() %&gt;%</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       torch::nnf_relu() %&gt;%</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       self$bn_linear1() %&gt;%</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       self$output()</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> )</span>
 <span class="r-in"><span><span class="va">cnn_arch</span><span class="op">$</span><span class="va">arch_dict</span> <span class="co"># and a quick description of its structure</span></span></span>
-<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $`conv2-fc1-net`</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        [,1]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> conv_1   14</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> conv_2   28</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> fc_1     28</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

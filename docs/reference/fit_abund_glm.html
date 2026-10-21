@@ -143,7 +143,7 @@ See <a href="https://rdrr.io/pkg/gamlss/man/gamlss.control.html" class="external
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="va"><a href="https://rspatial.org/" class="external-link">terra</a></span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="va"><a href="https://www.gamlss.com/" class="external-link">gamlss</a></span><span class="op">)</span></span></span>
@@ -158,14 +158,27 @@ See <a href="https://rdrr.io/pkg/gamlss/man/gamlss.control.html" class="external
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Explore reponse variables</span></span></span>
 <span class="r-in"><span><span class="va">some_sp</span><span class="op">$</span><span class="va">ind_ha</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/range.html" class="external-link">range</a></span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">some_sp</span><span class="op">$</span><span class="va">ind_ha</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rspatial.github.io/terra/reference/hist.html" class="external-link">hist</a></span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1]   0.0000 285.2941</span>
+<span class="r-in"><span><span class="va">some_sp</span><span class="op">$</span><span class="va">ind_ha</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/graphics/hist.html" class="external-link">hist</a></span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="fit_abund_glm-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Here we balance number of absences</span></span></span>
 <span class="r-in"><span><span class="va">some_sp</span> <span class="op">&lt;-</span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="balance_dataset.html">balance_dataset</a></span><span class="op">(</span><span class="va">some_sp</span>, response <span class="op">=</span> <span class="st">"ind_ha"</span>, absence_ratio <span class="op">=</span> <span class="fl">0.2</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Explore different family distributions</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="family_selector.html">family_selector</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">some_sp</span>, response <span class="op">=</span> <span class="st">"ind_ha"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rspatial.github.io/terra/reference/headtail.html" class="external-link">tail</a></span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="family_selector.html">family_selector</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">some_sp</span>, response <span class="op">=</span> <span class="st">"ind_ha"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">tail</a></span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Response variable is continuous and need to be transformed to integer in order to test for discrete families.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Selected 29 suitable families for the data.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 6 × 4</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   family_name         family_call range   discrete</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>               <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> Skew t type 3       ST3         (-∞, ∞)        0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> Skew t type 4       ST4         (-∞, ∞)        0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> Skew t type 5       ST5         (-∞, ∞)        0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> Zero Adjusted Gamma ZAGA        [0,∞)          0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span> Zero adjusted IG    ZAIG        [0,∞)          0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span> t-distribution      TF          (-∞, ∞)        0</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Fit a GLM model</span></span></span>
 <span class="r-in"><span><span class="va">glm_1</span> <span class="op">&lt;-</span> <span class="fu">fit_abund_glm</span><span class="op">(</span></span></span>
@@ -173,14 +186,132 @@ See <a href="https://rdrr.io/pkg/gamlss/man/gamlss.control.html" class="external
 <span class="r-in"><span>  response <span class="op">=</span> <span class="st">"ind_ha"</span>,</span></span>
 <span class="r-in"><span>  predictors <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"bio12"</span>, <span class="st">"elevation"</span>, <span class="st">"sand"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>  predictors_f <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"eco"</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  partition <span class="op">=</span> <span class="st">".part"</span>,</span></span>
+<span class="r-in"><span>  partition <span class="op">=</span> <span class="st">".part1"</span>,</span></span>
 <span class="r-in"><span>  distribution <span class="op">=</span> <span class="st">"ZAGA"</span>,</span></span>
 <span class="r-in"><span>  poly <span class="op">=</span> <span class="fl">0</span>,</span></span>
 <span class="r-in"><span>  inter_order <span class="op">=</span> <span class="fl">0</span>,</span></span>
 <span class="r-in"><span>  predict_part <span class="op">=</span> <span class="cn">TRUE</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Formula used for model fitting:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ind_ha ~ bio12 + elevation + sand + eco</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Replica number: 1/1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> -- Partition number 1/3</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> -- Partition number 2/3</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> -- Partition number 3/3</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">glm_1</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $model</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Family:  c("ZAGA", "Zero Adjusted GA") </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Fitting method: RS() </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Call:  gamlss::gamlss(formula = formula1, sigma.formula = sigma_formula,  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     nu.formula = nu_formula, tau.formula = tau_formula,  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     family = family, data = data, control = control_gamlss,      trace = FALSE) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Mu Coefficients:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept)        bio12    elevation         sand        ecoAD       ecoAMF  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   5.7846381   -0.0005815   -0.0007766   -0.0004089           NA   -1.3860558  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     ecoAPAF      ecoBMDF        ecoBY         ecoC      ecoCADP       ecoCAP  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  -1.3524058           NA           NA   -1.2336582           NA    1.4524114  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      ecoCDF        ecoCM        ecoDC         ecoE        ecoHC        ecoHM  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          NA           NA   -1.4433830   -2.0835995   -0.9277679           NA  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       ecoHP        ecoLM         ecoP       ecoPFS        ecoPS      ecoSABM  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          NA           NA           NA   -1.8347252           NA           NA  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      ecoSAS       ecoSAY      ecoSCMS     ecoSDMCF        ecoUS  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          NA   -0.6534990           NA           NA           NA  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Sigma Coefficients:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept)  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      -0.212  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Nu Coefficients:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept)  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      -1.605  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Degrees of Freedom for the fit: 15 Residual Deg. of Freedom   547 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Global Deviance:     4586.79 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             AIC:     4616.79 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             SBC:     4681.76 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $predictors</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 1 × 6</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   model response c1    c2        c3    f    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> glm   ind_ha   bio12 elevation sand  eco  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $performance</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 1 × 13</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   model mae_mean mae_sd corr_spear_mean corr_spear_sd corr_pear_mean</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>           <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> glm       25.6   1.43           0.295         0.116          0.282</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 7 more variables: corr_pear_sd &lt;dbl&gt;, inter_mean &lt;dbl&gt;, inter_sd &lt;dbl&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   slope_mean &lt;dbl&gt;, slope_sd &lt;dbl&gt;, pdisp_mean &lt;dbl&gt;, pdisp_sd &lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $performance_part</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 3 × 9</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   replica partition model   mae corr_spear corr_pear inter slope pdisp</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> 1       1         glm    26.8      0.224     0.202 13.7  0.364 0.554</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> 1       2         glm    24.0      0.232     0.242  7.94 0.543 0.446</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> 1       3         glm    26.0      0.429     0.403 -<span style="color: #BB0000;">8.58</span> 1.28  0.316</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $predicted_part</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 562 × 4</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    replica partition observed predicted</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> 1       1             13.3      36.9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> 1       1             20        14.7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> 1       1             10        11.6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> 1       1             23.3      13.9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> 1       1             10        28.4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> 1       1             10        26.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> 1       1             20        20.9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> 1       1             10        16.5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> 1       1             15        16.3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> 1       1             10        15.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 552 more rows</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $metadata</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $metadata$plataform</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "aarch64-apple-darwin23"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $metadata$R_version</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "R version 4.6.1 (2026-06-24)"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $metadata$run_date</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "2026-10-21 13:39:14 PDT"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $metadata$formula</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ind_ha ~ bio12 + elevation + sand + eco</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x6fb4f8d28&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $metadata$sigma.formula</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ~1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x6fb4f8d28&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $metadata$nu.formula</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ~1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x6fb4f8d28&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $metadata$tau.formula</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ~1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x6fb4f8d28&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $metadata$hyperparameters</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $metadata$hyperparameters$distribution</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "ZAGA"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $metadata$hyperparameters$poly</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $metadata$hyperparameters$inter_order</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $metadata$source_function</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "fit_abund_glm"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Using second order polynomials and first order interaction terms</span></span></span>
 <span class="r-in"><span><span class="va">glm_2</span> <span class="op">&lt;-</span> <span class="fu">fit_abund_glm</span><span class="op">(</span></span></span>
@@ -188,14 +319,180 @@ See <a href="https://rdrr.io/pkg/gamlss/man/gamlss.control.html" class="external
 <span class="r-in"><span>  response <span class="op">=</span> <span class="st">"ind_ha"</span>,</span></span>
 <span class="r-in"><span>  predictors <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"bio12"</span>, <span class="st">"elevation"</span>, <span class="st">"sand"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>  predictors_f <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"eco"</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  partition <span class="op">=</span> <span class="st">".part"</span>,</span></span>
+<span class="r-in"><span>  partition <span class="op">=</span> <span class="st">".part1"</span>,</span></span>
 <span class="r-in"><span>  distribution <span class="op">=</span> <span class="st">"ZAGA"</span>,</span></span>
 <span class="r-in"><span>  poly <span class="op">=</span> <span class="fl">2</span>,</span></span>
 <span class="r-in"><span>  inter_order <span class="op">=</span> <span class="fl">1</span>,</span></span>
 <span class="r-in"><span>  predict_part <span class="op">=</span> <span class="cn">TRUE</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Formula used for model fitting:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ind_ha ~ bio12 + elevation + sand + eco + I(bio12^2) + I(elevation^2) + I(sand^2) + bio12:elevation + bio12:sand + bio12:eco + elevation:sand + eco:elevation + eco:sand</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Replica number: 1/1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> -- Partition number 1/3</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> -- Partition number 2/3</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> -- Partition number 3/3</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">glm_2</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $model</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Family:  c("ZAGA", "Zero Adjusted GA") </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Fitting method: RS() </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Call:  gamlss::gamlss(formula = formula1, sigma.formula = sigma_formula,  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     nu.formula = nu_formula, tau.formula = tau_formula,  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     family = family, data = data, control = control_gamlss,      trace = FALSE) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Mu Coefficients:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        (Intercept)               bio12           elevation                sand  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          1.151e+03          -6.218e-01           8.841e-01          -4.165e-01  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>              ecoAD              ecoAMF             ecoAPAF             ecoBMDF  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                 NA          -1.149e+03          -1.146e+03                  NA  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>              ecoBY                ecoC             ecoCADP              ecoCAP  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                 NA          -1.145e+03                  NA          -2.983e+03  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             ecoCDF               ecoCM               ecoDC                ecoE  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                 NA                  NA          -1.149e+03          -1.383e+02  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>              ecoHC               ecoHM               ecoHP               ecoLM  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         -1.146e+03                  NA                  NA                  NA  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>               ecoP              ecoPFS               ecoPS             ecoSABM  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                 NA          -1.265e+03                  NA                  NA  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             ecoSAS              ecoSAY             ecoSCMS            ecoSDMCF  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                 NA          -1.144e+03                  NA                  NA  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>              ecoUS          I(bio12^2)      I(elevation^2)           I(sand^2)  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                 NA          -5.325e-08           6.700e-07           2.455e-06  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    bio12:elevation          bio12:sand         bio12:ecoAD        bio12:ecoAMF  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          1.263e-06           3.309e-07                  NA           6.221e-01  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      bio12:ecoAPAF       bio12:ecoBMDF         bio12:ecoBY          bio12:ecoC  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          6.211e-01                  NA                  NA           6.188e-01  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      bio12:ecoCADP        bio12:ecoCAP        bio12:ecoCDF         bio12:ecoCM  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                 NA                  NA                  NA                  NA  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        bio12:ecoDC          bio12:ecoE         bio12:ecoHC         bio12:ecoHM  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          6.226e-01                  NA           6.210e-01                  NA  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        bio12:ecoHP         bio12:ecoLM          bio12:ecoP        bio12:ecoPFS  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                 NA                  NA                  NA           6.993e-01  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        bio12:ecoPS       bio12:ecoSABM        bio12:ecoSAS        bio12:ecoSAY  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                 NA                  NA                  NA           6.205e-01  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      bio12:ecoSCMS      bio12:ecoSDMCF         bio12:ecoUS      elevation:sand  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                 NA                  NA                  NA          -8.723e-06  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    elevation:ecoAD    elevation:ecoAMF   elevation:ecoAPAF   elevation:ecoBMDF  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                 NA          -8.875e-01          -8.893e-01                  NA  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    elevation:ecoBY      elevation:ecoC   elevation:ecoCADP    elevation:ecoCAP  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                 NA          -8.796e-01                  NA                  NA  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   elevation:ecoCDF     elevation:ecoCM     elevation:ecoDC      elevation:ecoE  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                 NA                  NA          -8.846e-01                  NA  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    elevation:ecoHC     elevation:ecoHM     elevation:ecoHP     elevation:ecoLM  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         -8.866e-01                  NA                  NA                  NA  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     elevation:ecoP    elevation:ecoPFS     elevation:ecoPS   elevation:ecoSABM  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                 NA          -7.889e-01                  NA                  NA  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   elevation:ecoSAS    elevation:ecoSAY   elevation:ecoSCMS  elevation:ecoSDMCF  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                 NA          -8.842e-01                  NA                  NA  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    elevation:ecoUS          sand:ecoAD         sand:ecoAMF        sand:ecoAPAF  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                 NA                  NA           4.204e-01           4.162e-01  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       sand:ecoBMDF          sand:ecoBY           sand:ecoC        sand:ecoCADP  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                 NA                  NA           4.164e-01                  NA  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        sand:ecoCAP         sand:ecoCDF          sand:ecoCM          sand:ecoDC  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                 NA                  NA                  NA           4.195e-01  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          sand:ecoE          sand:ecoHC          sand:ecoHM          sand:ecoHP  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                 NA           4.138e-01                  NA                  NA  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         sand:ecoLM           sand:ecoP         sand:ecoPFS          sand:ecoPS  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                 NA                  NA           4.068e-01                  NA  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       sand:ecoSABM         sand:ecoSAS         sand:ecoSAY        sand:ecoSCMS  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                 NA                  NA           4.134e-01                  NA  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      sand:ecoSDMCF          sand:ecoUS  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                 NA                  NA  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Sigma Coefficients:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept)  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     -0.2606  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Nu Coefficients:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept)  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      -1.605  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Degrees of Freedom for the fit: 42 Residual Deg. of Freedom   520 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Global Deviance:     4532.49 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             AIC:     4616.49 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             SBC:     4798.42 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $predictors</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 1 × 6</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   model response c1    c2        c3    f    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> glm   ind_ha   bio12 elevation sand  eco  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $performance</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 1 × 13</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   model mae_mean  mae_sd corr_spear_mean corr_spear_sd corr_pear_mean</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>           <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> glm    1.88<span style="color: #949494;">e</span>18 3.26<span style="color: #949494;">e</span>18           0.232         0.160         0.022<span style="text-decoration: underline;">1</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 7 more variables: corr_pear_sd &lt;dbl&gt;, inter_mean &lt;dbl&gt;, inter_sd &lt;dbl&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   slope_mean &lt;dbl&gt;, slope_sd &lt;dbl&gt;, pdisp_mean &lt;dbl&gt;, pdisp_sd &lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $performance_part</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 3 × 9</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   replica partition model     mae corr_spear corr_pear inter     slope   pdisp</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> 1       1         glm   5.65<span style="color: #949494;">e</span>18     0.056<span style="text-decoration: underline;">1</span>   -<span style="color: #BB0000;">0.057</span><span style="color: #BB0000; text-decoration: underline;">9</span>  27.1 -<span style="color: #BB0000;">2.50</span><span style="color: #949494;">e</span><span style="color: #BB0000;">-20</span> 2.32<span style="color: #949494;">e</span>18</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> 1       2         glm   2.87<span style="color: #949494;">e</span> 1     0.274     0.089<span style="text-decoration: underline;">9</span>  23.9  5.03<span style="color: #949494;">e</span><span style="color: #BB0000;">- 2</span> 1.79<span style="color: #949494;">e</span> 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> 1       3         glm   3.08<span style="color: #949494;">e</span> 1     0.368     0.034<span style="text-decoration: underline;">2</span>  31.7  2.18<span style="color: #949494;">e</span><span style="color: #BB0000;">- 2</span> 1.57<span style="color: #949494;">e</span> 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $predicted_part</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 562 × 4</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    replica partition observed predicted</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> 1       1             13.3     25.5 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> 1       1             20       14.1 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> 1       1             10       12.3 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> 1       1             23.3     10.9 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> 1       1             10       41.7 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> 1       1             10       39.1 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> 1       1             20       17.8 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> 1       1             10        8.46</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> 1       1             15       16.1 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> 1       1             10        8.70</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 552 more rows</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $metadata</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $metadata$plataform</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "aarch64-apple-darwin23"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $metadata$R_version</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "R version 4.6.1 (2026-06-24)"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $metadata$run_date</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "2026-10-21 13:39:14 PDT"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $metadata$formula</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ind_ha ~ bio12 + elevation + sand + eco + I(bio12^2) + I(elevation^2) + </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     I(sand^2) + bio12:elevation + bio12:sand + bio12:eco + elevation:sand + </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     eco:elevation + eco:sand</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x6d427e3c0&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $metadata$sigma.formula</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ~1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x6d427e3c0&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $metadata$nu.formula</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ~1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x6d427e3c0&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $metadata$tau.formula</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ~1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x6d427e3c0&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $metadata$hyperparameters</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $metadata$hyperparameters$distribution</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "ZAGA"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $metadata$hyperparameters$poly</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $metadata$hyperparameters$inter_order</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $metadata$source_function</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "fit_abund_glm"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Using third order polynomials and second order interaction terms</span></span></span>
 <span class="r-in"><span><span class="va">glm_3</span> <span class="op">&lt;-</span> <span class="fu">fit_abund_glm</span><span class="op">(</span></span></span>
@@ -203,14 +500,252 @@ See <a href="https://rdrr.io/pkg/gamlss/man/gamlss.control.html" class="external
 <span class="r-in"><span>  response <span class="op">=</span> <span class="st">"ind_ha"</span>,</span></span>
 <span class="r-in"><span>  predictors <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"bio12"</span>, <span class="st">"elevation"</span>, <span class="st">"sand"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>  predictors_f <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"eco"</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  partition <span class="op">=</span> <span class="st">".part"</span>,</span></span>
+<span class="r-in"><span>  partition <span class="op">=</span> <span class="st">".part1"</span>,</span></span>
 <span class="r-in"><span>  distribution <span class="op">=</span> <span class="st">"ZAGA"</span>,</span></span>
 <span class="r-in"><span>  poly <span class="op">=</span> <span class="fl">3</span>,</span></span>
 <span class="r-in"><span>  inter_order <span class="op">=</span> <span class="fl">2</span>,</span></span>
 <span class="r-in"><span>  predict_part <span class="op">=</span> <span class="cn">TRUE</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Formula used for model fitting:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ind_ha ~ bio12 + elevation + sand + eco + I(bio12^2) + I(elevation^2) + I(sand^2) + I(bio12^3) + I(elevation^3) + I(sand^3) + bio12:elevation + bio12:sand + bio12:eco + elevation:sand + eco:elevation + eco:sand + bio12:elevation:sand + bio12:eco:elevation + bio12:eco:sand + eco:elevation:sand</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Replica number: 1/1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> -- Partition number 1/3</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> -- Partition number 2/3</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> -- Partition number 3/3</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">glm_3</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $model</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Family:  c("ZAGA", "Zero Adjusted GA") </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Fitting method: RS() </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Call:  gamlss::gamlss(formula = formula1, sigma.formula = sigma_formula,  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     nu.formula = nu_formula, tau.formula = tau_formula,  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     family = family, data = data, control = control_gamlss,      trace = FALSE) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Mu Coefficients:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>              (Intercept)                     bio12                 elevation  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                1.130e+03                -6.047e-01                 8.364e-01  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                     sand                     ecoAD                    ecoAMF  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>               -4.644e-01                        NA                -1.125e+03  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                  ecoAPAF                   ecoBMDF                     ecoBY  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>               -1.124e+03                        NA                        NA  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                     ecoC                   ecoCADP                    ecoCAP  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>               -9.219e+02                        NA                -2.884e+03  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                   ecoCDF                     ecoCM                     ecoDC  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                       NA                        NA                -1.134e+03  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                     ecoE                     ecoHC                     ecoHM  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>               -1.302e+02                -1.134e+03                        NA  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                    ecoHP                     ecoLM                      ecoP  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                       NA                        NA                        NA  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                   ecoPFS                     ecoPS                   ecoSABM  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>               -1.226e+03                        NA                        NA  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                   ecoSAS                    ecoSAY                   ecoSCMS  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                       NA                -1.103e+03                        NA  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                 ecoSDMCF                     ecoUS                I(bio12^2)  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                       NA                        NA                -3.874e-06  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>           I(elevation^2)                 I(sand^2)                I(bio12^3)  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                5.456e-06                 6.709e-06                 6.463e-10  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>           I(elevation^3)                 I(sand^3)           bio12:elevation  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>               -1.776e-09                -1.106e-09                 1.147e-05  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>               bio12:sand               bio12:ecoAD              bio12:ecoAMF  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                3.008e-05                        NA                 6.110e-01  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>            bio12:ecoAPAF             bio12:ecoBMDF               bio12:ecoBY  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                6.095e-01                        NA                        NA  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>               bio12:ecoC             bio12:ecoCADP              bio12:ecoCAP  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                4.004e-01                        NA                        NA  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             bio12:ecoCDF               bio12:ecoCM               bio12:ecoDC  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                       NA                        NA                 6.137e-01  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>               bio12:ecoE               bio12:ecoHC               bio12:ecoHM  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                       NA                 6.144e-01                        NA  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>              bio12:ecoHP               bio12:ecoLM                bio12:ecoP  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                       NA                        NA                        NA  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             bio12:ecoPFS               bio12:ecoPS             bio12:ecoSABM  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                6.753e-01                        NA                        NA  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             bio12:ecoSAS              bio12:ecoSAY             bio12:ecoSCMS  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                       NA                 5.949e-01                        NA  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>           bio12:ecoSDMCF               bio12:ecoUS            elevation:sand  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                       NA                        NA                 3.952e-05  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          elevation:ecoAD          elevation:ecoAMF         elevation:ecoAPAF  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                       NA                -8.626e-01                -8.548e-01  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        elevation:ecoBMDF           elevation:ecoBY            elevation:ecoC  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                       NA                        NA                -3.010e-02  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        elevation:ecoCADP          elevation:ecoCAP          elevation:ecoCDF  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                       NA                        NA                        NA  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          elevation:ecoCM           elevation:ecoDC            elevation:ecoE  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                       NA                -8.358e-01                        NA  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          elevation:ecoHC           elevation:ecoHM           elevation:ecoHP  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>               -8.067e-01                        NA                        NA  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          elevation:ecoLM            elevation:ecoP          elevation:ecoPFS  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                       NA                        NA                -7.637e-01  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          elevation:ecoPS         elevation:ecoSABM          elevation:ecoSAS  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                       NA                        NA                        NA  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         elevation:ecoSAY         elevation:ecoSCMS        elevation:ecoSDMCF  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>               -8.617e-01                        NA                        NA  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          elevation:ecoUS                sand:ecoAD               sand:ecoAMF  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                       NA                        NA                 4.550e-01  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             sand:ecoAPAF              sand:ecoBMDF                sand:ecoBY  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                4.447e-01                        NA                        NA  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                sand:ecoC              sand:ecoCADP               sand:ecoCAP  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                1.056e-01                        NA                        NA  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>              sand:ecoCDF                sand:ecoCM                sand:ecoDC  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                       NA                        NA                 4.772e-01  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                sand:ecoE                sand:ecoHC                sand:ecoHM  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                       NA                 4.725e-01                        NA  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>               sand:ecoHP                sand:ecoLM                 sand:ecoP  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                       NA                        NA                        NA  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>              sand:ecoPFS                sand:ecoPS              sand:ecoSABM  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                4.057e-01                        NA                        NA  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>              sand:ecoSAS               sand:ecoSAY              sand:ecoSCMS  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                       NA                 4.105e-01                        NA  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>            sand:ecoSDMCF                sand:ecoUS      bio12:elevation:sand  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                       NA                        NA                -1.920e-08  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    bio12:elevation:ecoAD    bio12:elevation:ecoAMF   bio12:elevation:ecoAPAF  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                       NA                -3.754e-06                -5.410e-06  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  bio12:elevation:ecoBMDF     bio12:elevation:ecoBY      bio12:elevation:ecoC  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                       NA                        NA                -1.150e-04  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  bio12:elevation:ecoCADP    bio12:elevation:ecoCAP    bio12:elevation:ecoCDF  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                       NA                        NA                        NA  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    bio12:elevation:ecoCM     bio12:elevation:ecoDC      bio12:elevation:ecoE  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                       NA                -4.936e-06                        NA  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    bio12:elevation:ecoHC     bio12:elevation:ecoHM     bio12:elevation:ecoHP  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>               -2.096e-05                        NA                        NA  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    bio12:elevation:ecoLM      bio12:elevation:ecoP    bio12:elevation:ecoPFS  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                       NA                        NA                        NA  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    bio12:elevation:ecoPS   bio12:elevation:ecoSABM    bio12:elevation:ecoSAS  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                       NA                        NA                        NA  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   bio12:elevation:ecoSAY   bio12:elevation:ecoSCMS  bio12:elevation:ecoSDMCF  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                       NA                        NA                        NA  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    bio12:elevation:ecoUS          bio12:sand:ecoAD         bio12:sand:ecoAMF  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                       NA                        NA                -3.330e-05  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       bio12:sand:ecoAPAF        bio12:sand:ecoBMDF          bio12:sand:ecoBY  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>               -2.141e-05                        NA                        NA  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          bio12:sand:ecoC        bio12:sand:ecoCADP         bio12:sand:ecoCAP  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                3.161e-04                        NA                        NA  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        bio12:sand:ecoCDF          bio12:sand:ecoCM          bio12:sand:ecoDC  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                       NA                        NA                -3.649e-05  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          bio12:sand:ecoE          bio12:sand:ecoHC          bio12:sand:ecoHM  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                       NA                -3.658e-05                        NA  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         bio12:sand:ecoHP          bio12:sand:ecoLM           bio12:sand:ecoP  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                       NA                        NA                        NA  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        bio12:sand:ecoPFS          bio12:sand:ecoPS        bio12:sand:ecoSABM  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                       NA                        NA                        NA  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        bio12:sand:ecoSAS         bio12:sand:ecoSAY        bio12:sand:ecoSCMS  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                       NA                        NA                        NA  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      bio12:sand:ecoSDMCF          bio12:sand:ecoUS      elevation:sand:ecoAD  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                       NA                        NA                        NA  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    elevation:sand:ecoAMF    elevation:sand:ecoAPAF    elevation:sand:ecoBMDF  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                2.533e-05                -6.096e-06                        NA  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     elevation:sand:ecoBY       elevation:sand:ecoC    elevation:sand:ecoCADP  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                       NA                -9.980e-04                        NA  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    elevation:sand:ecoCAP     elevation:sand:ecoCDF      elevation:sand:ecoCM  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                       NA                        NA                        NA  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     elevation:sand:ecoDC       elevation:sand:ecoE      elevation:sand:ecoHC  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>               -5.465e-05                        NA                -6.337e-05  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     elevation:sand:ecoHM      elevation:sand:ecoHP      elevation:sand:ecoLM  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                       NA                        NA                        NA  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      elevation:sand:ecoP     elevation:sand:ecoPFS      elevation:sand:ecoPS  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                       NA                        NA                        NA  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   elevation:sand:ecoSABM     elevation:sand:ecoSAS     elevation:sand:ecoSAY  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                       NA                        NA                        NA  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   elevation:sand:ecoSCMS   elevation:sand:ecoSDMCF      elevation:sand:ecoUS  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                       NA                        NA                        NA  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Sigma Coefficients:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept)  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     -0.2717  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Nu Coefficients:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept)  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      -1.605  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Degrees of Freedom for the fit: 61 Residual Deg. of Freedom   501 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Global Deviance:     4520.12 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             AIC:     4642.12 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             SBC:     4906.34 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $predictors</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 1 × 6</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   model response c1    c2        c3    f    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> glm   ind_ha   bio12 elevation sand  eco  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $performance</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 1 × 13</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   model mae_mean  mae_sd corr_spear_mean corr_spear_sd corr_pear_mean</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>           <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> glm    1.56<span style="color: #949494;">e</span>29 2.70<span style="color: #949494;">e</span>29           0.221         0.149        -<span style="color: #BB0000;">0.019</span><span style="color: #BB0000; text-decoration: underline;">1</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 7 more variables: corr_pear_sd &lt;dbl&gt;, inter_mean &lt;dbl&gt;, inter_sd &lt;dbl&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   slope_mean &lt;dbl&gt;, slope_sd &lt;dbl&gt;, pdisp_mean &lt;dbl&gt;, pdisp_sd &lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $performance_part</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 3 × 9</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   replica partition model     mae corr_spear corr_pear inter     slope   pdisp</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> 1       1         glm   1.70<span style="color: #949494;">e</span>24     0.053<span style="text-decoration: underline;">9</span>   -<span style="color: #BB0000;">0.057</span><span style="color: #BB0000; text-decoration: underline;">9</span>  27.1 -<span style="color: #BB0000;">8.29</span><span style="color: #949494;">e</span><span style="color: #BB0000;">-26</span> 6.99<span style="color: #949494;">e</span>23</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> 1       2         glm   3.37<span style="color: #949494;">e</span> 1     0.268     0.023<span style="text-decoration: underline;">3</span>  25.4  7.13<span style="color: #949494;">e</span><span style="color: #BB0000;">- 3</span> 3.26<span style="color: #949494;">e</span> 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> 1       3         glm   4.68<span style="color: #949494;">e</span>29     0.341    -<span style="color: #BB0000;">0.022</span><span style="color: #BB0000; text-decoration: underline;">6</span>  32.6 -<span style="color: #BB0000;">1.53</span><span style="color: #949494;">e</span><span style="color: #BB0000;">-31</span> 1.48<span style="color: #949494;">e</span>29</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $predicted_part</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 562 × 4</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    replica partition observed predicted</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> 1       1             13.3     24.0 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> 1       1             20       19.5 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> 1       1             10       13.4 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> 1       1             23.3      7.53</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> 1       1             10       44.5 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> 1       1             10       43.8 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> 1       1             20       16.7 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> 1       1             10        8.97</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> 1       1             15       16.2 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> 1       1             10        8.67</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 552 more rows</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $metadata</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $metadata$plataform</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "aarch64-apple-darwin23"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $metadata$R_version</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "R version 4.6.1 (2026-06-24)"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $metadata$run_date</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "2026-10-21 13:39:14 PDT"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $metadata$formula</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ind_ha ~ bio12 + elevation + sand + eco + I(bio12^2) + I(elevation^2) + </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     I(sand^2) + I(bio12^3) + I(elevation^3) + I(sand^3) + bio12:elevation + </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     bio12:sand + bio12:eco + elevation:sand + eco:elevation + </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     eco:sand + bio12:elevation:sand + bio12:eco:elevation + bio12:eco:sand + </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     eco:elevation:sand</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x6df1cc2a8&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $metadata$sigma.formula</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ~1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x6df1cc2a8&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $metadata$nu.formula</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ~1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x6df1cc2a8&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $metadata$tau.formula</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ~1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x6df1cc2a8&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $metadata$hyperparameters</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $metadata$hyperparameters$distribution</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "ZAGA"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $metadata$hyperparameters$poly</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $metadata$hyperparameters$inter_order</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $metadata$source_function</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "fit_abund_glm"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Setting formulas for different distribution parameters</span></span></span>
 <span class="r-in"><span><span class="va">glm_4</span> <span class="op">&lt;-</span> <span class="fu">fit_abund_glm</span><span class="op">(</span></span></span>
@@ -218,7 +753,7 @@ See <a href="https://rdrr.io/pkg/gamlss/man/gamlss.control.html" class="external
 <span class="r-in"><span>  response <span class="op">=</span> <span class="st">"ind_ha"</span>,</span></span>
 <span class="r-in"><span>  predictors <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"bio12"</span>, <span class="st">"elevation"</span>, <span class="st">"sand"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>  predictors_f <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"eco"</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  partition <span class="op">=</span> <span class="st">".part"</span>,</span></span>
+<span class="r-in"><span>  partition <span class="op">=</span> <span class="st">".part1"</span>,</span></span>
 <span class="r-in"><span>  distribution <span class="op">=</span> <span class="st">"ZAGA"</span>,</span></span>
 <span class="r-in"><span>  fit_formula <span class="op">=</span> <span class="va">ind_ha</span> <span class="op">~</span> <span class="va">bio12</span> <span class="op">+</span> <span class="va">elevation</span> <span class="op">+</span> <span class="va">sand</span> <span class="op">+</span> <span class="va">eco</span>,</span></span>
 <span class="r-in"><span>  sigma_formula <span class="op">=</span> <span class="va">ind_ha</span> <span class="op">~</span> <span class="va">bio12</span> <span class="op">+</span> <span class="va">elevation</span> <span class="op">+</span> <span class="va">sand</span>,</span></span>
@@ -226,9 +761,127 @@ See <a href="https://rdrr.io/pkg/gamlss/man/gamlss.control.html" class="external
 <span class="r-in"><span>  inter_order <span class="op">=</span> <span class="fl">0</span>,</span></span>
 <span class="r-in"><span>  predict_part <span class="op">=</span> <span class="cn">TRUE</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Formula used for model fitting:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ind_ha ~ bio12 + elevation + sand + eco</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Replica number: 1/1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> -- Partition number 1/3</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> -- Partition number 2/3</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> -- Partition number 3/3</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">glm_4</span></span></span>
-<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $model</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Family:  c("ZAGA", "Zero Adjusted GA") </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Fitting method: RS() </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Call:  gamlss::gamlss(formula = formula1, sigma.formula = sigma_formula,  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     nu.formula = nu_formula, tau.formula = tau_formula,  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     family = family, data = data, control = control_gamlss,      trace = FALSE) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Mu Coefficients:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept)        bio12    elevation         sand        ecoAD       ecoAMF  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   5.5976032   -0.0004723   -0.0008510   -0.0003508           NA   -1.3940197  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     ecoAPAF      ecoBMDF        ecoBY         ecoC      ecoCADP       ecoCAP  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  -1.4039557           NA           NA   -1.2443525           NA    1.6689538  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      ecoCDF        ecoCM        ecoDC         ecoE        ecoHC        ecoHM  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          NA           NA   -1.3775897   -2.0709633   -0.8742266           NA  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       ecoHP        ecoLM         ecoP       ecoPFS        ecoPS      ecoSABM  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          NA           NA           NA   -1.8515159           NA           NA  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      ecoSAS       ecoSAY      ecoSCMS     ecoSDMCF        ecoUS  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          NA   -0.5340199           NA           NA           NA  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Sigma Coefficients:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept)        bio12    elevation         sand  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  -2.061e-01   -9.656e-05   -4.136e-05    5.685e-04  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Nu Coefficients:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept)  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      -1.605  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Degrees of Freedom for the fit: 18 Residual Deg. of Freedom   544 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Global Deviance:     4578.26 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             AIC:     4614.26 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             SBC:     4692.23 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $predictors</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 1 × 6</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   model response c1    c2        c3    f    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> glm   ind_ha   bio12 elevation sand  eco  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $performance</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 1 × 13</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   model mae_mean mae_sd corr_spear_mean corr_spear_sd corr_pear_mean</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>           <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> glm       25.8   1.60           0.305         0.121          0.279</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 7 more variables: corr_pear_sd &lt;dbl&gt;, inter_mean &lt;dbl&gt;, inter_sd &lt;dbl&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   slope_mean &lt;dbl&gt;, slope_sd &lt;dbl&gt;, pdisp_mean &lt;dbl&gt;, pdisp_sd &lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $performance_part</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 3 × 9</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   replica partition model   mae corr_spear corr_pear inter slope pdisp</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> 1       1         glm    27.3      0.222     0.188 15.3  0.313 0.601</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> 1       2         glm    24.1      0.250     0.242  8.69 0.517 0.468</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> 1       3         glm    25.9      0.444     0.406 -<span style="color: #BB0000;">8.29</span> 1.27  0.321</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $predicted_part</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 562 × 4</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    replica partition observed predicted</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> 1       1             13.3      37.3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> 1       1             20        15.5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> 1       1             10        11.6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> 1       1             23.3      12.3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> 1       1             10        28.8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> 1       1             10        26.3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> 1       1             20        19.8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> 1       1             10        15.1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> 1       1             15        17.4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> 1       1             10        13.5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 552 more rows</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $metadata</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $metadata$plataform</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "aarch64-apple-darwin23"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $metadata$R_version</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "R version 4.6.1 (2026-06-24)"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $metadata$run_date</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "2026-10-21 13:39:14 PDT"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $metadata$formula</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ind_ha ~ bio12 + elevation + sand + eco</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x6f4948a50&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $metadata$sigma.formula</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ind_ha ~ bio12 + elevation + sand</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x6f4948a50&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $metadata$nu.formula</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ~1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x6df7ca158&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $metadata$tau.formula</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ~1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x6df7ca158&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $metadata$hyperparameters</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $metadata$hyperparameters$distribution</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "ZAGA"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $metadata$hyperparameters$poly</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $metadata$hyperparameters$inter_order</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $metadata$source_function</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "fit_abund_glm"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

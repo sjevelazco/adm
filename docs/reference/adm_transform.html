@@ -90,7 +90,7 @@ The new column's name is the original variable name followed by an underscore an
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="va"><a href="https://rspatial.org/" class="external-link">terra</a></span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
@@ -111,6 +111,20 @@ The new column's name is the original variable name followed by an underscore an
 <span class="r-in"><span>  method <span class="op">=</span> <span class="st">"01"</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">some_sp_2</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 938 × 5</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    species     ind_ha     x     y ind_ha_01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> Species one   10   -<span style="color: #BB0000;">61.2</span> -<span style="color: #BB0000;">25.0</span>    0.035<span style="text-decoration: underline;">1</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> Species one   10   -<span style="color: #BB0000;">60.7</span> -<span style="color: #BB0000;">25.0</span>    0.035<span style="text-decoration: underline;">1</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> Species one   10   -<span style="color: #BB0000;">60.2</span> -<span style="color: #BB0000;">25.0</span>    0.035<span style="text-decoration: underline;">1</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> Species one   13.3 -<span style="color: #BB0000;">60.7</span> -<span style="color: #BB0000;">25.4</span>    0.046<span style="text-decoration: underline;">7</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> Species one   10   -<span style="color: #BB0000;">60.2</span> -<span style="color: #BB0000;">25.9</span>    0.035<span style="text-decoration: underline;">1</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> Species one   10   -<span style="color: #BB0000;">54.0</span> -<span style="color: #BB0000;">26.0</span>    0.035<span style="text-decoration: underline;">1</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> Species one   20   -<span style="color: #BB0000;">53.9</span> -<span style="color: #BB0000;">26.0</span>    0.070<span style="text-decoration: underline;">1</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> Species one   10   -<span style="color: #BB0000;">53.9</span> -<span style="color: #BB0000;">26.0</span>    0.035<span style="text-decoration: underline;">1</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> Species one   10   -<span style="color: #BB0000;">53.9</span> -<span style="color: #BB0000;">26.1</span>    0.035<span style="text-decoration: underline;">1</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> Species one   20   -<span style="color: #BB0000;">53.9</span> -<span style="color: #BB0000;">26.1</span>    0.070<span style="text-decoration: underline;">1</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 928 more rows</span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Transform abundance data z-score</span></span></span>
 <span class="r-in"><span><span class="va">some_sp_2</span> <span class="op">&lt;-</span> <span class="fu">adm_transform</span><span class="op">(</span></span></span>
@@ -119,6 +133,20 @@ The new column's name is the original variable name followed by an underscore an
 <span class="r-in"><span>  method <span class="op">=</span> <span class="st">"zscore"</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">some_sp_2</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 938 × 5</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    species     ind_ha     x     y ind_ha_zscore</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> Species one   10   -<span style="color: #BB0000;">61.2</span> -<span style="color: #BB0000;">25.0</span>       -<span style="color: #BB0000;">0.218</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> Species one   10   -<span style="color: #BB0000;">60.7</span> -<span style="color: #BB0000;">25.0</span>       -<span style="color: #BB0000;">0.218</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> Species one   10   -<span style="color: #BB0000;">60.2</span> -<span style="color: #BB0000;">25.0</span>       -<span style="color: #BB0000;">0.218</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> Species one   13.3 -<span style="color: #BB0000;">60.7</span> -<span style="color: #BB0000;">25.4</span>       -<span style="color: #BB0000;">0.113</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> Species one   10   -<span style="color: #BB0000;">60.2</span> -<span style="color: #BB0000;">25.9</span>       -<span style="color: #BB0000;">0.218</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> Species one   10   -<span style="color: #BB0000;">54.0</span> -<span style="color: #BB0000;">26.0</span>       -<span style="color: #BB0000;">0.218</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> Species one   20   -<span style="color: #BB0000;">53.9</span> -<span style="color: #BB0000;">26.0</span>        0.096<span style="text-decoration: underline;">1</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> Species one   10   -<span style="color: #BB0000;">53.9</span> -<span style="color: #BB0000;">26.0</span>       -<span style="color: #BB0000;">0.218</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> Species one   10   -<span style="color: #BB0000;">53.9</span> -<span style="color: #BB0000;">26.1</span>       -<span style="color: #BB0000;">0.218</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> Species one   20   -<span style="color: #BB0000;">53.9</span> -<span style="color: #BB0000;">26.1</span>        0.096<span style="text-decoration: underline;">1</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 928 more rows</span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Transform abundance data log</span></span></span>
 <span class="r-in"><span><span class="va">some_sp_2</span> <span class="op">&lt;-</span> <span class="fu">adm_transform</span><span class="op">(</span></span></span>
@@ -127,6 +155,20 @@ The new column's name is the original variable name followed by an underscore an
 <span class="r-in"><span>  method <span class="op">=</span> <span class="st">"log"</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">some_sp_2</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 938 × 5</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    species     ind_ha     x     y ind_ha_log</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> Species one   10   -<span style="color: #BB0000;">61.2</span> -<span style="color: #BB0000;">25.0</span>       2.30</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> Species one   10   -<span style="color: #BB0000;">60.7</span> -<span style="color: #BB0000;">25.0</span>       2.30</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> Species one   10   -<span style="color: #BB0000;">60.2</span> -<span style="color: #BB0000;">25.0</span>       2.30</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> Species one   13.3 -<span style="color: #BB0000;">60.7</span> -<span style="color: #BB0000;">25.4</span>       2.59</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> Species one   10   -<span style="color: #BB0000;">60.2</span> -<span style="color: #BB0000;">25.9</span>       2.30</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> Species one   10   -<span style="color: #BB0000;">54.0</span> -<span style="color: #BB0000;">26.0</span>       2.30</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> Species one   20   -<span style="color: #BB0000;">53.9</span> -<span style="color: #BB0000;">26.0</span>       3.00</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> Species one   10   -<span style="color: #BB0000;">53.9</span> -<span style="color: #BB0000;">26.0</span>       2.30</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> Species one   10   -<span style="color: #BB0000;">53.9</span> -<span style="color: #BB0000;">26.1</span>       2.30</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> Species one   20   -<span style="color: #BB0000;">53.9</span> -<span style="color: #BB0000;">26.1</span>       3.00</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 928 more rows</span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Round abundance data</span></span></span>
 <span class="r-in"><span><span class="va">some_sp_2</span> <span class="op">&lt;-</span> <span class="fu">adm_transform</span><span class="op">(</span></span></span>
@@ -135,6 +177,20 @@ The new column's name is the original variable name followed by an underscore an
 <span class="r-in"><span>  method <span class="op">=</span> <span class="st">"round"</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">some_sp_2</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 938 × 5</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    species     ind_ha     x     y ind_ha_round</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> Species one   10   -<span style="color: #BB0000;">61.2</span> -<span style="color: #BB0000;">25.0</span>           10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> Species one   10   -<span style="color: #BB0000;">60.7</span> -<span style="color: #BB0000;">25.0</span>           10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> Species one   10   -<span style="color: #BB0000;">60.2</span> -<span style="color: #BB0000;">25.0</span>           10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> Species one   13.3 -<span style="color: #BB0000;">60.7</span> -<span style="color: #BB0000;">25.4</span>           13</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> Species one   10   -<span style="color: #BB0000;">60.2</span> -<span style="color: #BB0000;">25.9</span>           10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> Species one   10   -<span style="color: #BB0000;">54.0</span> -<span style="color: #BB0000;">26.0</span>           10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> Species one   20   -<span style="color: #BB0000;">53.9</span> -<span style="color: #BB0000;">26.0</span>           20</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> Species one   10   -<span style="color: #BB0000;">53.9</span> -<span style="color: #BB0000;">26.0</span>           10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> Species one   10   -<span style="color: #BB0000;">53.9</span> -<span style="color: #BB0000;">26.1</span>           10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> Species one   20   -<span style="color: #BB0000;">53.9</span> -<span style="color: #BB0000;">26.1</span>           20</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 928 more rows</span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Tranform raster data</span></span></span>
 <span class="r-in"><span><span class="co">## Transform to 0-1</span></span></span>
@@ -144,6 +200,18 @@ The new column's name is the original variable name followed by an underscore an
 <span class="r-in"><span>  method <span class="op">=</span> <span class="st">"01"</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">envar_2</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> class       : SpatRaster</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> size        : 201, 274, 2  (nrow, ncol, nlyr)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> resolution  : 0.08333333, 0.08333333  (x, y)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> extent      : -69.41681, -46.58347, -34.38347, -17.63347  (xmin, xmax, ymin, ymax)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> coord. ref. : lon/lat WGS 84 (EPSG:4326)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> sources     : envar.tif</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>               memory</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> varnames    : envar</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>               envar</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> names       :       bio12, bio12_01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> min values  :       9.283,        0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> max values  : 3171.336914,        1</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Transform z-score</span></span></span>
 <span class="r-in"><span><span class="va">envar_2</span> <span class="op">&lt;-</span> <span class="fu">adm_transform</span><span class="op">(</span></span></span>
@@ -152,6 +220,18 @@ The new column's name is the original variable name followed by an underscore an
 <span class="r-in"><span>  method <span class="op">=</span> <span class="st">"zscore"</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">envar_2</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> class       : SpatRaster</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> size        : 201, 274, 2  (nrow, ncol, nlyr)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> resolution  : 0.08333333, 0.08333333  (x, y)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> extent      : -69.41681, -46.58347, -34.38347, -17.63347  (xmin, xmax, ymin, ymax)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> coord. ref. : lon/lat WGS 84 (EPSG:4326)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> sources     : envar.tif</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>               memory</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> varnames    : envar</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>               envar</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> names       :       bio12, bio12_zscore</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> min values  :       9.283,    -2.249803</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> max values  : 3171.336914,     3.899979</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Transform log</span></span></span>
 <span class="r-in"><span><span class="va">envar_2</span> <span class="op">&lt;-</span> <span class="fu">adm_transform</span><span class="op">(</span></span></span>
@@ -160,6 +240,18 @@ The new column's name is the original variable name followed by an underscore an
 <span class="r-in"><span>  method <span class="op">=</span> <span class="st">"log"</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">envar_2</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> class       : SpatRaster</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> size        : 201, 274, 2  (nrow, ncol, nlyr)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> resolution  : 0.08333333, 0.08333333  (x, y)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> extent      : -69.41681, -46.58347, -34.38347, -17.63347  (xmin, xmax, ymin, ymax)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> coord. ref. : lon/lat WGS 84 (EPSG:4326)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> sources     : envar.tif</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>               memory</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> varnames    : envar</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>               envar</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> names       :       bio12, bio12_log</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> min values  :       9.283,  2.228185</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> max values  : 3171.336914,  8.061909</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Round</span></span></span>
 <span class="r-in"><span><span class="va">envar_2</span> <span class="op">&lt;-</span> <span class="fu">adm_transform</span><span class="op">(</span></span></span>
@@ -168,6 +260,18 @@ The new column's name is the original variable name followed by an underscore an
 <span class="r-in"><span>  method <span class="op">=</span> <span class="st">"round"</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">envar_2</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> class       : SpatRaster</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> size        : 201, 274, 2  (nrow, ncol, nlyr)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> resolution  : 0.08333333, 0.08333333  (x, y)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> extent      : -69.41681, -46.58347, -34.38347, -17.63347  (xmin, xmax, ymin, ymax)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> coord. ref. : lon/lat WGS 84 (EPSG:4326)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> sources     : envar.tif</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>               memory</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> varnames    : envar</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>               envar</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> names       :       bio12, bio12_round</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> min values  :       9.283,           9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> max values  : 3171.336914,        3171</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Invert transformation</span></span></span>
 <span class="r-in"><span><span class="co">## Invert 01 tranformation</span></span></span>
@@ -177,6 +281,20 @@ The new column's name is the original variable name followed by an underscore an
 <span class="r-in"><span>  method <span class="op">=</span> <span class="st">"01"</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">some_sp_transformed</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 938 × 5</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    species     ind_ha     x     y ind_ha_01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> Species one   10   -<span style="color: #BB0000;">61.2</span> -<span style="color: #BB0000;">25.0</span>    0.035<span style="text-decoration: underline;">1</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> Species one   10   -<span style="color: #BB0000;">60.7</span> -<span style="color: #BB0000;">25.0</span>    0.035<span style="text-decoration: underline;">1</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> Species one   10   -<span style="color: #BB0000;">60.2</span> -<span style="color: #BB0000;">25.0</span>    0.035<span style="text-decoration: underline;">1</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> Species one   13.3 -<span style="color: #BB0000;">60.7</span> -<span style="color: #BB0000;">25.4</span>    0.046<span style="text-decoration: underline;">7</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> Species one   10   -<span style="color: #BB0000;">60.2</span> -<span style="color: #BB0000;">25.9</span>    0.035<span style="text-decoration: underline;">1</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> Species one   10   -<span style="color: #BB0000;">54.0</span> -<span style="color: #BB0000;">26.0</span>    0.035<span style="text-decoration: underline;">1</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> Species one   20   -<span style="color: #BB0000;">53.9</span> -<span style="color: #BB0000;">26.0</span>    0.070<span style="text-decoration: underline;">1</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> Species one   10   -<span style="color: #BB0000;">53.9</span> -<span style="color: #BB0000;">26.0</span>    0.035<span style="text-decoration: underline;">1</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> Species one   10   -<span style="color: #BB0000;">53.9</span> -<span style="color: #BB0000;">26.1</span>    0.035<span style="text-decoration: underline;">1</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> Species one   20   -<span style="color: #BB0000;">53.9</span> -<span style="color: #BB0000;">26.1</span>    0.070<span style="text-decoration: underline;">1</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 928 more rows</span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">some_sp_inverted</span> <span class="op">&lt;-</span> <span class="fu">adm_transform</span><span class="op">(</span></span></span>
 <span class="r-in"><span>  data <span class="op">=</span> <span class="va">some_sp_transformed</span>,</span></span>
@@ -189,6 +307,20 @@ The new column's name is the original variable name followed by an underscore an
 <span class="r-in"><span>  <span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">some_sp_inverted</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 938 × 6</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    species     ind_ha     x     y ind_ha_01 ind_ha_01_inverted</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> Species one   10   -<span style="color: #BB0000;">61.2</span> -<span style="color: #BB0000;">25.0</span>    0.035<span style="text-decoration: underline;">1</span>               10  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> Species one   10   -<span style="color: #BB0000;">60.7</span> -<span style="color: #BB0000;">25.0</span>    0.035<span style="text-decoration: underline;">1</span>               10  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> Species one   10   -<span style="color: #BB0000;">60.2</span> -<span style="color: #BB0000;">25.0</span>    0.035<span style="text-decoration: underline;">1</span>               10  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> Species one   13.3 -<span style="color: #BB0000;">60.7</span> -<span style="color: #BB0000;">25.4</span>    0.046<span style="text-decoration: underline;">7</span>               13.3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> Species one   10   -<span style="color: #BB0000;">60.2</span> -<span style="color: #BB0000;">25.9</span>    0.035<span style="text-decoration: underline;">1</span>               10  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> Species one   10   -<span style="color: #BB0000;">54.0</span> -<span style="color: #BB0000;">26.0</span>    0.035<span style="text-decoration: underline;">1</span>               10  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> Species one   20   -<span style="color: #BB0000;">53.9</span> -<span style="color: #BB0000;">26.0</span>    0.070<span style="text-decoration: underline;">1</span>               20  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> Species one   10   -<span style="color: #BB0000;">53.9</span> -<span style="color: #BB0000;">26.0</span>    0.035<span style="text-decoration: underline;">1</span>               10  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> Species one   10   -<span style="color: #BB0000;">53.9</span> -<span style="color: #BB0000;">26.1</span>    0.035<span style="text-decoration: underline;">1</span>               10  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> Species one   20   -<span style="color: #BB0000;">53.9</span> -<span style="color: #BB0000;">26.1</span>    0.070<span style="text-decoration: underline;">1</span>               20  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 928 more rows</span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Invert z-score tranformation</span></span></span>
 <span class="r-in"><span><span class="va">some_sp_transformed</span> <span class="op">&lt;-</span> <span class="fu">adm_transform</span><span class="op">(</span></span></span>
@@ -197,6 +329,20 @@ The new column's name is the original variable name followed by an underscore an
 <span class="r-in"><span>  method <span class="op">=</span> <span class="st">"zscore"</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">some_sp_transformed</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 938 × 5</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    species     ind_ha     x     y ind_ha_zscore</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> Species one   10   -<span style="color: #BB0000;">61.2</span> -<span style="color: #BB0000;">25.0</span>       -<span style="color: #BB0000;">0.218</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> Species one   10   -<span style="color: #BB0000;">60.7</span> -<span style="color: #BB0000;">25.0</span>       -<span style="color: #BB0000;">0.218</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> Species one   10   -<span style="color: #BB0000;">60.2</span> -<span style="color: #BB0000;">25.0</span>       -<span style="color: #BB0000;">0.218</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> Species one   13.3 -<span style="color: #BB0000;">60.7</span> -<span style="color: #BB0000;">25.4</span>       -<span style="color: #BB0000;">0.113</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> Species one   10   -<span style="color: #BB0000;">60.2</span> -<span style="color: #BB0000;">25.9</span>       -<span style="color: #BB0000;">0.218</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> Species one   10   -<span style="color: #BB0000;">54.0</span> -<span style="color: #BB0000;">26.0</span>       -<span style="color: #BB0000;">0.218</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> Species one   20   -<span style="color: #BB0000;">53.9</span> -<span style="color: #BB0000;">26.0</span>        0.096<span style="text-decoration: underline;">1</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> Species one   10   -<span style="color: #BB0000;">53.9</span> -<span style="color: #BB0000;">26.0</span>       -<span style="color: #BB0000;">0.218</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> Species one   10   -<span style="color: #BB0000;">53.9</span> -<span style="color: #BB0000;">26.1</span>       -<span style="color: #BB0000;">0.218</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> Species one   20   -<span style="color: #BB0000;">53.9</span> -<span style="color: #BB0000;">26.1</span>        0.096<span style="text-decoration: underline;">1</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 928 more rows</span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">some_sp_inverted</span> <span class="op">&lt;-</span> <span class="fu">adm_transform</span><span class="op">(</span></span></span>
 <span class="r-in"><span>  data <span class="op">=</span> <span class="va">some_sp_transformed</span>,</span></span>
@@ -209,6 +355,20 @@ The new column's name is the original variable name followed by an underscore an
 <span class="r-in"><span>  <span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">some_sp_inverted</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 938 × 6</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    species     ind_ha     x     y ind_ha_zscore ind_ha_zscore_inverted</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>                  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> Species one   10   -<span style="color: #BB0000;">61.2</span> -<span style="color: #BB0000;">25.0</span>       -<span style="color: #BB0000;">0.218</span>                    10  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> Species one   10   -<span style="color: #BB0000;">60.7</span> -<span style="color: #BB0000;">25.0</span>       -<span style="color: #BB0000;">0.218</span>                    10  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> Species one   10   -<span style="color: #BB0000;">60.2</span> -<span style="color: #BB0000;">25.0</span>       -<span style="color: #BB0000;">0.218</span>                    10  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> Species one   13.3 -<span style="color: #BB0000;">60.7</span> -<span style="color: #BB0000;">25.4</span>       -<span style="color: #BB0000;">0.113</span>                    13.3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> Species one   10   -<span style="color: #BB0000;">60.2</span> -<span style="color: #BB0000;">25.9</span>       -<span style="color: #BB0000;">0.218</span>                    10  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> Species one   10   -<span style="color: #BB0000;">54.0</span> -<span style="color: #BB0000;">26.0</span>       -<span style="color: #BB0000;">0.218</span>                    10  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> Species one   20   -<span style="color: #BB0000;">53.9</span> -<span style="color: #BB0000;">26.0</span>        0.096<span style="text-decoration: underline;">1</span>                   20  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> Species one   10   -<span style="color: #BB0000;">53.9</span> -<span style="color: #BB0000;">26.0</span>       -<span style="color: #BB0000;">0.218</span>                    10  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> Species one   10   -<span style="color: #BB0000;">53.9</span> -<span style="color: #BB0000;">26.1</span>       -<span style="color: #BB0000;">0.218</span>                    10  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> Species one   20   -<span style="color: #BB0000;">53.9</span> -<span style="color: #BB0000;">26.1</span>        0.096<span style="text-decoration: underline;">1</span>                   20  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 928 more rows</span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Invert log and log1</span></span></span>
 <span class="r-in"><span><span class="va">some_sp_transformed</span> <span class="op">&lt;-</span> <span class="fu">adm_transform</span><span class="op">(</span></span></span>
@@ -217,6 +377,20 @@ The new column's name is the original variable name followed by an underscore an
 <span class="r-in"><span>  method <span class="op">=</span> <span class="st">"log"</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">some_sp_transformed</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 938 × 5</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    species     ind_ha     x     y ind_ha_log</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> Species one   10   -<span style="color: #BB0000;">61.2</span> -<span style="color: #BB0000;">25.0</span>       2.30</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> Species one   10   -<span style="color: #BB0000;">60.7</span> -<span style="color: #BB0000;">25.0</span>       2.30</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> Species one   10   -<span style="color: #BB0000;">60.2</span> -<span style="color: #BB0000;">25.0</span>       2.30</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> Species one   13.3 -<span style="color: #BB0000;">60.7</span> -<span style="color: #BB0000;">25.4</span>       2.59</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> Species one   10   -<span style="color: #BB0000;">60.2</span> -<span style="color: #BB0000;">25.9</span>       2.30</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> Species one   10   -<span style="color: #BB0000;">54.0</span> -<span style="color: #BB0000;">26.0</span>       2.30</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> Species one   20   -<span style="color: #BB0000;">53.9</span> -<span style="color: #BB0000;">26.0</span>       3.00</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> Species one   10   -<span style="color: #BB0000;">53.9</span> -<span style="color: #BB0000;">26.0</span>       2.30</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> Species one   10   -<span style="color: #BB0000;">53.9</span> -<span style="color: #BB0000;">26.1</span>       2.30</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> Species one   20   -<span style="color: #BB0000;">53.9</span> -<span style="color: #BB0000;">26.1</span>       3.00</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 928 more rows</span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">some_sp_inverted</span> <span class="op">&lt;-</span> <span class="fu">adm_transform</span><span class="op">(</span></span></span>
 <span class="r-in"><span>  data <span class="op">=</span> <span class="va">some_sp_transformed</span>,</span></span>
@@ -224,7 +398,22 @@ The new column's name is the original variable name followed by an underscore an
 <span class="r-in"><span>  method <span class="op">=</span> <span class="st">"log"</span>,</span></span>
 <span class="r-in"><span>  inverse <span class="op">=</span> <span class="cn">TRUE</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>log and log1 tranformations can't restore original negative values, use carefully.</span>
 <span class="r-in"><span><span class="va">some_sp_inverted</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 938 × 6</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    species     ind_ha     x     y ind_ha_log ind_ha_log_inverted</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>               <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> Species one   10   -<span style="color: #BB0000;">61.2</span> -<span style="color: #BB0000;">25.0</span>       2.30                10  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> Species one   10   -<span style="color: #BB0000;">60.7</span> -<span style="color: #BB0000;">25.0</span>       2.30                10  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> Species one   10   -<span style="color: #BB0000;">60.2</span> -<span style="color: #BB0000;">25.0</span>       2.30                10  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> Species one   13.3 -<span style="color: #BB0000;">60.7</span> -<span style="color: #BB0000;">25.4</span>       2.59                13.3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> Species one   10   -<span style="color: #BB0000;">60.2</span> -<span style="color: #BB0000;">25.9</span>       2.30                10  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> Species one   10   -<span style="color: #BB0000;">54.0</span> -<span style="color: #BB0000;">26.0</span>       2.30                10  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> Species one   20   -<span style="color: #BB0000;">53.9</span> -<span style="color: #BB0000;">26.0</span>       3.00                20  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> Species one   10   -<span style="color: #BB0000;">53.9</span> -<span style="color: #BB0000;">26.0</span>       2.30                10  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> Species one   10   -<span style="color: #BB0000;">53.9</span> -<span style="color: #BB0000;">26.1</span>       2.30                10  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> Species one   20   -<span style="color: #BB0000;">53.9</span> -<span style="color: #BB0000;">26.1</span>       3.00                20  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 928 more rows</span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">some_sp_transformed</span> <span class="op">&lt;-</span> <span class="fu">adm_transform</span><span class="op">(</span></span></span>
 <span class="r-in"><span>  data <span class="op">=</span> <span class="va">some_sp</span>,</span></span>
@@ -232,6 +421,20 @@ The new column's name is the original variable name followed by an underscore an
 <span class="r-in"><span>  method <span class="op">=</span> <span class="st">"log1"</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">some_sp_transformed</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 938 × 5</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    species     ind_ha     x     y ind_ha_log1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> Species one   10   -<span style="color: #BB0000;">61.2</span> -<span style="color: #BB0000;">25.0</span>        2.40</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> Species one   10   -<span style="color: #BB0000;">60.7</span> -<span style="color: #BB0000;">25.0</span>        2.40</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> Species one   10   -<span style="color: #BB0000;">60.2</span> -<span style="color: #BB0000;">25.0</span>        2.40</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> Species one   13.3 -<span style="color: #BB0000;">60.7</span> -<span style="color: #BB0000;">25.4</span>        2.66</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> Species one   10   -<span style="color: #BB0000;">60.2</span> -<span style="color: #BB0000;">25.9</span>        2.40</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> Species one   10   -<span style="color: #BB0000;">54.0</span> -<span style="color: #BB0000;">26.0</span>        2.40</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> Species one   20   -<span style="color: #BB0000;">53.9</span> -<span style="color: #BB0000;">26.0</span>        3.04</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> Species one   10   -<span style="color: #BB0000;">53.9</span> -<span style="color: #BB0000;">26.0</span>        2.40</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> Species one   10   -<span style="color: #BB0000;">53.9</span> -<span style="color: #BB0000;">26.1</span>        2.40</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> Species one   20   -<span style="color: #BB0000;">53.9</span> -<span style="color: #BB0000;">26.1</span>        3.04</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 928 more rows</span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">some_sp_inverted</span> <span class="op">&lt;-</span> <span class="fu">adm_transform</span><span class="op">(</span></span></span>
 <span class="r-in"><span>  data <span class="op">=</span> <span class="va">some_sp_transformed</span>,</span></span>
@@ -239,7 +442,22 @@ The new column's name is the original variable name followed by an underscore an
 <span class="r-in"><span>  method <span class="op">=</span> <span class="st">"log1"</span>,</span></span>
 <span class="r-in"><span>  inverse <span class="op">=</span> <span class="cn">TRUE</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>log and log1 tranformations can't restore original negative values, use carefully.</span>
 <span class="r-in"><span><span class="va">some_sp_inverted</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 938 × 6</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    species     ind_ha     x     y ind_ha_log1 ind_ha_log1_inverted</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>                <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> Species one   10   -<span style="color: #BB0000;">61.2</span> -<span style="color: #BB0000;">25.0</span>        2.40                 10  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> Species one   10   -<span style="color: #BB0000;">60.7</span> -<span style="color: #BB0000;">25.0</span>        2.40                 10  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> Species one   10   -<span style="color: #BB0000;">60.2</span> -<span style="color: #BB0000;">25.0</span>        2.40                 10  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> Species one   13.3 -<span style="color: #BB0000;">60.7</span> -<span style="color: #BB0000;">25.4</span>        2.66                 13.3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> Species one   10   -<span style="color: #BB0000;">60.2</span> -<span style="color: #BB0000;">25.9</span>        2.40                 10  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> Species one   10   -<span style="color: #BB0000;">54.0</span> -<span style="color: #BB0000;">26.0</span>        2.40                 10  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> Species one   20   -<span style="color: #BB0000;">53.9</span> -<span style="color: #BB0000;">26.0</span>        3.04                 20  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> Species one   10   -<span style="color: #BB0000;">53.9</span> -<span style="color: #BB0000;">26.0</span>        2.40                 10  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> Species one   10   -<span style="color: #BB0000;">53.9</span> -<span style="color: #BB0000;">26.1</span>        2.40                 10  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> Species one   20   -<span style="color: #BB0000;">53.9</span> -<span style="color: #BB0000;">26.1</span>        3.04                 20  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 928 more rows</span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## To invert raster, is the same process</span></span></span>
 <span class="r-in"><span><span class="co">## Example:</span></span></span>
@@ -249,6 +467,18 @@ The new column's name is the original variable name followed by an underscore an
 <span class="r-in"><span>  method <span class="op">=</span> <span class="st">"01"</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">envar_transformed</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> class       : SpatRaster</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> size        : 201, 274, 2  (nrow, ncol, nlyr)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> resolution  : 0.08333333, 0.08333333  (x, y)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> extent      : -69.41681, -46.58347, -34.38347, -17.63347  (xmin, xmax, ymin, ymax)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> coord. ref. : lon/lat WGS 84 (EPSG:4326)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> sources     : envar.tif</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>               memory</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> varnames    : envar</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>               envar</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> names       :       bio12, bio12_01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> min values  :       9.283,        0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> max values  : 3171.336914,        1</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">envar_inverted</span> <span class="op">&lt;-</span> <span class="fu">adm_transform</span><span class="op">(</span></span></span>
 <span class="r-in"><span>  data <span class="op">=</span> <span class="va">envar_transformed</span>,</span></span>
@@ -256,12 +486,25 @@ The new column's name is the original variable name followed by an underscore an
 <span class="r-in"><span>  method <span class="op">=</span> <span class="st">"01"</span>,</span></span>
 <span class="r-in"><span>  inverse <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
 <span class="r-in"><span>  t_terms <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>    a <span class="op">=</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/global.html" class="external-link">global</a></span><span class="op">(</span><span class="va">envar</span>, <span class="va">min</span>, na.rm <span class="op">=</span> <span class="cn">T</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>    b <span class="op">=</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/global.html" class="external-link">global</a></span><span class="op">(</span><span class="va">envar</span>, <span class="va">max</span>, na.rm <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span></span>
+<span class="r-in"><span>    a <span class="op">=</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/global.html" class="external-link">global</a></span><span class="op">(</span><span class="va">envar</span>, <span class="va">min</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>    b <span class="op">=</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/global.html" class="external-link">global</a></span><span class="op">(</span><span class="va">envar</span>, <span class="va">max</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span>  <span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">envar_inverted</span></span></span>
-<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> class       : SpatRaster</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> size        : 201, 274, 3  (nrow, ncol, nlyr)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> resolution  : 0.08333333, 0.08333333  (x, y)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> extent      : -69.41681, -46.58347, -34.38347, -17.63347  (xmin, xmax, ymin, ymax)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> coord. ref. : lon/lat WGS 84 (EPSG:4326)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> sources     : envar.tif</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>               memory (2 layers)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> varnames    : envar</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>               envar</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>               envar</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> names       :       bio12, bio12_01, bio12_01_inverted</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> min values  :       9.283,        0,             9.283</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> max values  : 3171.336914,        1,       3171.336914</span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

@@ -39,6 +39,17 @@
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.5.0" id="adm-050">adm 0.5.0<a class="anchor" aria-label="anchor" href="#adm-050"></a></h2>
 <div class="section level3">
+<h3 id="changes-after-cran-review-0-5-0">Changes after CRAN review<a class="anchor" aria-label="anchor" href="#changes-after-cran-review-0-5-0"></a></h3>
+<ul><li>The title no longer starts with “Tools for”, and the Description now cites the package paper (de Oliveira Junior and Velazco 2025, <a href="doi:10.1111/2041-210X.70074" class="uri">doi:10.1111/2041-210X.70074</a>).</li>
+<li>
+<code><a href="../reference/envar.html">envar()</a></code> and <code><a href="../reference/cretusa_predictors.html">cretusa_predictors()</a></code> now return the <code>SpatRaster</code> shipped with the package and have a documented <code>\value</code>.</li>
+<li>Examples are wrapped in <code>\donttest{}</code> instead of <code>\dontrun{}</code>; they were rewritten so they run, use only declared dependencies, and are much faster (DNN/CNN examples run only when torch is installed).</li>
+<li>No function sets a fixed random seed any more (<code>set.seed(13)</code>, <code>set.seed(ii)</code> and <code>torch::torch_manual_seed(13)</code> were removed). Call <code><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed()</a></code> and <code><a href="https://torch.mlverse.org/docs/reference/torch_manual_seed.html" class="external-link">torch::torch_manual_seed()</a></code> before fitting if you need reproducible results.</li>
+<li>The workflow vignette restores the graphical parameters it changes (<code><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par()</a></code>).</li>
+<li>
+<code>T</code> was replaced by <code>TRUE</code> in the code and examples.</li>
+</ul></div>
+<div class="section level3">
 <h3 id="bug-fixes-0-5-0">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-5-0"></a></h3>
 <ul><li>
 <code>fit_abund_qrf</code> now works when a partition is used; it was calling the internal result wrapper with an outdated argument order. Without a partition it now also returns <code>predictors</code> and <code>metadata</code>, as the other <code>fit_abund_*</code> functions do.</li>

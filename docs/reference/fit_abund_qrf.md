@@ -130,7 +130,7 @@ A list object with:
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
+# \donttest{
 require(terra)
 require(dplyr)
 
@@ -144,10 +144,12 @@ some_sp <- sppabund %>%
 
 # Explore reponse variables
 some_sp$ind_ha %>% range()
+#> [1]   0.0000 285.2941
 some_sp$ind_ha %>% hist()
+
 
 # Here we balance number of absences
 some_sp <-
   balance_dataset(some_sp, response = "ind_ha", absence_ratio = 0.2)
-} # }
+# }
 ```

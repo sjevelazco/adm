@@ -121,7 +121,7 @@ In case one or more hyperparameters are provided, the function will complete the
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Database with species abundance and x and y coordinates</span></span></span>
@@ -134,16 +134,22 @@ In case one or more hyperparameters are provided, the function will complete the
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Explore response variables</span></span></span>
 <span class="r-in"><span><span class="va">some_sp</span><span class="op">$</span><span class="va">ind_ha</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/range.html" class="external-link">range</a></span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1]   0.0000 186.8627</span>
 <span class="r-in"><span><span class="va">some_sp</span><span class="op">$</span><span class="va">ind_ha</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/graphics/hist.html" class="external-link">hist</a></span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="tune_abund_raf-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Here we balance number of absences</span></span></span>
 <span class="r-in"><span><span class="va">some_sp</span> <span class="op">&lt;-</span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="balance_dataset.html">balance_dataset</a></span><span class="op">(</span><span class="va">some_sp</span>, response <span class="op">=</span> <span class="st">"ind_ha"</span>, absence_ratio <span class="op">=</span> <span class="fl">0.2</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># A small subset keeps this example fast</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">some_sp</span> <span class="op">&lt;-</span> <span class="va">some_sp</span><span class="op">[</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/dimensions.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">some_sp</span><span class="op">)</span>, <span class="fl">200</span><span class="op">)</span><span class="op">)</span>, <span class="op">]</span></span></span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Create a grid</span></span></span>
 <span class="r-in"><span><span class="va">raf_grid</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/expand.grid.html" class="external-link">expand.grid</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>  mtry <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span>from <span class="op">=</span> <span class="fl">2</span>, to <span class="op">=</span> <span class="fl">3</span>, by <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  ntree <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span>from <span class="op">=</span> <span class="fl">500</span>, to <span class="op">=</span> <span class="fl">1000</span>, by <span class="op">=</span> <span class="fl">100</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  mtry <span class="op">=</span> <span class="fl">2</span><span class="op">:</span><span class="fl">3</span>,</span></span>
+<span class="r-in"><span>  ntree <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">50</span>, <span class="fl">100</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>  stringsAsFactors <span class="op">=</span> <span class="cn">FALSE</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
@@ -153,15 +159,130 @@ In case one or more hyperparameters are provided, the function will complete the
 <span class="r-in"><span>  response <span class="op">=</span> <span class="st">"ind_ha"</span>,</span></span>
 <span class="r-in"><span>  predictors <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"bio12"</span>, <span class="st">"elevation"</span>, <span class="st">"sand"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>  predictors_f <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"eco"</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  partition <span class="op">=</span> <span class="st">".part"</span>,</span></span>
+<span class="r-in"><span>  partition <span class="op">=</span> <span class="st">".part1"</span>,</span></span>
 <span class="r-in"><span>  predict_part <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
 <span class="r-in"><span>  metrics <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"corr_pear"</span>, <span class="st">"mae"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>  grid <span class="op">=</span> <span class="va">raf_grid</span>,</span></span>
-<span class="r-in"><span>  n_cores <span class="op">=</span> <span class="fl">3</span></span></span>
+<span class="r-in"><span>  n_cores <span class="op">=</span> <span class="fl">1</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Using provided grid.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Searching for optimal hyperparameters...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Fitting the best model...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Formula used for model fitting:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ind_ha ~ bio12 + elevation + sand + eco</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Replica number: 1/1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> -- Partition number 1/3</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> -- Partition number 2/3</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> -- Partition number 3/3</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> The best model was achieved with: </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>  mtry = 2 and ntree = 100</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">tuned_raf</span></span></span>
-<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $model</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Call:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  randomForest(formula = formula1, data = data, mtry = mtry, ntree = ntree,      importance = FALSE) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                Type of random forest: regression</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                      Number of trees: 100</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> No. of variables tried at each split: 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>           Mean of squared residuals: 728.9428</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                     % Var explained: 4.35</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $predictors</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 1 × 6</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   model response c1    c2        c3    f    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> raf   ind_ha   bio12 elevation sand  eco  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $performance</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 1 × 13</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   model mae_mean mae_sd corr_spear_mean corr_spear_sd corr_pear_mean</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>           <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> raf       20.3  0.558           0.270        0.077<span style="text-decoration: underline;">0</span>          0.215</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 7 more variables: corr_pear_sd &lt;dbl&gt;, inter_mean &lt;dbl&gt;, inter_sd &lt;dbl&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   slope_mean &lt;dbl&gt;, slope_sd &lt;dbl&gt;, pdisp_mean &lt;dbl&gt;, pdisp_sd &lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $performance_part</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 3 × 9</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   replica partition model   mae corr_spear corr_pear inter slope pdisp</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> 1       1         raf    19.8      0.329    0.279   8.36 0.399 0.700</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> 1       2         raf    20.9      0.183    0.078<span style="text-decoration: underline;">9</span> 20.7  0.215 0.367</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> 1       3         raf    20.4      0.297    0.287   8.12 0.832 0.345</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $predicted_part</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 200 × 4</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    replica partition observed predicted</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> 1       1               50      35.9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> 1       1               30      33.5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> 1       1               10      12.7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> 1       1               10      19.5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> 1       1               10      35.5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> 1       1               10      30.1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> 1       1               40      32.9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> 1       1               10      26.8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> 1       1               50      48.7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> 1       1               20      32.1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 190 more rows</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $metadata</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $metadata$plataform</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "aarch64-apple-darwin23"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $metadata$R_version</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "R version 4.6.1 (2026-06-24)"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $metadata$run_date</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "2026-10-21 13:40:35 PDT"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $metadata$formula</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ind_ha ~ bio12 + elevation + sand + eco</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x6dda9e0e8&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $metadata$importance</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $metadata$hyperparameters</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $metadata$hyperparameters$mtry</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $metadata$hyperparameters$ntree</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 100</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $metadata$source_function</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "tune_abund_raf"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $optimal_combination</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   comb_id mtry ntree model mae_mean   mae_sd corr_spear_mean corr_spear_sd</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  comb_3    2   100   raf 20.26949 0.858931       0.2715684     0.1008452</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   corr_pear_mean corr_pear_sd inter_mean inter_sd slope_mean  slope_sd</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3      0.2271266    0.1423189    11.6307 8.483081  0.5058793 0.3820859</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   pdisp_mean  pdisp_sd</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  0.4704724 0.1968739</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $all_combinations</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   comb_id mtry ntree model mae_mean    mae_sd corr_spear_mean corr_spear_sd</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1  comb_1    2    50   raf 20.42383 0.8788225       0.2596367    0.11386300</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2  comb_2    3    50   raf 20.99984 0.7110636       0.2425709    0.07487930</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  comb_3    2   100   raf 20.26949 0.8589310       0.2715684    0.10084522</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4  comb_4    3   100   raf 20.63031 0.3296048       0.2442177    0.07739837</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   corr_pear_mean corr_pear_sd inter_mean  inter_sd slope_mean  slope_sd</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1      0.2196949    0.1813738   11.43846 11.869116  0.5390408 0.5849263</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2      0.1907682    0.1409322   14.07839  8.515779  0.4057176 0.4035233</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3      0.2271266    0.1423189   11.63070  8.483081  0.5058793 0.3820859</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4      0.1978030    0.1351581   13.56967  8.135619  0.4319145 0.3789949</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   pdisp_mean  pdisp_sd</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1  0.4692900 0.1973203</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2  0.5365805 0.2830610</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  0.4704724 0.1968739</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4  0.4975310 0.2123992</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

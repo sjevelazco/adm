@@ -135,7 +135,7 @@ environmental conditions used to train the model.
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
+# \donttest{
 require(dplyr)
 require(terra)
 
@@ -153,12 +153,18 @@ mglm <- fit_abund_glm(
   response = "ind_ha",
   predictors = c("bio12", "elevation", "sand"),
   predictors_f = c("eco"),
-  partition = ".part",
+  partition = ".part1",
   distribution = "ZAIG",
   poly = 3,
   inter_order = 0,
   predict_part = TRUE
 )
+#> Formula used for model fitting:
+#> ind_ha ~ bio12 + elevation + sand + eco + I(bio12^2) + I(elevation^2) + I(sand^2) + I(bio12^3) + I(elevation^3) + I(sand^3)
+#> Replica number: 1/1
+#> -- Partition number 1/3
+#> -- Partition number 2/3
+#> -- Partition number 3/3
 
 # Partial Dependence Plots:
 
@@ -170,12 +176,14 @@ p_abund_pdp(
   response_name = "Abundance"
 )
 
+
 p_abund_pdp(
   model = mglm,
   resolution = 5,
   training_data = some_sp,
   response_name = "Abundance"
 )
+
 
 # Especific variables and different resulotions
 p_abund_pdp(
@@ -185,6 +193,7 @@ p_abund_pdp(
   response_name = "Abundance"
 )
 
+
 # With residuals and rug plot
 p_abund_pdp(
   model = mglm,
@@ -193,12 +202,14 @@ p_abund_pdp(
   resid = TRUE
 )
 
+
 p_abund_pdp(
   model = mglm,
   training_data = some_sp,
   response_name = "Abundance",
   rug = TRUE
 )
+
 
 p_abund_pdp(
   model = mglm,
@@ -208,6 +219,7 @@ p_abund_pdp(
   rug = TRUE
 )
 
+
 # Partial depence plot for training and projection condition found in a projection area
 p_abund_pdp(
   model = mglm,
@@ -216,6 +228,7 @@ p_abund_pdp(
   response_name = "Abundance",
   rug = TRUE
 )
+
 
 # Custumize colors and theme
 p_abund_pdp(
@@ -230,5 +243,6 @@ p_abund_pdp(
   alpha = 0.4,
   theme = ggplot2::theme_dark()
 )
-} # }
+
+# }
 ```

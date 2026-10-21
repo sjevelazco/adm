@@ -14,13 +14,20 @@ cretusa_predictors()
 
 A raster in tif format with the first principal components.
 
+## Value
+
+A `SpatRaster` (see
+[`rast`](https://rspatial.github.io/terra/reference/rast.html)) with the
+first principal components (PC1, PC2, ...) read from the raster file
+shipped with the package (`external/cretusa_predictors.tif`).
+
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
+# \donttest{
 require(terra)
-envar <- system.file("external/cretusa_predictors.tif", package = "adm")
-envar <- terra::rast(envar)
-plot(envar)
-} # }
+predictors <- adm::cretusa_predictors()
+plot(predictors)
+
+# }
 ```

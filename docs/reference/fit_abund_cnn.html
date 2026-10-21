@@ -172,7 +172,8 @@
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
+<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="fu">torch</span><span class="fu">::</span><span class="fu"><a href="https://torch.mlverse.org/docs/reference/torch_is_installed.html" class="external-link">torch_is_installed</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="va"><a href="https://rspatial.org/" class="external-link">terra</a></span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
@@ -192,6 +193,10 @@
 <span class="r-in"><span><span class="va">some_sp</span> <span class="op">&lt;-</span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="balance_dataset.html">balance_dataset</a></span><span class="op">(</span><span class="va">some_sp</span>, response <span class="op">=</span> <span class="st">"ind_ha"</span>, absence_ratio <span class="op">=</span> <span class="fl">0.2</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># A small subset keeps this example fast</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">some_sp</span> <span class="op">&lt;-</span> <span class="va">some_sp</span><span class="op">[</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/dimensions.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">some_sp</span><span class="op">)</span>, <span class="fl">150</span><span class="op">)</span><span class="op">)</span>, <span class="op">]</span></span></span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">envar</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"external/envar.tif"</span>, package <span class="op">=</span> <span class="st">"adm"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">envar</span> <span class="op">&lt;-</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/rast.html" class="external-link">rast</a></span><span class="op">(</span><span class="va">envar</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
@@ -199,18 +204,18 @@
 <span class="r-in"><span><span class="va">cnn_arch</span> <span class="op">&lt;-</span> <span class="fu"><a href="generate_cnn_architecture.html">generate_cnn_architecture</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  number_of_features <span class="op">=</span> <span class="fl">3</span>,</span></span>
 <span class="r-in"><span>  number_of_outputs <span class="op">=</span> <span class="fl">1</span>,</span></span>
-<span class="r-in"><span>  sample_size <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">11</span>, <span class="fl">11</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  sample_size <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5</span>, <span class="fl">5</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>  number_of_conv_layers <span class="op">=</span> <span class="fl">2</span>,</span></span>
-<span class="r-in"><span>  conv_layers_size <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">14</span>, <span class="fl">28</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  conv_layers_size <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span>, <span class="fl">8</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>  conv_layers_kernel <span class="op">=</span> <span class="fl">3</span>,</span></span>
 <span class="r-in"><span>  conv_layers_stride <span class="op">=</span> <span class="fl">1</span>,</span></span>
 <span class="r-in"><span>  conv_layers_padding <span class="op">=</span> <span class="fl">0</span>,</span></span>
 <span class="r-in"><span>  number_of_fc_layers <span class="op">=</span> <span class="fl">1</span>,</span></span>
-<span class="r-in"><span>  fc_layers_size <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">28</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  fc_layers_size <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">8</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>  pooling <span class="op">=</span> <span class="cn">NULL</span>,</span></span>
-<span class="r-in"><span>  batch_norm <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
+<span class="r-in"><span>  batch_norm <span class="op">=</span> <span class="cn">FALSE</span>,</span></span>
 <span class="r-in"><span>  dropout <span class="op">=</span> <span class="fl">0</span>,</span></span>
-<span class="r-in"><span>  verbose <span class="op">=</span> <span class="cn">T</span></span></span>
+<span class="r-in"><span>  verbose <span class="op">=</span> <span class="cn">FALSE</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Fit a CNN model</span></span></span>
@@ -219,23 +224,169 @@
 <span class="r-in"><span>  response <span class="op">=</span> <span class="st">"ind_ha"</span>,</span></span>
 <span class="r-in"><span>  predictors <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"bio12"</span>, <span class="st">"elevation"</span>, <span class="st">"sand"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>  predictors_f <span class="op">=</span> <span class="cn">NULL</span>,</span></span>
-<span class="r-in"><span>  partition <span class="op">=</span> <span class="st">".part"</span>,</span></span>
+<span class="r-in"><span>  partition <span class="op">=</span> <span class="st">".part1"</span>,</span></span>
 <span class="r-in"><span>  x <span class="op">=</span> <span class="st">"x"</span>,</span></span>
 <span class="r-in"><span>  y <span class="op">=</span> <span class="st">"y"</span>,</span></span>
 <span class="r-in"><span>  rasters <span class="op">=</span> <span class="va">envar</span>,</span></span>
-<span class="r-in"><span>  sample_size <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">11</span>, <span class="fl">11</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  sample_size <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5</span>, <span class="fl">5</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>  learning_rate <span class="op">=</span> <span class="fl">0.01</span>,</span></span>
-<span class="r-in"><span>  n_epochs <span class="op">=</span> <span class="fl">100</span>,</span></span>
+<span class="r-in"><span>  n_epochs <span class="op">=</span> <span class="fl">3</span>,</span></span>
 <span class="r-in"><span>  batch_size <span class="op">=</span> <span class="fl">32</span>,</span></span>
 <span class="r-in"><span>  validation_patience <span class="op">=</span> <span class="fl">2</span>,</span></span>
 <span class="r-in"><span>  fitting_patience <span class="op">=</span> <span class="fl">5</span>,</span></span>
 <span class="r-in"><span>  custom_architecture <span class="op">=</span> <span class="va">cnn_arch</span>,</span></span>
-<span class="r-in"><span>  verbose <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
+<span class="r-in"><span>  verbose <span class="op">=</span> <span class="cn">FALSE</span>,</span></span>
 <span class="r-in"><span>  predict_part <span class="op">=</span> <span class="cn">TRUE</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">mcnn</span></span></span>
-<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
+<span class="r-plt img"><img src="fit_abund_cnn-1.png" alt="" width="700" height="433"></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Some torch operators might not yet be implemented for the MPS device. A</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> temporary fix is to set the `PYTORCH_ENABLE_MPS_FALLBACK=1` to use the CPU as a</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> fall back for those operators:</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Add `PYTORCH_ENABLE_MPS_FALLBACK=1` to your `.Renviron` file, for example use</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span>   `usethis::edit_r_environ()`.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">✖</span> Using `Sys.setenv()` doesn't work because the env var must be set before R</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span>   starts.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Some torch operators might not yet be implemented for the MPS device. A</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> temporary fix is to set the `PYTORCH_ENABLE_MPS_FALLBACK=1` to use the CPU as a</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> fall back for those operators:</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Add `PYTORCH_ENABLE_MPS_FALLBACK=1` to your `.Renviron` file, for example use</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span>   `usethis::edit_r_environ()`.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">✖</span> Using `Sys.setenv()` doesn't work because the env var must be set before R</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span>   starts.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Some torch operators might not yet be implemented for the MPS device. A</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> temporary fix is to set the `PYTORCH_ENABLE_MPS_FALLBACK=1` to use the CPU as a</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> fall back for those operators:</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Add `PYTORCH_ENABLE_MPS_FALLBACK=1` to your `.Renviron` file, for example use</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span>   `usethis::edit_r_environ()`.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">✖</span> Using `Sys.setenv()` doesn't work because the env var must be set before R</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span>   starts.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Some torch operators might not yet be implemented for the MPS device. A</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> temporary fix is to set the `PYTORCH_ENABLE_MPS_FALLBACK=1` to use the CPU as a</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> fall back for those operators:</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Add `PYTORCH_ENABLE_MPS_FALLBACK=1` to your `.Renviron` file, for example use</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span>   `usethis::edit_r_environ()`.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">✖</span> Using `Sys.setenv()` doesn't work because the env var must be set before R</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span>   starts.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Some torch operators might not yet be implemented for the MPS device. A</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> temporary fix is to set the `PYTORCH_ENABLE_MPS_FALLBACK=1` to use the CPU as a</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> fall back for those operators:</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Add `PYTORCH_ENABLE_MPS_FALLBACK=1` to your `.Renviron` file, for example use</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span>   `usethis::edit_r_environ()`.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">✖</span> Using `Sys.setenv()` doesn't work because the env var must be set before R</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span>   starts.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Some torch operators might not yet be implemented for the MPS device. A</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> temporary fix is to set the `PYTORCH_ENABLE_MPS_FALLBACK=1` to use the CPU as a</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> fall back for those operators:</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Add `PYTORCH_ENABLE_MPS_FALLBACK=1` to your `.Renviron` file, for example use</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span>   `usethis::edit_r_environ()`.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">✖</span> Using `Sys.setenv()` doesn't work because the env var must be set before R</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span>   starts.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Some torch operators might not yet be implemented for the MPS device. A</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> temporary fix is to set the `PYTORCH_ENABLE_MPS_FALLBACK=1` to use the CPU as a</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> fall back for those operators:</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Add `PYTORCH_ENABLE_MPS_FALLBACK=1` to your `.Renviron` file, for example use</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span>   `usethis::edit_r_environ()`.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">✖</span> Using `Sys.setenv()` doesn't work because the env var must be set before R</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span>   starts.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $model</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A `luz_module_fitted`</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ── Time ────────────────────────────────────────────────────────────────────────</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> • Total time: 260ms</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> • Avg time per training epoch: 86ms</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ── Results ─────────────────────────────────────────────────────────────────────</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Metrics observed in the last epoch.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB;">ℹ</span> Training:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> loss: 23.4182</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ── Model ───────────────────────────────────────────────────────────────────────</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> An `nn_module` containing 489 parameters.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ── Modules ─────────────────────────────────────────────────────────────────────</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> • conv1: &lt;nn_conv2d&gt; #112 parameters</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> • conv2: &lt;nn_conv2d&gt; #296 parameters</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> • linear1: &lt;nn_linear&gt; #72 parameters</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> • output: &lt;nn_linear&gt; #9 parameters</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $predictors</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 1 × 5</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   model response c1    c2        c3   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> cnn   ind_ha   bio12 elevation sand </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $performance</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 1 × 13</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   model mae_mean mae_sd corr_spear_mean corr_spear_sd corr_pear_mean</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>           <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> cnn       25.1   2.93          0.045<span style="text-decoration: underline;">4</span>         0.122         0.012<span style="text-decoration: underline;">2</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 7 more variables: corr_pear_sd &lt;dbl&gt;, inter_mean &lt;dbl&gt;, inter_sd &lt;dbl&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   slope_mean &lt;dbl&gt;, slope_sd &lt;dbl&gt;, pdisp_mean &lt;dbl&gt;, pdisp_sd &lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $performance_part</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 3 × 9</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   replica partition model   mae corr_spear corr_pear inter    slope  pdisp</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> 1       1         cnn    24.8     0.160  -<span style="color: #BB0000;">0.000</span><span style="color: #BB0000; text-decoration: underline;">602</span> 28.9  -<span style="color: #BB0000;">0.006</span><span style="color: #BB0000; text-decoration: underline;">30</span> 0.095<span style="text-decoration: underline;">6</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> 1       2         cnn    22.3     0.059<span style="text-decoration: underline;">6</span>  0.180     8.13  2.68    0.067<span style="text-decoration: underline;">0</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> 1       3         cnn    28.1    -<span style="color: #BB0000;">0.083</span><span style="color: #BB0000; text-decoration: underline;">0</span> -<span style="color: #BB0000;">0.142</span>    38.0  -<span style="color: #BB0000;">0.639</span>   0.223 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $predicted_part</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 150 × 4</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    replica partition observed predicted</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> 1       1             10        2.85</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> 1       1             10        3.23</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> 1       1             15        5.68</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> 1       1             13.3      9.08</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> 1       1             40       10.1 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> 1       1             80        7.91</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> 1       1             30        7.24</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> 1       1             30       10.7 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> 1       1             40        9.23</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> 1       1             90       11.4 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 140 more rows</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $metadata</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $metadata$plataform</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "aarch64-apple-darwin23"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $metadata$R_version</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "R version 4.6.1 (2026-06-24)"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $metadata$run_date</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "2026-10-21 13:39:05 PDT"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $metadata$lr</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $metadata$weight_decay</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $metadata$loss</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> An `nn_module` containing 0 parameters.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $metadata$optimizer</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;optim_adamw&gt; object generator</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   Inherits from: &lt;inherit&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   Public:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     initialize: function (params, lr = 0.001, betas = c(0.9, 0.999), eps = 1e-08, </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     loop_fun: function (group, param, g, p) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     step: function (closure = NULL) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     clone: function (deep = FALSE) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   Parent env: &lt;environment: 0x6efb33e00&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   Locked objects: FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   Locked class: FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   Portable: TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $metadata$source_function</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "fit_abund_cnn"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

@@ -206,7 +206,7 @@ with *tune_abund_raf* to tune and validate a RAF model:
 `#> `\
 `#> Fitting the best model...`\
 `#> The best model was achieved with: `\
-`#>  mtry = 2 and ntree = 100`
+`#>  mtry = 4 and ntree = 300`
 
 The function returns a list with the following elements:
 
@@ -226,11 +226,11 @@ The function returns a list with the following elements:
 `#> Call:`\
 `#>  randomForest(formula = formula1, data = data, mtry = mtry, ntree = ntree,      importance = FALSE) `\
 `#>                Type of random forest: regression`\
-`#>                      Number of trees: 100`\
-`#> No. of variables tried at each split: 2`\
+`#>                      Number of trees: 300`\
+`#> No. of variables tried at each split: 4`\
 `#> `\
-`#>           Mean of squared residuals: 150.5632`\
-`#>                     % Var explained: 20.37`
+`#>           Mean of squared residuals: 152.3461`\
+`#>                     % Var explained: 19.43`
 
 “predictors”: a tibble containing relevant informations about the model
 fitted.
@@ -249,7 +249,7 @@ fitted.
 `#> ``# A tibble: 1 × 13`\
 `#>   model mae_mean mae_sd corr_spear_mean corr_spear_sd corr_pear_mean`\
 `#>   ``<chr>``    ``<dbl>``  ``<dbl>``           ``<dbl>``         ``<dbl>``          ``<dbl>`\
-`#> ``1`` raf       7.84   1.83           0.384         0.200          0.316`\
+`#> ``1`` raf       7.70   1.93           0.397         0.177          0.309`\
 `#> ``# ℹ 7 more variables: corr_pear_sd <dbl>, inter_mean <dbl>, inter_sd <dbl>,`\
 `#> ``#   slope_mean <dbl>, slope_sd <dbl>, pdisp_mean <dbl>, pdisp_sd <dbl>`
 
@@ -258,11 +258,11 @@ fitted.
 \
 `mraf``$``performance_part`\
 `#> ``# A tibble: 3 × 9`\
-`#>   replica partition model   mae corr_spear corr_pear    inter slope pdisp`\
-`#>   ``<chr>``   ``<chr>``     ``<chr>`` ``<dbl>``      ``<dbl>``     ``<dbl>``    ``<dbl>`` ``<dbl>`` ``<dbl>`\
-`#> ``1`` 1       1         raf    9.85      0.594     0.478 -``0.001``10`` 1.22  0.393`\
-`#> ``2`` 1       2         raf    7.39      0.362     0.281  3.24    0.445 0.631`\
-`#> ``3`` 1       3         raf    6.27      0.195     0.190  3.15    0.429 0.443`
+`#>   replica partition model   mae corr_spear corr_pear inter slope pdisp`\
+`#>   ``<chr>``   ``<chr>``     ``<chr>`` ``<dbl>``      ``<dbl>``     ``<dbl>`` ``<dbl>`` ``<dbl>`` ``<dbl>`\
+`#> ``1`` 1       1         raf    9.83      0.584     0.475  1.75 0.992 0.478`\
+`#> ``2`` 1       2         raf    7.19      0.376     0.260  3.64 0.402 0.646`\
+`#> ``3`` 1       3         raf    6.08      0.232     0.193  3.38 0.395 0.488`
 
 “predicted_part”: predictions for each partition.
 
@@ -271,12 +271,12 @@ fitted.
 `#> ``# A tibble: 6 × 4`\
 `#>   replica partition observed predicted`\
 `#>   ``<chr>``   ``<chr>``        ``<int>``     ``<dbl>`\
-`#> ``1`` 1       1               10     2.47 `\
-`#> ``2`` 1       1               10     3.02 `\
-`#> ``3`` 1       1                0     0.627`\
-`#> ``4`` 1       1               10    10.4  `\
-`#> ``5`` 1       1               10    10.8  `\
-`#> ``6`` 1       1               10     9.13`
+`#> ``1`` 1       1               10     0.783`\
+`#> ``2`` 1       1               10     0.937`\
+`#> ``3`` 1       1                0     0.233`\
+`#> ``4`` 1       1               10    10.0  `\
+`#> ``5`` 1       1               10     9.87 `\
+`#> ``6`` 1       1               10     9.01`
 
 “optimal_combination”: the set of hyperparameters values considered the
 best given the metrics and its performance.
@@ -285,42 +285,42 @@ best given the metrics and its performance.
 `mraf``$``optimal_combination`` `[`%>%`](https://magrittr.tidyverse.org/reference/pipe.html)` ``dplyr``::`[`glimpse`](https://pillar.r-lib.org/reference/glimpse.html)`(``)`\
 `#> Rows: 1`\
 `#> Columns: 16`\
-`#> $ comb_id         ``<chr>`` "comb_1"`\
-`#> $ mtry            ``<dbl>`` 2`\
-`#> $ ntree           ``<dbl>`` 100`\
+`#> $ comb_id         ``<chr>`` "comb_4"`\
+`#> $ mtry            ``<dbl>`` 4`\
+`#> $ ntree           ``<dbl>`` 300`\
 `#> $ model           ``<chr>`` "raf"`\
-`#> $ mae_mean        ``<dbl>`` 7.835086`\
-`#> $ mae_sd          ``<dbl>`` 1.828213`\
-`#> $ corr_spear_mean ``<dbl>`` 0.383678`\
-`#> $ corr_spear_sd   ``<dbl>`` 0.2003848`\
-`#> $ corr_pear_mean  ``<dbl>`` 0.3163061`\
-`#> $ corr_pear_sd    ``<dbl>`` 0.1470123`\
-`#> $ inter_mean      ``<dbl>`` 2.130081`\
-`#> $ inter_sd        ``<dbl>`` 1.846114`\
-`#> $ slope_mean      ``<dbl>`` 0.6965336`\
-`#> $ slope_sd        ``<dbl>`` 0.4493598`\
-`#> $ pdisp_mean      ``<dbl>`` 0.4891603`\
-`#> $ pdisp_sd        ``<dbl>`` 0.1252488`
+`#> $ mae_mean        ``<dbl>`` 7.705056`\
+`#> $ mae_sd          ``<dbl>`` 1.936323`\
+`#> $ corr_spear_mean ``<dbl>`` 0.3963133`\
+`#> $ corr_spear_sd   ``<dbl>`` 0.1708365`\
+`#> $ corr_pear_mean  ``<dbl>`` 0.3129542`\
+`#> $ corr_pear_sd    ``<dbl>`` 0.1429257`\
+`#> $ inter_mean      ``<dbl>`` 2.901719`\
+`#> $ inter_sd        ``<dbl>`` 0.9437854`\
+`#> $ slope_mean      ``<dbl>`` 0.5990813`\
+`#> $ slope_sd        ``<dbl>`` 0.3226842`\
+`#> $ pdisp_mean      ``<dbl>`` 0.5380095`\
+`#> $ pdisp_sd        ``<dbl>`` 0.08471985`
 
 “all_combinations”: performance for every hyper-parameter combination.
 
 \
 `mraf``$``all_combinations`` `[`%>%`](https://magrittr.tidyverse.org/reference/pipe.html)` `[`head`](https://rspatial.github.io/terra/reference/headtail.html)`(``)`\
 `#>   comb_id mtry ntree model mae_mean   mae_sd corr_spear_mean corr_spear_sd`\
-`#> 1  comb_1    2   100   raf 7.835086 1.828213       0.3836780     0.2003848`\
-`#> 2  comb_2    4   100   raf 7.910588 1.988897       0.3592797     0.2033749`\
-`#> 3  comb_3    2   300   raf 7.834701 1.875159       0.3757081     0.1983759`\
-`#> 4  comb_4    4   300   raf 7.753951 1.980398       0.3789300     0.1930393`\
-`#>   corr_pear_mean corr_pear_sd inter_mean inter_sd slope_mean  slope_sd`\
-`#> 1      0.3163061    0.1470123   2.130081 1.846114  0.6965336 0.4493598`\
-`#> 2      0.2707336    0.1664333   3.664373 1.007601  0.5104461 0.3514737`\
-`#> 3      0.3135883    0.1440350   2.372848 1.609151  0.6766354 0.4353365`\
-`#> 4      0.2970138    0.1489508   3.184253 0.830947  0.5748996 0.3176335`\
-`#>   pdisp_mean  pdisp_sd`\
-`#> 1  0.4891603 0.1252488`\
-`#> 2  0.5496524 0.1252156`\
-`#> 3  0.4988350 0.1264250`\
-`#> 4  0.5307853 0.1113435`
+`#> 1  comb_1    2   100   raf 7.855477 1.822326       0.3689964     0.1988137`\
+`#> 2  comb_2    4   100   raf 7.776412 2.021562       0.3899182     0.1754987`\
+`#> 3  comb_3    2   300   raf 7.807794 1.954262       0.3768522     0.1972647`\
+`#> 4  comb_4    4   300   raf 7.705056 1.936323       0.3963133     0.1708365`\
+`#>   corr_pear_mean corr_pear_sd inter_mean  inter_sd slope_mean  slope_sd`\
+`#> 1      0.3052569    0.1668113   2.414984 1.8871992  0.6564074 0.4790029`\
+`#> 2      0.2970345    0.1577941   3.174406 1.0934607  0.5650666 0.3164487`\
+`#> 3      0.3108264    0.1403134   2.236968 1.5348106  0.6986172 0.4129176`\
+`#> 4      0.3129542    0.1429257   2.901719 0.9437854  0.5990813 0.3226842`\
+`#>   pdisp_mean   pdisp_sd`\
+`#> 1  0.5023722 0.11113723`\
+`#> 2  0.5351318 0.09201974`\
+`#> 3  0.4686155 0.10214885`\
+`#> 4  0.5380095 0.08471985`
 
 ### GLM
 
@@ -603,14 +603,14 @@ is a “luz_module_fitted” from *torch* and *luz* packages.
 `mdnn``$``model`\
 `` #> A `luz_module_fitted` ``\
 `#> ── Time ────────────────────────────────────────────────────────────────────────`\
-`#> • Total time: 2s`\
-`#> • Avg time per training epoch: 112ms`\
+`#> • Total time: 1.5s`\
+`#> • Avg time per training epoch: 122ms`\
 `#> `\
 `#> ── Results ─────────────────────────────────────────────────────────────────────`\
 `#> Metrics observed in the last epoch.`\
 `#> `\
 `#> ``ℹ`` Training:`\
-`#> loss: 0.5333`\
+`#> loss: 0.5273`\
 `#> `\
 `#> ── Model ───────────────────────────────────────────────────────────────────────`\
 `` #> An `nn_module` containing 86 parameters. ``\
@@ -634,9 +634,9 @@ dataframe, using *adm_summarize* function:
 `#> ``# A tibble: 3 × 14`\
 `#>   model_ID model mae_mean mae_sd corr_spear_mean corr_spear_sd corr_pear_mean`\
 `#>      ``<int>`` ``<chr>``    ``<dbl>``  ``<dbl>``           ``<dbl>``         ``<dbl>``          ``<dbl>`\
-`#> ``1``        1 dnn      0.579  0.176           0.404         0.125          0.321`\
-`#> ``2``        2 raf      7.84   1.83            0.384         0.200          0.316`\
-`#> ``3``        3 glm      7.41   2.62            0.505         0.167          0.428`\
+`#> ``1``        1 dnn      0.590  0.209           0.290        0.067``6``          0.219`\
+`#> ``2``        2 raf      7.70   1.93            0.397        0.177           0.309`\
+`#> ``3``        3 glm      7.41   2.62            0.505        0.167           0.428`\
 `#> ``# ℹ 7 more variables: corr_pear_sd <dbl>, inter_mean <dbl>, inter_sd <dbl>,`\
 `#> ``#   slope_mean <dbl>, slope_sd <dbl>, pdisp_mean <dbl>, pdisp_sd <dbl>`
 
@@ -694,7 +694,7 @@ more about it, visit *adm_transform* documentation. Let’s visualize the
 predictions:
 
 \
-[`par`](https://rdrr.io/r/graphics/par.html)`(``mfrow ``=`` `[`c`](https://rdrr.io/r/base/c.html)`(``1``, ``2`` ``+`` ``has_torch``)``)`\
+`oldpar`` ``<-`` `[`par`](https://rdrr.io/r/graphics/par.html)`(``mfrow ``=`` `[`c`](https://rdrr.io/r/base/c.html)`(``1``, ``2`` ``+`` ``has_torch``)``)`\
 `if`` ``(``has_torch``)`` `[`plot`](https://rspatial.github.io/terra/reference/plot.html)`(``pred_dnn``$``dnn``, main ``=`` ``"DNN"``)`\
 [`plot`](https://rspatial.github.io/terra/reference/plot.html)`(``preds``$``raf``, main ``=`` ``"RAF"``)`\
 [`plot`](https://rspatial.github.io/terra/reference/plot.html)`(``preds``$``glm``, main ``=`` ``"GLM"``)`
@@ -702,7 +702,7 @@ predictions:
 ![](v01_modelling_workflow_files/figure-html/unnamed-chunk-4-1.png)
 
 \
-[`par`](https://rdrr.io/r/graphics/par.html)`(``mfrow ``=`` `[`c`](https://rdrr.io/r/base/c.html)`(``1``, ``1``)``)`
+[`par`](https://rdrr.io/r/graphics/par.html)`(``oldpar``)`
 
 ## Exploring models
 

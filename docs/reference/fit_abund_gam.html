@@ -138,10 +138,29 @@ See <a href="https://rdrr.io/pkg/gamlss/man/gamlss.control.html" class="external
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="va"><a href="https://rspatial.org/" class="external-link">terra</a></span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="va"><a href="https://www.gamlss.com/" class="external-link">gamlss</a></span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Loading required package: gamlss</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Loading required package: splines</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Loading required package: gamlss.data</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Attaching package: ‘gamlss.data’</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> The following object is masked from ‘package:datasets’:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>     sleep</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Loading required package: gamlss.dist</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Loading required package: nlme</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Attaching package: ‘nlme’</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> The following object is masked from ‘package:dplyr’:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>     collapse</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Loading required package: parallel</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>  **********   GAMLSS Version 5.5-0  ********** </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> For more on GAMLSS look at https://www.gamlss.com/</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Type gamlssNews() to see new features/changes/bug fixes.</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Database with species abundance and x and y coordinates</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"sppabund"</span><span class="op">)</span></span></span>
@@ -153,14 +172,27 @@ See <a href="https://rdrr.io/pkg/gamlss/man/gamlss.control.html" class="external
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Explore reponse variables</span></span></span>
 <span class="r-in"><span><span class="va">some_sp</span><span class="op">$</span><span class="va">ind_ha</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/range.html" class="external-link">range</a></span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">some_sp</span><span class="op">$</span><span class="va">ind_ha</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rspatial.github.io/terra/reference/hist.html" class="external-link">hist</a></span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1]   0.0000 285.2941</span>
+<span class="r-in"><span><span class="va">some_sp</span><span class="op">$</span><span class="va">ind_ha</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/graphics/hist.html" class="external-link">hist</a></span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="fit_abund_gam-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Here we balance number of absences</span></span></span>
 <span class="r-in"><span><span class="va">some_sp</span> <span class="op">&lt;-</span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="balance_dataset.html">balance_dataset</a></span><span class="op">(</span><span class="va">some_sp</span>, response <span class="op">=</span> <span class="st">"ind_ha"</span>, absence_ratio <span class="op">=</span> <span class="fl">0.2</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Explore different family distributions</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="family_selector.html">family_selector</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">some_sp</span>, response <span class="op">=</span> <span class="st">"ind_ha"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rspatial.github.io/terra/reference/headtail.html" class="external-link">tail</a></span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="family_selector.html">family_selector</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">some_sp</span>, response <span class="op">=</span> <span class="st">"ind_ha"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">tail</a></span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Response variable is continuous and need to be transformed to integer in order to test for discrete families.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Selected 29 suitable families for the data.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 6 × 4</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   family_name         family_call range   discrete</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>               <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> Skew t type 3       ST3         (-∞, ∞)        0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> Skew t type 4       ST4         (-∞, ∞)        0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> Skew t type 5       ST5         (-∞, ∞)        0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> Zero Adjusted Gamma ZAGA        [0,∞)          0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span> Zero adjusted IG    ZAIG        [0,∞)          0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span> t-distribution      TF          (-∞, ∞)        0</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Fit a GAM model</span></span></span>
 <span class="r-in"><span><span class="va">mgam</span> <span class="op">&lt;-</span> <span class="fu">fit_abund_gam</span><span class="op">(</span></span></span>
@@ -169,12 +201,107 @@ See <a href="https://rdrr.io/pkg/gamlss/man/gamlss.control.html" class="external
 <span class="r-in"><span>  predictors <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"elevation"</span>, <span class="st">"sand"</span>, <span class="st">"bio3"</span>, <span class="st">"bio12"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>  sigma_formula <span class="op">=</span> <span class="op">~</span> <span class="va">elevation</span> <span class="op">+</span> <span class="va">bio3</span> <span class="op">+</span> <span class="va">bio12</span>,</span></span>
 <span class="r-in"><span>  predictors_f <span class="op">=</span> <span class="cn">NULL</span>,</span></span>
-<span class="r-in"><span>  partition <span class="op">=</span> <span class="st">".part"</span>,</span></span>
+<span class="r-in"><span>  partition <span class="op">=</span> <span class="st">".part1"</span>,</span></span>
 <span class="r-in"><span>  distribution <span class="op">=</span> <span class="fu">gamlss.dist</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/gamlss.dist/man/ZAGA.html" class="external-link">ZAGA</a></span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Formula used for model fitting:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ind_ha ~ pb(elevation) + pb(sand) + pb(bio3) + pb(bio12)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Replica number: 1/1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> -- Partition number 1/3</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> -- Partition number 2/3</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> -- Partition number 3/3</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">mgam</span></span></span>
-<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $model</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Family:  c("ZAGA", "Zero Adjusted GA") </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Fitting method: RS() </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Call:  gamlss::gamlss(formula = formula1, sigma.formula = sigma_formula,  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     nu.formula = nu_formula, tau.formula = tau_formula,  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     family = family, data = data, control = control_gamlss,      trace = FALSE) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Mu Coefficients:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   (Intercept)  pb(elevation)       pb(sand)       pb(bio3)      pb(bio12)  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     8.4916013     -0.0000553      0.0000874     -8.5344436     -0.0006680  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Sigma Coefficients:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept)    elevation         bio3        bio12  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  -0.5688448   -0.0001438    1.5439011   -0.0002137  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Nu Coefficients:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept)  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      -1.605  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Degrees of Freedom for the fit: 13.13 Residual Deg. of Freedom   548.9 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Global Deviance:     4597.25 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             AIC:     4623.5 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             SBC:     4680.37 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $predictors</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 1 × 6</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   model response c1        c2    c3    c4   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> gam   ind_ha   elevation sand  bio3  bio12</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $performance</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 1 × 13</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   model mae_mean mae_sd corr_spear_mean corr_spear_sd corr_pear_mean</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>           <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> gam       26.6   1.30           0.252        0.031<span style="text-decoration: underline;">1</span>          0.239</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 7 more variables: corr_pear_sd &lt;dbl&gt;, inter_mean &lt;dbl&gt;, inter_sd &lt;dbl&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   slope_mean &lt;dbl&gt;, slope_sd &lt;dbl&gt;, pdisp_mean &lt;dbl&gt;, pdisp_sd &lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $performance_part</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 3 × 9</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   replica partition model   mae corr_spear corr_pear inter slope pdisp</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> 1       1         gam    26.9      0.268     0.256  6.78 0.553 0.463</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> 1       2         gam    25.2      0.271     0.194 10.6  0.441 0.441</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> 1       3         gam    27.8      0.216     0.267  3.71 0.875 0.305</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $metadata</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $metadata$plataform</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "aarch64-apple-darwin23"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $metadata$R_version</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "R version 4.6.1 (2026-06-24)"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $metadata$run_date</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "2026-10-21 13:39:13 PDT"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $metadata$formula</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ind_ha ~ pb(elevation) + pb(sand) + pb(bio3) + pb(bio12)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x6dfdd4f20&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $metadata$sigma.formula</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ~elevation + bio3 + bio12</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x6d23d2468&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $metadata$nu.formula</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ~1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x6dfdd4f20&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $metadata$tau.formula</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ~1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x6dfdd4f20&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $metadata$hyperparameters</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $metadata$hyperparameters$distribution</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> GAMLSS Family: ZAGA Zero Adjusted GA </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Link function for mu   : log </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Link function for sigma: log </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Link function for nu   : logit </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $metadata$hyperparameters$inter</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "automatic"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $metadata$source_function</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "fit_abund_gam"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

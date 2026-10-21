@@ -85,17 +85,19 @@
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
+<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="co"># Generate some big list of architectures combining all argument values</span></span></span>
 <span class="r-in"><span><span class="va">big_arch_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="generate_arch_list.html">generate_arch_list</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  type <span class="op">=</span> <span class="st">"dnn"</span>,</span></span>
 <span class="r-in"><span>  number_of_features <span class="op">=</span> <span class="fl">4</span>,</span></span>
 <span class="r-in"><span>  number_of_outputs <span class="op">=</span> <span class="fl">1</span>,</span></span>
-<span class="r-in"><span>  n_layers <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span>from <span class="op">=</span> <span class="fl">2</span>, to <span class="op">=</span> <span class="fl">6</span>, by <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  n_neurons <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">8</span>, <span class="fl">16</span>, <span class="fl">32</span>, <span class="fl">64</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  n_layers <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span>from <span class="op">=</span> <span class="fl">2</span>, to <span class="op">=</span> <span class="fl">4</span>, by <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  n_neurons <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">8</span>, <span class="fl">16</span>, <span class="fl">32</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">big_arch_list</span><span class="op">$</span><span class="va">arch_list</span><span class="op">)</span> <span class="co"># 5456 architectures!</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">big_arch_list</span><span class="op">$</span><span class="va">arch_list</span><span class="op">)</span> <span class="co"># number of architectures generated</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 117</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># It can be reduced sampling network architectures by its parameters number</span></span></span>
 <span class="r-in"><span></span></span>
@@ -106,11 +108,41 @@
 <span class="r-in"><span>  min_max <span class="op">=</span> <span class="cn">TRUE</span> <span class="co"># Keep the network with the minimum and maximum number of parameters</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">reduced_arch_list</span><span class="op">$</span><span class="va">arch_list</span><span class="op">)</span> <span class="co"># from 5456 to 92 architectures!!</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">reduced_arch_list</span><span class="op">$</span><span class="va">arch_list</span><span class="op">)</span> <span class="co"># reduced number of architectures</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 28</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># See architectures names, deepness and number of parameters</span></span></span>
 <span class="r-in"><span><span class="va">reduced_arch_list</span><span class="op">$</span><span class="va">changes</span></span></span>
-<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          class  old_name  new_name parameters deep</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1  2_layer_net  arch-2-1  arch-2-1        153    2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2  2_layer_net  arch-2-4  arch-2-2        249    2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  2_layer_net  arch-2-3  arch-2-3        513    2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4  2_layer_net  arch-2-8  arch-2-4        753    2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5  2_layer_net  arch-2-6  arch-2-5        801    2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6  2_layer_net  arch-2-9  arch-2-6       1377    2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7  3_layer_net  arch-3-1  arch-3-1        241    3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8  3_layer_net arch-3-19  arch-3-2        529    3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9  3_layer_net arch-3-20  arch-3-3        649    3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10 3_layer_net arch-3-22  arch-3-4        873    3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11 3_layer_net  arch-3-6  arch-3-5        945    3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12 3_layer_net arch-3-15  arch-3-6       1105    3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13 3_layer_net arch-3-17  arch-3-7       1297    3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14 3_layer_net arch-3-24  arch-3-8       1425    3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15 3_layer_net arch-3-26  arch-3-9       1873    3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16 3_layer_net arch-3-27 arch-3-10       2497    3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 17 4_layer_net  arch-4-1  arch-4-1        329    4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 18 4_layer_net  arch-4-4  arch-4-2        481    4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 19 4_layer_net arch-4-10  arch-4-3        481    4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 20 4_layer_net arch-4-37  arch-4-4        641    4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 21 4_layer_net arch-4-58  arch-4-5        769    4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 22 4_layer_net arch-4-20  arch-4-6        905    4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 23 4_layer_net arch-4-65  arch-4-7       1081    4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 24 4_layer_net arch-4-15  arch-4-8       1249    4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 25 4_layer_net arch-4-48  arch-4-9       1433    4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 26 4_layer_net arch-4-74 arch-4-10       1769    4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 27 4_layer_net arch-4-52 arch-4-11       2105    4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 28 4_layer_net arch-4-81 arch-4-12       3617    4</span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

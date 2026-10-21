@@ -60,7 +60,8 @@ SpatRaster. Croped raster
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
+# \donttest{
+require(dplyr)
 require(terra)
 
 # Datasbase with species abundance and x and y coordinates
@@ -77,7 +78,9 @@ envar <- terra::rast(envar)
 #
 sampl_r <- croppin_hood(occ = some_sp[1, ], x = "x", y = "y", raster = envar, size = 5)
 plot(sampl_r)
+
 plot(sampl_r[[1]])
 points(some_sp[1, c("x", "y")], pch = 19)
-} # }
+
+# }
 ```

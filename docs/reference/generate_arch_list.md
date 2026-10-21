@@ -104,20 +104,33 @@ A list containing:
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
+# \donttest{
+require(dplyr)
 # Generating architectures for DNN, using batch normalization and dropout
 dnn_archs <- generate_arch_list(
   type = "dnn",
   number_of_features = 4,
   number_of_outputs = 1,
-  n_layers = c(2, 3, 4),
-  n_neurons = c(8, 16, 32, 64),
+  n_layers = c(2, 3),
+  n_neurons = c(8, 16),
   batch_norm = TRUE,
   dropout = 0.2
 )
 
 dnn_archs$arch_dict # Matrices describing the networks
-length(dnn_archs$arch_list) # Generated 336 DNN architectures
+#> $`2_layer_net`
+#>         [,1] [,2] [,3] [,4]
+#> layer_1    8   16    8   16
+#> layer_2    8    8   16   16
+#> 
+#> $`3_layer_net`
+#>         [,1] [,2] [,3] [,4] [,5] [,6] [,7] [,8]
+#> layer_1    8   16    8   16    8   16    8   16
+#> layer_2    8    8   16   16    8    8   16   16
+#> layer_3    8    8    8    8   16   16   16   16
+#> 
+length(dnn_archs$arch_list) # number of DNN architectures generated
+#> [1] 12
 
 # Generating architectures for CNN, using batch normalization, dropout and average pooling
 # Note that arguments meaning change with the context
@@ -126,10 +139,10 @@ cnn_archs <- generate_arch_list(
   type = "cnn",
   number_of_features = 4,
   number_of_outputs = 1,
-  n_layers = c(2, 3, 4), # now convolutional layers
-  n_neurons = c(8, 16, 32, 64),
+  n_layers = c(2, 3), # now convolutional layers
+  n_neurons = c(8, 16),
   sample_size = c(11, 11),
-  number_of_fc_layers = c(2, 4), # fully connected layers
+  number_of_fc_layers = 2, # fully connected layers
   fc_layers_size = c(16, 8),
   conv_layers_kernel = 3,
   conv_layers_stride = 1,
@@ -140,7 +153,40 @@ cnn_archs <- generate_arch_list(
 )
 
 cnn_archs$arch_dict # Matrices describing the networks
-length(cnn_archs$arch_list) # Generated 6720 CNN architectures
+#> $`conv2-fc2-net`
+#>        [,1] [,2] [,3] [,4] [,5] [,6] [,7] [,8] [,9] [,10] [,11] [,12] [,13]
+#> conv_1    8   16    8   16    8   16    8   16    8    16     8    16     8
+#> conv_2    8    8   16   16    8    8   16   16    8     8    16    16     8
+#> fc_1     16   16   16   16    8    8    8    8   16    16    16    16     8
+#> fc_2     16   16   16   16   16   16   16   16    8     8     8     8     8
+#>        [,14] [,15] [,16]
+#> conv_1    16     8    16
+#> conv_2     8    16    16
+#> fc_1       8     8     8
+#> fc_2       8     8     8
+#> 
+#> $`conv3-fc2-net`
+#>        [,1] [,2] [,3] [,4] [,5] [,6] [,7] [,8] [,9] [,10] [,11] [,12] [,13]
+#> conv_1    8   16    8   16    8   16    8   16    8    16     8    16     8
+#> conv_2    8    8   16   16    8    8   16   16    8     8    16    16     8
+#> conv_3    8    8    8    8   16   16   16   16    8     8     8     8    16
+#> fc_1     16   16   16   16   16   16   16   16    8     8     8     8     8
+#> fc_2     16   16   16   16   16   16   16   16   16    16    16    16    16
+#>        [,14] [,15] [,16] [,17] [,18] [,19] [,20] [,21] [,22] [,23] [,24] [,25]
+#> conv_1    16     8    16     8    16     8    16     8    16     8    16     8
+#> conv_2     8    16    16     8     8    16    16     8     8    16    16     8
+#> conv_3    16    16    16     8     8     8     8    16    16    16    16     8
+#> fc_1       8     8     8    16    16    16    16    16    16    16    16     8
+#> fc_2      16    16    16     8     8     8     8     8     8     8     8     8
+#>        [,26] [,27] [,28] [,29] [,30] [,31] [,32]
+#> conv_1    16     8    16     8    16     8    16
+#> conv_2     8    16    16     8     8    16    16
+#> conv_3     8     8     8    16    16    16    16
+#> fc_1       8     8     8     8     8     8     8
+#> fc_2       8     8     8     8     8     8     8
+#> 
+length(cnn_archs$arch_list) # number of CNN architectures generated
+#> [1] 48
 
 # The list size can be easily and greatly reduced with select_arch_list
 
@@ -151,7 +197,8 @@ dnn_archs_redux <- dnn_archs %>% select_arch_list(
   min_max = TRUE # Keep the network with the minimum and maximum number of parameters
 )
 
-length(dnn_archs_redux$arch_list) # from 336 to 29 architectures
+length(dnn_archs_redux$arch_list) # reduced number of architectures
+#> [1] 12
 
 cnn_archs_redux <- cnn_archs %>% select_arch_list(
   type = c("cnn"),
@@ -160,6 +207,7 @@ cnn_archs_redux <- cnn_archs %>% select_arch_list(
   min_max = TRUE # Keep the network with the minimum and maximum number of parameters
 )
 
-length(cnn_archs_redux$arch_list) # from 6720 to 77 architectures
-} # }
+length(cnn_archs_redux$arch_list) # reduced number of architectures
+#> [1] 19
+# }
 ```

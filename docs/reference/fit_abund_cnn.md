@@ -164,7 +164,8 @@ A list object with:
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
+# \donttest{
+if (torch::torch_is_installed()) {
 require(terra)
 require(dplyr)
 
@@ -184,6 +185,10 @@ some_sp$ind_ha %>% hist()
 some_sp <-
   balance_dataset(some_sp, response = "ind_ha", absence_ratio = 0.2)
 
+# A small subset keeps this example fast
+set.seed(1)
+some_sp <- some_sp[sort(sample(nrow(some_sp), 150)), ]
+
 envar <- system.file("external/envar.tif", package = "adm")
 envar <- terra::rast(envar)
 
@@ -191,18 +196,18 @@ envar <- terra::rast(envar)
 cnn_arch <- generate_cnn_architecture(
   number_of_features = 3,
   number_of_outputs = 1,
-  sample_size = c(11, 11),
+  sample_size = c(5, 5),
   number_of_conv_layers = 2,
-  conv_layers_size = c(14, 28),
+  conv_layers_size = c(4, 8),
   conv_layers_kernel = 3,
   conv_layers_stride = 1,
   conv_layers_padding = 0,
   number_of_fc_layers = 1,
-  fc_layers_size = c(28),
+  fc_layers_size = c(8),
   pooling = NULL,
-  batch_norm = TRUE,
+  batch_norm = FALSE,
   dropout = 0,
-  verbose = T
+  verbose = FALSE
 )
 
 # Fit a CNN model
@@ -211,21 +216,167 @@ mcnn <- fit_abund_cnn(
   response = "ind_ha",
   predictors = c("bio12", "elevation", "sand"),
   predictors_f = NULL,
-  partition = ".part",
+  partition = ".part1",
   x = "x",
   y = "y",
   rasters = envar,
-  sample_size = c(11, 11),
+  sample_size = c(5, 5),
   learning_rate = 0.01,
-  n_epochs = 100,
+  n_epochs = 3,
   batch_size = 32,
   validation_patience = 2,
   fitting_patience = 5,
   custom_architecture = cnn_arch,
-  verbose = TRUE,
+  verbose = FALSE,
   predict_part = TRUE
 )
 
 mcnn
-} # }
+}
+
+#> Warning: Some torch operators might not yet be implemented for the MPS device. A
+#> temporary fix is to set the `PYTORCH_ENABLE_MPS_FALLBACK=1` to use the CPU as a
+#> fall back for those operators:
+#> ℹ Add `PYTORCH_ENABLE_MPS_FALLBACK=1` to your `.Renviron` file, for example use
+#>   `usethis::edit_r_environ()`.
+#> ✖ Using `Sys.setenv()` doesn't work because the env var must be set before R
+#>   starts.
+#> Warning: Some torch operators might not yet be implemented for the MPS device. A
+#> temporary fix is to set the `PYTORCH_ENABLE_MPS_FALLBACK=1` to use the CPU as a
+#> fall back for those operators:
+#> ℹ Add `PYTORCH_ENABLE_MPS_FALLBACK=1` to your `.Renviron` file, for example use
+#>   `usethis::edit_r_environ()`.
+#> ✖ Using `Sys.setenv()` doesn't work because the env var must be set before R
+#>   starts.
+#> Warning: Some torch operators might not yet be implemented for the MPS device. A
+#> temporary fix is to set the `PYTORCH_ENABLE_MPS_FALLBACK=1` to use the CPU as a
+#> fall back for those operators:
+#> ℹ Add `PYTORCH_ENABLE_MPS_FALLBACK=1` to your `.Renviron` file, for example use
+#>   `usethis::edit_r_environ()`.
+#> ✖ Using `Sys.setenv()` doesn't work because the env var must be set before R
+#>   starts.
+#> Warning: Some torch operators might not yet be implemented for the MPS device. A
+#> temporary fix is to set the `PYTORCH_ENABLE_MPS_FALLBACK=1` to use the CPU as a
+#> fall back for those operators:
+#> ℹ Add `PYTORCH_ENABLE_MPS_FALLBACK=1` to your `.Renviron` file, for example use
+#>   `usethis::edit_r_environ()`.
+#> ✖ Using `Sys.setenv()` doesn't work because the env var must be set before R
+#>   starts.
+#> Warning: Some torch operators might not yet be implemented for the MPS device. A
+#> temporary fix is to set the `PYTORCH_ENABLE_MPS_FALLBACK=1` to use the CPU as a
+#> fall back for those operators:
+#> ℹ Add `PYTORCH_ENABLE_MPS_FALLBACK=1` to your `.Renviron` file, for example use
+#>   `usethis::edit_r_environ()`.
+#> ✖ Using `Sys.setenv()` doesn't work because the env var must be set before R
+#>   starts.
+#> Warning: Some torch operators might not yet be implemented for the MPS device. A
+#> temporary fix is to set the `PYTORCH_ENABLE_MPS_FALLBACK=1` to use the CPU as a
+#> fall back for those operators:
+#> ℹ Add `PYTORCH_ENABLE_MPS_FALLBACK=1` to your `.Renviron` file, for example use
+#>   `usethis::edit_r_environ()`.
+#> ✖ Using `Sys.setenv()` doesn't work because the env var must be set before R
+#>   starts.
+#> Warning: Some torch operators might not yet be implemented for the MPS device. A
+#> temporary fix is to set the `PYTORCH_ENABLE_MPS_FALLBACK=1` to use the CPU as a
+#> fall back for those operators:
+#> ℹ Add `PYTORCH_ENABLE_MPS_FALLBACK=1` to your `.Renviron` file, for example use
+#>   `usethis::edit_r_environ()`.
+#> ✖ Using `Sys.setenv()` doesn't work because the env var must be set before R
+#>   starts.
+#> $model
+#> A `luz_module_fitted`
+#> ── Time ────────────────────────────────────────────────────────────────────────
+#> • Total time: 260ms
+#> • Avg time per training epoch: 86ms
+#> 
+#> ── Results ─────────────────────────────────────────────────────────────────────
+#> Metrics observed in the last epoch.
+#> 
+#> ℹ Training:
+#> loss: 23.4182
+#> 
+#> ── Model ───────────────────────────────────────────────────────────────────────
+#> An `nn_module` containing 489 parameters.
+#> 
+#> ── Modules ─────────────────────────────────────────────────────────────────────
+#> • conv1: <nn_conv2d> #112 parameters
+#> • conv2: <nn_conv2d> #296 parameters
+#> • linear1: <nn_linear> #72 parameters
+#> • output: <nn_linear> #9 parameters
+#> 
+#> $predictors
+#> # A tibble: 1 × 5
+#>   model response c1    c2        c3   
+#>   <chr> <chr>    <chr> <chr>     <chr>
+#> 1 cnn   ind_ha   bio12 elevation sand 
+#> 
+#> $performance
+#> # A tibble: 1 × 13
+#>   model mae_mean mae_sd corr_spear_mean corr_spear_sd corr_pear_mean
+#>   <chr>    <dbl>  <dbl>           <dbl>         <dbl>          <dbl>
+#> 1 cnn       25.1   2.93          0.0454         0.122         0.0122
+#> # ℹ 7 more variables: corr_pear_sd <dbl>, inter_mean <dbl>, inter_sd <dbl>,
+#> #   slope_mean <dbl>, slope_sd <dbl>, pdisp_mean <dbl>, pdisp_sd <dbl>
+#> 
+#> $performance_part
+#> # A tibble: 3 × 9
+#>   replica partition model   mae corr_spear corr_pear inter    slope  pdisp
+#>   <chr>   <chr>     <chr> <dbl>      <dbl>     <dbl> <dbl>    <dbl>  <dbl>
+#> 1 1       1         cnn    24.8     0.160  -0.000602 28.9  -0.00630 0.0956
+#> 2 1       2         cnn    22.3     0.0596  0.180     8.13  2.68    0.0670
+#> 3 1       3         cnn    28.1    -0.0830 -0.142    38.0  -0.639   0.223 
+#> 
+#> $predicted_part
+#> # A tibble: 150 × 4
+#>    replica partition observed predicted
+#>    <chr>   <chr>        <dbl>     <dbl>
+#>  1 1       1             10        2.85
+#>  2 1       1             10        3.23
+#>  3 1       1             15        5.68
+#>  4 1       1             13.3      9.08
+#>  5 1       1             40       10.1 
+#>  6 1       1             80        7.91
+#>  7 1       1             30        7.24
+#>  8 1       1             30       10.7 
+#>  9 1       1             40        9.23
+#> 10 1       1             90       11.4 
+#> # ℹ 140 more rows
+#> 
+#> $metadata
+#> $metadata$plataform
+#> [1] "aarch64-apple-darwin23"
+#> 
+#> $metadata$R_version
+#> [1] "R version 4.6.1 (2026-06-24)"
+#> 
+#> $metadata$run_date
+#> [1] "2026-10-21 13:39:05 PDT"
+#> 
+#> $metadata$lr
+#> [1] 0.01
+#> 
+#> $metadata$weight_decay
+#> [1] 0
+#> 
+#> $metadata$loss
+#> An `nn_module` containing 0 parameters.
+#> 
+#> $metadata$optimizer
+#> <optim_adamw> object generator
+#>   Inherits from: <inherit>
+#>   Public:
+#>     initialize: function (params, lr = 0.001, betas = c(0.9, 0.999), eps = 1e-08, 
+#>     loop_fun: function (group, param, g, p) 
+#>     step: function (closure = NULL) 
+#>     clone: function (deep = FALSE) 
+#>   Parent env: <environment: 0x6efb33e00>
+#>   Locked objects: FALSE
+#>   Locked class: FALSE
+#>   Portable: TRUE
+#> 
+#> $metadata$source_function
+#> [1] "fit_abund_cnn"
+#> 
+#> 
+# }
 ```

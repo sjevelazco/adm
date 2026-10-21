@@ -125,7 +125,8 @@ fitting_patience = 5. In case one or more hyperparameters are provided, the func
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
+<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="fu">torch</span><span class="fu">::</span><span class="fu"><a href="https://torch.mlverse.org/docs/reference/torch_is_installed.html" class="external-link">torch_is_installed</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Database with species abundance and x and y coordinates</span></span></span>
@@ -144,13 +145,18 @@ fitting_patience = 5. In case one or more hyperparameters are provided, the func
 <span class="r-in"><span><span class="va">some_sp</span> <span class="op">&lt;-</span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="balance_dataset.html">balance_dataset</a></span><span class="op">(</span><span class="va">some_sp</span>, response <span class="op">=</span> <span class="st">"ind_ha"</span>, absence_ratio <span class="op">=</span> <span class="fl">0.2</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># A small subset keeps this example fast</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">some_sp</span> <span class="op">&lt;-</span> <span class="va">some_sp</span><span class="op">[</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/dimensions.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">some_sp</span><span class="op">)</span>, <span class="fl">120</span><span class="op">)</span><span class="op">)</span>, <span class="op">]</span></span></span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Generate some architectures</span></span></span>
 <span class="r-in"><span><span class="va">many_archs</span> <span class="op">&lt;-</span> <span class="fu"><a href="generate_arch_list.html">generate_arch_list</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  type <span class="op">=</span> <span class="st">"dnn"</span>,</span></span>
 <span class="r-in"><span>  number_of_features <span class="op">=</span> <span class="fl">3</span>,</span></span>
 <span class="r-in"><span>  number_of_outputs <span class="op">=</span> <span class="fl">1</span>,</span></span>
 <span class="r-in"><span>  n_layers <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">3</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  n_neurons <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">6</span>, <span class="fl">12</span>, <span class="fl">16</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  n_neurons <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">6</span>, <span class="fl">12</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  batch_norm <span class="op">=</span> <span class="cn">FALSE</span></span></span>
 <span class="r-in"><span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="select_arch_list.html">select_arch_list</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"dnn"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>  method <span class="op">=</span> <span class="st">"percentile"</span>,</span></span>
@@ -161,11 +167,11 @@ fitting_patience = 5. In case one or more hyperparameters are provided, the func
 <span class="r-in"><span><span class="co"># Create a grid</span></span></span>
 <span class="r-in"><span><span class="co"># Obs.: the grid is tested with every architecture, thus it can get very large.</span></span></span>
 <span class="r-in"><span><span class="va">dnn_grid</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/expand.grid.html" class="external-link">expand.grid</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>  learning_rate <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.01</span>, <span class="fl">0.005</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  n_epochs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">50</span>, <span class="fl">100</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  learning_rate <span class="op">=</span> <span class="fl">0.001</span>,</span></span>
+<span class="r-in"><span>  n_epochs <span class="op">=</span> <span class="fl">3</span>,</span></span>
 <span class="r-in"><span>  batch_size <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">32</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  validation_patience <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">4</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  fitting_patience <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">4</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  validation_patience <span class="op">=</span> <span class="fl">2</span>,</span></span>
+<span class="r-in"><span>  fitting_patience <span class="op">=</span> <span class="fl">2</span>,</span></span>
 <span class="r-in"><span>  stringsAsFactors <span class="op">=</span> <span class="cn">FALSE</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
@@ -174,12 +180,12 @@ fitting_patience = 5. In case one or more hyperparameters are provided, the func
 <span class="r-in"><span>  data <span class="op">=</span> <span class="va">some_sp</span>,</span></span>
 <span class="r-in"><span>  response <span class="op">=</span> <span class="st">"ind_ha"</span>,</span></span>
 <span class="r-in"><span>  predictors <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"bio12"</span>, <span class="st">"elevation"</span>, <span class="st">"sand"</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  partition <span class="op">=</span> <span class="st">".part"</span>,</span></span>
+<span class="r-in"><span>  partition <span class="op">=</span> <span class="st">".part1"</span>,</span></span>
 <span class="r-in"><span>  predict_part <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
 <span class="r-in"><span>  metrics <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"corr_pear"</span>, <span class="st">"mae"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>  grid <span class="op">=</span> <span class="va">dnn_grid</span>,</span></span>
 <span class="r-in"><span>  architectures <span class="op">=</span> <span class="va">many_archs</span>,</span></span>
-<span class="r-in"><span>  n_cores <span class="op">=</span> <span class="fl">3</span></span></span>
+<span class="r-in"><span>  n_cores <span class="op">=</span> <span class="fl">1</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">tuned_dnn</span></span></span>
@@ -189,24 +195,74 @@ fitting_patience = 5. In case one or more hyperparameters are provided, the func
 <span class="r-in"><span>  number_of_features <span class="op">=</span> <span class="fl">3</span>,</span></span>
 <span class="r-in"><span>  number_of_outputs <span class="op">=</span> <span class="fl">1</span>,</span></span>
 <span class="r-in"><span>  number_of_hidden_layers <span class="op">=</span> <span class="fl">3</span>,</span></span>
-<span class="r-in"><span>  hidden_layers_size <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">8</span>, <span class="fl">16</span>, <span class="fl">8</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  batch_norm <span class="op">=</span> <span class="cn">TRUE</span></span></span>
+<span class="r-in"><span>  hidden_layers_size <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span>, <span class="fl">8</span>, <span class="fl">4</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  batch_norm <span class="op">=</span> <span class="cn">FALSE</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">tuned_dnn_2</span> <span class="op">&lt;-</span> <span class="fu">tune_abund_dnn</span><span class="op">(</span></span></span>
-<span class="r-in"><span>  data <span class="op">=</span> <span class="va">some_sp</span>,</span></span>
-<span class="r-in"><span>  response <span class="op">=</span> <span class="st">"ind_ha"</span>,</span></span>
-<span class="r-in"><span>  predictors <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"bio12"</span>, <span class="st">"elevation"</span>, <span class="st">"sand"</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  partition <span class="op">=</span> <span class="st">".part"</span>,</span></span>
-<span class="r-in"><span>  predict_part <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
-<span class="r-in"><span>  metrics <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"corr_pear"</span>, <span class="st">"mae"</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  grid <span class="op">=</span> <span class="va">dnn_grid</span>,</span></span>
-<span class="r-in"><span>  architectures <span class="op">=</span> <span class="va">one_arch</span>,</span></span>
-<span class="r-in"><span>  n_cores <span class="op">=</span> <span class="fl">3</span></span></span>
-<span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">tuned_dnn_2</span></span></span>
-<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
+<span class="r-plt img"><img src="tune_abund_dnn-1.png" alt="" width="700" height="433"></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Using provided architectures.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Adding default hyperparameter for: weight_decay</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Testing 36 combinations.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Searching for optimal hyperparameters...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Fitting the best model...</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Some torch operators might not yet be implemented for the MPS device. A</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> temporary fix is to set the `PYTORCH_ENABLE_MPS_FALLBACK=1` to use the CPU as a</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> fall back for those operators:</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Add `PYTORCH_ENABLE_MPS_FALLBACK=1` to your `.Renviron` file, for example use</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span>   `usethis::edit_r_environ()`.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">✖</span> Using `Sys.setenv()` doesn't work because the env var must be set before R</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span>   starts.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Some torch operators might not yet be implemented for the MPS device. A</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> temporary fix is to set the `PYTORCH_ENABLE_MPS_FALLBACK=1` to use the CPU as a</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> fall back for those operators:</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Add `PYTORCH_ENABLE_MPS_FALLBACK=1` to your `.Renviron` file, for example use</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span>   `usethis::edit_r_environ()`.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">✖</span> Using `Sys.setenv()` doesn't work because the env var must be set before R</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span>   starts.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Some torch operators might not yet be implemented for the MPS device. A</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> temporary fix is to set the `PYTORCH_ENABLE_MPS_FALLBACK=1` to use the CPU as a</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> fall back for those operators:</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Add `PYTORCH_ENABLE_MPS_FALLBACK=1` to your `.Renviron` file, for example use</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span>   `usethis::edit_r_environ()`.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">✖</span> Using `Sys.setenv()` doesn't work because the env var must be set before R</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span>   starts.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Some torch operators might not yet be implemented for the MPS device. A</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> temporary fix is to set the `PYTORCH_ENABLE_MPS_FALLBACK=1` to use the CPU as a</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> fall back for those operators:</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Add `PYTORCH_ENABLE_MPS_FALLBACK=1` to your `.Renviron` file, for example use</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span>   `usethis::edit_r_environ()`.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">✖</span> Using `Sys.setenv()` doesn't work because the env var must be set before R</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span>   starts.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Some torch operators might not yet be implemented for the MPS device. A</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> temporary fix is to set the `PYTORCH_ENABLE_MPS_FALLBACK=1` to use the CPU as a</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> fall back for those operators:</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Add `PYTORCH_ENABLE_MPS_FALLBACK=1` to your `.Renviron` file, for example use</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span>   `usethis::edit_r_environ()`.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">✖</span> Using `Sys.setenv()` doesn't work because the env var must be set before R</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span>   starts.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Some torch operators might not yet be implemented for the MPS device. A</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> temporary fix is to set the `PYTORCH_ENABLE_MPS_FALLBACK=1` to use the CPU as a</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> fall back for those operators:</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Add `PYTORCH_ENABLE_MPS_FALLBACK=1` to your `.Renviron` file, for example use</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span>   `usethis::edit_r_environ()`.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">✖</span> Using `Sys.setenv()` doesn't work because the env var must be set before R</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span>   starts.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Some torch operators might not yet be implemented for the MPS device. A</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> temporary fix is to set the `PYTORCH_ENABLE_MPS_FALLBACK=1` to use the CPU as a</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> fall back for those operators:</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Add `PYTORCH_ENABLE_MPS_FALLBACK=1` to your `.Renviron` file, for example use</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span>   `usethis::edit_r_environ()`.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">✖</span> Using `Sys.setenv()` doesn't work because the env var must be set before R</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span>   starts.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> The best model was achieved with: </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>  learning_rate = 0.001</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>  n_epochs = 3</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>  patience = 2 and 2</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>  batch_size = 32</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>  arch = 2 layers with 6-&gt;6 neurons </span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

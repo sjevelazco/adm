@@ -50,8 +50,25 @@ SpatRaster object used in 'env_layer'
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
+# \donttest{
+require(dplyr)
+#> Loading required package: dplyr
+#> 
+#> Attaching package: ‘dplyr’
+#> The following objects are masked from ‘package:stats’:
+#> 
+#>     filter, lag
+#> The following objects are masked from ‘package:base’:
+#> 
+#>     intersect, setdiff, setequal, union
 require(terra)
+#> Loading required package: terra
+#> terra 1.9.50
+#> 
+#> Attaching package: ‘terra’
+#> The following objects are masked from ‘package:testthat’:
+#> 
+#>     compare, describe
 
 # Datasbase with species abundance and x and y coordinates
 data("sppabund")
@@ -88,6 +105,35 @@ ex_spp2 <-
   )
 
 ex_spp
+#> # A tibble: 938 × 12
+#>    species     ind_ha     x     y  bio1 bio12 bio15  bio3  cfvo elevation  sand
+#>    <chr>        <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl>     <dbl> <dbl>
+#>  1 Species one   10   -61.2 -25.0  22.9  921.  66.7 0.475  33.5      144.  217.
+#>  2 Species one   10   -60.7 -25.0  22.8 1008.  62.5 0.461  31.9      134.  163.
+#>  3 Species one   10   -60.2 -25.0  22.7 1103.  55.8 0.458  26.2      118.  185.
+#>  4 Species one   13.3 -60.7 -25.4  22.5 1056.  61.0 0.457  41.4      124.  162.
+#>  5 Species one   10   -60.2 -25.9  22.1 1175.  55.8 0.449  43.6      104.  213.
+#>  6 Species one   10   -54.0 -26.0  20.7 2185.  19.0 0.494  60.2      411.  125.
+#>  7 Species one   20   -53.9 -26.0  20.7 2185.  19.0 0.494  60.2      411.  125.
+#>  8 Species one   10   -53.9 -26.0  20.3 2403.  18.7 0.497  53.4      488.  113.
+#>  9 Species one   10   -53.9 -26.1  20.0 2349.  18.3 0.496  55.5      509.  117.
+#> 10 Species one   20   -53.9 -26.1  20.0 2349.  18.3 0.496  55.5      509.  117.
+#> # ℹ 928 more rows
+#> # ℹ 1 more variable: eco <fct>
 ex_spp2
-} # }
+#> # A tibble: 938 × 6
+#>    species     ind_ha     x     y  bio1 elevation
+#>    <chr>        <dbl> <dbl> <dbl> <dbl>     <dbl>
+#>  1 Species one   10   -61.2 -25.0  22.9      144.
+#>  2 Species one   10   -60.7 -25.0  22.8      134.
+#>  3 Species one   10   -60.2 -25.0  22.7      118.
+#>  4 Species one   13.3 -60.7 -25.4  22.5      124.
+#>  5 Species one   10   -60.2 -25.9  22.1      104.
+#>  6 Species one   10   -54.0 -26.0  20.7      411.
+#>  7 Species one   20   -53.9 -26.0  20.7      411.
+#>  8 Species one   10   -53.9 -26.0  20.3      488.
+#>  9 Species one   10   -53.9 -26.1  20.0      509.
+#> 10 Species one   20   -53.9 -26.1  20.0      509.
+#> # ℹ 928 more rows
+# }
 ```

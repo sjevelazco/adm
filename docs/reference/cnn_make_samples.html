@@ -102,7 +102,7 @@ Each element in the 'predictors' list is an array representing a cropped image f
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="va"><a href="https://rspatial.org/" class="external-link">terra</a></span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
@@ -123,12 +123,97 @@ Each element in the 'predictors' list is an array representing a cropped image f
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">cnn_samples</span><span class="op">$</span><span class="va">predictors</span><span class="op">)</span> <span class="co">#  938 matrix sets</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 938</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">cnn_samples</span><span class="op">$</span><span class="va">predictors</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span> <span class="co"># three 11x11 channels</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 11 11  3</span>
 <span class="r-in"><span><span class="va">cnn_samples</span><span class="op">$</span><span class="va">predictors</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span> <span class="co"># representing predictor variables</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> , , bio12</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          [,1]    [,2]    [,3]    [,4]    [,5]    [,6]    [,7]     [,8]     [,9]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1,] 802.838 808.967 828.594 845.690 862.625 877.790 885.878 895.7950  908.339</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [2,] 807.953 816.198 833.677 852.528 867.688 881.162 894.061 901.7070  913.445</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [3,] 817.966 827.494 843.650 860.660 872.825 885.607 898.205 906.5400  921.686</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [4,] 827.614 838.307 855.957 873.674 882.593 890.656 901.934 913.0670  929.393</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [5,] 833.219 845.296 862.517 883.290 899.482 904.035 911.205 923.5420  940.845</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [6,] 840.811 853.260 870.440 887.550 906.044 920.945 926.770 938.2560  949.734</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [7,] 851.661 860.907 879.748 898.679 910.296 925.442 938.526 946.2310  962.286</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [8,] 861.882 871.002 886.683 910.277 924.581 933.219 952.295 965.6260  980.299</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [9,] 872.410 886.184 900.303 917.841 936.907 949.130 960.666 973.4420  990.378</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [10,] 878.787 892.817 911.183 929.059 943.272 958.010 972.263 986.8550 1002.995</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [11,] 889.544 903.292 922.164 941.022 954.158 967.007 979.560 994.1479 1013.069</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          [,10]    [,11]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1,]  920.053  934.349</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [2,]  927.111  941.732</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [3,]  935.043  951.226</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [4,]  945.347  961.447</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [5,]  958.621  976.756</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [6,]  967.786  990.069</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [7,]  980.784  997.451</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [8,]  996.618 1012.557</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [9,] 1009.093 1022.770</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [10,] 1019.177 1031.817</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [11,] 1031.324 1042.586</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> , , sand</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>           [,1]     [,2]     [,3]     [,4]     [,5]     [,6]     [,7]     [,8]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1,] 323.6941 294.7756 276.7231 258.6481 249.3895 236.9979 232.5712 239.5818</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [2,] 318.4454 282.5389 282.6850 266.2378 239.1768 224.1918 213.3185 214.7108</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [3,] 301.7150 271.9843 251.0643 238.5831 230.4549 226.8542 206.9613 197.9787</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [4,] 285.7474 249.9197 231.3249 218.5245 222.5039 237.0598 230.7322 210.7647</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [5,] 268.0114 233.5496 230.3769 224.8472 226.3653 228.5308 226.8357 209.2088</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [6,] 266.7217 236.8561 223.6430 236.1223 222.2937 216.8967 219.1638 206.0938</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [7,] 267.7408 239.8533 217.5965 220.6808 206.2489 210.0489 216.5722 204.1752</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [8,] 270.6972 245.8227 222.6527 210.7542 192.8077 187.4747 186.5412 174.0954</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [9,] 266.6864 252.3928 224.1620 206.7325 189.2622 173.1911 177.0700 179.4060</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [10,] 265.2602 249.9310 223.7477 202.2854 192.0435 184.8542 179.0631 169.5506</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [11,] 263.8184 251.1419 220.4428 202.1964 193.6808 189.4042 181.7933 172.5262</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>           [,9]    [,10]    [,11]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1,] 240.3530 221.5458 209.9458</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [2,] 220.5592 200.3471 172.7042</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [3,] 202.1252 193.5226 154.0340</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [4,] 196.5667 170.3566 147.7815</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [5,] 193.1667 165.8647 163.1308</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [6,] 205.0498 166.1343 159.1493</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [7,] 193.0397 162.7033 163.6378</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [8,] 168.6706 167.1084 154.3853</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [9,] 177.3993 174.9158 162.2080</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [10,] 171.4749 178.4732 169.0149</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [11,] 165.9639 171.1086 165.5527</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> , , elevation</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>           [,1]     [,2]     [,3]     [,4]     [,5]     [,6]     [,7]     [,8]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1,] 160.2064 157.8758 156.5414 153.9792 153.2733 152.2813 149.4811 148.3174</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [2,] 158.0649 156.0323 154.4119 152.5727 150.9236 151.2927 150.0134 147.1337</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [3,] 157.9999 156.0471 153.5946 150.9868 148.8929 148.8825 148.0686 145.5205</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [4,] 159.2546 156.6284 154.0268 150.6498 146.5647 145.6614 143.9781 142.4431</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [5,] 157.4605 154.9460 152.6915 150.8062 147.4920 143.0008 141.0518 140.9928</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [6,] 155.0929 153.8401 150.3845 147.9261 146.6643 144.1770 141.6326 139.5923</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [7,] 154.7157 151.4120 149.3949 145.5323 142.4875 141.8800 138.5630 136.2642</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [8,] 154.0592 149.6503 146.8942 145.5834 141.0187 138.7971 139.0075 136.9624</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [9,] 154.6649 151.1506 146.4789 144.0058 141.3016 138.4157 136.8261 134.3743</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [10,] 153.8999 150.4387 147.2578 143.2834 139.9646 137.6269 136.0478 134.4441</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [11,] 154.5030 150.6051 147.7185 143.6771 139.1083 136.8613 134.4441 133.4532</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>           [,9]    [,10]    [,11]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1,] 146.3409 143.3547 140.5644</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [2,] 144.8442 141.6464 139.5549</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [3,] 143.5724 140.4271 138.3337</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [4,] 142.1358 139.2160 136.8360</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [5,] 140.3583 138.6406 137.0702</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [6,] 136.9433 136.9760 136.8540</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [7,] 135.0484 135.0333 133.4777</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [8,] 134.9185 134.4216 131.6734</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [9,] 134.2206 132.2392 129.2876</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [10,] 132.9516 129.9190 126.9211</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [11,] 131.6458 129.2512 126.3157</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span><span class="fu"><a href="https://rspatial.github.io/terra/reference/rast.html" class="external-link">rast</a></span><span class="op">(</span><span class="va">cnn_samples</span><span class="op">$</span><span class="va">predictors</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="cnn_make_samples-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">cnn_samples</span><span class="op">$</span><span class="va">response</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span> <span class="co"># linked to a label</span></span></span>
-<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 10</span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

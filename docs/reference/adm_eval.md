@@ -62,7 +62,7 @@ Further details see Waldock et al. (2022)
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
+# \donttest{
 pred_a <- c(
   3, 2, 0, 0, 2, 5, 1, 3, 1, 2, 1, 1, 2, 5, 4,
   1, 2, 5, 3, 3, 4, 3, 2, 0, 2, 1, 2, 2, 1, 4,
@@ -75,5 +75,9 @@ obs_a <- c(
 )
 
 adm_eval(obs = obs_a, pred = pred_a)
-} # }
+#> # A tibble: 1 × 6
+#>     mae corr_spear corr_pear inter slope pdisp
+#>   <dbl>      <dbl>     <dbl> <dbl> <dbl> <dbl>
+#> 1   1.4      0.289     0.262  1.91 0.228  1.14
+# }
 ```

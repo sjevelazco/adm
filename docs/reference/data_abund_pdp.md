@@ -123,7 +123,7 @@ A list with two tibbles "pdpdata" and "resid".
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
+# \donttest{
 require(dplyr)
 require(terra)
 
@@ -141,12 +141,18 @@ mglm <- fit_abund_glm(
   response = "ind_ha",
   predictors = c("bio12", "elevation", "sand"),
   predictors_f = c("eco"),
-  partition = ".part",
+  partition = ".part1",
   distribution = "ZAIG",
   poly = 3,
   inter_order = 0,
   predict_part = TRUE
 )
+#> Formula used for model fitting:
+#> ind_ha ~ bio12 + elevation + sand + eco + I(bio12^2) + I(elevation^2) + I(sand^2) + I(bio12^3) + I(elevation^3) + I(sand^3)
+#> Replica number: 1/1
+#> -- Partition number 1/3
+#> -- Partition number 2/3
+#> -- Partition number 3/3
 
 # Prepare data for Partial Dependence Plots
 pdp_data <- data_abund_pdp(
@@ -160,5 +166,37 @@ pdp_data <- data_abund_pdp(
 )
 
 pdp_data
-} # }
+#> $pdpdata
+#> # A tibble: 27 × 3
+#>      bio12 Abundance Type      
+#>      <dbl>     <dbl> <chr>     
+#>  1    9.28     0.467 Projection
+#>  2  141.       0.956 Projection
+#>  3  273.       1.68  Projection
+#>  4  405.       2.57  Projection
+#>  5  460.       2.97  Training  
+#>  6  536.       3.49  Training  
+#>  7  668.       4.24  Training  
+#>  8  800.       4.68  Training  
+#>  9  932.       4.77  Training  
+#> 10 1063.       4.54  Training  
+#> # ℹ 17 more rows
+#> 
+#> $resid
+#> # A tibble: 938 × 2
+#>    bio12 Abundance
+#>    <dbl>     <dbl>
+#>  1  921.      38.5
+#>  2 1008.      40.1
+#>  3 1103.      39.3
+#>  4 1056.      40.5
+#>  5 1175.      38.3
+#>  6 2185.      16.2
+#>  7 2185.      16.2
+#>  8 2403.      15.8
+#>  9 2349.      14.6
+#> 10 2349.      14.6
+#> # ℹ 928 more rows
+#> 
+# }
 ```

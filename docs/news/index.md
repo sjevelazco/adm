@@ -2,6 +2,27 @@
 
 ## adm 0.5.0
 
+### Changes after CRAN review
+
+- The title no longer starts with “Tools for”, and the Description now
+  cites the package paper (de Oliveira Junior and Velazco 2025,
+  <doi:10.1111/2041-210X.70074>).
+- [`envar()`](https://sjevelazco.github.io/adm/reference/envar.md) and
+  [`cretusa_predictors()`](https://sjevelazco.github.io/adm/reference/cretusa_predictors.md)
+  now return the `SpatRaster` shipped with the package and have a
+  documented `\value`.
+- Examples are wrapped in `\donttest{}` instead of `\dontrun{}`; they
+  were rewritten so they run, use only declared dependencies, and are
+  much faster (DNN/CNN examples run only when torch is installed).
+- No function sets a fixed random seed any more (`set.seed(13)`,
+  `set.seed(ii)` and `torch::torch_manual_seed(13)` were removed). Call
+  [`set.seed()`](https://rdrr.io/r/base/Random.html) and
+  [`torch::torch_manual_seed()`](https://torch.mlverse.org/docs/reference/torch_manual_seed.html)
+  before fitting if you need reproducible results.
+- The workflow vignette restores the graphical parameters it changes
+  ([`par()`](https://rdrr.io/r/graphics/par.html)).
+- `T` was replaced by `TRUE` in the code and examples.
+
 ### Bug fixes
 
 - `fit_abund_qrf` now works when a partition is used; it was calling the

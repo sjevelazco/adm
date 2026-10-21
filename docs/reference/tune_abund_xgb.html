@@ -151,7 +151,7 @@ the grid with the default values.</p></dd>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="co"># Database with species abundance and x and y coordinates</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"sppabund"</span><span class="op">)</span></span></span>
@@ -161,19 +161,25 @@ the grid with the default values.</p></dd>
 <span class="r-in"><span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="op">-</span><span class="va">.part2</span>, <span class="op">-</span><span class="va">.part3</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="co"># Explore response variables</span></span></span>
 <span class="r-in"><span><span class="va">some_sp</span><span class="op">$</span><span class="va">ind_ha</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/range.html" class="external-link">range</a></span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1]   0.0000 186.8627</span>
 <span class="r-in"><span><span class="va">some_sp</span><span class="op">$</span><span class="va">ind_ha</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/graphics/hist.html" class="external-link">hist</a></span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="tune_abund_xgb-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="co"># Here we balance number of absences</span></span></span>
 <span class="r-in"><span><span class="va">some_sp</span> <span class="op">&lt;-</span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="balance_dataset.html">balance_dataset</a></span><span class="op">(</span><span class="va">some_sp</span>, response <span class="op">=</span> <span class="st">"ind_ha"</span>, absence_ratio <span class="op">=</span> <span class="fl">0.2</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># A small subset keeps this example fast</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">some_sp</span> <span class="op">&lt;-</span> <span class="va">some_sp</span><span class="op">[</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/dimensions.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">some_sp</span><span class="op">)</span>, <span class="fl">200</span><span class="op">)</span><span class="op">)</span>, <span class="op">]</span></span></span>
 <span class="r-in"><span><span class="co"># Create a grid</span></span></span>
 <span class="r-in"><span><span class="va">xgb_grid</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/expand.grid.html" class="external-link">expand.grid</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>  nrounds <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">100</span>, <span class="fl">300</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  max_depth <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span>, <span class="fl">6</span>, <span class="fl">8</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  learning_rate <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.2</span>, <span class="fl">0.5</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  min_split_loss <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">5</span>, <span class="fl">10</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  colsample_bytree <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.5</span>, <span class="fl">1</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  min_child_weight <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.5</span>, <span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  subsample <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.5</span>, <span class="fl">1</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  nrounds <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">20</span>, <span class="fl">50</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  max_depth <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span>, <span class="fl">6</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  learning_rate <span class="op">=</span> <span class="fl">0.3</span>,</span></span>
+<span class="r-in"><span>  min_split_loss <span class="op">=</span> <span class="fl">1</span>,</span></span>
+<span class="r-in"><span>  colsample_bytree <span class="op">=</span> <span class="fl">1</span>,</span></span>
+<span class="r-in"><span>  min_child_weight <span class="op">=</span> <span class="fl">1</span>,</span></span>
+<span class="r-in"><span>  subsample <span class="op">=</span> <span class="fl">0.5</span>,</span></span>
 <span class="r-in"><span>  stringsAsFactors <span class="op">=</span> <span class="cn">FALSE</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="co"># Tune a XGB model</span></span></span>
@@ -182,15 +188,162 @@ the grid with the default values.</p></dd>
 <span class="r-in"><span>  response <span class="op">=</span> <span class="st">"ind_ha"</span>,</span></span>
 <span class="r-in"><span>  predictors <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"bio12"</span>, <span class="st">"elevation"</span>, <span class="st">"sand"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>  predictors_f <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"eco"</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  partition <span class="op">=</span> <span class="st">".part"</span>,</span></span>
+<span class="r-in"><span>  partition <span class="op">=</span> <span class="st">".part1"</span>,</span></span>
 <span class="r-in"><span>  predict_part <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
 <span class="r-in"><span>  metrics <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"corr_pear"</span>, <span class="st">"mae"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>  grid <span class="op">=</span> <span class="va">xgb_grid</span>,</span></span>
 <span class="r-in"><span>  objective <span class="op">=</span> <span class="st">"reg:squarederror"</span>,</span></span>
-<span class="r-in"><span>  n_cores <span class="op">=</span> <span class="fl">3</span></span></span>
+<span class="r-in"><span>  n_cores <span class="op">=</span> <span class="fl">1</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Using provided grid.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Searching for optimal hyperparameters...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Fitting the best model...</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Categorical variables aren't available for XGB and will be ignored.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Replica number: 1/1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> -- Partition number 1/3</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> -- Partition number 2/3</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> -- Partition number 3/3</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> The best model was achieved with: </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>  max_depth = 4</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>  learning_rate = 0.3</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>  min_split_loss = 1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>  colsample_bytree = 1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>  min_child_weight = 1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>  subsample = 0.5</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>  nrounds = 20</span>
 <span class="r-in"><span><span class="va">tuned_xgb</span></span></span>
-<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $model</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ##### xgb.Booster</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> call:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   xgboost::xgb.train(params = list(objective = objective, max_depth = max_depth, </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     learning_rate = learning_rate, min_child_weight = min_child_weight, </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     subsample = subsample, colsample_bytree = colsample_bytree, </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     min_split_loss = min_split_loss, seed = 13), data = dfull, </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     nrounds = ifelse(early_stopping$fm_strategy[[1]] == "hold_out", </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         yes = nrounds, no = early_stop_interpreter(early_stopping, </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             train_observer, nrounds)), evals = fm_evals, verbose = 0, </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     early_stopping_rounds = fm_early_stopping)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> # of features: 3 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> # of rounds:  2 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $predictors</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 1 × 5</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   model response c1    c2        c3   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> xgb   ind_ha   bio12 elevation sand </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $performance</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 1 × 13</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   model mae_mean mae_sd corr_spear_mean corr_spear_sd corr_pear_mean</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>           <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> xgb       18.8   1.81           0.213         0.248          0.138</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 7 more variables: corr_pear_sd &lt;dbl&gt;, inter_mean &lt;dbl&gt;, inter_sd &lt;dbl&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   slope_mean &lt;dbl&gt;, slope_sd &lt;dbl&gt;, pdisp_mean &lt;dbl&gt;, pdisp_sd &lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $performance_part</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 3 × 9</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   replica partition model   mae corr_spear corr_pear inter  slope pdisp</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> 1       1         xgb    16.9     0.287     0.150  10.1   0.437 0.343</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> 1       2         xgb    20.6    -<span style="color: #BB0000;">0.063</span><span style="color: #BB0000; text-decoration: underline;">3</span>   -<span style="color: #BB0000;">0.051</span><span style="color: #BB0000; text-decoration: underline;">4</span> 36.9  -<span style="color: #BB0000;">0.373</span> 0.138</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> 1       3         xgb    19.0     0.416     0.315  -<span style="color: #BB0000;">8.81</span>  1.45  0.217</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $predicted_part</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 200 × 4</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    replica partition observed predicted</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> 1       1               50      23.6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> 1       1               30      23.6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> 1       1               10      19.2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> 1       1               10      19.2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> 1       1               10      23.2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> 1       1               10      25.1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> 1       1               40      25.1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> 1       1               10      25.1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> 1       1               50      25.1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> 1       1               20      25.8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 190 more rows</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $metadata</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $metadata$plataform</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "aarch64-apple-darwin23"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $metadata$R_version</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "R version 4.6.1 (2026-06-24)"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $metadata$run_date</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "2026-10-21 13:40:41 PDT"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $metadata$evals</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $metadata$early_stopping_rounds</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $metadata$boosted_rounds</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $metadata$hyperparameters</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $metadata$hyperparameters$objective</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "reg:squarederror"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $metadata$hyperparameters$max_depth</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $metadata$hyperparameters$learning_rate</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $metadata$hyperparameters$min_child_weight</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $metadata$hyperparameters$subsample</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $metadata$hyperparameters$colsample_bytree</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $metadata$hyperparameters$min_split_loss</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $metadata$source_function</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "tune_abund_xgb"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $optimal_combination</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   comb_id nrounds max_depth learning_rate min_split_loss colsample_bytree</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1  comb_1      20         4           0.3              1                1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   min_child_weight subsample model mae_mean   mae_sd corr_spear_mean</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                1       0.5   xgb 18.83134 1.809452       0.2131009</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   corr_spear_sd corr_pear_mean corr_pear_sd inter_mean inter_sd slope_mean</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1     0.2478548      0.1379899     0.183625   12.72398 22.96598   0.505014</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    slope_sd pdisp_mean  pdisp_sd</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 0.9136537  0.2328386 0.1036295</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $all_combinations</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   comb_id nrounds max_depth learning_rate min_split_loss colsample_bytree</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1  comb_1      20         4           0.3              1                1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2  comb_2      50         4           0.3              1                1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  comb_3      20         6           0.3              1                1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4  comb_4      50         6           0.3              1                1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   min_child_weight subsample model mae_mean   mae_sd corr_spear_mean</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                1       0.5   xgb 18.83134 1.809452       0.2131009</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2                1       0.5   xgb 18.83134 1.809452       0.2131009</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3                1       0.5   xgb 19.16952 1.937502       0.2365540</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4                1       0.5   xgb 19.16952 1.937502       0.2365540</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   corr_spear_sd corr_pear_mean corr_pear_sd inter_mean inter_sd slope_mean</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1     0.2478548      0.1379899    0.1836250   12.72398 22.96598   0.505014</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2     0.2478548      0.1379899    0.1836250   12.72398 22.96598   0.505014</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3     0.1802596      0.1347968    0.1659993   14.55690 18.75889   0.426665</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4     0.1802596      0.1347968    0.1659993   14.55690 18.75889   0.426665</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    slope_sd pdisp_mean  pdisp_sd</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 0.9136537  0.2328386 0.1036295</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 0.9136537  0.2328386 0.1036295</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 0.7085001  0.2666522 0.1153665</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 0.7085001  0.2666522 0.1153665</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

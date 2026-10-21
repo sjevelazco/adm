@@ -245,7 +245,7 @@ To use the grid, we can pass it to the *tune_abund* function as the
 `#> -- Partition number 2/3`\
 `#> -- Partition number 3/3`\
 `#> The best model was achieved with: `\
-`#>  mtry = 1 and ntree = 300`
+`#>  mtry = 1 and ntree = 200`
 
 ### Conclusion
 

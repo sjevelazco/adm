@@ -73,7 +73,7 @@ predictions.
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
+# \donttest{
 require(terra)
 require(dplyr)
 
@@ -96,6 +96,12 @@ mraf <- fit_abund_raf(
   predictors = c("PC1", "PC2", "PC3"),
   partition = ".part"
 )
+#> Formula used for model fitting:
+#> ind_ha ~ PC1 + PC2 + PC3
+#> Replica number: 1/1
+#> -- Partition number 1/3
+#> -- Partition number 2/3
+#> -- Partition number 3/3
 
 # Calculate uncertainty
 unc <- adm_uncertainty(
@@ -104,9 +110,10 @@ unc <- adm_uncertainty(
   response = "ind_ha",
   pred = cretusa_predictors[[c("PC1", "PC2", "PC3")]],
   iteration = 10,
-  n_cores = 2
+  n_cores = 1
 )
 
 plot(unc)
-} # }
+
+# }
 ```

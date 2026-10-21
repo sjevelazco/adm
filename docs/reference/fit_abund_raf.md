@@ -113,7 +113,7 @@ A list object with:
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
+# \donttest{
 require(terra)
 require(dplyr)
 
@@ -127,7 +127,9 @@ some_sp <- sppabund %>%
 
 # Explore reponse variables
 some_sp$ind_ha %>% range()
+#> [1]   0.0000 285.2941
 some_sp$ind_ha %>% hist()
+
 
 # Here we balance number of absences
 some_sp <-
@@ -139,12 +141,96 @@ mraf <- fit_abund_raf(
   response = "ind_ha",
   predictors = c("bio12", "elevation", "sand"),
   predictors_f = c("eco"),
-  partition = ".part",
+  partition = ".part1",
   mtry = 3,
   ntree = 500,
   predict_part = TRUE
 )
+#> Formula used for model fitting:
+#> ind_ha ~ bio12 + elevation + sand + eco
+#> Replica number: 1/1
+#> -- Partition number 1/3
+#> -- Partition number 2/3
+#> -- Partition number 3/3
 
 mraf
-} # }
+#> $model
+#> 
+#> Call:
+#>  randomForest(formula = formula1, data = data, mtry = mtry, ntree = ntree,      importance = FALSE) 
+#>                Type of random forest: regression
+#>                      Number of trees: 500
+#> No. of variables tried at each split: 3
+#> 
+#>           Mean of squared residuals: 1313.612
+#>                     % Var explained: 4.09
+#> 
+#> $predictors
+#> # A tibble: 1 × 6
+#>   model response c1    c2        c3    f    
+#>   <chr> <chr>    <chr> <chr>     <chr> <chr>
+#> 1 raf   ind_ha   bio12 elevation sand  eco  
+#> 
+#> $performance
+#> # A tibble: 1 × 13
+#>   model mae_mean mae_sd corr_spear_mean corr_spear_sd corr_pear_mean
+#>   <chr>    <dbl>  <dbl>           <dbl>         <dbl>          <dbl>
+#> 1 raf       23.1   1.06           0.415        0.0614          0.310
+#> # ℹ 7 more variables: corr_pear_sd <dbl>, inter_mean <dbl>, inter_sd <dbl>,
+#> #   slope_mean <dbl>, slope_sd <dbl>, pdisp_mean <dbl>, pdisp_sd <dbl>
+#> 
+#> $performance_part
+#> # A tibble: 3 × 9
+#>   replica partition model   mae corr_spear corr_pear inter slope pdisp
+#>   <chr>   <chr>     <chr> <dbl>      <dbl>     <dbl> <dbl> <dbl> <dbl>
+#> 1 1       1         raf    22.6      0.395     0.356  9.88 0.570 0.624
+#> 2 1       2         raf    22.4      0.366     0.173 18.7  0.294 0.591
+#> 3 1       3         raf    24.3      0.484     0.401  5.66 0.879 0.456
+#> 
+#> $predicted_part
+#> # A tibble: 562 × 4
+#>    replica partition observed predicted
+#>    <chr>   <chr>        <dbl>     <dbl>
+#>  1 1       1             13.3      14.5
+#>  2 1       1             20        13.8
+#>  3 1       1             10        14.2
+#>  4 1       1             23.3      12.9
+#>  5 1       1             10        37.9
+#>  6 1       1             10        41.5
+#>  7 1       1             20        13.9
+#>  8 1       1             10        10.3
+#>  9 1       1             15        11.6
+#> 10 1       1             10        12.1
+#> # ℹ 552 more rows
+#> 
+#> $metadata
+#> $metadata$plataform
+#> [1] "aarch64-apple-darwin23"
+#> 
+#> $metadata$R_version
+#> [1] "R version 4.6.1 (2026-06-24)"
+#> 
+#> $metadata$run_date
+#> [1] "2026-10-21 13:39:17 PDT"
+#> 
+#> $metadata$formula
+#> ind_ha ~ bio12 + elevation + sand + eco
+#> <environment: 0x6de738938>
+#> 
+#> $metadata$importance
+#> [1] FALSE
+#> 
+#> $metadata$hyperparameters
+#> $metadata$hyperparameters$mtry
+#> [1] 3
+#> 
+#> $metadata$hyperparameters$ntree
+#> [1] 500
+#> 
+#> 
+#> $metadata$source_function
+#> [1] "fit_abund_raf"
+#> 
+#> 
+# }
 ```

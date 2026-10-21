@@ -118,7 +118,7 @@ default FALSE.</p></dd>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="va"><a href="https://rspatial.org/" class="external-link">terra</a></span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
@@ -126,13 +126,12 @@ default FALSE.</p></dd>
 <span class="r-in"><span><span class="va">envar</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"external/envar.tif"</span>, package <span class="op">=</span> <span class="st">"adm"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">envar</span> <span class="op">&lt;-</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/rast.html" class="external-link">rast</a></span><span class="op">(</span><span class="va">envar</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Extract data</span></span></span>
+<span class="r-in"><span><span class="co"># Species abundance data, coordinates, and partition</span></span></span>
 <span class="r-in"><span><span class="va">some_sp</span> <span class="op">&lt;-</span> <span class="va">sppabund</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span></span>
 <span class="r-in"><span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">species</span> <span class="op">==</span> <span class="st">"Species one"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span></span>
-<span class="r-in"><span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">species</span>, <span class="va">ind_ha</span>, <span class="va">x</span>, <span class="va">y</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">species</span>, <span class="va">ind_ha</span>, <span class="va">x</span>, <span class="va">y</span>, <span class="va">.part1</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">some_sp</span></span></span>
-<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Extract environmental data</span></span></span>
 <span class="r-in"><span><span class="va">some_sp</span> <span class="op">&lt;-</span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="adm_extract.html">adm_extract</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>    data <span class="op">=</span> <span class="va">some_sp</span>,</span></span>
@@ -141,58 +140,27 @@ default FALSE.</p></dd>
 <span class="r-in"><span>    env_layer <span class="op">=</span> <span class="va">envar</span></span></span>
 <span class="r-in"><span>  <span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Partition</span></span></span>
-<span class="r-in"><span><span class="va">some_sp</span> <span class="op">&lt;-</span> <span class="fu">flexsdm</span><span class="fu">::</span><span class="fu"><a href="https://sjevelazco.github.io/flexsdm/reference/part_random.html" class="external-link">part_random</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>  data <span class="op">=</span> <span class="va">some_sp</span>,</span></span>
-<span class="r-in"><span>  pr_ab <span class="op">=</span> <span class="st">"ind_ha"</span>,</span></span>
-<span class="r-in"><span>  method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>method <span class="op">=</span> <span class="st">"rep_kfold"</span>, folds <span class="op">=</span> <span class="fl">3</span>, replicates <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## %######################################################%##</span></span></span>
-<span class="r-in"><span><span class="co">#                                                          #</span></span></span>
-<span class="r-in"><span><span class="co">####          Create different type of models           ####</span></span></span>
-<span class="r-in"><span><span class="co">#                                                          #</span></span></span>
-<span class="r-in"><span><span class="co">## %######################################################%##</span></span></span>
 <span class="r-in"><span><span class="co"># Fit some models</span></span></span>
-<span class="r-in"><span><span class="co"># require(gamlss)</span></span></span>
-<span class="r-in"><span><span class="co"># m1 &lt;- gamlss::fitDist(some_sp$ind_ha, type="realline")</span></span></span>
-<span class="r-in"><span><span class="co"># m1$fits</span></span></span>
-<span class="r-in"><span><span class="co"># m1$failed</span></span></span>
-<span class="r-in"><span><span class="co">#</span></span></span>
-<span class="r-in"><span><span class="co"># m1 &lt;- gamlss(ind_ha ~ pb(elevation) + pb(sand) + pb(bio3) + pb(bio12), family=NO, data=some_sp)</span></span></span>
-<span class="r-in"><span><span class="co"># choosen_dist &lt;- gamlss::chooseDist(m1, parallel="multicore", ncpus=4, type="realAll")</span></span></span>
-<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">mgam</span> <span class="op">&lt;-</span> <span class="fu"><a href="fit_abund_gam.html">fit_abund_gam</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>  data <span class="op">=</span> <span class="va">some_sp</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>ind_ha <span class="op">=</span> <span class="fu"><a href="https://rspatial.github.io/terra/reference/math-generics.html" class="external-link">round</a></span><span class="op">(</span><span class="va">ind_ha</span><span class="op">)</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  data <span class="op">=</span> <span class="va">some_sp</span>,</span></span>
 <span class="r-in"><span>  response <span class="op">=</span> <span class="st">"ind_ha"</span>,</span></span>
 <span class="r-in"><span>  predictors <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"elevation"</span>, <span class="st">"sand"</span>, <span class="st">"bio3"</span>, <span class="st">"bio12"</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  predictors_f <span class="op">=</span> <span class="st">"eco"</span>,</span></span>
-<span class="r-in"><span>  partition <span class="op">=</span> <span class="st">".part"</span>,</span></span>
-<span class="r-in"><span>  distribution <span class="op">=</span> <span class="fu">gamlss.dist</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/gamlss.dist/man/PO.html" class="external-link">PO</a></span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  partition <span class="op">=</span> <span class="st">".part1"</span>,</span></span>
+<span class="r-in"><span>  distribution <span class="op">=</span> <span class="st">"NO"</span>,</span></span>
+<span class="r-in"><span>  verbose <span class="op">=</span> <span class="cn">FALSE</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Formula used for model fitting:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ind_ha ~ pb(elevation) + pb(sand) + pb(bio3) + pb(bio12)</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>additive.fit convergence not obtained in  30  iterations</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">mraf</span> <span class="op">&lt;-</span> <span class="fu"><a href="fit_abund_raf.html">fit_abund_raf</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  data <span class="op">=</span> <span class="va">some_sp</span>,</span></span>
 <span class="r-in"><span>  response <span class="op">=</span> <span class="st">"ind_ha"</span>,</span></span>
 <span class="r-in"><span>  predictors <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"elevation"</span>, <span class="st">"sand"</span>, <span class="st">"bio3"</span>, <span class="st">"bio12"</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  partition <span class="op">=</span> <span class="st">".part"</span>,</span></span>
+<span class="r-in"><span>  partition <span class="op">=</span> <span class="st">".part1"</span>,</span></span>
+<span class="r-in"><span>  ntree <span class="op">=</span> <span class="fl">100</span>,</span></span>
+<span class="r-in"><span>  verbose <span class="op">=</span> <span class="cn">FALSE</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">mgbm</span> <span class="op">&lt;-</span> <span class="fu"><a href="fit_abund_gbm.html">fit_abund_gbm</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>  data <span class="op">=</span> <span class="va">some_sp</span>,</span></span>
-<span class="r-in"><span>  response <span class="op">=</span> <span class="st">"ind_ha"</span>,</span></span>
-<span class="r-in"><span>  predictors <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"elevation"</span>, <span class="st">"sand"</span>, <span class="st">"bio3"</span>, <span class="st">"bio12"</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  partition <span class="op">=</span> <span class="st">".part"</span>,</span></span>
-<span class="r-in"><span>  distribution <span class="op">=</span></span></span>
-<span class="r-in"><span>  <span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## %######################################################%##</span></span></span>
-<span class="r-in"><span><span class="co">#                                                          #</span></span></span>
-<span class="r-in"><span><span class="co">####                        Predict models               ####</span></span></span>
-<span class="r-in"><span><span class="co">#                                                          #</span></span></span>
-<span class="r-in"><span><span class="co">## %######################################################%##</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># adm_predict can be used for predict one or more models fitted with fit_ or tune_ functions</span></span></span>
 <span class="r-in"><span></span></span>
@@ -202,46 +170,60 @@ default FALSE.</p></dd>
 <span class="r-in"><span>  pred <span class="op">=</span> <span class="va">envar</span>,</span></span>
 <span class="r-in"><span>  training_data <span class="op">=</span> <span class="va">some_sp</span>,</span></span>
 <span class="r-in"><span>  nchunk <span class="op">=</span> <span class="fl">1</span>,</span></span>
-<span class="r-in"><span>  predict_area <span class="op">=</span> <span class="cn">NULL</span>,</span></span>
-<span class="r-in"><span>  invert_transform <span class="op">=</span> <span class="cn">NULL</span>,</span></span>
-<span class="r-in"><span>  transform_negative <span class="op">=</span> <span class="cn">FALSE</span>,</span></span>
-<span class="r-in"><span>  sample_size <span class="op">=</span> <span class="cn">NULL</span></span></span>
+<span class="r-in"><span>  transform_negative <span class="op">=</span> <span class="cn">TRUE</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Predicting an individual model</span>
+<span class="r-in"><span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">ind_p</span><span class="op">$</span><span class="va">gam</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="adm_predict-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># a list of models</span></span></span>
 <span class="r-in"><span><span class="va">list_p</span> <span class="op">&lt;-</span> <span class="fu">adm_predict</span><span class="op">(</span></span></span>
-<span class="r-in"><span>  models <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">mgam</span>, <span class="va">mraf</span>, <span class="va">mgbm</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  models <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">mgam</span>, <span class="va">mraf</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>  pred <span class="op">=</span> <span class="va">envar</span>,</span></span>
 <span class="r-in"><span>  training_data <span class="op">=</span> <span class="va">some_sp</span>,</span></span>
 <span class="r-in"><span>  nchunk <span class="op">=</span> <span class="fl">1</span>,</span></span>
-<span class="r-in"><span>  predict_area <span class="op">=</span> <span class="cn">NULL</span>,</span></span>
-<span class="r-in"><span>  invert_transform <span class="op">=</span> <span class="cn">NULL</span>,</span></span>
-<span class="r-in"><span>  transform_negative <span class="op">=</span> <span class="cn">FALSE</span>,</span></span>
-<span class="r-in"><span>  sample_size <span class="op">=</span> <span class="cn">NULL</span></span></span>
+<span class="r-in"><span>  transform_negative <span class="op">=</span> <span class="cn">TRUE</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Predicting a list of models</span>
+<span class="r-in"><span><span class="va">list_p</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $gam</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> class       : SpatRaster</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> size        : 201, 274, 1  (nrow, ncol, nlyr)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> resolution  : 0.08333333, 0.08333333  (x, y)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> extent      : -69.41681, -46.58347, -34.38347, -17.63347  (xmin, xmax, ymin, ymax)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> coord. ref. : lon/lat WGS 84 (EPSG:4326)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> source(s)   : memory</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> varname     : envar</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> name        :       gam</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> min value   :         0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> max value   : 44.503344</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $raf</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> class       : SpatRaster</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> size        : 201, 274, 1  (nrow, ncol, nlyr)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> resolution  : 0.08333333, 0.08333333  (x, y)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> extent      : -69.41681, -46.58347, -34.38347, -17.63347  (xmin, xmax, ymin, ymax)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> coord. ref. : lon/lat WGS 84 (EPSG:4326)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> source(s)   : memory</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> varname     : envar</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> name        :        raf</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> min value   :          0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> max value   : 148.743333</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## %######################################################%##</span></span></span>
-<span class="r-in"><span><span class="co">#                                                          #</span></span></span>
-<span class="r-in"><span><span class="co">####              Predict model using chunks            ####</span></span></span>
-<span class="r-in"><span><span class="co">#                                                          #</span></span></span>
-<span class="r-in"><span><span class="co">## %######################################################%##</span></span></span>
 <span class="r-in"><span><span class="co"># Predicting models in chunks helps reduce memory requirements in</span></span></span>
 <span class="r-in"><span><span class="co"># cases where models are predicted for large scales and high resolution</span></span></span>
-<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">ind_p</span> <span class="op">&lt;-</span> <span class="fu">adm_predict</span><span class="op">(</span></span></span>
 <span class="r-in"><span>  models <span class="op">=</span> <span class="va">mraf</span>,</span></span>
 <span class="r-in"><span>  pred <span class="op">=</span> <span class="va">envar</span>,</span></span>
 <span class="r-in"><span>  training_data <span class="op">=</span> <span class="va">some_sp</span>,</span></span>
 <span class="r-in"><span>  nchunk <span class="op">=</span> <span class="fl">4</span>,</span></span>
-<span class="r-in"><span>  predict_area <span class="op">=</span> <span class="cn">NULL</span>,</span></span>
-<span class="r-in"><span>  invert_transform <span class="op">=</span> <span class="cn">NULL</span>,</span></span>
-<span class="r-in"><span>  transform_negative <span class="op">=</span> <span class="cn">FALSE</span>,</span></span>
+<span class="r-in"><span>  transform_negative <span class="op">=</span> <span class="cn">TRUE</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">ind_p</span></span></span>
-<span class="r-in"><span><span class="va">ind_p</span><span class="op">$</span><span class="va">raf</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Predicting an individual model</span>
 <span class="r-in"><span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">ind_p</span><span class="op">$</span><span class="va">raf</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
-<span class="r-in"><span></span></span>
+<span class="r-plt img"><img src="adm_predict-2.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
